@@ -2,8 +2,9 @@ import { useState } from 'react'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
-import FaqComponent from './Faq/FaqComponent';
-import FaqAdd from './Faq/FaqAdd';
+import FaqComponent from './components/Faq/FaqComponent';
+import FaqAdd from './components/Faq/FaqAdd';
+import Material from './components/Material/Material';
 
 function App() {
   const [selectedNav, setSelectedNav] = useState("Home");
@@ -11,13 +12,15 @@ function App() {
   const renderContent = () => {
     switch (selectedNav) {
         case "Home":
-            return <h1>Welcome back John Lennon</h1>;
+          return <h1>Welcome back John Lennon</h1>;
         case "Admin":
-            return <h1>Admin</h1>;
+          return <h1>Admin</h1>;
         case "Faq":
-            return <FaqComponent/>;
+          return <FaqComponent/>;
         case "AddFaq":
-            return <FaqAdd/>
+          return <FaqAdd/>
+        case "AddFile":
+          return <Material/>
         default:
             return <h1>Imagine</h1>;
     }
@@ -35,6 +38,7 @@ function App() {
             <Nav.Link href="#admin" onClick={() => setSelectedNav("Admin")}>Admin</Nav.Link>
             <Nav.Link href="#faq" onClick={() => setSelectedNav("Faq")}>Faq</Nav.Link>
             <Nav.Link href="#addfaq" onClick={() => setSelectedNav("AddFaq")}>AddFaq</Nav.Link>
+            <Nav.Link href="#addfile" onClick={() => setSelectedNav("AddFile")}>AddFile</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../axiosConfig';
+import axiosInstance from '../../../axiosConfig';
 import './FaqComponent.css'; 
 import { Accordion } from 'react-bootstrap';
 
