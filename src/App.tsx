@@ -20,7 +20,7 @@ function App() {
         case "AddFaq":
           return <FaqAdd/>
         case "AddFile":
-          return <Material/>
+          return <Material materialId={0}/>
         default:
             return <h1>Imagine</h1>;
     }

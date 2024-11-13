@@ -1,24 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { MaterialDto } from "../../dtos/MaterialDto";
+import React, { useEffect } from "react"
 
 interface MaterialProps {
     materialId: number;
-    showRemoveFile: boolean;
-    showDownloadFile: boolean;
-    showAddingFile: boolean;
-    materialCreated: (materialId: number) => void;
+    // showRemoveFile: boolean;
+    // showDownloadFile: boolean;
+    // showAddingFile: boolean;
+    // materialCreated: (materialId: number) => void;
   }
-const Material = () => {
-
-    const [material, setMaterial] = useState<MaterialDto | null>(null);
-    const [materialName, setMaterialName] = useState<string>('');
-    const [url, setUrl] = useState<string>('');
-    
-    useEffect(() => 
+  
+const Material: React.FC<MaterialProps> = ({
+    materialId,
+    }) => 
     {
-        if (materialId !== 0) 
-          getMaterial(materialId);
-    }, 
-    [materialId]);
-}
+        useEffect(() => {}, [materialId]) 
+        return (
+            <div>
+
+            </div>
+        )
+    }
 export default Material;
