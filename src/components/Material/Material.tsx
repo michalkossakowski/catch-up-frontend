@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
 import FileAdd from '../File/FileAdd';
 import { FileDto } from "../../dtos/FileDto";
@@ -14,6 +15,12 @@ interface MaterialProps {
   showDownloadFile?: boolean;
   showAddingFile?: boolean;
   materialCreated: (materialId: number) => void;
+=======
+
+
+const Material = () => {
+    return (<div></div>)
+>>>>>>> 8bd153ab229ed898a75334bc4b5d25712cbfd400
 }
 
 const Material: React.FC<MaterialProps> = ({
