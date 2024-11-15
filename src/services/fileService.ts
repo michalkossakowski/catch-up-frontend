@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { FileDto } from '../dtos/FileDto';
-
 const BASE_URL = 'https://localhost:7097/api/File/';
 const fileService = 
 {
@@ -20,6 +19,7 @@ const fileService =
                     },
                 }
             );
+            console.log("File uploaded", response)
             return response.data;
         } 
         catch (error) 
@@ -33,12 +33,13 @@ const fileService =
         try 
         {
             const response = await axios.get(`${BASE_URL}Download/${fileId}`, {responseType: 'blob',});
+            console.log("File downloaded")
             return response.data;
         } 
         catch (error) 
         {
-          console.error('File download error:', error);
-          throw error;
+            console.error('File download error:', error);
+            throw error;
         }
     },
 }

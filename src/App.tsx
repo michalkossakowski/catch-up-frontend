@@ -8,7 +8,10 @@ import Material from './components/Material/Material';
 
 function App() {
   const [selectedNav, setSelectedNav] = useState("Home");
-
+  const materialCreated = (materialId: number) => {
+    console.log("Zwrócono id nowo utworzonego materiału",materialId)
+    return materialId
+  }      
   const renderContent = () => {
     switch (selectedNav) {
         case "Home":
@@ -20,7 +23,7 @@ function App() {
         case "AddFaq":
           return <FaqAdd/>
         case "AddFile":
-          return <Material materialId={0}/>
+          return <Material materialId={1060} showRemoveFile={true} showDownloadFile={true} showAddingFile={true} materialCreated={materialCreated}/>
         default:
             return <h1>Imagine</h1>;
     }

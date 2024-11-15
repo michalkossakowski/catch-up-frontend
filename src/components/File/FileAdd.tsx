@@ -9,7 +9,7 @@ import uploadIcon from "../../assets/uploadIcon.svg"
 interface FileAddProps 
 {
     materialId: number;
-    onFileUploaded: (file: FileDto) => void;
+    onFileUploaded: (fileDto: FileDto) => void;
 }
 const FileAdd: React.FC<FileAddProps> = ({ materialId, onFileUploaded }) =>
 {
@@ -29,14 +29,14 @@ const FileAdd: React.FC<FileAddProps> = ({ materialId, onFileUploaded }) =>
         e.preventDefault()
         setIsDragActive(false)
         
-        const file = e.dataTransfer.files[0]
-        handleFileUpload(file)
+        const files = Array.from(e.dataTransfer.files);
+        files.forEach((file) => handleFileUpload(file));
     }
     const onFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0]
-            handleFileUpload(file)
-        }
+        if (e.target.files) {
+            const files = Array.from(e.target.files);
+            files.forEach((file) => handleFileUpload(file));
+          }
     }
     const handleFileUpload = async (file: File) =>{
         if(file)
@@ -56,25 +56,23 @@ const FileAdd: React.FC<FileAddProps> = ({ materialId, onFileUploaded }) =>
 
  
     return( 
-        <section className="container">
-            <div className={`card-body dropzone d-flex flex-column mb-3 justify-content-center text-center ${isDragActive ? 'borderColorOnDrag' : ''}`}
-                onDragOver={(e) => onDragOver(e)}
-                onDragLeave={(e) => onDragLeave(e)}
-                onDrop={(e) => onDrop(e)}
-            >
-                <div>
-                    <img src={uploadIcon} className={`uploadIcon ${isDragActive ? 'uploadIconOnDrag' : ''}`}/>
-                </div>
-                <div className="p-3">
-                    <p className="text-body-tertiary fs-6 opacity-50 p-0 m-0">Drag and drop file here</p>
-                    <p className="text-body-tertiary fs-6 opacity-50 p-0 m-0">or</p>
-                </div>
-                <div>
-                    <input type="file" id="formFile" onChange={(e) => onFileSelected(e)}/>
-                    <label className="btn btn-outline-primary" htmlFor="formFile">Browse for file</label>
-                </div>
+        <div className={`p-3 mt-3 dropzone ${isDragActive ? 'borderColorOnDrag' : ''}`}
+            onDragOver={(e) => onDragOver(e)}
+            onDragLeave={(e) => onDragLeave(e)}
+            onDrop={(e) => onDrop(e)}
+        >
+            <div>
+                <img src={uploadIcon} className={`uploadIcon ${isDragActive ? 'uploadIconOnDrag' : ''}`}/>
             </div>
-        </section>
+            <div className="p-3">
+                <p className="text-body-tertiary fs-6 opacity-50 p-0 m-0">Drag and drop file here</p>
+                <p className="text-body-tertiary fs-6 opacity-50 p-0 m-0">or</p>
+            </div>
+            <div>
+                <input type="file" id="formFile" onChange={(e) => onFileSelected(e)} multiple />
+                <label className="btn btn-outline-primary" htmlFor="formFile">Browse for file</label>
+            </div>
+        </div>
     )
 }
 export default FileAdd;

@@ -3,8 +3,8 @@ input{
 }
 .dropzone{
     min-width: 300px;
-    max-width: 450px;
     min-height: 225px;
+    width: 100%;
     border-style: dashed;
     border-width: 1px;
     border-color: #dcdfb9;

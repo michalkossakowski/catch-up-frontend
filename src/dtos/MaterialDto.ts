@@ -1,4 +1,7 @@
+import { FileDto } from "./FileDto";
+
 export interface MaterialDto {
-    id: number;
+    id?: number;
     name: string;
+    files?: FileDto[]
 }
