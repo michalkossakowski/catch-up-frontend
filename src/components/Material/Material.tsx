@@ -27,7 +27,10 @@ const Material: React.FC<MaterialProps> = ({
   const [materialName, setMaterialName] = useState<string>('');
 
   useEffect(() => {
+    console.log(materialId)
+
     if (materialId !== 0) {
+        console.log(materialId)
       getMaterial(materialId);
     }
   }, [materialId]);
@@ -41,17 +44,15 @@ const Material: React.FC<MaterialProps> = ({
     }
   };
 
-  const onFileUploaded = (fileDto: FileDto) => { 
-    setMaterial((prevMaterial) => {
-        if (prevMaterial) {
-            return {
-                ...prevMaterial,
-                files: [...(prevMaterial.files || []), fileDto],
-            };
-        }
-        return prevMaterial;
-    });
-};
+  const onFileUploaded = (fileDto: FileDto) => {
+    if (material) {
+      setMaterial({
+        ...material,
+        files: [...(material.files || []), fileDto],
+      });
+    }
+  };
+
   const createMaterial = async () => {
     const tempMaterialDto: MaterialDto = { name: materialName };
     if (materialName) {
@@ -120,7 +121,7 @@ const Material: React.FC<MaterialProps> = ({
             ))}
           </ul>
           {showAddingFile && (
-            <FileAdd materialId={material.id || 0} onFileUploaded={onFileUploaded} />
+            <FileAdd materialId={materialId} onFileUploaded={onFileUploaded} />
           )}
         </>
       ) : (
