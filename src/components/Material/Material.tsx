@@ -85,8 +85,7 @@ const Material: React.FC<MaterialProps> = ({
   const downloadFile = async (fileId: number) => {
     try {
       const response = await fileService.downloadFile(fileId);
-      const blob = response;
-      const url = window.URL.createObjectURL(blob);
+      const url = window.URL.createObjectURL(response);
       const a = document.createElement('a');
       a.href = url;
       const file = material?.files?.find((file) => file.id === fileId);
