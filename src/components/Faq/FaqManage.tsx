@@ -1,28 +1,15 @@
 import React, { useState } from 'react';
-import axiosInstance from '../../../axiosConfig';
-import FaqAdd from './FaqAdd';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import FaqComponent from './FaqComponent';
 
 
 const FaqManage: React.FC = () => {
     return (
         <>
+        <h1>Manage Faq</h1>
             <Container>
-                <Row>
-                    <Col>
-                        <Row>
-                            <FaqAdd/>
-                        </Row>
-                        
-                    </Col>
-
-                    <Col>
-                        <FaqComponent/>
-                    </Col>
-                </Row>
+                <FaqComponent isAdmin={true}/>
             </Container>
-
         </>
     );
 };

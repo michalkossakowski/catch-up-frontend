@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { FaqDto } from '../../dtos/faqDto';
+import { FaqDto } from '../../dtos/FaqDto';
 import Material from '../Material/Material';
 import { addFaq } from '../../services/faqService';
 
+interface FaqAddProps {
+    onFaqAdded: () => void; 
+}
 
-const FaqAdd: React.FC = () => {
+const FaqAdd: React.FC<FaqAddProps> = ({ onFaqAdded }) => {
     const [title, setTitle] = useState<string>('');
     const [answer, setAnswer] = useState<string>('');
     const [materialsId, setMaterialsId] = useState<number|null>();
@@ -23,12 +26,12 @@ const FaqAdd: React.FC = () => {
         };
 
         addFaq(faq)
-        .then((data) => {
-            console.log('Success: ' + data);
+        .then(() => {
             setTitle('');
             setAnswer('');
             setTitle('');
             setMaterialsId(null);
+            onFaqAdded(); 
         })
         .catch((error) => {
             console.log(error)

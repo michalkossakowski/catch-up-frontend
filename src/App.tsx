@@ -19,7 +19,7 @@ function App() {
         case "Admin":
           return <h1>Admin</h1>;
         case "Faq":
-          return <FaqComponent/>;
+          return <FaqComponent isAdmin={false}/>;
         case "FaqManage":
           return <FaqManage/>;
         case "AddFile":

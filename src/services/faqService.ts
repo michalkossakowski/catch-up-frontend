@@ -1,5 +1,5 @@
 import axiosInstance from '../../axiosConfig';
-import { FaqDto } from '../dtos/faqDto';
+import { FaqDto } from '../dtos/FaqDto';
 
 export const getFaqs = async (): Promise<FaqDto[]> => {
     try {
@@ -53,7 +53,7 @@ export const editFaq = async (faq: FaqDto): Promise<FaqDto> => {
     }
 };
 
-export const deleteFaq = async (id: string): Promise<any> => {
+export const deleteFaq = async (id: number): Promise<any> => {
     try {
         const response = await axiosInstance.delete('/Faq/Delete/' + id);
         return response.data;

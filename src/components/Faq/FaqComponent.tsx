@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import './FaqComponent.css'; 
 import { Accordion, Alert, Button, Form, InputGroup } from 'react-bootstrap';
-import { FaqDto } from '../../dtos/faqDto';
-import { getFaqs, getByTitle } from '../../services/faqService';
+import { FaqDto } from '../../dtos/FaqDto';
+import { getFaqs, getByTitle, deleteFaq } from '../../services/faqService';
 import Material from '../Material/Material';
+import FaqAdd from './FaqAdd';
+import FaqEdit from './FaqEdit';
 
-const FaqComponent: React.FC = () => {
+const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
     const [faqs, setFaqs] = useState<FaqDto[]>([]);
     const [loading, setLoading] = useState(true)
     const [showError, setShowError] = useState(false)
@@ -14,6 +16,8 @@ const FaqComponent: React.FC = () => {
     const [searchMessage, setSearchMessage] = useState('alert')
     const [searchTitle, setSearchTitle] = useState('');
     let i = 1;
+    const [showEdit, setShowEdit] = useState(false);
+    const [editedFaq, setEditedFaq] = useState<FaqDto | null>();
 
     useEffect(() => {
         getAllFaqs();
@@ -53,9 +57,32 @@ const FaqComponent: React.FC = () => {
             .finally(() => setLoading(false));
     };
 
+
+    const handleDelete = (faqId: number) => {
+        deleteFaq(faqId) 
+            .then(() => {
+                setFaqs((prevFaqs) => prevFaqs.filter((faq) => faq.id !== faqId));
+            })
+            .catch((error) => {
+                setShowError(true)
+                setAlertMessage('Error deleting FAQ: ' + error.message)
+            })
+    };
+
+    const editClick = (faqId: number) => {
+        setEditedFaq(faqs.find((faq)=> faq.id === faqId));
+        setShowEdit(true);
+    };
+
+    const handleFaqEdited = () => {
+        getAllFaqs();
+        setShowEdit(false);
+        setEditedFaq(null);
+    };
+
     const materialCreated = (materialId: number) => {
         return materialId
-      }      
+    }      
       
     return (
         <>
@@ -113,14 +140,46 @@ const FaqComponent: React.FC = () => {
                                             <Material materialId={faq.materialsId} showDownloadFile={true} materialCreated={materialCreated} />
                                         </div>  
                                     )}
+
+                                    {isAdmin && (
+                                        <div className='buttonBox'>
+                                            <Button
+                                                variant="primary"
+                                                onClick={() => editClick(faq.id)}>
+                                                Edit
+                                            </Button>
+                                            <Button
+                                                variant="danger"
+                                                onClick={() => handleDelete(faq.id)}>
+                                                Delete
+                                            </Button>
+                                        </div>
+                                    )}
                                 </Accordion.Body>
                             </Accordion.Item>
                         ))}
                     </Accordion>
                 )}
                 
+                {isAdmin && (
+                    <div className='editBox'>
+
+                        {!showEdit  && (
+                           <FaqAdd onFaqAdded={getAllFaqs}/>
+                        )}
+                        {showEdit && editedFaq && (
+                            <div>
+                                <Button
+                                    variant="primary"
+                                    onClick={() => setShowEdit(false)}>
+                                    Back to Add
+                                </Button>
+                                <FaqEdit faq={editedFaq} onFaqEdited={handleFaqEdited}/>
+                            </div>
+                        )}
+                    </div>
+                )}
             </section>
-            
         </>
     );
 };
