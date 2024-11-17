@@ -3,8 +3,8 @@ import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import FaqComponent from './components/Faq/FaqComponent';
-import FaqAdd from './components/Faq/FaqAdd';
 import Material from './components/Material/Material';
+import FaqManage from './components/Faq/FaqManage';
 
 function App() {
   const [selectedNav, setSelectedNav] = useState("Home");
@@ -20,8 +20,8 @@ function App() {
           return <h1>Admin</h1>;
         case "Faq":
           return <FaqComponent/>;
-        case "AddFaq":
-          return <FaqAdd/>
+        case "FaqManage":
+          return <FaqManage/>;
         case "AddFile":
           return <Material materialId={1060} showRemoveFile={true} showDownloadFile={true} showAddingFile={true} materialCreated={materialCreated}/>
         default:
@@ -40,7 +40,7 @@ function App() {
             <Nav.Link href="#home" onClick={() => setSelectedNav("Home")}>Home</Nav.Link>
             <Nav.Link href="#admin" onClick={() => setSelectedNav("Admin")}>Admin</Nav.Link>
             <Nav.Link href="#faq" onClick={() => setSelectedNav("Faq")}>Faq</Nav.Link>
-            <Nav.Link href="#addfaq" onClick={() => setSelectedNav("AddFaq")}>AddFaq</Nav.Link>
+            <Nav.Link href="#faqmanage" onClick={() => setSelectedNav("FaqManage")}>FaqManage</Nav.Link>
             <Nav.Link href="#addfile" onClick={() => setSelectedNav("AddFile")}>AddFile</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
@@ -60,6 +60,10 @@ function App() {
 
     {renderContent()}
 
+    <footer className="py-3 my-4 border-top">
+      <p className="text-center text-muted">© 2024 UnhandledException</p>
+    </footer>
+    
     </>
   )
 }

@@ -1,27 +1,29 @@
 import React, { useState } from 'react';
 import axiosInstance from '../../../axiosConfig';
+import { FaqDto } from '../../dtos/faqDto';
+import Material from '../Material/Material';
 
-interface FaqDto {
-    id?: number;
-    title: string;
-    answer: string;
-    materialsId?: number | null;
-}
 
 const FaqAdd: React.FC = () => {
     const [title, setTitle] = useState<string>('');
     const [answer, setAnswer] = useState<string>('');
+    const [materialsId, setMaterialsId] = useState<number|null>();
+    const materialCreated = (materialId: number) => {
+        setMaterialsId(materialId)
+    }      
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const faqData: FaqDto = {
-            title,
-            answer,
+        const faq: FaqDto = {
+            id: 0,
+            title: title,
+            answer: answer,
+            materialsId: null
         };
 
         try {
-            const response = await axiosInstance.post('/Faq/Add', faqData, {
+            const response = await axiosInstance.post('/Faq/Add', faq, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -29,6 +31,8 @@ const FaqAdd: React.FC = () => {
             console.log('Success: ' + response);
             setTitle('');
             setAnswer('');
+            setTitle('');
+            setMaterialsId(null);
         } catch (error) {
             console.log(error)
         }
@@ -63,6 +67,17 @@ const FaqAdd: React.FC = () => {
                             required
                         />
                     </div>
+
+                    <Material materialId={materialsId ?? 0} showRemoveFile={true} showDownloadFile={true} showAddingFile={true} materialCreated={materialCreated}/>
+
+                   
+                    {//usuwanie materiałów czeka na Eryka 
+
+                    // {materialsId != 0 && (
+                    //     <button type="button" className="btn btn-danger" onClick={() => setMaterialsId(null)}>Remove Materials</button>
+                    // )}
+                    }
+
                     <br />
                     <button type="submit" className="btn btn-primary">
                         Submit
