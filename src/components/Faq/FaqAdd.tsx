@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import axiosInstance from '../../../axiosConfig';
 import { FaqDto } from '../../dtos/faqDto';
 import Material from '../Material/Material';
+import { addFaq } from '../../services/faqService';
 
 
 const FaqAdd: React.FC = () => {
@@ -19,23 +19,22 @@ const FaqAdd: React.FC = () => {
             id: 0,
             title: title,
             answer: answer,
-            materialsId: null
+            materialsId: materialsId
         };
 
-        try {
-            const response = await axiosInstance.post('/Faq/Add', faq, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            console.log('Success: ' + response);
+        addFaq(faq)
+        .then((data) => {
+            console.log('Success: ' + data);
             setTitle('');
             setAnswer('');
             setTitle('');
             setMaterialsId(null);
-        } catch (error) {
+        })
+        .catch((error) => {
             console.log(error)
-        }
+        })
+        .finally(() => {});
+
     };
 
     return (
