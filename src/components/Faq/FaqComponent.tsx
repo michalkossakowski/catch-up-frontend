@@ -4,7 +4,6 @@ import { Accordion, Alert, Button, Form, InputGroup } from 'react-bootstrap';
 import { FaqDto } from '../../dtos/FaqDto';
 import { getFaqs, getByTitle, deleteFaq } from '../../services/faqService';
 import Material from '../Material/Material';
-import FaqAdd from './FaqAdd';
 import FaqEdit from './FaqEdit';
 
 const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
@@ -74,7 +73,7 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
         setShowEdit(true);
     };
 
-    const handleFaqEdited = () => {
+    const handleFaqUpdated = () => {
         getAllFaqs();
         setShowEdit(false);
         setEditedFaq(null);
@@ -86,26 +85,26 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
       
     return (
         <>
+            {isAdmin && (
+                <div>
+                    {!showEdit && (
+                        <FaqEdit isEditMode={false} onFaqEdited={handleFaqUpdated}/>
+                    )}
+                    {showEdit && editedFaq && (
+                        <div>
+                            <Button variant="primary" onClick={() => setShowEdit(false)}>
+                                Back to Add
+                            </Button>
+                            <FaqEdit faq={editedFaq} isEditMode={true} onFaqEdited={handleFaqUpdated} />
+                        </div>
+                    )}
+                </div>
+            )}
+
+
             <section className='container'>
                 <h2 className='title'>Frequently Asked Questions</h2>
                 
-                {!showError && faqs.length > 0 &&(
-                    <div className='searchBox'>
-                        <InputGroup className="inputGroup mb-3">
-                            <Form.Control
-                                placeholder="Enter searching title..."
-                                value={searchTitle} 
-                                onChange={(e) => setSearchTitle(e.target.value)} 
-                                onKeyDown={(e) => e.key === 'Enter' && searchFaq()}
-                            />
-                            <Button variant="primary" id="searchButton" onClick={searchFaq}> 
-                                Search
-                            </Button>
-                        </InputGroup>
-                    </div>
-                )}
-                    
-
                 <div className='loaderBox'>
                     {loading && (
                         <span className='loader'></span>
@@ -125,58 +124,58 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
                 </div>
 
                 {!showSearchMessage && !showError && !loading &&(
-                    <Accordion className='AccordionItem'>
-                        {faqs.map((faq) => (
-                            <Accordion.Item eventKey={faq.id.toString()} key={faq.id}>
-                                <Accordion.Header>
-                                    {i++}. {faq.title}
-                                </Accordion.Header>
-                                <Accordion.Body>
-                                    <p>{faq.answer}</p>
-
-                                    {faq.materialsId && (
-                                        <div> 
-                                            Additional materials:                                
-                                            <Material materialId={faq.materialsId} showDownloadFile={true} materialCreated={materialCreated} />
-                                        </div>  
-                                    )}
-
-                                    {isAdmin && (
-                                        <div className='buttonBox'>
-                                            <Button
-                                                variant="primary"
-                                                onClick={() => editClick(faq.id)}>
-                                                Edit
-                                            </Button>
-                                            <Button
-                                                variant="danger"
-                                                onClick={() => handleDelete(faq.id)}>
-                                                Delete
-                                            </Button>
-                                        </div>
-                                    )}
-                                </Accordion.Body>
-                            </Accordion.Item>
-                        ))}
-                    </Accordion>
-                )}
-                
-                {isAdmin && (
-                    <div className='editBox'>
-
-                        {!showEdit  && (
-                           <FaqAdd onFaqAdded={getAllFaqs}/>
-                        )}
-                        {showEdit && editedFaq && (
-                            <div>
-                                <Button
-                                    variant="primary"
-                                    onClick={() => setShowEdit(false)}>
-                                    Back to Add
-                                </Button>
-                                <FaqEdit faq={editedFaq} onFaqEdited={handleFaqEdited}/>
+                    <div>
+                        {faqs.length > 0 &&(
+                            <div className='searchBox'>
+                                <InputGroup className="inputGroup mb-3">
+                                    <Form.Control
+                                        placeholder="Enter searching title..."
+                                        value={searchTitle} 
+                                        onChange={(e) => setSearchTitle(e.target.value)} 
+                                        onKeyDown={(e) => e.key === 'Enter' && searchFaq()}
+                                    />
+                                    <Button variant="primary" id="searchButton" onClick={searchFaq}> 
+                                        Search
+                                    </Button>
+                                </InputGroup>
                             </div>
                         )}
+
+
+                        <Accordion className='AccordionItem'>
+                            {faqs.map((faq) => (
+                                <Accordion.Item eventKey={faq.id.toString()} key={faq.id}>
+                                    <Accordion.Header>
+                                        {i++}. {faq.title}
+                                    </Accordion.Header>
+                                    <Accordion.Body>
+                                        <p>{faq.answer}</p>
+
+                                        {faq.materialsId && (
+                                            <div> 
+                                                Additional materials:                                
+                                                <Material materialId={faq.materialsId} showDownloadFile={true} materialCreated={materialCreated} />
+                                            </div>  
+                                        )}
+
+                                        {isAdmin && (
+                                            <div className='buttonBox'>
+                                                <Button
+                                                    variant="primary"
+                                                    onClick={() => editClick(faq.id)}>
+                                                    Edit
+                                                </Button>
+                                                <Button
+                                                    variant="danger"
+                                                    onClick={() => handleDelete(faq.id)}>
+                                                    Delete
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </Accordion.Body>
+                                </Accordion.Item>
+                            ))}
+                        </Accordion>
                     </div>
                 )}
             </section>

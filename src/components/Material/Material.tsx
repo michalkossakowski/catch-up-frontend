@@ -28,11 +28,10 @@ const Material: React.FC<MaterialProps> = ({
   const [materialName, setMaterialName] = useState<string>('');
 
   useEffect(() => {
-    console.log(materialId)
-
-    if (materialId !== 0) {
-        console.log(materialId)
-      getMaterial(materialId);
+    if (materialId === 0 || materialId === null) {
+      setMaterial(null);
+    } else {
+      getMaterial(materialId); 
     }
   }, [materialId]);
 

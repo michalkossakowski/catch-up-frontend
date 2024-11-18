@@ -39,9 +39,7 @@
     }
 } 
 
-.editBox{
-    margin: 20px;
-    padding: 20px;
-    border: solid white 2px;
-    border-radius: 20px;
+.buttonBox Button{
+    margin-top: 10px;
+    margin-right: 10px;
 }
