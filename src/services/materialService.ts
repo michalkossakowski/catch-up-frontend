@@ -1,13 +1,12 @@
+import axiosInstance from "../../axiosConfig";
 import { MaterialDto } from "../dtos/MaterialDto"
-import axios from 'axios';
-const BASE_URL = 'https://localhost:7097/api/Material/';
 
 const materialService = 
 {
     getMaterial: async(materialId : number): Promise<MaterialDto> => {
         try
         {
-            const response = await axios.get<{ message: string; materialDto: MaterialDto;}>(`${BASE_URL}Get/${materialId}`)
+            const response = await axiosInstance.get<{ message: string; materialDto: MaterialDto;}>(`/MaterialGet/${materialId}`)
             console.log("Material got successfully:", response);
             return response.data.materialDto
         }
@@ -20,7 +19,7 @@ const materialService =
     getMaterialWithFiles: async(materialId : number): Promise<MaterialDto> => {
         try
         {
-            const response = await axios.get<{ message: string; materialDto: MaterialDto;}>(`${BASE_URL}GetWithFiles/${materialId}`)
+            const response = await axiosInstance.get<{ message: string; materialDto: MaterialDto;}>(`/Material/GetWithFiles/${materialId}`)
             console.log("Material got successfully:", response);
             return response.data.materialDto
         }
@@ -33,7 +32,7 @@ const materialService =
     createMaterial: async(material : MaterialDto): Promise<MaterialDto> => {
         try
         {
-            const response = await axios.post<{ message: string; material: MaterialDto;}>(`${BASE_URL}Create/`, material)
+            const response = await axiosInstance.post<{ message: string; material: MaterialDto;}>(`/Material/Create/`, material)
             console.log("Material created:", response);
             return response.data.material
         }
@@ -46,7 +45,7 @@ const materialService =
     removeFile: async(materialId: number, fileId: number) => {
         try 
         {
-            const response = await axios.post(`${BASE_URL}RemoveFile/${materialId}/${fileId}`)
+            const response = await axiosInstance.post(`/Material/RemoveFile/${materialId}/${fileId}`)
             console.log("File removed:", response)
         } 
         catch (error) 

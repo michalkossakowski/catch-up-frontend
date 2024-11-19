@@ -1,6 +1,5 @@
-import axios from 'axios';
 import { FileDto } from '../dtos/FileDto';
-const BASE_URL = 'https://localhost:7097/api/File/';
+import axiosInstance from '../../axiosConfig';
 const fileService = 
 {
     uploadFile: async (file: File, materialId?: number): Promise<{ message: string; fileDto: FileDto; materialId: number }> => {
@@ -8,15 +7,13 @@ const fileService =
         formData.append('file', file);
 
         try {
-            const response = await axios.post<{ message: string; fileDto: FileDto; materialId: number }>
+            const response = await axiosInstance.post<{ message: string; fileDto: FileDto; materialId: number }>
             (
-                `${BASE_URL}Upload`,
+                `File/Upload`,
                 formData,
                 {
-                    params: materialId 
-                    ? { materialId } 
-                    : {},headers: {'Content-Type': 'multipart/form-data',
-                    },
+                    params: materialId ? { materialId } : {},
+                    headers: {'Content-Type': 'multipart/form-data'},
                 }
             );
             console.log("File uploaded", response)
@@ -32,7 +29,7 @@ const fileService =
     downloadFile: async (fileId: number): Promise<Blob> => {
         try 
         {
-            const response = await axios.get(`${BASE_URL}Download/${fileId}`, {responseType: 'blob',});
+            const response = await axiosInstance.get(`/File/Download/${fileId}`, {responseType: 'blob',});
             console.log("File downloaded")
             return response.data;
         } 
