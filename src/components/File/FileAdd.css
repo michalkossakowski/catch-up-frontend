@@ -1,0 +1,24 @@
+input{
+    display: none;
+}
+.dropzone{
+    min-width: 300px;
+    min-height: 225px;
+    width: 100%;
+    border-style: dashed;
+    border-width: 1px;
+    border-color: #dcdfb9;
+}
+.borderColorOnDrag{
+    border-color: #eca7a7;
+}
+.uploadIcon{
+    width: 64px;
+    height: 64px;
+    filter: brightness(0) saturate(100%) invert(93%) sepia(15%) saturate(402%) hue-rotate(16deg) brightness(95%) contrast(90%);
+    transition: transform 0.2s ease;
+}
+.uploadIconOnDrag{
+    filter: brightness(0) saturate(100%) invert(86%) sepia(30%) saturate(1696%) hue-rotate(297deg) brightness(113%) contrast(85%);
+    transform: scale(1.25);
+}

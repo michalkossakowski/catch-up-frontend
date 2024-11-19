@@ -1,0 +1,13 @@
+.hoverIcon:hover{
+    filter: brightness(0) saturate(100%) invert(77%) sepia(59%) saturate(450%) hue-rotate(59deg) brightness(93%) contrast(94%);
+}
+.deleteIcon{
+    filter: brightness(0) saturate(100%) invert(32%) sepia(41%) saturate(7010%) hue-rotate(344deg) brightness(91%) contrast(93%);
+}
+.downloadIcon{
+    filter: brightness(0) saturate(100%) invert(93%) sepia(8%) saturate(2447%) hue-rotate(130deg) brightness(96%) contrast(93%);
+}
+.icon-size{
+    width: 20px;
+    height: 20px;
+}
