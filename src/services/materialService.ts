@@ -16,6 +16,19 @@ const materialService =
             throw error
         }   
     },
+    getAllMaterials: async(): Promise<MaterialDto[]> => {
+        try
+        {
+            const response = await axiosInstance.get<MaterialDto[]>(`/Material/GetAllMaterials`)
+            console.log("Material got successfullyxdxdxd:", response.data);
+            return response.data
+        }
+        catch(error)
+        {
+            console.error('Material get error:', error)
+            throw error
+        }   
+    },
     getMaterialWithFiles: async(materialId : number): Promise<MaterialDto> => {
         try
         {

@@ -9,7 +9,7 @@ import downloadIcon from "../../assets/downloadIcon.svg";
 import fileService from "../../services/fileService";
 
 interface MaterialProps {
-  materialId: number;
+  materialId?: number;
   showRemoveFile?: boolean;
   showDownloadFile?: boolean;
   showAddingFile?: boolean;
@@ -28,7 +28,7 @@ const Material: React.FC<MaterialProps> = ({
   const [materialName, setMaterialName] = useState<string>('');
 
   useEffect(() => {
-    if (materialId === 0 || materialId === null) {
+    if (materialId === 0 || materialId === null || materialId === undefined) {
       setMaterial(null);
     } else {
       getMaterial(materialId); 
@@ -45,11 +45,12 @@ const Material: React.FC<MaterialProps> = ({
   };
 
   const onFileUploaded = (fileDto: FileDto) => {
+    console.log(fileDto)
     if (material) {
-      setMaterial({
-        ...material,
+      setMaterial((prevMaterial) =>({
+        ...prevMaterial,
         files: [...(material.files || []), fileDto],
-      });
+      }));
     }
   };
 
@@ -61,6 +62,8 @@ const Material: React.FC<MaterialProps> = ({
         setMaterial(response);
         materialCreated(response.id || 0);
         setMaterialName('');
+        materialId = response.id
+        console.log(materialId)
       } catch (error) {
         console.error('Error creating material:', error);
       }
@@ -120,7 +123,7 @@ const Material: React.FC<MaterialProps> = ({
             ))}
           </ul>
           {showAddingFile && (
-            <FileAdd materialId={materialId} onFileUploaded={onFileUploaded} />
+            <FileAdd materialId={material.id || 0} onFileUploaded={onFileUploaded} />
           )}
         </>
       ) : (
