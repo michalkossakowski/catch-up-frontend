@@ -56,7 +56,7 @@ const FileAdd: React.FC<FileAddProps> = ({ materialId, onFileUploaded }) =>
 
  
     return( 
-        <div className={`p-3 mt-3 dropzone ${isDragActive ? 'borderColorOnDrag' : ''}`}
+        <div className={`p-3 mt-3 dropzone text-center mb-4 ${isDragActive ? 'borderColorOnDrag' : ''}`}
             onDragOver={(e) => onDragOver(e)}
             onDragLeave={(e) => onDragLeave(e)}
             onDrop={(e) => onDrop(e)}

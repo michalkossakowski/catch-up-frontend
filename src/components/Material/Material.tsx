@@ -97,7 +97,7 @@ const Material: React.FC<MaterialProps> = ({
   };
 
   return (
-    <section className="container mt-3">
+    <section className="container mt-3 p-0">
       {material ? (
         <>
           <ul className="list-group">
@@ -124,7 +124,7 @@ const Material: React.FC<MaterialProps> = ({
           )}
         </>
       ) : (
-        <div className="input-group mb-3 ">
+        <div className="input-group mb-3">
           <input
             type="text"
             placeholder="Material's name"
