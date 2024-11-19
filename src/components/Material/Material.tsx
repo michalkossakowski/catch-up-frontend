@@ -13,7 +13,7 @@ interface MaterialProps {
   showRemoveFile?: boolean;
   showDownloadFile?: boolean;
   showAddingFile?: boolean;
-  materialCreated: (materialId: number) => void;
+  materialCreated?: (materialId: number) => void;
 
 }
 
@@ -22,7 +22,7 @@ const Material: React.FC<MaterialProps> = ({
   showRemoveFile,
   showDownloadFile,
   showAddingFile,
-  materialCreated,
+  materialCreated = () => {},
 }) => {
   const [material, setMaterial] = useState<MaterialDto | null>(null);
   const [materialName, setMaterialName] = useState<string>('');
