@@ -114,7 +114,6 @@ const NewbieMentorComponent: React.FC = () => {
   return (
     <div className="container mt-5">
       <h2>List of Mentors</h2>
-      {error && <Alert variant="danger">{error}</Alert>}
 
       {loading ? (
         <div className="text-center">
