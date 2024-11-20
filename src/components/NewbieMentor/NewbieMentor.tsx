@@ -1,82 +1,68 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Alert, Accordion } from 'react-bootstrap';
+import { Table, Alert, Spinner } from 'react-bootstrap';
 import NewbieMentorService from '../../services/newbieMentorService';
-import { NewbieMentorDto } from '../../dtos/NewbieMentorDto';
+import { UserDto } from '../../dtos/UserDto'; 
 
 const NewbieMentorComponent: React.FC = () => {
-  const [mentors, setMentors] = useState<any[]>([]);
-  const [newbies, setNewbies] = useState<any[]>([]);
-  const [assignedMentors, setAssignedMentors] = useState<NewbieMentorDto[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
-  const [message, setMessage] = useState<string>('');
+  const [newbieMentors, setNewbieMentors] = useState<UserDto[]>([]); // Przechowuje listę mentorów
+  const [loading, setLoading] = useState<boolean>(true); // Flaga ładowania
+  const [error, setError] = useState<string>(''); // Flaga błędu
 
   useEffect(() => {
-    getAllMentors();
-    getAllUnassignedNewbies();
+    fetchNewbieMentors();
   }, []);
 
-  const getAllMentors = async () => {
+  const fetchNewbieMentors = async () => {
+    setLoading(true);
+    setError('');
     try {
-      const response = await NewbieMentorService.getAllMentors();
-      setMentors(response.data);
+      const mentors = await NewbieMentorService.getAllMentors();
+      const mentorsWithNewbiesCount = await Promise.all(mentors.map(async (mentor) => {
+        mentor.newbiesCount = await NewbieMentorService.getNewbieCountByMentor(mentor.id);
+        console.log(mentor.newbiesCount);
+        return { ...mentor }
+      }));
+      setNewbieMentors(mentorsWithNewbiesCount);
     } catch (error: any) {
-      setError(error.message);
+      setError(error.message || 'An error occurred while fetching newbie mentors');
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const getAllUnassignedNewbies = async () => {
-    try {
-      const response = await NewbieMentorService.getAllUnassignedNewbies();
-      setNewbies(response.data);
-    } catch (error: any) {
-      setError(error.message);
-    }
-  };
-
-  const handleAssignMentor = async (newbieId: string, mentorId: string) => {
-      setMessage('Mentor assigned successfully!');
-      getAllMentors(); 
   };
 
   return (
-    <div className="container">
-      <h2>Assign Mentor to Newbie</h2>
+    <div className="container mt-5">
+      <h2>List of Newbie Mentors</h2>
 
-      {/* Error and success messages */}
       {error && <Alert variant="danger">{error}</Alert>}
-      {message && <Alert variant="success">{message}</Alert>}
 
       {loading ? (
-        <span>Loading...</span>
+        <div className="text-center">
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
       ) : (
-        <>
-          <h3>Mentors</h3>
-          <Accordion>
-            {mentors.map((mentor) => (
-              <Accordion.Item key={mentor.id} eventKey={mentor.id}>
-                <Accordion.Header>{mentor.name}</Accordion.Header>
-                <Accordion.Body>
-                  <Button variant="primary" onClick={() => handleAssignMentor(newbies[0]?.id, mentor.id)}>
-                    Assign Newbie to this Mentor
-                  </Button>
-                </Accordion.Body>
-              </Accordion.Item>
+        <Table striped bordered hover responsive>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Surname</th>
+              <th>Position</th>
+              <th>Assigned Newbies</th> 
+            </tr>
+          </thead>
+          <tbody>
+            {newbieMentors.map((mentor) => (
+              <tr key={mentor.id}>
+                <td>{mentor.name}</td> 
+                <td>{mentor.surname}</td>
+                <td>{mentor.position}</td>
+                <td>{mentor.newbiesCount || 0}</td> {/* Liczba przypisanych newbies */}
+              </tr>
             ))}
-          </Accordion>
-
-          <h3>Unassigned Newbies</h3>
-          <Accordion>
-            {newbies.map((newbie) => (
-              <Accordion.Item key={newbie.id} eventKey={newbie.id}>
-                <Accordion.Header>{newbie.name}</Accordion.Header>
-                <Accordion.Body>
-                  <p>Details about the newbie...</p>
-                </Accordion.Body>
-              </Accordion.Item>
-            ))}
-          </Accordion>
-        </>
+          </tbody>
+        </Table>
       )}
     </div>
   );
