@@ -11,7 +11,6 @@ const NewbieMentorService = {
             const response = await axios.get< UserDto[] >(`${API_URL}/GetAllMentors`);
             console.log("Mentors got successfully:", response.data);
             return response.data;
-
         } 
         catch (error) {
             console.error("Error while getting mentors", error);
@@ -23,10 +22,48 @@ const NewbieMentorService = {
         try {
           const response = await axios.get< number >(`${API_URL}/GetNewbieCountByMentor/${mentorId}`);
           return response.data;
-        } catch (error) {
+        }
+        catch (error) {
           console.error("Error while getting newbie count for mentor", error);
           throw error;
         }
       },
+    getAssignmentsByMentor: async (mentorId: string): Promise<UserDto[]> => {
+        try {
+            const response = await axios.get<UserDto[]>(`${API_URL}/GetAssignmentsByMentor/${mentorId}`);
+            return response.data;
+        } 
+        catch (error) {
+            console.error("Error fetching assigned newbies:", error);
+            throw error;
+        }
+    },
+    getAllUnassignedNewbies: async (): Promise<UserDto[]> => {
+        try {
+            const response = await axios.get<UserDto[]>(`${API_URL}/GetAllUnassignedNewbies`);
+            return response.data;
+        } 
+        catch (error) {
+            console.error("Error fetching unassigned newbies:", error);
+            throw error;
+        }
+    },
+    deleteAssignment: async (newbieId: string, mentorId: string) => {
+        try {
+          await axios.delete(`${API_URL}/Delete/${newbieId}/${mentorId}`);
+        } catch (error) {
+          throw new Error('Failed to delete the assignment');
+        }
+      },
+     assignNewbieToMentor: async (newbieId: string, mentorId: string) => 
+        {
+        try {
+          const response = await axios.post(`${API_URL}/Assign/${newbieId}/${mentorId}`);
+          return response.data; 
+        } catch (error) {
+          throw new Error('An error occurred while assigning the newbie to the mentor');
+        }
+      },
 };
+
 export default NewbieMentorService;
