@@ -1,14 +1,14 @@
-import axios from 'axios';
+
+import axios from '../../axiosConfig';
 import { NewbieMentorDto } from '../dtos/NewbieMentorDto'; 
 import { UserDto } from '../dtos/UserDto';
 
-const API_URL = "https://localhost:7097/api/NewbieMentor";
 
 const NewbieMentorService = {
     getAllMentors: async (): Promise<UserDto[]> => {
         try {
             console.log("Trying to getAllMentors");
-            const response = await axios.get< UserDto[] >(`${API_URL}/GetAllMentors`);
+            const response = await axios.get< UserDto[] >(`/NewbieMentor/GetAllMentors`);
             console.log("Mentors got successfully:", response.data);
             return response.data;
         } 
@@ -20,7 +20,7 @@ const NewbieMentorService = {
     },
     getNewbieCountByMentor: async (mentorId: string): Promise<number> => {
         try {
-          const response = await axios.get< number >(`${API_URL}/GetNewbieCountByMentor/${mentorId}`);
+          const response = await axios.get< number >(`/NewbieMentor/GetNewbieCountByMentor/${mentorId}`);
           return response.data;
         }
         catch (error) {
@@ -30,7 +30,7 @@ const NewbieMentorService = {
       },
     getAssignmentsByMentor: async (mentorId: string): Promise<UserDto[]> => {
         try {
-            const response = await axios.get<UserDto[]>(`${API_URL}/GetAssignmentsByMentor/${mentorId}`);
+            const response = await axios.get<UserDto[]>(`/NewbieMentor/GetAssignmentsByMentor/${mentorId}`);
             return response.data;
         } 
         catch (error) {
@@ -40,7 +40,7 @@ const NewbieMentorService = {
     },
     getAllUnassignedNewbies: async (): Promise<UserDto[]> => {
         try {
-            const response = await axios.get<UserDto[]>(`${API_URL}/GetAllUnassignedNewbies`);
+            const response = await axios.get<UserDto[]>(`/NewbieMentor/GetAllUnassignedNewbies`);
             return response.data;
         } 
         catch (error) {
@@ -50,7 +50,7 @@ const NewbieMentorService = {
     },
     deleteAssignment: async (newbieId: string, mentorId: string) => {
         try {
-          await axios.delete(`${API_URL}/Delete/${newbieId}/${mentorId}`);
+          await axios.delete(`/NewbieMentor/Delete/${newbieId}/${mentorId}`);
         } catch (error) {
           throw new Error('Failed to delete the assignment');
         }
@@ -58,7 +58,7 @@ const NewbieMentorService = {
      assignNewbieToMentor: async (newbieId: string, mentorId: string) => 
         {
         try {
-          const response = await axios.post(`${API_URL}/Assign/${newbieId}/${mentorId}`);
+          const response = await axios.post(`/NewbieMentor/Assign/${newbieId}/${mentorId}`);
           return response.data; 
         } catch (error) {
           throw new Error('An error occurred while assigning the newbie to the mentor');
