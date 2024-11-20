@@ -5,6 +5,7 @@ import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import FaqComponent from './components/Faq/FaqComponent';
 import Material from './components/Material/Material';
 import FaqManage from './components/Faq/FaqManage';
+import AssignTask from './components/TaskAssigment/AssignTask';
 
 function App() {
   const [selectedNav, setSelectedNav] = useState("Home");
@@ -24,6 +25,8 @@ function App() {
           return <FaqManage/>;
         case "AddFile":
           return <Material materialId={1060} showRemoveFile={true} showDownloadFile={true} showAddingFile={true} materialCreated={materialCreated}/>
+        case "AssignTask":
+          return <AssignTask/>
         default:
             return <h1>Imagine</h1>;
     }
@@ -42,6 +45,7 @@ function App() {
             <Nav.Link href="#faq" onClick={() => setSelectedNav("Faq")}>Faq</Nav.Link>
             <Nav.Link href="#faqmanage" onClick={() => setSelectedNav("FaqManage")}>FaqManage</Nav.Link>
             <Nav.Link href="#addfile" onClick={() => setSelectedNav("AddFile")}>AddFile</Nav.Link>
+            <Nav.Link href="#assignTask" onClick={() => setSelectedNav("AssignTask")}>AssignTask</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">
