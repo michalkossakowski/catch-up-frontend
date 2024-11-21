@@ -8,6 +8,7 @@ import FaqManage from './components/Faq/FaqManage';
 import NewbieMentor from './components/NewbieMentor/NewbieMentor';
 import EditMatList from './components/Material/EditMatList';
 import EditMatList_SideBar from './components/Material/EditMatList_SideBar';
+import AssignTask from './components/TaskAssigment/AssignTask';
 
 function App() {
   const [selectedNav, setSelectedNav] = useState("Home");
@@ -26,6 +27,8 @@ function App() {
           return <Material showRemoveFile={true} showDownloadFile={true} showAddingFile={true}/>
         case "NewbieMentor":
          return <NewbieMentor/>
+        case "AssignTask":
+          return <AssignTask/>
         case "EditMatList":
             return <EditMatList/>
         case "EditMatList_SideBar":
@@ -49,6 +52,7 @@ function App() {
             <Nav.Link href="#faqmanage" onClick={() => setSelectedNav("FaqManage")}>FaqManage</Nav.Link>      
             <Nav.Link href="#addfile" onClick={() => setSelectedNav("AddFile")}>AddFile</Nav.Link>
             <Nav.Link href="#newbiementor" onClick={() => setSelectedNav('NewbieMentor')}>NewbieMentor</Nav.Link>
+            <Nav.Link href="#assignTask" onClick={() => setSelectedNav("AssignTask")}>AssignTask</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#editmatlist" onClick={() => setSelectedNav("EditMatList")}>EditMatList</NavDropdown.Item>
               <NavDropdown.Item href="#editmatlist_sidebar" onClick={() => setSelectedNav("EditMatList_SideBar")}>EditMatList_SideBar</NavDropdown.Item>
