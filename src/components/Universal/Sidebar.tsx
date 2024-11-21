@@ -17,7 +17,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar, children }) => 
         tabIndex={1} 
         style={{ 
           visibility: isOpen ? "visible" : "hidden", 
-          position: isOpen ? "sticky" : "absolute",
+          position: isOpen ? "sticky" : "fixed",
           height: "80vh",
           }}>
         <div className="offcanvas-header p-0 pe-5">
