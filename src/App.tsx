@@ -33,12 +33,12 @@ function App() {
          return <NewbieMentor/>
         case "AssignTask":
           return <AssignTask/>
+        case "TaskContentManage":
+            return <TaskContentManage/>
         case "EditMatList":
             return <EditMatList/>
         case "EditMatList_SideBar":
             return <EditMatList_SideBar/>
-        case "TaskContentManage":
-            return <TaskContentManage />;
         default:
             return <h1>Imagine All The People!</h1>;
     }
@@ -59,6 +59,7 @@ function App() {
             <Nav.Link href="#addfile" onClick={() => setSelectedNav("AddFile")}>AddFile</Nav.Link>
             <Nav.Link href="#newbiementor" onClick={() => setSelectedNav('NewbieMentor')}>NewbieMentor</Nav.Link>
             <Nav.Link href="#assignTask" onClick={() => setSelectedNav("AssignTask")}>AssignTask</Nav.Link>
+            <Nav.Link href="#taskcontentmanage" onClick={() => setSelectedNav("TaskContentManage")}>TaskContentManage</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#editmatlist" onClick={() => setSelectedNav("EditMatList")}>EditMatList</NavDropdown.Item>
               <NavDropdown.Item href="#editmatlist_sidebar" onClick={() => setSelectedNav("EditMatList_SideBar")}>EditMatList_SideBar</NavDropdown.Item><NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
