@@ -5,6 +5,7 @@ import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import FaqComponent from './components/Faq/FaqComponent';
 import Material from './components/Material/Material';
 import FaqManage from './components/Faq/FaqManage';
+import NewbieMentor from './components/NewbieMentor/NewbieMentor';
 import EditMatList from './components/Material/EditMatList';
 import EditMatList_SideBar from './components/Material/EditMatList_SideBar';
 
@@ -22,13 +23,16 @@ function App() {
         case "FaqManage":
           return <FaqManage/>;
         case "AddFile":
+          return <Material materialId={1060} showRemoveFile={true} showDownloadFile={true} showAddingFile={true} materialCreated={materialCreated}/>
+        case "NewbieMentor":
+         return <NewbieMentor/>
           return <Material showRemoveFile={true} showDownloadFile={true} showAddingFile={true}/>
         case "EditMatList":
             return <EditMatList/>
         case "EditMatList_SideBar":
             return <EditMatList_SideBar/>
         default:
-            return <h1>Imagine</h1>;
+            return <h1>Imagine All The People!</h1>;
     }
 };
 
@@ -43,8 +47,9 @@ function App() {
             <Nav.Link href="#home" onClick={() => setSelectedNav("Home")}>Home</Nav.Link>
             <Nav.Link href="#admin" onClick={() => setSelectedNav("Admin")}>Admin</Nav.Link>
             <Nav.Link href="#faq" onClick={() => setSelectedNav("Faq")}>Faq</Nav.Link>
-            <Nav.Link href="#faqmanage" onClick={() => setSelectedNav("FaqManage")}>FaqManage</Nav.Link>
+            <Nav.Link href="#faqmanage" onClick={() => setSelectedNav("FaqManage")}>FaqManage</Nav.Link>      
             <Nav.Link href="#addfile" onClick={() => setSelectedNav("AddFile")}>AddFile</Nav.Link>
+            <Nav.Link href="#newbiementor" onClick={() => setSelectedNav('NewbieMentor')}>NewbieMentor</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#editmatlist" onClick={() => setSelectedNav("EditMatList")}>EditMatList</NavDropdown.Item>
               <NavDropdown.Item href="#editmatlist_sidebar" onClick={() => setSelectedNav("EditMatList_SideBar")}>EditMatList_SideBar</NavDropdown.Item>

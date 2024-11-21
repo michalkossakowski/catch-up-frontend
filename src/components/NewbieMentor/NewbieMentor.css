@@ -1,0 +1,16 @@
+.cursor-pointer {
+    cursor: pointer;
+  }
+ .row {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+.col-md-6 {
+    flex: 1;
+    padding: 0 15px;
+  }
+  .table-active {
+  background-color: #01080f;
+  color: white;
+}
