@@ -6,6 +6,7 @@ import FaqComponent from './components/Faq/FaqComponent';
 import Material from './components/Material/Material';
 import FaqManage from './components/Faq/FaqManage';
 import NewbieMentor from './components/NewbieMentor/NewbieMentor';
+import AssignTask from './components/TaskAssigment/AssignTask';
 
 function App() {
   const [selectedNav, setSelectedNav] = useState("Home");
@@ -27,6 +28,8 @@ function App() {
           return <Material materialId={1060} showRemoveFile={true} showDownloadFile={true} showAddingFile={true} materialCreated={materialCreated}/>
         case "NewbieMentor":
          return <NewbieMentor/>
+        case "AssignTask":
+          return <AssignTask/>
         default:
             return <h1>Imagine All The People!</h1>;
     }
@@ -46,6 +49,7 @@ function App() {
             <Nav.Link href="#faqmanage" onClick={() => setSelectedNav("FaqManage")}>FaqManage</Nav.Link>      
             <Nav.Link href="#addfile" onClick={() => setSelectedNav("AddFile")}>AddFile</Nav.Link>
             <Nav.Link href="#newbiementor" onClick={() => setSelectedNav('NewbieMentor')}>NewbieMentor</Nav.Link>
+            <Nav.Link href="#assignTask" onClick={() => setSelectedNav("AssignTask")}>AssignTask</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">
