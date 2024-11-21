@@ -13,38 +13,42 @@ interface FileAddProps
 }
 const FileAdd: React.FC<FileAddProps> = ({ materialId, onFileUploaded }) =>
 {
-    const [isDragActive, setIsDragActive] = useState(false);
+
+    const randomValue = crypto.randomUUID()
+    const [isDragActive, setIsDragActive] = useState(false)
 
     const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        console.log(materialId)
         e.preventDefault()
         setIsDragActive(true)
     }
 
     const onDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault()
+        console.log("dragLEave" + materialId)
         setIsDragActive(false)
     }
 
     const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault()
         setIsDragActive(false)
-        
+        console.log(materialId)
         const files = Array.from(e.dataTransfer.files);
-        files.forEach((file) => handleFileUpload(file));
+        files.forEach((file) => handleFileUpload(file, materialId));
     }
     const onFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
+            console.log(materialId)
             const files = Array.from(e.target.files);
-            files.forEach((file) => handleFileUpload(file));
+            files.forEach((file) => handleFileUpload(file, materialId))
           }
     }
-    const handleFileUpload = async (file: File) =>{
+    const handleFileUpload = async (file: File, materialIds: number) =>{
         if(file)
         {
             try 
             {
-                const response = await fileService.uploadFile(file, materialId);
-                console.log("File uploaded successfully:", response);
+                const response = await fileService.uploadFile(file, materialIds);
                 onFileUploaded(response.fileDto)
             } 
             catch (error) 
@@ -56,7 +60,7 @@ const FileAdd: React.FC<FileAddProps> = ({ materialId, onFileUploaded }) =>
 
  
     return( 
-        <div className={`p-3 mt-3 dropzone ${isDragActive ? 'borderColorOnDrag' : ''}`}
+        <div className={`p-3 mt-3 dropzone text-center mb-4 ${isDragActive ? 'borderColorOnDrag' : ''}`}
             onDragOver={(e) => onDragOver(e)}
             onDragLeave={(e) => onDragLeave(e)}
             onDrop={(e) => onDrop(e)}
@@ -69,8 +73,8 @@ const FileAdd: React.FC<FileAddProps> = ({ materialId, onFileUploaded }) =>
                 <p className="text-body-tertiary fs-6 opacity-50 p-0 m-0">or</p>
             </div>
             <div>
-                <input type="file" id="formFile" onChange={(e) => onFileSelected(e)} multiple />
-                <label className="btn btn-outline-primary" htmlFor="formFile">Browse for file</label>
+                <input type="file" id={`"${randomValue}"`} onChange={(e) => onFileSelected(e)} multiple />
+                <label className="btn btn-outline-primary" htmlFor={`"${randomValue}"`}>Browse for file</label>
             </div>
         </div>
     )
