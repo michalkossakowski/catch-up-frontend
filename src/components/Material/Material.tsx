@@ -63,7 +63,6 @@ const Material: React.FC<MaterialProps> = ({
         materialCreated(response.id || 0);
         setMaterialName('');
         materialId = response.id
-        console.log(materialId)
       } catch (error) {
         console.error('Error creating material:', error);
       }

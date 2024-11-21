@@ -5,7 +5,8 @@ import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import FaqComponent from './components/Faq/FaqComponent';
 import Material from './components/Material/Material';
 import FaqManage from './components/Faq/FaqManage';
-import SelectMaterial from './components/Material/SelectMaterial';
+import EditMatList from './components/Material/EditMatList';
+import EditMatList_SideBar from './components/Material/EditMatList_SideBar';
 
 function App() {
   const [selectedNav, setSelectedNav] = useState("Home");
@@ -22,8 +23,10 @@ function App() {
           return <FaqManage/>;
         case "AddFile":
           return <Material showRemoveFile={true} showDownloadFile={true} showAddingFile={true}/>
-        case "SelectMaterial":
-            return <SelectMaterial/>
+        case "EditMatList":
+            return <EditMatList/>
+        case "EditMatList_SideBar":
+            return <EditMatList_SideBar/>
         default:
             return <h1>Imagine</h1>;
     }
@@ -43,10 +46,8 @@ function App() {
             <Nav.Link href="#faqmanage" onClick={() => setSelectedNav("FaqManage")}>FaqManage</Nav.Link>
             <Nav.Link href="#addfile" onClick={() => setSelectedNav("AddFile")}>AddFile</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-              <NavDropdown.Item href="#SelectMaterial" onClick={() => setSelectedNav("SelectMaterial")}>SelectMaterial</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">
-                Another action
-              </NavDropdown.Item>
+              <NavDropdown.Item href="#editmatlist" onClick={() => setSelectedNav("EditMatList")}>EditMatList</NavDropdown.Item>
+              <NavDropdown.Item href="#editmatlist_sidebar" onClick={() => setSelectedNav("EditMatList_SideBar")}>EditMatList_SideBar</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="#action/3.4">

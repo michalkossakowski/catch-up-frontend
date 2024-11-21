@@ -39,6 +39,19 @@ const fileService =
             throw error;
         }
     },
+    getAllFiles: async(): Promise<FileDto[]> => {
+        try
+        {
+            const response = await axiosInstance.get<{message: string, filesDto: FileDto[]}>(`/File/GetAllFiles`)
+            console.log("File all:", response.data.message);
+            return response.data.filesDto
+        }
+        catch(error)
+        {
+            console.error('Material get error:', error)
+            throw error
+        }   
+    },
 }
 
 export default fileService;

@@ -20,7 +20,7 @@ const materialService =
         try
         {
             const response = await axiosInstance.get<MaterialDto[]>(`/Material/GetAllMaterials`)
-            console.log("Material got successfullyxdxdxd:", response.data);
+            console.log("Material got successfully:", response.data);
             return response.data
         }
         catch(error)
@@ -60,6 +60,18 @@ const materialService =
         {
             const response = await axiosInstance.post(`/Material/RemoveFile/${materialId}/${fileId}`)
             console.log("File removed:", response)
+        } 
+        catch (error) 
+        {
+            console.error('Error removing file:', error)
+            throw error
+        }
+    },
+    deleteMaterial: async(materialId: number) => {
+        try 
+        {
+            const response = await axiosInstance.delete(`/Material/Delete/${materialId}`)
+            console.log("Material removed:", response)
         } 
         catch (error) 
         {
