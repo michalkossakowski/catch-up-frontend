@@ -23,10 +23,9 @@ function App() {
         case "FaqManage":
           return <FaqManage/>;
         case "AddFile":
-          return <Material materialId={1060} showRemoveFile={true} showDownloadFile={true} showAddingFile={true} materialCreated={materialCreated}/>
+          return <Material showRemoveFile={true} showDownloadFile={true} showAddingFile={true}/>
         case "NewbieMentor":
          return <NewbieMentor/>
-          return <Material showRemoveFile={true} showDownloadFile={true} showAddingFile={true}/>
         case "EditMatList":
             return <EditMatList/>
         case "EditMatList_SideBar":

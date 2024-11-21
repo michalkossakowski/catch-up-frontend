@@ -11,8 +11,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, closeSidebar, children }) => 
 
   return (
     <>
-      <div className={`offcanvas offcanvas-end ${isOpen ? "show" : ""}`} tabIndex={1} style={{ visibility: isOpen ? "visible" : "hidden", position: isOpen ? "relative" : "fixed"}}>
-        <div className="offcanvas-header">
+      <div className={`
+        offcanvas offcanvas-end pt-3
+        ${isOpen ? "show" : ""}`} 
+        tabIndex={1} 
+        style={{ 
+          visibility: isOpen ? "visible" : "hidden", 
+          position: isOpen ? "sticky" : "absolute",
+          height: "80vh",
+          }}>
+        <div className="offcanvas-header p-0 pe-5">
           <button
             type="button"
             className="btn-close"
