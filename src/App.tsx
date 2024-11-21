@@ -6,13 +6,17 @@ import FaqComponent from './components/Faq/FaqComponent';
 import Material from './components/Material/Material';
 import FaqManage from './components/Faq/FaqManage';
 import NewbieMentor from './components/NewbieMentor/NewbieMentor';
+import AssignTask from './components/TaskAssigment/AssignTask';
+import TaskContentManage from './components/Task/TaskContentManage';
 import EditMatList from './components/Material/EditMatList';
 import EditMatList_SideBar from './components/Material/EditMatList_SideBar';
-import AssignTask from './components/TaskAssigment/AssignTask';
 
 function App() {
   const [selectedNav, setSelectedNav] = useState("Home");
-     
+  const materialCreated = (materialId: number) => {
+    console.log("Zwrócono id nowo utworzonego materiału",materialId)
+    return materialId
+  }      
   const renderContent = () => {
     switch (selectedNav) {
         case "Home":
@@ -24,11 +28,13 @@ function App() {
         case "FaqManage":
           return <FaqManage/>;
         case "AddFile":
-          return <Material showRemoveFile={true} showDownloadFile={true} showAddingFile={true}/>
+          return <Material materialId={1060} showRemoveFile={true} showDownloadFile={true} showAddingFile={true} materialCreated={materialCreated}/>
         case "NewbieMentor":
          return <NewbieMentor/>
         case "AssignTask":
           return <AssignTask/>
+        case "TaskContentManage":
+            return <TaskContentManage/>
         case "EditMatList":
             return <EditMatList/>
         case "EditMatList_SideBar":
@@ -53,9 +59,13 @@ function App() {
             <Nav.Link href="#addfile" onClick={() => setSelectedNav("AddFile")}>AddFile</Nav.Link>
             <Nav.Link href="#newbiementor" onClick={() => setSelectedNav('NewbieMentor')}>NewbieMentor</Nav.Link>
             <Nav.Link href="#assignTask" onClick={() => setSelectedNav("AssignTask")}>AssignTask</Nav.Link>
+            <Nav.Link href="#taskcontentmanage" onClick={() => setSelectedNav("TaskContentManage")}>TaskContentManage</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#editmatlist" onClick={() => setSelectedNav("EditMatList")}>EditMatList</NavDropdown.Item>
-              <NavDropdown.Item href="#editmatlist_sidebar" onClick={() => setSelectedNav("EditMatList_SideBar")}>EditMatList_SideBar</NavDropdown.Item>
+              <NavDropdown.Item href="#editmatlist_sidebar" onClick={() => setSelectedNav("EditMatList_SideBar")}>EditMatList_SideBar</NavDropdown.Item><NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+              <NavDropdown.Item href="#action/3.2">
+                Another action
+              </NavDropdown.Item>
               <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="#action/3.4">
