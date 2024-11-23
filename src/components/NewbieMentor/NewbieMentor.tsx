@@ -7,13 +7,51 @@ import './NewbieMentor.css';
 const NewbieMentorComponent: React.FC = () => {
   const [newbieMentors, setNewbieMentors] = useState<UserDto[]>([]);
   const [selectedMentorId, setSelectedMentorId] = useState<string | null>(null);
+  const [selectedMentorName, setSelectedMentorName] = useState<string | null>(null);
+  const [selectedMentorSurname, setSelectedMentorSurname] = useState<string | null>(null);
   const [assignedNewbies, setAssignedNewbies] = useState<UserDto[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [unassignedNewbies, setUnassignedNewbies] = useState<UserDto[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [deletingNewbieId, setDeletingNewbieId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>(''); // Mentor search term
+  const [searchTermAssigned, setSearchTermAssigned] = useState<string>(''); // Assigned newbie search term
+  const [searchTermUnassigned, setSearchTermUnassigned] = useState<string>(''); // Unassigned newbie search term
   
+  const [sortConfigMentors, setSortConfigMentors] = useState<{ key: string, direction: 'asc' | 'desc' }>({
+    key: 'name', 
+    direction: 'asc'
+  });
+  
+  const [sortConfigAssigned, setSortConfigAssigned] = useState<{ key: string, direction: 'asc' | 'desc' }>({
+    key: 'name', 
+    direction: 'asc'
+  });
+  
+  const [sortConfigUnassigned, setSortConfigUnassigned] = useState<{ key: string, direction: 'asc' | 'desc' }>({
+    key: 'name', 
+    direction: 'asc'
+  });
+
+  // Filter for each section separately
+  const filteredMentors = newbieMentors.filter(
+    (mentor) =>
+      mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      mentor.surname.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredAssignedNewbies = assignedNewbies.filter(
+    (newbie) =>
+      newbie.name.toLowerCase().includes(searchTermAssigned.toLowerCase()) ||
+      newbie.surname.toLowerCase().includes(searchTermAssigned.toLowerCase())
+  );
+
+  const filteredUnassignedNewbies = unassignedNewbies.filter(
+    (newbie) =>
+      newbie.name.toLowerCase().includes(searchTermUnassigned.toLowerCase()) ||
+      newbie.surname.toLowerCase().includes(searchTermUnassigned.toLowerCase())
+  );
 
   useEffect(() => {
     fetchMentors();
@@ -65,8 +103,10 @@ const NewbieMentorComponent: React.FC = () => {
       setLoading(false);
     }
   };
-
-  const handleMentorClick = (mentorId: string) => {
+  
+  const handleMentorClick = (mentorId: string, mentorName: string, mentorSubname: string) => {
+    setSelectedMentorName(mentorName);
+    setSelectedMentorSurname(mentorSubname);
     setSelectedMentorId(mentorId);
     fetchAssignedNewbies(mentorId);
     fetchUnassignedNewbies(mentorId);
@@ -95,6 +135,7 @@ const NewbieMentorComponent: React.FC = () => {
       }
     }
   };
+
   const handleAssignNewbie = async (newbieId: string) => {
     if (selectedMentorId) {
       setLoading(true);
@@ -112,6 +153,62 @@ const NewbieMentorComponent: React.FC = () => {
     }
   };
 
+ // Sortowanie mentorów
+const sortedMentors = filteredMentors.sort((a, b) => {
+  const aValue = a[sortConfigMentors.key as keyof UserDto]?.toString().toLowerCase() || '';
+  const bValue = b[sortConfigMentors.key as keyof UserDto]?.toString().toLowerCase() || '';
+  
+  if (aValue < bValue) return sortConfigMentors.direction === 'asc' ? -1 : 1;
+  if (aValue > bValue) return sortConfigMentors.direction === 'asc' ? 1 : -1;
+  return 0;
+});
+
+// Sortowanie przypisanych nowicjuszy
+const sortedAssigned = filteredAssignedNewbies.sort((a, b) => {
+  const aValue = a[sortConfigAssigned.key as keyof UserDto]?.toString().toLowerCase() || '';
+  const bValue = b[sortConfigAssigned.key as keyof UserDto]?.toString().toLowerCase() || '';
+  
+  if (aValue < bValue) return sortConfigAssigned.direction === 'asc' ? -1 : 1;
+  if (aValue > bValue) return sortConfigAssigned.direction === 'asc' ? 1 : -1;
+  return 0;
+});
+
+// Sortowanie nieprzypisanych nowicjuszy
+const sortedUnassigned = filteredUnassignedNewbies.sort((a, b) => {
+  const aValue = a[sortConfigUnassigned.key as keyof UserDto]?.toString().toLowerCase() || '';
+  const bValue = b[sortConfigUnassigned.key as keyof UserDto]?.toString().toLowerCase() || '';
+  
+  if (aValue < bValue) return sortConfigUnassigned.direction === 'asc' ? -1 : 1;
+  if (aValue > bValue) return sortConfigUnassigned.direction === 'asc' ? 1 : -1;
+  return 0;
+});
+
+// Funkcja obsługująca sortowanie
+const handleSort = (key: string, table: 'mentors' | 'assigned' | 'unassigned') => {
+  let direction: 'asc' | 'desc' = 'asc';
+
+  // Sprawdzanie, czy klucz to ten sam, który jest już sortowany
+  if (table === 'mentors' && sortConfigMentors.key === key && sortConfigMentors.direction === 'asc') {
+    direction = 'desc';
+    setSortConfigMentors({ key, direction });
+  } 
+  else if (table === 'assigned' && sortConfigAssigned.key === key && sortConfigAssigned.direction === 'asc') {
+    direction = 'desc';
+    setSortConfigAssigned({ key, direction });
+  } 
+  else if (table === 'unassigned' && sortConfigUnassigned.key === key && sortConfigUnassigned.direction === 'asc') {
+    direction = 'desc';
+    setSortConfigUnassigned({ key, direction });
+  } 
+  else {
+    if (table === 'mentors') setSortConfigMentors({ key, direction });
+    else if (table === 'assigned') setSortConfigAssigned({ key, direction });
+    else if (table === 'unassigned') setSortConfigUnassigned({ key, direction });
+  }
+};
+
+  
+
   return (
     <div className="container mt-5">
       <h2>List of Mentors</h2>
@@ -126,24 +223,33 @@ const NewbieMentorComponent: React.FC = () => {
         <div className="row">
           <div className="col-md-6">
             <div className="mt-4">
-              <h3>Mentors</h3>
-              <Table striped bordered hover responsive>
+              <div className="mb-3">
+                <h3>Mentors</h3>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search mentor by name or surname..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <Table id="mentors" striped bordered hover responsive>
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Surname</th>
-                    <th>Position</th>
-                    <th>Number of Newbies</th>
+                  <th onClick={() => handleSort('name', 'mentors')} style={{ cursor: 'pointer' }}>Name</th>
+                  <th onClick={() => handleSort('surname', 'mentors')} style={{ cursor: 'pointer' }}>Surname</th>
+                  <th onClick={() => handleSort('position', 'mentors')} style={{ cursor: 'pointer' }}>Position</th>
+                  <th onClick={() => handleSort('newbiesCount', 'mentors')} style={{ cursor: 'pointer' }}>Number of Newbies</th>
+
                   </tr>
                 </thead>
                 <tbody>
-                  {newbieMentors.map((mentor) => (
+                  {sortedMentors.map((mentor) => (
                     <tr
                       key={mentor.id}
-                      onClick={() => handleMentorClick(mentor.id)}
+                      onClick={() => handleMentorClick(mentor.id,mentor.name,mentor.surname)}
                       style={{ cursor: 'pointer' }}
-                      className={mentor.id === selectedMentorId ? 'table-active' : ''}
-                    >
+                      className={mentor.id === selectedMentorId ? 'table-active' : ''}>
                       <td>{mentor.name}</td>
                       <td>{mentor.surname}</td>
                       <td>{mentor.position}</td>
@@ -154,75 +260,82 @@ const NewbieMentorComponent: React.FC = () => {
               </Table>
             </div>
           </div>
-
           <div className="col-md-6">
             {selectedMentorId && (
               <div className="mt-4">
-                <h3>Assigned Newbies</h3>
-                {assignedNewbies.length > 0 ? (
-                  <Table striped bordered hover responsive>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Surname</th>
-                        <th>Position</th>
-                        <th>Actions</th>
+                <h3>Assigned Newbies to {selectedMentorName} {selectedMentorSurname}</h3>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search assigned newbies by name or surname..."
+                    value={searchTermAssigned}
+                    onChange={(e) => setSearchTermAssigned(e.target.value)}
+                  />
+                </div>
+                <Table id="assigned" striped bordered hover responsive>
+                  <thead>
+                    <tr>
+                    <th onClick={() => handleSort('name', 'assigned')} style={{ cursor: 'pointer' }}>Name</th>
+                    <th onClick={() => handleSort('surname', 'assigned')} style={{ cursor: 'pointer' }}>Surname</th>
+                    <th onClick={() => handleSort('position', 'assigned')} style={{ cursor: 'pointer' }}>Position</th>
+                    <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sortedAssigned.map((newbie) => (
+                      <tr key={newbie.id}>
+                        <td>{newbie.name}</td>
+                        <td>{newbie.surname}</td>
+                        <td>{newbie.position}</td>
+                        <td>
+                          <Button variant="danger" onClick={() => handleDeleteClick(newbie.id)}>Unassign</Button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {assignedNewbies.map((newbie) => (
-                        <tr key={newbie.id}>
-                          <td>{newbie.name}</td>
-                          <td>{newbie.surname}</td>
-                          <td>{newbie.position}</td>
-                          <td>
-                            <Button
-                              variant="danger"
-                              onClick={() => handleDeleteClick(newbie.id)}
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+            )}
+            {selectedMentorId && (
+              <div className="mt-4">
+                <h3>Unassigned Newbies from {selectedMentorName} {selectedMentorSurname}</h3>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search unassigned newbies by name or surname..."
+                    value={searchTermUnassigned}
+                    onChange={(e) => setSearchTermUnassigned(e.target.value)}
+                  />
+                </div>
+                <Table id="unassigned" striped bordered hover responsive>
+                  <thead>
+                    <tr>
+                    <th onClick={() => handleSort('name', 'unassigned')} style={{ cursor: 'pointer' }}>Name</th>
+                    <th onClick={() => handleSort('surname', 'unassigned')} style={{ cursor: 'pointer' }}>Surname</th>
+                    <th onClick={() => handleSort('position', 'unassigned')} style={{ cursor: 'pointer' }}>Position</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sortedUnassigned.map((newbie) => (
+                      <tr key={newbie.id}>
+                        <td>{newbie.name}</td>
+                        <td>{newbie.surname}</td>
+                        <td>{newbie.position}</td>
+                        <td>
+                        <Button
+                              variant="primary"
+                              onClick={() => handleAssignNewbie(newbie.id)}
                             >
-                              Unassign
+                              Assign
                             </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                ) : (
-                  <Alert variant="info">No newbies assigned to this mentor.</Alert>
-                )}
-
-                <h3 className="mt-4">Unassigned Newbies</h3>
-                {unassignedNewbies.length > 0 ? (
-                  <Table striped bordered hover responsive>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Surname</th>
-                        <th>Position</th>
-                        <th>Actions</th>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-  {unassignedNewbies.map((newbie) => (
-    <tr key={newbie.id}>
-      <td>{newbie.name}</td>
-      <td>{newbie.surname}</td>
-      <td>{newbie.position}</td>
-      <td>
-        <Button
-              variant="primary"
-              onClick={() => handleAssignNewbie(newbie.id)}
-                  >
-                  Assign
-                  </Button>
-                </td>
-              </tr>
-                ))}
-                </tbody>
-                  </Table>
-                ) : (
-                  <Alert variant="info">No unassigned newbies found.</Alert>
-                )}
+                    ))}
+                  </tbody>
+                </Table>
               </div>
             )}
           </div>
@@ -231,11 +344,9 @@ const NewbieMentorComponent: React.FC = () => {
 
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Deletion</Modal.Title>
+          <Modal.Title>Confirm Unassignment</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to unassign this newbie from the mentor?
-        </Modal.Body>
+        <Modal.Body>Are you sure you want to unassign this newbie from this mentor?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Cancel
