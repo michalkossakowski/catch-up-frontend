@@ -13,6 +13,7 @@ const NewbieMentorComponent: React.FC = () => {
   const [unassignedNewbies, setUnassignedNewbies] = useState<UserDto[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [deletingNewbieId, setDeletingNewbieId] = useState<string | null>(null);
+  
 
   useEffect(() => {
     fetchMentors();
@@ -76,12 +77,12 @@ const NewbieMentorComponent: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleDelete = async () => {
+  const handleUnassign = async () => {
     if (deletingNewbieId && selectedMentorId) {
       setLoading(true);
       setError('');
       try {
-        await NewbieMentorService.deleteAssignment(deletingNewbieId, selectedMentorId);
+        await NewbieMentorService.Unassign(deletingNewbieId, selectedMentorId);
         setAssignedNewbies((prev) => prev.filter((newbie) => newbie.id !== deletingNewbieId));
         setShowModal(false);
         fetchAssignedNewbies(selectedMentorId);
@@ -179,7 +180,7 @@ const NewbieMentorComponent: React.FC = () => {
                               variant="danger"
                               onClick={() => handleDeleteClick(newbie.id)}
                             >
-                              Delete
+                              Unassign
                             </Button>
                           </td>
                         </tr>
@@ -239,8 +240,8 @@ const NewbieMentorComponent: React.FC = () => {
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            Delete
+          <Button variant="danger" onClick={handleUnassign}>
+            Unassign
           </Button>
         </Modal.Footer>
       </Modal>
