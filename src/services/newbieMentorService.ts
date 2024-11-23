@@ -38,9 +38,9 @@ const NewbieMentorService = {
             throw error;
         }
     },
-    getAllUnassignedNewbies: async (): Promise<UserDto[]> => {
+    getAllUnassignedNewbies: async (mentorId: string): Promise<UserDto[]> => {
         try {
-            const response = await axios.get<UserDto[]>(`/NewbieMentor/GetAllUnassignedNewbies`);
+            const response = await axios.get<UserDto[]>(`/NewbieMentor/GetAllUnassignedNewbies/${mentorId}`);
             return response.data;
         } 
         catch (error) {
