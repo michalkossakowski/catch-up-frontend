@@ -5,6 +5,7 @@ import { FaqDto } from '../../dtos/FaqDto';
 import { getFaqs, getByTitle, deleteFaq } from '../../services/faqService';
 import Material from '../Material/Material';
 import FaqEdit from './FaqEdit';
+import Loading from '../Loading/loading';
 
 const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
     const [faqs, setFaqs] = useState<FaqDto[]>([]);
@@ -106,8 +107,9 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
                 <h2 className='title'>Frequently Asked Questions</h2>
                 
                 <div className='loaderBox'>
+                    
                     {loading && (
-                        <span className='loader'></span>
+                        <Loading/>
                     )}
 
                     {showError &&(
