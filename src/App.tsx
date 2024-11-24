@@ -10,6 +10,7 @@ import AssignTask from './components/TaskAssigment/AssignTask';
 import TaskContentManage from './components/Task/TaskContentManage';
 import EditMatList from './components/Material/EditMatList';
 import EditMatList_SideBar from './components/Material/EditMatList_SideBar';
+import RoadMapManage from './components/RoadMap/RoadMapManage';
 
 function App() {
   const [selectedNav, setSelectedNav] = useState("Home");
@@ -39,6 +40,8 @@ function App() {
             return <EditMatList/>
         case "EditMatList_SideBar":
             return <EditMatList_SideBar/>
+        case "RoadMapManage":
+            return <RoadMapManage/>;
         default:
             return <h1>Imagine All The People!</h1>;
     }
@@ -60,6 +63,7 @@ function App() {
             <Nav.Link href="#newbiementor" onClick={() => setSelectedNav('NewbieMentor')}>NewbieMentor</Nav.Link>
             <Nav.Link href="#assignTask" onClick={() => setSelectedNav("AssignTask")}>AssignTask</Nav.Link>
             <Nav.Link href="#taskcontentmanage" onClick={() => setSelectedNav("TaskContentManage")}>TaskContentManage</Nav.Link>
+            <Nav.Link href="#roadMapManage" onClick={() => setSelectedNav("RoadMapManage")}>RoadMapManage</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#editmatlist" onClick={() => setSelectedNav("EditMatList")}>EditMatList</NavDropdown.Item>
               <NavDropdown.Item href="#editmatlist_sidebar" onClick={() => setSelectedNav("EditMatList_SideBar")}>EditMatList_SideBar</NavDropdown.Item><NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
