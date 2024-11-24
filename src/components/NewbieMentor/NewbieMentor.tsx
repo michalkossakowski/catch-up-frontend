@@ -3,6 +3,7 @@ import { Table, Alert, Spinner, Button, Modal } from 'react-bootstrap';
 import NewbieMentorService from '../../services/newbieMentorService';
 import { UserDto } from '../../dtos/UserDto';
 import './NewbieMentor.css';
+import Loading from '../Loading/loading';
 
 const NewbieMentorComponent: React.FC = () => {
   const [newbieMentors, setNewbieMentors] = useState<UserDto[]>([]);
@@ -214,11 +215,7 @@ const handleSort = (key: string, table: 'mentors' | 'assigned' | 'unassigned') =
       <h2>List of Mentors</h2>
 
       {loading ? (
-        <div className="text-center">
-          <Spinner animation="border" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-        </div>
+          <Loading/>
       ) : (
         <div className="row">
           <div className="col-md-6">

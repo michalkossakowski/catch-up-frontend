@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import './FaqComponent.css'; 
+import './TaskContentComponent.css';
 import { Accordion, Alert, Button, Form, InputGroup } from 'react-bootstrap';
-import { FaqDto } from '../../dtos/FaqDto';
-import { getFaqs, getByTitle, deleteFaq } from '../../services/faqService';
+import { TaskContentDto } from '../../dtos/TaskContentDto';
+import { getTaskContents, getByTitle, deleteTaskContent } from '../../services/taskContentService';
 import Material from '../Material/Material';
-import FaqEdit from './FaqEdit';
-import Loading from '../Loading/loading';
+import TaskContentEdit from './TaskContentEdit';
 
 const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
-    const [faqs, setFaqs] = useState<FaqDto[]>([]);
+    const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
     const [loading, setLoading] = useState(true)
     const [showError, setShowError] = useState(false)
     const [alertMessage, setAlertMessage] = useState('')
@@ -17,37 +16,40 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
     const [searchTitle, setSearchTitle] = useState('');
     let i = 1;
     const [showEdit, setShowEdit] = useState(false);
-    const [editedFaq, setEditedFaq] = useState<FaqDto | null>();
+    const [editedTaskContent, setEditedTaskContent] = useState<TaskContentDto | null>();
 
     useEffect(() => {
-        getAllFaqs();
+        getAllTaskContents();
     }, []);
 
 
-    const getAllFaqs = () => {
+    const getAllTaskContents = () => {
+        console.log('Pobieranie task contents');
         setLoading(true);
-        getFaqs()
-        .then((data) => {
-            setFaqs(data);
-            setShowError(false); 
-        })
-        .catch((error) => {
-            setShowError(true);
-            setAlertMessage('Error: ' + error.message);
-        })
-        .finally(() => setLoading(false));
+        getTaskContents()
+            .then((data) => {
+                console.log('Pobrane dane:', data);
+                setTaskContents(data);
+                setShowError(false);
+            })
+            .catch((error) => {
+                console.error('B³¹d pobierania:', error);
+                setShowError(true);
+                setAlertMessage('Error: ' + error.message);
+            })
+            .finally(() => setLoading(false));
     }
 
-    const searchFaq = () => {
+    const searchTaskContents = () => {
         if (searchTitle.length == 0) {
-            getAllFaqs()
+            getAllTaskContents()
             setShowSearchMessage(false);
             return
         }
         setLoading(true);
         getByTitle(searchTitle)
             .then((data) => {
-                setFaqs(data);
+                setTaskContents(data);
                 setShowSearchMessage(false);
             })
             .catch((error) => {
@@ -58,45 +60,45 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
     };
 
 
-    const handleDelete = (faqId: number) => {
-        deleteFaq(faqId) 
+    const handleDelete = (taskContentId: number) => {
+        deleteTaskContent(taskContentId)
             .then(() => {
-                setFaqs((prevFaqs) => prevFaqs.filter((faq) => faq.id !== faqId));
+                setTaskContents((prevTaskContents) => prevTaskContents.filter((taskContent) => taskContent.id !== taskContentId));
             })
             .catch((error) => {
                 setShowError(true)
-                setAlertMessage('Error deleting FAQ: ' + error.message)
+                setAlertMessage('Error deleting TaskContent: ' + error.message)
             })
     };
 
-    const editClick = (faqId: number) => {
-        setEditedFaq(faqs.find((faq)=> faq.id === faqId));
+    const editClick = (taskContentId: number) => {
+        setEditedTaskContent(taskContents.find((taskContent) => taskContent.id === taskContentId));
         setShowEdit(true);
     };
 
-    const handleFaqUpdated = () => {
-        getAllFaqs();
+    const handleTaskContentUpdated = () => {
+        getAllTaskContents();
         setShowEdit(false);
-        setEditedFaq(null);
+        setEditedTaskContent(null);
     };
 
     const materialCreated = (materialId: number) => {
         return materialId
-    }      
-      
+    }
+
     return (
         <>
             {isAdmin && (
                 <div>
                     {!showEdit && (
-                        <FaqEdit isEditMode={false} onFaqEdited={handleFaqUpdated}/>
+                        <TaskContentEdit isEditMode={false} onTaskContentEdited={handleTaskContentUpdated} />
                     )}
-                    {showEdit && editedFaq && (
+                    {showEdit && editedTaskContent && (
                         <div>
                             <Button variant="primary" onClick={() => setShowEdit(false)}>
                                 Back to Add
                             </Button>
-                            <FaqEdit faq={editedFaq} isEditMode={true} onFaqEdited={handleFaqUpdated} />
+                            <TaskContentEdit taskContent={editedTaskContent} isEditMode={true} onTaskContentEdited={handleTaskContentUpdated} />
                         </div>
                     )}
                 </div>
@@ -104,39 +106,38 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
 
 
             <section className='container'>
-                <h2 className='title'>Frequently Asked Questions</h2>
-                
+                <h2 className='title'>TaskContents</h2>
+
                 <div className='loaderBox'>
-                    
                     {loading && (
-                        <Loading/>
+                        <span className='loader'></span>
                     )}
 
-                    {showError &&(
+                    {showError && (
                         <Alert className='alert' variant='danger'>
                             {alertMessage}
                         </Alert>
                     )}
 
-                    {showSearchMessage &&(
+                    {showSearchMessage && (
                         <Alert className='alert' variant='warning'>
                             {searchMessage}
                         </Alert>
                     )}
                 </div>
 
-                {!showSearchMessage && !showError && !loading &&(
+                {!showSearchMessage && !showError && !loading && (
                     <div>
-                        {faqs.length > 0 &&(
+                        {taskContents.length > 0 && (
                             <div className='searchBox'>
                                 <InputGroup className="inputGroup mb-3">
                                     <Form.Control
-                                        placeholder="Enter searching title..."
-                                        value={searchTitle} 
-                                        onChange={(e) => setSearchTitle(e.target.value)} 
-                                        onKeyDown={(e) => e.key === 'Enter' && searchFaq()}
+                                        placeholder="Enter searched title..."
+                                        value={searchTitle}
+                                        onChange={(e) => setSearchTitle(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && searchTaskContents()}
                                     />
-                                    <Button variant="primary" id="searchButton" onClick={searchFaq}> 
+                                    <Button variant="primary" id="searchButton" onClick={searchTaskContents}>
                                         Search
                                     </Button>
                                 </InputGroup>
@@ -145,31 +146,31 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
 
 
                         <Accordion className='AccordionItem'>
-                            {faqs.map((faq) => (
-                                <Accordion.Item eventKey={faq.id.toString()} key={faq.id}>
+                            {taskContents.map((taskContent) => (
+                                <Accordion.Item eventKey={taskContent.id.toString()} key={taskContent.id}>
                                     <Accordion.Header>
-                                        {i++}. {faq.title}
+                                        {i++}. {taskContent.title}
                                     </Accordion.Header>
                                     <Accordion.Body>
-                                        <p>{faq.answer}</p>
+                                        <p>{taskContent.description}</p>
 
-                                        {faq.materialsId && (
-                                            <div> 
-                                                Additional materials:                                
-                                                <Material materialId={faq.materialsId} showDownloadFile={true} materialCreated={materialCreated} />
-                                            </div>  
+                                        {taskContent.materialsId && (
+                                            <div>
+                                                Additional materials:
+                                                <Material materialId={taskContent.materialsId} showDownloadFile={true} materialCreated={materialCreated} />
+                                            </div>
                                         )}
 
                                         {isAdmin && (
                                             <div className='buttonBox'>
                                                 <Button
                                                     variant="primary"
-                                                    onClick={() => editClick(faq.id)}>
+                                                    onClick={() => editClick(taskContent.id)}>
                                                     Edit
                                                 </Button>
                                                 <Button
                                                     variant="danger"
-                                                    onClick={() => handleDelete(faq.id)}>
+                                                    onClick={() => handleDelete(taskContent.id)}>
                                                     Delete
                                                 </Button>
                                             </div>
