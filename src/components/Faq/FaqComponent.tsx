@@ -5,7 +5,7 @@ import { FaqDto } from '../../dtos/FaqDto';
 import { getFaqs, getByTitle, deleteFaq } from '../../services/faqService';
 import Material from '../Material/Material';
 import FaqEdit from './FaqEdit';
-import Loading from '../Loading/loading';
+import Loading from '../Loading/Loading';
 
 const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
     const [faqs, setFaqs] = useState<FaqDto[]>([]);

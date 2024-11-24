@@ -3,7 +3,7 @@ import { Table, Alert, Spinner, Button, Modal } from 'react-bootstrap';
 import NewbieMentorService from '../../services/newbieMentorService';
 import { UserDto } from '../../dtos/UserDto';
 import './NewbieMentor.css';
-import Loading from '../Loading/loading';
+import Loading from '../Loading/Loading';
 
 const NewbieMentorComponent: React.FC = () => {
   const [newbieMentors, setNewbieMentors] = useState<UserDto[]>([]);
