@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Nav, Navbar } from 'react-bootstrap';
@@ -8,6 +8,7 @@ import LoginPage from './components/Login/LoginComponent';
 import FaqComponent from './components/Faq/FaqComponent';
 import Material from './components/Material/Material';
 import FaqManage from './components/Faq/FaqManage';
+import { useTokenInterceptor } from './Provider/TokenInterceptor.tsx';
 
 // Create a separate component for the navbar and routes
 const AppContent = () => {
@@ -19,7 +20,7 @@ const AppContent = () => {
     };
 
     return (
-        <Router>
+        <>
             <Navbar expand="lg" className="bg-body-tertiary navbar-expand-lg">
                 <Container>
                     <Navbar.Brand href="/">catchUp</Navbar.Brand>
@@ -64,15 +65,17 @@ const AppContent = () => {
             <footer className="py-3 my-4 border-top">
                 <p className="text-center text-muted">© 2024 UnhandledException</p>
             </footer>
-        </Router>
+        </>
     );
 };
 
 function App() {
     return (
-        <AuthProvider>
-            <AppContent />
-        </AuthProvider>
+        <Router>
+            <AuthProvider>
+                <AppContent />
+            </AuthProvider>
+        </Router>
     );
 }
 
