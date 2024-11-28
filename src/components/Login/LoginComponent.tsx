@@ -8,7 +8,7 @@ const LoginComponent = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const { setToken, setUser } = useAuth();
+    const { setAccessToken, setRefreshToken, setUser } = useAuth();
     const navigate = useNavigate();
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -16,8 +16,9 @@ const LoginComponent = () => {
         try {
             // Step 1: Login and get access token
             const response = await axiosInstance.post('Auth/Login', { email, password });
-            const { accessToken } = response.data;
-            setToken(accessToken);
+            const { accessToken, refreshToken } = response.data;
+            setAccessToken(accessToken);
+            setRefreshToken(refreshToken);
 
             // Step 2: Decode token to get user ID
             const decodedToken: any = jwtDecode(accessToken);
@@ -31,7 +32,8 @@ const LoginComponent = () => {
             navigate('/');
         } catch (err) {
             setError('Invalid email or password');
-            setToken(null);
+            setAccessToken(null);
+            setRefreshToken(null);
             setUser(null);
         }
     };

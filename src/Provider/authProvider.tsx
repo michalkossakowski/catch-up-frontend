@@ -1,9 +1,7 @@
-import axios from "axios";
-import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
-import {setLogoutHandler} from "../../axiosConfig.ts";
+import axiosInstance from "../../axiosConfig";
+import { createContext, useContext, useMemo, useState, ReactNode } from "react";
 import Cookies from "js-cookie";
 
-// Updated to match the UserDto from the backend
 interface User {
     id?: string;
     name?: string;
@@ -14,12 +12,14 @@ interface User {
 }
 
 interface AuthContextType {
-    token: string | null;
+    accessToken: string | null;
+    refreshToken: string | null;
     user: User | null;
-    setToken: (newToken: string | null) => void;
+    setAccessToken: (newToken: string | null) => void;
+    setRefreshToken: (newRefreshToken: string | null) => void;
     setUser: (newUser: User | null) => void;
     logout: () => void;
-    hasRole: (requiredRole: string) => boolean;
+    getRole: (userId: string) => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,35 +29,45 @@ interface AuthProviderProps {
 }
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
-    const [token, setToken_] = useState<string | null>(Cookies.get('token') || null);
-
-    // Parse user from cookies, using JSON.parse to handle the stored object
+    const [accessToken, setAccessToken_] = useState<string | null>(Cookies.get('accessToken') || null);
+    const [refreshToken, setRefreshToken_] = useState<string | null>(Cookies.get('refreshToken') || null);
     const [user, setUser_] = useState<User | null>(() => {
         const storedUser = Cookies.get('user');
         return storedUser ? JSON.parse(storedUser) : null;
     });
 
-    const setToken = (newToken: string | null) => {
-        setToken_(newToken);
+    const [roleCache, setRoleCache] = useState<Record<string, string | null>>({}); // Cache roles by user ID
+
+    const setAccessToken = (newToken: string | null) => {
+        setAccessToken_(newToken);
         if (newToken) {
-            Cookies.set('token', newToken, {
-                expires: 1,  // 1 day expiration
-                path: '/',   // available across the entire site
-                secure: true // only send over HTTPS
+            Cookies.set('accessToken', newToken, {
+                path: '/',
+                secure: true
             });
         } else {
-            Cookies.remove('token');
+            Cookies.remove('accessToken');
+        }
+    };
+
+    const setRefreshToken = (newRefreshToken: string | null) => {
+        setRefreshToken_(newRefreshToken);
+        if (newRefreshToken) {
+            Cookies.set('refreshToken', newRefreshToken, {
+                path: '/',
+                secure: true
+            });
+        } else {
+            Cookies.remove('refreshToken');
         }
     };
 
     const setUser = (newUser: User | null) => {
         if (newUser) {
-            // Exclude password when storing in cookies
             const { ...userToStore } = newUser;
             Cookies.set('user', JSON.stringify(userToStore), {
-                expires: 1,  // 1 day expiration
-                path: '/',   // available across the entire site
-                secure: true // only send over HTTPS
+                path: '/',
+                secure: true
             });
             setUser_(userToStore);
         } else {
@@ -65,58 +75,52 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         }
     };
 
-    /*
-    const refreshToken = async () => {
-        try {
-            const response = await axiosInstance.post('Auth/RefreshToken', {
-                token: token,
-                refreshToken: token
-            });
-
-            const { newAccessToken } = response.data;
-            setToken(newAccessToken);
-            return true;
-        } catch (error) {
-            logout();
-            return false;
-        }
-    };
-    */
-
     const logout = () => {
-        setToken(null);
+        setAccessToken(null);
+        setRefreshToken(null);
         setUser(null);
+        setRoleCache({});
     };
 
-    const hasRole = (requiredRole: string) => {
-        return user?.type === requiredRole;
-    };
-
-    useEffect(() => {
-        if (token) {
-            axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-        } else {
-            delete axios.defaults.headers.common["Authorization"];
+    const getRoleAsync = async (userId: string): Promise<string | null> => {
+        if (roleCache[userId]) {
+            return roleCache[userId]; // Return cached role if available
         }
-        setLogoutHandler(logout);
-    }, [token]);
+        try {
+            const response = await axiosInstance.get(`User/GetRole/${userId}`);
+            const role = response.data;
+            setRoleCache((prev) => ({ ...prev, [userId]: role }));
+            console.log(role);
+            return role;
+        } catch (error) {
+            console.error('Error fetching user role:', error);
+            return null;
+        }
+    };
+
+    const getRole= (userId: string): Promise<string | null> => {
+        return getRoleAsync(userId); // Shortcut
+    };
 
     const contextValue = useMemo(
         () => ({
-            token,
+            accessToken,
+            refreshToken,
             user,
-            setToken,
+            setAccessToken,
+            setRefreshToken,
             setUser,
             logout,
-            hasRole
+            getRole
         }),
-        [token, user]
+        [accessToken, refreshToken, user, roleCache]
     );
 
     return (
         <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
     );
 };
+
 
 export const useAuth = (): AuthContextType => {
     const context = useContext(AuthContext);

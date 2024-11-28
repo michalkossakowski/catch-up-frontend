@@ -15,7 +15,6 @@ import EditMatList from './components/Material/EditMatList';
 import EditMatList_SideBar from './components/Material/EditMatList_SideBar';
 import RoadMapManage from './components/RoadMap/RoadMapManage';
 
-// Create a separate component for the navbar and routes
 const AppContent = () => {
     const { user } = useAuth();
 
@@ -97,11 +96,11 @@ const AppContent = () => {
 
 function App() {
     return (
-        <Router>
-            <AuthProvider>
-                <AppContent />
-            </AuthProvider>
-        </Router>
+        <AuthProvider>
+            <Router>
+                    <AppContent />
+            </Router>
+        </AuthProvider>
     );
 }
 

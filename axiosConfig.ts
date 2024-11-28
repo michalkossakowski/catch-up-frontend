@@ -9,35 +9,106 @@ const axiosInstance = axios.create({
     },
 });
 
-// Function to handle token logout (you'll need to pass this from your auth context)
-let logoutFunction: (() => void) | null = null;
+let isRefreshing = false; // flag to not allow multiple refreshesh cus async
+let refreshSubscribers: ((token: string) => void)[] = [];
 
-export const setLogoutHandler = (logout: () => void) => {
-    logoutFunction = logout;
+// refresh queue
+const subscribeTokenRefresh = (cb: (token: string) => void) => {
+    refreshSubscribers.push(cb);
+};
+
+const onRefreshed = (token: string) => {
+    refreshSubscribers.forEach(cb => cb(token));
+    refreshSubscribers = [];
 };
 
 // Request interceptor
 axiosInstance.interceptors.request.use(
-    (config) => {
-        const token = Cookies.get('token');
+    async (config) => {
+        const accessToken = Cookies.get('accessToken');
+        const refreshToken = Cookies.get('refreshToken');
 
-        if (token) {
+        if (accessToken) {
             try {
-                const decodedToken: any = jwtDecode(token);
-                const isTokenExpired = decodedToken.exp * 1000 < Date.now();
+                const decodedToken: any = jwtDecode(accessToken);
+                const isAccessTokenExpired = decodedToken.exp * 1000 < Date.now();
 
-                if (isTokenExpired) {
-                    if (logoutFunction) {
-                        logoutFunction();
+                if (isAccessTokenExpired) {
+                    if (!refreshToken) {
+                        Cookies.remove('accessToken');
+                        Cookies.remove('refreshToken');
+                        Cookies.remove('user');
+                        window.location.href = '/login';
+                        throw new Error('No refresh token available');
                     }
-                    throw new Error('Token expired');
+
+                    const decodedRefreshToken: any = jwtDecode(refreshToken);
+                    const isRefreshTokenExpired = decodedRefreshToken.exp * 1000 < Date.now();
+
+                    if (isRefreshTokenExpired) {
+                        Cookies.remove('accessToken');
+                        Cookies.remove('refreshToken');
+                        Cookies.remove('user');
+                        window.location.href = '/login';
+                        throw new Error('Refresh token expired');
+                    }
+
+                    // If we're not already refreshing, start the refresh process
+                    if (!isRefreshing) {
+                        isRefreshing = true;
+
+                        try {
+                            const response = await axios.post(
+                                'https://localhost:7097/api/Auth/Refresh',
+                                refreshToken,
+                                {
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    }
+                                }
+                            );
+
+                            const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
+
+                            Cookies.set('accessToken', newAccessToken, {
+                                path: '/',
+                                secure: true
+                            });
+                            Cookies.set('refreshToken', newRefreshToken, {
+                                path: '/',
+                                secure: true
+                            });
+
+                            onRefreshed(newAccessToken);
+                            isRefreshing = false;
+
+                            config.headers.Authorization = `Bearer ${newAccessToken}`;
+                        } catch (refreshError) {
+                            Cookies.remove('accessToken');
+                            Cookies.remove('refreshToken');
+                            Cookies.remove('user');
+                            window.location.href = '/login';
+                            isRefreshing = false;
+                            throw refreshError;
+                        }
+                    } else {
+                        return new Promise((resolve) => {
+                            subscribeTokenRefresh((token) => {
+                                config.headers.Authorization = `Bearer ${token}`;
+                                resolve(config);
+                            });
+                        });
+                    }
                 }
 
-                config.headers.Authorization = `Bearer ${token}`;
+                config.headers.Authorization = `Bearer ${accessToken}`;
+                return config;
             } catch (error) {
-                if (logoutFunction) {
-                    logoutFunction();
-                }
+                Cookies.remove('accessToken');
+                Cookies.remove('refreshToken');
+                Cookies.remove('user');
+                window.location.href = '/login';
+                return Promise.reject(error);
             }
         }
 
@@ -48,14 +119,15 @@ axiosInstance.interceptors.request.use(
     }
 );
 
-// Response interceptor for handling unauthorized errors
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && error.response.status === 401) {
-            if (logoutFunction) {
-                logoutFunction();
-            }
+            Cookies.remove('accessToken');
+            Cookies.remove('refreshToken');
+            Cookies.remove('user');
+
+            window.location.href = '/login';
         }
         return Promise.reject(error);
     }
