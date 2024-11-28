@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../axiosConfig';
 import { useAuth } from '../../Provider/authProvider';
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 
 const LoginComponent = () => {
     const [email, setEmail] = useState('');
@@ -14,33 +14,25 @@ const LoginComponent = () => {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            // Step 1: Authenticate and get the accessToken
+            // Step 1: Login and get access token
             const response = await axiosInstance.post('Auth/Login', { email, password });
             const { accessToken } = response.data;
-
-            // Step 2: Store the accessToken in context and localStorage
             setToken(accessToken);
-            // Optionally store the refreshToken if needed
-            // setRefreshToken(refreshToken);
 
-            // Step 3: Decode the accessToken to get the user_id
-            const decodedToken: any = jwtDecode(accessToken); // Decode the token to extract user info
-            const userId = decodedToken.nameid;  // Assuming the token contains the user ID
+            // Step 2: Decode token to get user ID
+            const decodedToken: any = jwtDecode(accessToken);
+            const userId = decodedToken.nameid;
 
-            // Step 4: Fetch user data using the userId from the API
-            const userResponse = await axiosInstance.get(`/User/GetById/${userId}`, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`, // Pass token for authorization
-                }
-            });
+            // Step 3: Fetch user details using the ID
+            const userResponse = await axiosInstance.get(`User/GetById/${userId}`);
+            const userData = userResponse.data;
+            setUser(userData);
 
-            // Step 5: Store user data in context and localStorage
-            setUser(userResponse.data);
-
-            // Step 6: Redirect to the home page (or wherever you want after login)
             navigate('/');
         } catch (err) {
             setError('Invalid email or password');
+            setToken(null);
+            setUser(null);
         }
     };
 

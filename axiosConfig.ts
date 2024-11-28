@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import Cookies from "js-cookie";
 
 const axiosInstance = axios.create({
     baseURL: 'https://localhost:7097/api/',
@@ -18,7 +19,7 @@ export const setLogoutHandler = (logout: () => void) => {
 // Request interceptor
 axiosInstance.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
+        const token = Cookies.get('token');
 
         if (token) {
             try {
@@ -26,17 +27,14 @@ axiosInstance.interceptors.request.use(
                 const isTokenExpired = decodedToken.exp * 1000 < Date.now();
 
                 if (isTokenExpired) {
-                    // Token is expired, trigger logout
                     if (logoutFunction) {
                         logoutFunction();
                     }
                     throw new Error('Token expired');
                 }
 
-                // Add token to headers for authenticated requests
                 config.headers.Authorization = `Bearer ${token}`;
             } catch (error) {
-                // If decoding fails or token is invalid
                 if (logoutFunction) {
                     logoutFunction();
                 }
@@ -54,7 +52,6 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-        // If the server responds with a 401 (Unauthorized) status
         if (error.response && error.response.status === 401) {
             if (logoutFunction) {
                 logoutFunction();

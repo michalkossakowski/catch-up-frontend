@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Nav, Navbar } from 'react-bootstrap';
@@ -8,7 +8,6 @@ import LoginPage from './components/Login/LoginComponent';
 import FaqComponent from './components/Faq/FaqComponent';
 import Material from './components/Material/Material';
 import FaqManage from './components/Faq/FaqManage';
-import { useTokenInterceptor } from './Provider/TokenInterceptor.tsx';
 
 // Create a separate component for the navbar and routes
 const AppContent = () => {

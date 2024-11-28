@@ -1,10 +1,11 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../Provider/authProvider';
 import { jwtDecode } from "jwt-decode";
-import { useEffect } from "react";
+import Cookies from "js-cookie";
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-    const { token, logout } = useAuth();
+    const { logout } = useAuth();
+    const token = Cookies.get('token');
     const location = useLocation();
 
     if (!token) {
