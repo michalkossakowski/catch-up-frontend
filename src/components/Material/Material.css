@@ -15,3 +15,13 @@
 .double-downIcon{
     filter: brightness(0) saturate(100%) invert(83%) sepia(43%) saturate(336%) hue-rotate(95deg) brightness(89%) contrast(88%);
 }
+
+.editIconInName{
+    width: 1em;
+    height: 1em;
+    filter: brightness(0) saturate(100%) invert(81%) sepia(42%) saturate(4071%) hue-rotate(140deg) brightness(92%) contrast(91%);
+}
+
+.editIconInName:hover{
+    filter: brightness(0) saturate(100%) invert(87%) sepia(16%) saturate(3558%) hue-rotate(157deg) brightness(102%) contrast(104%);
+}

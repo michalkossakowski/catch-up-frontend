@@ -8,16 +8,11 @@ import FaqManage from './components/Faq/FaqManage';
 import NewbieMentor from './components/NewbieMentor/NewbieMentor';
 import AssignTask from './components/TaskAssigment/AssignTask';
 import TaskContentManage from './components/Task/TaskContentManage';
-import EditMatList from './components/Material/EditMatList';
-import EditMatList_SideBar from './components/Material/EditMatList_SideBar';
 import RoadMapManage from './components/RoadMap/RoadMapManage';
+import EditMatList from './components/Material/DndMaterial/EditMatList';
 
 function App() {
-  const [selectedNav, setSelectedNav] = useState("Home");
-  const materialCreated = (materialId: number) => {
-    console.log("Zwrócono id nowo utworzonego materiału",materialId)
-    return materialId
-  }      
+  const [selectedNav, setSelectedNav] = useState("Home");  
   const renderContent = () => {
     switch (selectedNav) {
         case "Home":
@@ -29,19 +24,17 @@ function App() {
         case "FaqManage":
           return <FaqManage/>;
         case "AddFile":
-          return <Material materialId={1060} showRemoveFile={true} showDownloadFile={true} showAddingFile={true} materialCreated={materialCreated}/>
+          return <Material/>
         case "NewbieMentor":
          return <NewbieMentor/>
         case "AssignTask":
           return <AssignTask/>
         case "TaskContentManage":
             return <TaskContentManage/>
-        case "EditMatList":
-            return <EditMatList/>
-        case "EditMatList_SideBar":
-            return <EditMatList_SideBar/>
         case "RoadMapManage":
             return <RoadMapManage/>;
+        case "EditMatList":
+            return <EditMatList/>;
         default:
             return <h1>Imagine All The People!</h1>;
     }
@@ -65,8 +58,8 @@ function App() {
             <Nav.Link href="#taskcontentmanage" onClick={() => setSelectedNav("TaskContentManage")}>TaskContentManage</Nav.Link>
             <Nav.Link href="#roadMapManage" onClick={() => setSelectedNav("RoadMapManage")}>RoadMapManage</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-              <NavDropdown.Item href="#editmatlist" onClick={() => setSelectedNav("EditMatList")}>EditMatList</NavDropdown.Item>
-              <NavDropdown.Item href="#editmatlist_sidebar" onClick={() => setSelectedNav("EditMatList_SideBar")}>EditMatList_SideBar</NavDropdown.Item><NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+              <NavDropdown.Item href="#EditMatList" onClick={() => setSelectedNav("EditMatList")}>EditMatList</NavDropdown.Item>
+              <NavDropdown.Item href="#action/3.1">s</NavDropdown.Item><NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">
                 Another action
               </NavDropdown.Item>

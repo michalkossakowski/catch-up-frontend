@@ -79,5 +79,17 @@ const materialService =
             throw error
         }
     },
+    addFile: async(materialId: number, fileId: number) => {
+        try 
+        {
+            const response = await axiosInstance.post(`/Material/AddFile/${materialId}/${fileId}`)
+            console.log("File added to material:", response)
+        } 
+        catch (error) 
+        {
+            console.error('Error in adding file:', error)
+            throw error
+        }
+    },
 }
 export default materialService
