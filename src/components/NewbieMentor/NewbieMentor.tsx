@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Alert, Spinner, Button, Modal } from 'react-bootstrap';
-import 'bootstrap-icons/font/bootstrap-icons.css';
 import NewbieMentorService from '../../services/newbieMentorService';
 import { UserDto } from '../../dtos/UserDto';
 import './NewbieMentor.css';
