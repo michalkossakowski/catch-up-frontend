@@ -17,8 +17,8 @@ const NewbieMentorComponent: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [deletingNewbieId, setDeletingNewbieId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>(''); // Mentor search term
-  const [searchTermAssigned, setSearchTermAssigned] = useState<string>(''); // Assigned newbie search term
-  const [searchTermUnassigned, setSearchTermUnassigned] = useState<string>(''); // Unassigned newbie search term
+  const [searchTermAssigned, setSearchTermAssigned] = useState<string>(''); 
+  const [searchTermUnassigned, setSearchTermUnassigned] = useState<string>(''); 
   
   const [sortConfigMentors, setSortConfigMentors] = useState<{ key: string, direction: 'asc' | 'desc' }>({
     key: 'name', 
