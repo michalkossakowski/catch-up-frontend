@@ -35,7 +35,7 @@ export const deleteRoadMapPoint = async (roadMapPointId: number): Promise<any> =
 
 export const getByRoadMapId = async (roadMapId: number): Promise<RoadMapPointDto[]> => {
     try {
-        const response = await axiosInstance.get<RoadMapPointDto[]>('/RoadMapPoint/GetByNewbieId/' + roadMapId);
+        const response = await axiosInstance.get<RoadMapPointDto[]>('/RoadMapPoint/GetByRoadMapId/' + roadMapId);
         return response.data;
     } catch (error: any) {
         handleError('getByNewbieId', error);
