@@ -31,13 +31,21 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
   }, [materialIdToUpdate,state])
 
   useEffect ( () => {
-    console.log("s")
     const filteredMaterials = () => { 
       setSearchedList(materialList.filter((material) => material.name.toLowerCase().includes(searchTerm.toLowerCase())))
     }
     filteredMaterials()
   }, [searchTerm, materialList])
 
+  const onDeleteItem = async (materialID: number) => {
+    try {
+      await materialService.deleteMaterial(materialID)
+      setMaterialList(materialList.filter((material) => material.id !== materialID));
+    } catch (error) 
+    {
+      console.error("Problem with deleting material:", error)
+    }
+  }
 
   return (
     <div>
@@ -58,10 +66,9 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
           return (
             <div key={material.id} style={{ display: isVisible ? "block" : "none" }}>
               <MaterialItem
-                id={material.id}
-                name={material.name}
-                files={material.files}
+                materialDto={material}
                 state={materialIdToUpdate === material.id ? state : 0}
+                onDeleteItem={onDeleteItem}
               />
             </div>
           );

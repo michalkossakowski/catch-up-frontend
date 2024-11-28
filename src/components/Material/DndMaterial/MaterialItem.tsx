@@ -4,12 +4,15 @@ import { useDroppable } from "@dnd-kit/core";
 import materialService from "../../../services/materialService";
 import { Accordion, Button } from "react-bootstrap";
 import editIcon from "../../../assets/editIcon.svg"
+import deleteIcon from "../../../assets/deleteIcon.svg"
 import '../Material.css';
 
-interface MaterialItemProps extends MaterialDto {
+interface MaterialItemProps{
+  materialDto: MaterialDto
   state?: number
+  onDeleteItem: (materialID: number) => void
 }
-const MaterialItem: React.FC<MaterialItemProps> = (materialDto) => {
+const MaterialItem: React.FC<MaterialItemProps> = ({materialDto, state, onDeleteItem}) => {
     const [material, setMaterial] = useState<MaterialDto>();
     const getWithFiles = async () => {
       try {
@@ -25,14 +28,20 @@ const MaterialItem: React.FC<MaterialItemProps> = (materialDto) => {
     }, [])
 
     useEffect (() =>{
-      if(materialDto.state != 0)
+      if(state != 0)
         getWithFiles()
-    }, [materialDto.state])
+    }, [state])
         
     const {setNodeRef} = useDroppable({
         id: material?.id?.toString() || ""
         })
     const idString = material ? `item${material.id}` : "";
+
+    const clickDeleteitem = () => {
+      if(material?.id)
+        onDeleteItem(material?.id)
+    }
+
     
     return (
       <Accordion.Item eventKey={idString}>
@@ -43,13 +52,13 @@ const MaterialItem: React.FC<MaterialItemProps> = (materialDto) => {
         <Accordion.Body ref={setNodeRef}>
           {material?.files && material.files.map((file) =>(
             <div className="badge text-bg-secondary p-3  m-1">
-              {file.name}
+              {file.name}{/* <img src={editIcon} className="editIconInName mb-2"/> */}
             </div>
           ))}
           <div className="d-flex justify-content-end mt-3 me-3">
             <Button variant="primary" className="me-2">Edit</Button>
             <Button variant="primary" className="me-2 ms-2">Copy</Button>
-            <Button variant="danger" className="ms-2">Delete</Button>
+            <Button variant="danger" className="ms-2" onClick={clickDeleteitem}>Delete</Button>
           </div>
         </Accordion.Body >
       </Accordion.Item>
