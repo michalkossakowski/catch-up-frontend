@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Alert, Spinner, Button, Modal } from 'react-bootstrap';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import NewbieMentorService from '../../services/newbieMentorService';
 import { UserDto } from '../../dtos/UserDto';
 import './NewbieMentor.css';
@@ -16,7 +17,7 @@ const NewbieMentorComponent: React.FC = () => {
   const [unassignedNewbies, setUnassignedNewbies] = useState<UserDto[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [deletingNewbieId, setDeletingNewbieId] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>(''); // Mentor search term
+  const [searchTerm, setSearchTerm] = useState<string>(''); // dla Mentora
   const [searchTermAssigned, setSearchTermAssigned] = useState<string>(''); 
   const [searchTermUnassigned, setSearchTermUnassigned] = useState<string>(''); 
   
@@ -35,7 +36,7 @@ const NewbieMentorComponent: React.FC = () => {
     direction: 'asc'
   });
 
-  // Filter for each section separately
+  //  Filtr dla każdej tabeli z osobna
   const filteredMentors = newbieMentors.filter(
     (mentor) =>
       mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -159,8 +160,14 @@ const sortedMentors = filteredMentors.sort((a, b) => {
   const aValue = a[sortConfigMentors.key as keyof UserDto]?.toString().toLowerCase() || '';
   const bValue = b[sortConfigMentors.key as keyof UserDto]?.toString().toLowerCase() || '';
   
-  if (aValue < bValue) return sortConfigMentors.direction === 'asc' ? -1 : 1;
-  if (aValue > bValue) return sortConfigMentors.direction === 'asc' ? 1 : -1;
+  if (aValue < bValue) 
+  {
+    return sortConfigMentors.direction === 'asc' ? -1 : 1;
+  }
+  if (aValue > bValue) 
+  {
+    return sortConfigMentors.direction === 'asc' ? 1 : -1;
+  }
   return 0;
 });
 
@@ -169,8 +176,14 @@ const sortedAssigned = filteredAssignedNewbies.sort((a, b) => {
   const aValue = a[sortConfigAssigned.key as keyof UserDto]?.toString().toLowerCase() || '';
   const bValue = b[sortConfigAssigned.key as keyof UserDto]?.toString().toLowerCase() || '';
   
-  if (aValue < bValue) return sortConfigAssigned.direction === 'asc' ? -1 : 1;
-  if (aValue > bValue) return sortConfigAssigned.direction === 'asc' ? 1 : -1;
+  if (aValue < bValue) 
+    {
+      return sortConfigAssigned.direction === 'asc' ? -1 : 1;
+    }
+  if (aValue > bValue) 
+    {
+      return sortConfigAssigned.direction === 'asc' ? 1 : -1;
+    }
   return 0;
 });
 
@@ -179,8 +192,14 @@ const sortedUnassigned = filteredUnassignedNewbies.sort((a, b) => {
   const aValue = a[sortConfigUnassigned.key as keyof UserDto]?.toString().toLowerCase() || '';
   const bValue = b[sortConfigUnassigned.key as keyof UserDto]?.toString().toLowerCase() || '';
   
-  if (aValue < bValue) return sortConfigUnassigned.direction === 'asc' ? -1 : 1;
-  if (aValue > bValue) return sortConfigUnassigned.direction === 'asc' ? 1 : -1;
+  if (aValue < bValue) 
+    {
+      return sortConfigUnassigned.direction === 'asc' ? -1 : 1;
+    }
+  if (aValue > bValue) 
+    {
+      return sortConfigUnassigned.direction === 'asc' ? 1 : -1;
+    }
   return 0;
 });
 
@@ -233,10 +252,18 @@ const handleSort = (key: string, table: 'mentors' | 'assigned' | 'unassigned') =
               <Table id="mentors" striped bordered hover responsive>
                 <thead>
                   <tr>
-                  <th onClick={() => handleSort('name', 'mentors')} style={{ cursor: 'pointer' }}>Name</th>
-                  <th onClick={() => handleSort('surname', 'mentors')} style={{ cursor: 'pointer' }}>Surname</th>
-                  <th onClick={() => handleSort('position', 'mentors')} style={{ cursor: 'pointer' }}>Position</th>
-                  <th onClick={() => handleSort('newbiesCount', 'mentors')} style={{ cursor: 'pointer' }}>Number of Newbies</th>
+                  <th onClick={() => handleSort('name', 'mentors')} style={{ cursor: 'pointer' }}>
+  Name <i className="bi bi-arrow-down-up"></i>
+</th>
+<th onClick={() => handleSort('surname', 'mentors')} style={{ cursor: 'pointer' }}>
+  Surname <i className="bi bi-arrow-down-up"></i>
+</th>
+<th onClick={() => handleSort('position', 'mentors')} style={{ cursor: 'pointer' }}>
+  Position <i className="bi bi-arrow-down-up"></i>
+</th>
+<th onClick={() => handleSort('newbiesCount', 'mentors')} style={{ cursor: 'pointer' }}>
+  Number of Newbies <i className="bi bi-arrow-down-up"></i>
+</th>
 
                   </tr>
                 </thead>
@@ -273,9 +300,12 @@ const handleSort = (key: string, table: 'mentors' | 'assigned' | 'unassigned') =
                 <Table id="assigned" striped bordered hover responsive>
                   <thead>
                     <tr>
-                    <th onClick={() => handleSort('name', 'assigned')} style={{ cursor: 'pointer' }}>Name</th>
-                    <th onClick={() => handleSort('surname', 'assigned')} style={{ cursor: 'pointer' }}>Surname</th>
-                    <th onClick={() => handleSort('position', 'assigned')} style={{ cursor: 'pointer' }}>Position</th>
+                    <th onClick={() => handleSort('name', 'assigned')} style={{ cursor: 'pointer' }}>
+                      Name <i className="bi bi-arrow-down-up"></i></th>
+                    <th onClick={() => handleSort('surname', 'assigned')} style={{ cursor: 'pointer' }}>
+                      Surname <i className="bi bi-arrow-down-up"></i></th>
+                    <th onClick={() => handleSort('position', 'assigned')} style={{ cursor: 'pointer' }}>
+                      Position <i className="bi bi-arrow-down-up"></i></th>
                     <th>Actions</th>
                     </tr>
                   </thead>
@@ -309,9 +339,12 @@ const handleSort = (key: string, table: 'mentors' | 'assigned' | 'unassigned') =
                 <Table id="unassigned" striped bordered hover responsive>
                   <thead>
                     <tr>
-                    <th onClick={() => handleSort('name', 'unassigned')} style={{ cursor: 'pointer' }}>Name</th>
-                    <th onClick={() => handleSort('surname', 'unassigned')} style={{ cursor: 'pointer' }}>Surname</th>
-                    <th onClick={() => handleSort('position', 'unassigned')} style={{ cursor: 'pointer' }}>Position</th>
+                    <th onClick={() => handleSort('name', 'unassigned')} style={{ cursor: 'pointer' }}>
+                      Name <i className="bi bi-arrow-down-up"></i></th>
+                    <th onClick={() => handleSort('surname', 'unassigned')} style={{ cursor: 'pointer' }}>
+                      Surname <i className="bi bi-arrow-down-up"></i></th>
+                    <th onClick={() => handleSort('position', 'unassigned')} style={{ cursor: 'pointer' }}>
+                      Position <i className="bi bi-arrow-down-up"></i></th>
                       <th>Actions</th>
                     </tr>
                   </thead>
