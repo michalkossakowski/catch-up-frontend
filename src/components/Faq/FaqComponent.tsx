@@ -106,6 +106,20 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
             <section className='container'>
                 <h2 className='title'>Frequently Asked Questions</h2>
                 
+                <div className='searchBox'>
+                    <InputGroup className="inputGroup mb-3">
+                        <Form.Control
+                            placeholder="Enter searching title..."
+                            value={searchTitle} 
+                            onChange={(e) => setSearchTitle(e.target.value)} 
+                            onKeyDown={(e) => e.key === 'Enter' && searchFaq()}
+                        />
+                        <Button variant="primary" id="searchButton" onClick={searchFaq}> 
+                            Search
+                        </Button>
+                    </InputGroup>
+                </div>
+
                 <div className='loaderBox'>
                     
                     {loading && (
@@ -127,23 +141,6 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
 
                 {!showSearchMessage && !showError && !loading &&(
                     <div>
-                        {faqs.length > 0 &&(
-                            <div className='searchBox'>
-                                <InputGroup className="inputGroup mb-3">
-                                    <Form.Control
-                                        placeholder="Enter searching title..."
-                                        value={searchTitle} 
-                                        onChange={(e) => setSearchTitle(e.target.value)} 
-                                        onKeyDown={(e) => e.key === 'Enter' && searchFaq()}
-                                    />
-                                    <Button variant="primary" id="searchButton" onClick={searchFaq}> 
-                                        Search
-                                    </Button>
-                                </InputGroup>
-                            </div>
-                        )}
-
-
                         <Accordion className='AccordionItem'>
                             {faqs.map((faq) => (
                                 <Accordion.Item eventKey={faq.id.toString()} key={faq.id}>
