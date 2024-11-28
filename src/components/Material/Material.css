@@ -11,3 +11,7 @@
     width: 20px;
     height: 20px;
 }
+
+.double-downIcon{
+    filter: brightness(0) saturate(100%) invert(83%) sepia(43%) saturate(336%) hue-rotate(95deg) brightness(89%) contrast(88%);
+}

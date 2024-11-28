@@ -9,11 +9,11 @@ import downloadIcon from "../../assets/downloadIcon.svg";
 import fileService from "../../services/fileService";
 
 interface MaterialProps {
-  materialId: number;
+  materialId?: number;
   showRemoveFile?: boolean;
   showDownloadFile?: boolean;
   showAddingFile?: boolean;
-  materialCreated: (materialId: number) => void;
+  materialCreated?: (materialId: number) => void;
 
 }
 
@@ -22,13 +22,13 @@ const Material: React.FC<MaterialProps> = ({
   showRemoveFile,
   showDownloadFile,
   showAddingFile,
-  materialCreated,
+  materialCreated = () => {},
 }) => {
   const [material, setMaterial] = useState<MaterialDto | null>(null);
   const [materialName, setMaterialName] = useState<string>('');
 
   useEffect(() => {
-    if (materialId === 0 || materialId === null) {
+    if (materialId === 0 || materialId === null || materialId === undefined) {
       setMaterial(null);
     } else {
       getMaterial(materialId); 
@@ -45,11 +45,12 @@ const Material: React.FC<MaterialProps> = ({
   };
 
   const onFileUploaded = (fileDto: FileDto) => {
+    console.log(fileDto)
     if (material) {
-      setMaterial({
+      setMaterial((material) =>({
         ...material,
-        files: [...(material.files || []), fileDto],
-      });
+        files: [...(material?.files || []), fileDto],
+      }));
     }
   };
 
@@ -61,6 +62,7 @@ const Material: React.FC<MaterialProps> = ({
         setMaterial(response);
         materialCreated(response.id || 0);
         setMaterialName('');
+        materialId = response.id
       } catch (error) {
         console.error('Error creating material:', error);
       }
@@ -97,7 +99,7 @@ const Material: React.FC<MaterialProps> = ({
   };
 
   return (
-    <section className="container mt-3">
+    <section className="container mt-3 p-0">
       {material ? (
         <>
           <ul className="list-group">
@@ -120,11 +122,11 @@ const Material: React.FC<MaterialProps> = ({
             ))}
           </ul>
           {showAddingFile && (
-            <FileAdd materialId={materialId} onFileUploaded={onFileUploaded} />
+            <FileAdd materialId={material.id || 0} onFileUploaded={onFileUploaded} />
           )}
         </>
       ) : (
-        <div className="input-group mb-3 ">
+        <div className="input-group mb-3">
           <input
             type="text"
             placeholder="Material's name"

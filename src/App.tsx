@@ -1,13 +1,19 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Nav, Navbar } from 'react-bootstrap';
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import AuthProvider, { useAuth } from './Provider/authProvider';
 import ProtectedRoute from './Routes/ProtectedRoute';
 import LoginPage from './components/Login/LoginComponent';
 import FaqComponent from './components/Faq/FaqComponent';
 import Material from './components/Material/Material';
 import FaqManage from './components/Faq/FaqManage';
+import NewbieMentor from './components/NewbieMentor/NewbieMentor';
+import AssignTask from './components/TaskAssigment/AssignTask';
+import TaskContentManage from './components/Task/TaskContentManage';
+import EditMatList from './components/Material/EditMatList';
+import EditMatList_SideBar from './components/Material/EditMatList_SideBar';
+import RoadMapManage from './components/RoadMap/RoadMapManage';
 
 // Create a separate component for the navbar and routes
 const AppContent = () => {
@@ -26,10 +32,24 @@ const AppContent = () => {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            <Nav.Link href="/" onClick={() => 'Home'}>Home</Nav.Link>
-                            <Nav.Link href="/faq" onClick={() =>'Faq'}>Faq</Nav.Link>
-                            <Nav.Link href="/faqmanage" onClick={() => 'FaqManage'}>FaqManage</Nav.Link>
-                            <Nav.Link href="/addfile" onClick={() => 'AddFile'}>AddFile</Nav.Link>
+                            <Nav.Link href="/">Home</Nav.Link>
+                            <Nav.Link href="/admin">Admin</Nav.Link>
+                            <Nav.Link href="/faq">Faq</Nav.Link>
+                            <Nav.Link href="/faqmanage">FaqManage</Nav.Link>
+                            <Nav.Link href="/addfile">AddFile</Nav.Link>
+                            <Nav.Link href="/newbiementor">NewbieMentor</Nav.Link>
+                            <Nav.Link href="/assigntask">AssignTask</Nav.Link>
+                            <Nav.Link href="/taskcontentmanage">TaskContentManage</Nav.Link>
+                            <Nav.Link href="/roadmapmanage">RoadMapManage</Nav.Link>
+                            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
+                                <NavDropdown.Item href="/editmatlist">EditMatList</NavDropdown.Item>
+                                <NavDropdown.Item href="/editmatlist_sidebar">EditMatList_SideBar</NavDropdown.Item>
+                                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+                                <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
+                                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+                                <NavDropdown.Divider />
+                                <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
+                            </NavDropdown>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
@@ -45,6 +65,7 @@ const AppContent = () => {
                         </ProtectedRoute>
                     }
                 />
+                <Route path="/admin" element={<ProtectedRoute><h1>Admin</h1></ProtectedRoute>} />
                 <Route path="/faq" element={<ProtectedRoute><FaqComponent isAdmin={false} /></ProtectedRoute>} />
                 <Route path="/faqmanage" element={<ProtectedRoute><FaqManage /></ProtectedRoute>} />
                 <Route path="/addfile" element={
@@ -58,6 +79,12 @@ const AppContent = () => {
                         />
                     </ProtectedRoute>
                 } />
+                <Route path="/newbiementor" element={<ProtectedRoute><NewbieMentor /></ProtectedRoute>} />
+                <Route path="/assigntask" element={<ProtectedRoute><AssignTask /></ProtectedRoute>} />
+                <Route path="/taskcontentmanage" element={<ProtectedRoute><TaskContentManage /></ProtectedRoute>} />
+                <Route path="/editmatlist" element={<ProtectedRoute><EditMatList /></ProtectedRoute>} />
+                <Route path="/editmatlist_sidebar" element={<ProtectedRoute><EditMatList_SideBar /></ProtectedRoute>} />
+                <Route path="/roadmapmanage" element={<ProtectedRoute><RoadMapManage /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
 
