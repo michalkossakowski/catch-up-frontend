@@ -1,67 +1,196 @@
-import React, { useEffect, useState } from "react";
-import { MaterialDto } from "../../../dtos/MaterialDto";
-import { useDroppable } from "@dnd-kit/core";
-import materialService from "../../../services/materialService";
-import { Accordion, Button } from "react-bootstrap";
-import editIcon from "../../../assets/editIcon.svg"
+import React, { useEffect, useState } from "react"
+import { MaterialDto } from "../../../dtos/MaterialDto"
+import { useDroppable } from "@dnd-kit/core"
+import materialService from "../../../services/materialService"
+import { Accordion, Button, Form, InputGroup, Modal } from "react-bootstrap"
 import deleteIcon from "../../../assets/deleteIcon.svg"
-import '../Material.css';
+import '../Material.css'
 
-interface MaterialItemProps{
+interface MaterialItemProps {
   materialDto: MaterialDto
   state?: number
   onDeleteItem: (materialID: number) => void
 }
-const MaterialItem: React.FC<MaterialItemProps> = ({materialDto, state, onDeleteItem}) => {
-    const [material, setMaterial] = useState<MaterialDto>();
-    const getWithFiles = async () => {
-      try {
-        if(materialDto.id ){
-          setMaterial(await materialService.getMaterialWithFiles(materialDto.id))
-        }
-      } catch (error) {
-        console.error("Error fetching materials:", error)
+const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDeleteItem }) => {
+  const [material, setMaterial] = useState<MaterialDto>()
+  const [isEditing, setIsEditing] = useState(false)
+
+  const [modalShow, setModalShow] = React.useState(false)
+
+  const [filesToDelete, setFilesToDelete] = useState<number[]>([])
+  const [editedName, setEditedName] = useState<string>()
+  const [nameError, setNameError] = useState<string | null>(null)
+
+  const getWithFiles = async () => {
+    try {
+      if (materialDto.id) {
+        setMaterial(await materialService.getMaterialWithFiles(materialDto.id))
+      }
+    } catch (error) {
+      console.error("Error fetching materials:", error)
+    }
+  }
+
+  useEffect(() => {
+    getWithFiles()
+  }, [])
+
+  useEffect(() => {
+    if (state != 0)
+      getWithFiles()
+  }, [state])
+
+  useEffect(() => {
+    if (material) {
+      setEditedName(material.name)
+    }
+  }, [material])
+
+  const { setNodeRef } = useDroppable({
+    id: material?.id?.toString() || ""
+  })
+  const idString = material ? `item${material.id}` : ""
+
+  const clickDeleteitem = () => {
+    setModalShow(true)
+    // if (material?.id)
+    //   onDeleteItem(material?.id)
+  }
+  const handleDeleteItem = () => {
+    setModalShow(false)
+    if (material?.id)
+      onDeleteItem(material?.id)
+  }
+  const toggleEditMode = () => {
+    if (isEditing) {
+      handleSave()
+    }
+    setIsEditing(!isEditing)
+  }
+
+  const handleSave = async () => {
+    if (material?.id) {
+      for (const fileID of filesToDelete) {
+        if (material?.id)
+          await deleteFile(fileID)
+      }
+      if (material?.name !== editedName && editedName) {
+        await materialService.editMaterial(material?.id, editedName)
+        material.name = editedName
       }
     }
-    useEffect ( () => {
-      getWithFiles()
-    }, [])
+    setFilesToDelete([])
+  }
 
-    useEffect (() =>{
-      if(state != 0)
-        getWithFiles()
-    }, [state])
-        
-    const {setNodeRef} = useDroppable({
-        id: material?.id?.toString() || ""
-        })
-    const idString = material ? `item${material.id}` : "";
-
-    const clickDeleteitem = () => {
-      if(material?.id)
-        onDeleteItem(material?.id)
+  const deleteFile = async (fileId: number) => {
+    if (material?.id) {
+      try {
+        await materialService.removeFile(material.id, fileId)
+      } catch (error) { }
     }
+  }
 
-    
-    return (
+  const validateName = (name: string) => {
+    if (!name || name.length === 0) {
+      setNameError("Name is required")
+      return false
+    }
+    setNameError(null)
+    return true
+  }
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value
+    setEditedName(newName)
+    validateName(newName)
+  }
+
+  const handleDeleteFile = (fileID: number) => {
+    setFilesToDelete((prev) => [...prev, fileID])
+    setMaterial((prevMaterial) =>
+      prevMaterial
+        ? { ...prevMaterial, files: prevMaterial.files?.filter((file) => file.id !== fileID) }
+        : null
+    )
+  }
+  const cancelChanges = async () => {
+    if (materialDto.id) {
+      const originalMaterial = await materialService.getMaterialWithFiles(materialDto.id)
+      setMaterial(originalMaterial)
+    }
+    setNameError(null)
+    setIsEditing(false)
+    setFilesToDelete([])
+    setEditedName(material?.name || "")
+  }
+
+  return (
+    <>
+      <Modal
+        onHide={() => setModalShow(false)}
+        show={modalShow}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="p-0 m-0 fs-3">You are going to <span className="text-danger">delete</span> Material. Are You sure ?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="success" onClick={() => setModalShow(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={() => handleDeleteItem()}>
+            Submit
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <Accordion.Item eventKey={idString}>
-        <Accordion.Header> 
-          {material && material.name}
-          {/* <img src={editIcon} className="editIconInName mb-2"/> */}
+        <Accordion.Header>
+          {isEditing ? (
+            <InputGroup hasValidation>
+              <Form.Control
+                required
+                type="text"
+                className="form-control me-2"
+                value={editedName}
+                onChange={handleNameChange}
+                onClick={(e) => e.stopPropagation()}
+                onKeyUp={(e) => e.preventDefault()}
+                isInvalid={!!nameError}
+              />
+              <Form.Control.Feedback type="invalid">
+                {nameError}
+              </Form.Control.Feedback>
+            </InputGroup>
+          ) : (
+            material?.name
+          )}
         </Accordion.Header>
         <Accordion.Body ref={setNodeRef}>
-          {material?.files && material.files.map((file) =>(
-            <div className="badge text-bg-secondary p-3  m-1">
-              {file.name}{/* <img src={editIcon} className="editIconInName mb-2"/> */}
+          {material?.files && material.files.map((file) => (
+            <div className="badge text-bg-secondary p-3 m-1" key={file.id}>
+              {file.name}
+              <img
+                src={deleteIcon}
+                className={"deleteIcon deleteIcon_EditMatList mb-2 p-0 " + (isEditing ? "visible" : "invisible")}
+                onClick={isEditing ? () => handleDeleteFile(file.id) : undefined}
+                alt="Delete file" />
             </div>
           ))}
           <div className="d-flex justify-content-end mt-3 me-3">
-            <Button variant="primary" className="me-2">Edit</Button>
-            <Button variant="primary" className="me-2 ms-2">Copy</Button>
+            {isEditing &&
+            <Button variant="primary" className="me-2" onClick={cancelChanges}>Cancel</Button>}
+            <Button variant="primary" disabled={!!nameError} className="me-2 ms-2 disactive" onClick={toggleEditMode}>{isEditing ? "Save" : "Edit"}</Button>
             <Button variant="danger" className="ms-2" onClick={clickDeleteitem}>Delete</Button>
           </div>
         </Accordion.Body >
       </Accordion.Item>
-    )
+    </>
+  )
 }
+
 export default MaterialItem

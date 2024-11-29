@@ -25,3 +25,10 @@
 .editIconInName:hover{
     filter: brightness(0) saturate(100%) invert(87%) sepia(16%) saturate(3558%) hue-rotate(157deg) brightness(102%) contrast(104%);
 }
+.deleteIcon_EditMatList{
+    width: 1em;
+    height: 1em;
+}
+.deleteIcon_EditMatList:hover{
+    filter: brightness(0) saturate(100%) invert(64%) sepia(62%) saturate(3261%) hue-rotate(307deg) brightness(94%) contrast(93%);
+}

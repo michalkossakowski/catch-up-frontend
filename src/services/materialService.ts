@@ -7,7 +7,7 @@ const materialService =
         try
         {
             const response = await axiosInstance.get<{ message: string; materialDto: MaterialDto;}>(`/MaterialGet/${materialId}`)
-            console.log("Material got successfully:", response);
+            console.log("Material got successfully:", response)
             return response.data.materialDto
         }
         catch(error)
@@ -20,7 +20,7 @@ const materialService =
         try
         {
             const response = await axiosInstance.get<MaterialDto[]>(`/Material/GetAllMaterials`)
-            console.log("Material got successfully:", response.data);
+            console.log("Material got successfully:", response.data)
             return response.data
         }
         catch(error)
@@ -33,7 +33,7 @@ const materialService =
         try
         {
             const response = await axiosInstance.get<{ message: string; materialDto: MaterialDto;}>(`/Material/GetWithFiles/${materialId}`)
-            console.log("Material got successfully:", response);
+            console.log("Material got successfully:", response)
             return response.data.materialDto
         }
         catch(error)
@@ -46,7 +46,7 @@ const materialService =
         try
         {
             const response = await axiosInstance.post<{ message: string; material: MaterialDto;}>(`/Material/Create/`, material)
-            console.log("Material created:", response);
+            console.log("Material created:", response)
             return response.data.material
         }
         catch(error)
@@ -88,6 +88,19 @@ const materialService =
         catch (error) 
         {
             console.error('Error in adding file:', error)
+            throw error
+        }
+    },
+
+    editMaterial: async(materialId: number, name: string) => {
+        try 
+        {
+            const response = await axiosInstance.put(`/Material/Edit/${materialId}/${name}`)
+            console.log("Material edited:", response)
+        } 
+        catch (error) 
+        {
+            console.error('Error in editing material:', error)
             throw error
         }
     },

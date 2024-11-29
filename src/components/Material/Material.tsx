@@ -22,7 +22,7 @@ const Material: React.FC<MaterialProps> = ({
   showRemoveFile,
   showDownloadFile,
   showAddingFile,
-  materialCreated = () => {},
+  materialCreated = () => { },
 }) => {
   const [material, setMaterial] = useState<MaterialDto | null>(null);
   const [materialName, setMaterialName] = useState<string>('');
@@ -31,7 +31,7 @@ const Material: React.FC<MaterialProps> = ({
     if (materialId === 0 || materialId === null || materialId === undefined) {
       setMaterial(null);
     } else {
-      getMaterial(materialId); 
+      getMaterial(materialId);
     }
   }, [materialId]);
 
@@ -47,7 +47,7 @@ const Material: React.FC<MaterialProps> = ({
   const onFileUploaded = (fileDto: FileDto) => {
     console.log(fileDto)
     if (material) {
-      setMaterial((material) =>({
+      setMaterial((material) => ({
         ...material,
         files: [...(material?.files || []), fileDto],
       }));
