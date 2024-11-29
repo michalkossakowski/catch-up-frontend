@@ -7,5 +7,5 @@ export interface UserDto {
     type: string;
     position: string;
     state: number;      
-    newbiesCount?: number;
+    assignCount?: number;
 }
