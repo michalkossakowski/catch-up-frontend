@@ -6,7 +6,7 @@ import { UserDto } from '../../dtos/UserDto';
 import './NewbieMentor.css';
 import Loading from '../Loading/Loading';
 
-const NewbieMentorComponent: React.FC = () => {
+const AssignNewbieToMentorComponent: React.FC = () => {
   const [newbieMentors, setNewbieMentors] = useState<UserDto[]>([]);
   const [selectedMentorId, setSelectedMentorId] = useState<string | null>(null);
   const [selectedMentorName, setSelectedMentorName] = useState<string | null>(null);
@@ -260,7 +260,7 @@ const NewbieMentorComponent: React.FC = () => {
                     <th onClick={() => handleSort('position', 'mentors')} style={{ cursor: 'pointer' }}>
                       Position <i className="bi bi-arrow-down-up"></i>
                     </th>
-                    <th onClick={() => handleSort('newbiesCount', 'mentors')} style={{ cursor: 'pointer' }}>
+                    <th onClick={() => handleSort('assignCount', 'mentors')} style={{ cursor: 'pointer' }}>
                       Number of Newbies <i className="bi bi-arrow-down-up"></i>
                     </th>
 
@@ -399,4 +399,4 @@ const NewbieMentorComponent: React.FC = () => {
   );
 };
 
-export default NewbieMentorComponent;
+export default AssignNewbieToMentorComponent;
