@@ -5,6 +5,8 @@ import materialService from "../../../services/materialService";
 import { Accordion, Button, Form, Modal } from "react-bootstrap";
 import Material from "../Material";
 import '../Material.css'
+import ErrorMessage from "../../ErrorMessage";
+import React from "react";
 
 interface MaterialsContainerProps {
   materialIdToUpdate?: number
@@ -19,11 +21,16 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [showMaterial, setShowMaterial] = useState<boolean>(false);
 
+  // Obsługa error-ów
+  const [errorShow, setErrorShow] = React.useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  
   const fetchMaterials = async () => {
     try {
       setMaterialList(await materialService.getAllMaterials())
     } catch (error) {
-      console.error("Error fetching materials:", error)
+      setErrorMessage("Error fetching materials: " +error)
+      setErrorShow(true)
     }
   }
 
@@ -49,12 +56,20 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
       setMaterialList(materialList.filter((material) => material.id !== materialID));
       onMaterialSelect(materialID, [])
     } catch (error) {
-      console.error("Problem with deleting material:", error)
+      setErrorMessage("Problem with deleting material: " + error)
+      setErrorShow(true)
     }
   }
 
   return (
     <div className="container-md">
+      <ErrorMessage
+        message={errorMessage || 'Undefine error'}
+        show={errorShow}
+        onHide={() => {
+          setErrorShow(false);
+          setErrorMessage(null);
+        }} />
       <Form.Control
         size="lg"
         className="mb-4"

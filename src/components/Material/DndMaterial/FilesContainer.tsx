@@ -3,6 +3,8 @@ import fileService from "../../../services/fileService";
 import { useEffect, useState } from "react";
 import { FileDto } from "../../../dtos/FileDto";
 import { Form } from "react-bootstrap";
+import ErrorMessage from "../../ErrorMessage";
+import React from "react";
 interface FilesContainerProps {
     excludedFileIds: number[]
 }
@@ -11,12 +13,17 @@ const FilesContainer: React.FC<FilesContainerProps> = ({ excludedFileIds }) => {
     const [filtredFileList, setFiltredFileList] = useState<FileDto[]>([])
     const [searchTerm, setSearchTerm] = useState<string>('')
 
+    // Obsługa error-ów
+    const [errorShow, setErrorShow] = React.useState(false)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
     useEffect(() => {
         const fetchFiles = async () => {
             try {
                 setFileList(await fileService.getAllFiles())
             } catch (error) {
-                console.error("Error fetching files:", error)
+                setErrorMessage("Error fetching files: "+ error)
+                setErrorShow(true)
             }
         }
         fetchFiles()
@@ -35,6 +42,13 @@ const FilesContainer: React.FC<FilesContainerProps> = ({ excludedFileIds }) => {
 
     return (
         <div className="container-md">
+            <ErrorMessage
+                message={errorMessage || 'Undefine error'}
+                show={errorShow}
+                onHide={() => {
+                    setErrorShow(false);
+                    setErrorMessage(null);
+                }} />
             <Form.Control
                 size="lg"
                 className="mb-4"

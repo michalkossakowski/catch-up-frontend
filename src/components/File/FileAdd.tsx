@@ -3,15 +3,18 @@ import React, { useState } from "react"
 import { FileDto } from "../../dtos/FileDto.ts";
 import fileService from "../../services/fileService.ts"
 
-import './FileAdd.css'; 
+import './FileAdd.css';
+import ErrorMessage from "../ErrorMessage.tsx";
 
-interface FileAddProps 
-{
+interface FileAddProps {
     materialId: number;
     onFileUploaded: (fileDto: FileDto) => void;
 }
-const FileAdd: React.FC<FileAddProps> = ({ materialId, onFileUploaded }) =>
-{
+const FileAdd: React.FC<FileAddProps> = ({ materialId, onFileUploaded }) => {
+
+    // Obsługa error-ów
+    const [errorShow, setErrorShow] = React.useState(false)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     const randomValue = crypto.randomUUID()
     const [isDragActive, setIsDragActive] = useState(false)
@@ -36,32 +39,37 @@ const FileAdd: React.FC<FileAddProps> = ({ materialId, onFileUploaded }) =>
         if (e.target.files) {
             const files = Array.from(e.target.files);
             files.forEach((file) => handleFileUpload(file, materialId))
-          }
+        }
     }
-    const handleFileUpload = async (file: File, materialIds: number) =>{
-        if(file)
-        {
-            try 
-            {
+    const handleFileUpload = async (file: File, materialIds: number) => {
+        if (file) {
+            try {
                 const response = await fileService.uploadFile(file, materialIds);
                 onFileUploaded(response.fileDto)
-            } 
-            catch (error) 
-            {
-                console.error("Error uploading file:", error);
+            }
+            catch (error) {
+                setErrorMessage("Error uploading file: " + error)
+                setErrorShow(true)
             }
         }
     }
 
- 
-    return( 
+
+    return (
         <div className={`p-3 mt-3 dropzone text-center mb-4 ${isDragActive ? 'borderColorOnDrag' : ''}`}
             onDragOver={(e) => onDragOver(e)}
             onDragLeave={(e) => onDragLeave(e)}
             onDrop={(e) => onDrop(e)}
         >
+            <ErrorMessage
+                message={errorMessage || 'Undefine error'}
+                show={errorShow}
+                onHide={() => {
+                    setErrorShow(false);
+                    setErrorMessage(null);
+                }} />
             <div>
-                <i className={`bi bi-upload uploadIcon ${isDragActive ? 'uploadIconOnDrag' : ''}`}/>
+                <i className={`bi bi-upload uploadIcon ${isDragActive ? 'uploadIconOnDrag' : ''}`} />
             </div>
             <div className="p-3">
                 <p className="text-body-tertiary fs-6 opacity-50 p-0 m-0">Drag and drop file here</p>

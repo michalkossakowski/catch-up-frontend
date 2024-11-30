@@ -6,15 +6,16 @@ import { Accordion, Button, Form, InputGroup, Modal } from "react-bootstrap"
 import '../Material.css'
 import FileAdd from "../../File/FileAdd"
 import { FileDto } from "../../../dtos/FileDto"
+import ErrorMessage from "../../ErrorMessage"
 
 interface MaterialItemProps {
   materialDto: MaterialDto
   state?: number
   onDeleteItem: (materialID: number) => void
-  onMaterialSelect: (materialID: number, fileIds: number[] ) => void
+  onMaterialSelect: (materialID: number, fileIds: number[]) => void
 }
-const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDeleteItem, onMaterialSelect}) => {
-  
+const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDeleteItem, onMaterialSelect }) => {
+
   const [material, setMaterial] = useState<MaterialDto>()
   const [isEditing, setIsEditing] = useState(false)
 
@@ -24,13 +25,18 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
   const [editedName, setEditedName] = useState<string>()
   const [nameError, setNameError] = useState<string | null>(null)
 
+  // Obsługa error-ów
+  const [errorShow, setErrorShow] = React.useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
   const getWithFiles = async () => {
     try {
       if (materialDto.id) {
         setMaterial(await materialService.getMaterialWithFiles(materialDto.id))
       }
     } catch (error) {
-      console.error("Error fetching materials:", error)
+      setErrorMessage("Error fetching materials: " + error)
+      setErrorShow(true)
     }
   }
 
@@ -87,7 +93,11 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
     if (material?.id) {
       try {
         await materialService.removeFile(material.id, fileId)
-      } catch (error) { }
+      } catch (error) 
+      {
+        setErrorMessage("Error in deleting file " + error)
+        setErrorShow(true)
+      }
     }
   }
 
@@ -114,11 +124,11 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
         : null
     )
   }
-  
+
   const handleAccordionClick = () => {
     if (material?.files && material?.id) {
       const fileIds = material?.files.map((file) => file.id)
-      onMaterialSelect(material?.id,fileIds)
+      onMaterialSelect(material?.id, fileIds)
     }
   }
 
@@ -140,13 +150,20 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
         ...material,
         files: updatedFiles,
       }));
-      if(material?.id)
-        onMaterialSelect(material?.id ,updatedFiles.map((file) => file.id)); // przekazanie aktualnej listy plików
+      if (material?.id)
+        onMaterialSelect(material?.id, updatedFiles.map((file) => file.id)); // przekazanie aktualnej listy plików
     }
   }
 
   return (
     <>
+      <ErrorMessage
+        message={errorMessage || 'Undefine error'}
+        show={errorShow}
+        onHide={() => {
+          setErrorShow(false);
+          setErrorMessage(null);
+        }} />
       <Modal
         onHide={() => setModalShow(false)}
         show={modalShow}
@@ -170,7 +187,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
       </Modal>
 
       <Accordion.Item eventKey={idString}>
-        <Accordion.Header  onClick={handleAccordionClick}>
+        <Accordion.Header onClick={handleAccordionClick}>
           {isEditing ? (
             <InputGroup hasValidation>
               <Form.Control
@@ -198,16 +215,16 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
               <i
                 className={"bi bi-trash3 deleteIcon deleteIcon_EditMatList mb-2 p-0 " + (isEditing ? "visible" : "invisible")}
                 onClick={isEditing ? () => handleDeleteFile(file.id) : undefined}
-                 />
+              />
             </div>
-            
+
           ))}
-          <hr/>
-            <div><FileAdd materialId={material?.id || 0} onFileUploaded={onFileUploaded}/></div>                
-          <hr/>
+          <hr />
+          <div><FileAdd materialId={material?.id || 0} onFileUploaded={onFileUploaded} /></div>
+          <hr />
           <div className="d-flex justify-content-end mt-3 me-3">
             {isEditing &&
-            <Button variant="primary" className="me-2" onClick={cancelChanges}>Cancel</Button>}
+              <Button variant="primary" className="me-2" onClick={cancelChanges}>Cancel</Button>}
             <Button variant="primary" disabled={!!nameError} className="me-2 ms-2 disactive" onClick={toggleEditMode}>{isEditing ? "Save" : "Edit"}</Button>
             <Button variant="danger" className="ms-2" onClick={clickDeleteitem}>Delete</Button>
           </div>
