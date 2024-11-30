@@ -60,7 +60,7 @@ const AppContent = () => {
                     path="/"
                     element={
                         <ProtectedRoute>
-                            <h1>Welcome back {user?.name || 'UserNameNotFound'}</h1>
+                            <h1>Welcome back {user?.name}</h1>
                         </ProtectedRoute>
                     }
                 />

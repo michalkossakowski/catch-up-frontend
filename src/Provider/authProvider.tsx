@@ -19,7 +19,7 @@ interface AuthContextType {
     setRefreshToken: (newRefreshToken: string | null) => void;
     setUser: (newUser: User | null) => void;
     logout: () => void;
-    getRole: (userId: string) => Promise<string | null>;
+    getRole: (userId: string) => string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,7 +36,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         return storedUser ? JSON.parse(storedUser) : null;
     });
 
-    const [roleCache, setRoleCache] = useState<Record<string, string | null>>({}); // Cache roles by user ID
+    const [roleCache, setRoleCache] = useState<Record<string, string>>({});
 
     const setAccessToken = (newToken: string | null) => {
         setAccessToken_(newToken);
@@ -82,24 +82,32 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         setRoleCache({});
     };
 
-    const getRoleAsync = async (userId: string): Promise<string | null> => {
-        if (roleCache[userId]) {
-            return roleCache[userId]; // Return cached role if available
-        }
-        try {
-            const response = await axiosInstance.get(`User/GetRole/${userId}`);
-            const role = response.data;
-            setRoleCache((prev) => ({ ...prev, [userId]: role }));
-            console.log(role);
-            return role;
-        } catch (error) {
-            console.error('Error fetching user role:', error);
-            return null;
-        }
-    };
+    const getRole = (userId: string): string => {
+        if (!userId) return 'User';
 
-    const getRole= (userId: string): Promise<string | null> => {
-        return getRoleAsync(userId); // Shortcut
+        if (roleCache[userId]) {
+            return roleCache[userId];
+        }
+
+        try {
+            const fetchRole = async () => {
+                try {
+                    const response = await axiosInstance.get(`User/GetRole/${userId}`);
+                    const role = response.data || 'User';
+                    setRoleCache((prev) => ({ ...prev, [userId]: role }));
+                    return role;
+                } catch (error) {
+                    console.error('Error fetching user role:', error);
+                    return 'User';
+                }
+            };
+
+            fetchRole();
+            return roleCache[userId] || 'User';
+        } catch (error) {
+            console.error('Error in getRole:', error);
+            return 'User';
+        }
     };
 
     const contextValue = useMemo(
@@ -120,7 +128,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
     );
 };
-
 
 export const useAuth = (): AuthContextType => {
     const context = useContext(AuthContext);
