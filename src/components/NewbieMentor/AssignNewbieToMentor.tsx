@@ -1,41 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Alert, Spinner, Button, Modal } from 'react-bootstrap';
+import { Table, Button, Modal } from 'react-bootstrap';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import NewbieMentorService from '../../services/newbieMentorService';
 import { UserDto } from '../../dtos/UserDto';
 import './NewbieMentor.css';
 import Loading from '../Loading/Loading';
 
-const NewbieMentorComponent: React.FC = () => {
+const AssignNewbieToMentorComponent: React.FC = () => {
   const [newbieMentors, setNewbieMentors] = useState<UserDto[]>([]);
   const [selectedMentorId, setSelectedMentorId] = useState<string | null>(null);
   const [selectedMentorName, setSelectedMentorName] = useState<string | null>(null);
   const [selectedMentorSurname, setSelectedMentorSurname] = useState<string | null>(null);
   const [assignedNewbies, setAssignedNewbies] = useState<UserDto[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
+  const [, setError] = useState<string>('');
   const [unassignedNewbies, setUnassignedNewbies] = useState<UserDto[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [deletingNewbieId, setDeletingNewbieId] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>(''); // Mentor search term
-  const [searchTermAssigned, setSearchTermAssigned] = useState<string>(''); // Assigned newbie search term
-  const [searchTermUnassigned, setSearchTermUnassigned] = useState<string>(''); // Unassigned newbie search term
-  
+  const [searchTerm, setSearchTerm] = useState<string>(''); // dla Mentora
+  const [searchTermAssigned, setSearchTermAssigned] = useState<string>('');
+  const [searchTermUnassigned, setSearchTermUnassigned] = useState<string>('');
+
   const [sortConfigMentors, setSortConfigMentors] = useState<{ key: string, direction: 'asc' | 'desc' }>({
-    key: 'name', 
-    direction: 'asc'
-  });
-  
-  const [sortConfigAssigned, setSortConfigAssigned] = useState<{ key: string, direction: 'asc' | 'desc' }>({
-    key: 'name', 
-    direction: 'asc'
-  });
-  
-  const [sortConfigUnassigned, setSortConfigUnassigned] = useState<{ key: string, direction: 'asc' | 'desc' }>({
-    key: 'name', 
+    key: 'name',
     direction: 'asc'
   });
 
-  // Filter for each section separately
+  const [sortConfigAssigned, setSortConfigAssigned] = useState<{ key: string, direction: 'asc' | 'desc' }>({
+    key: 'name',
+    direction: 'asc'
+  });
+
+  const [sortConfigUnassigned, setSortConfigUnassigned] = useState<{ key: string, direction: 'asc' | 'desc' }>({
+    key: 'name',
+    direction: 'asc'
+  });
+
+  //  Filtr dla każdej tabeli z osobna
   const filteredMentors = newbieMentors.filter(
     (mentor) =>
       mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -59,13 +60,13 @@ const NewbieMentorComponent: React.FC = () => {
   }, []);
 
   const fetchMentors = async () => {
-    setLoading(true);
+    //setLoading(true);
     setError('');
     try {
       const mentors = await NewbieMentorService.getAllMentors();
       const mentorsWithNewbiesCount = await Promise.all(
         mentors.map(async (mentor) => {
-          mentor.newbiesCount = await NewbieMentorService.getNewbieCountByMentor(mentor.id);
+          mentor.assignCount = await NewbieMentorService.getNewbieCountByMentor(mentor.id);
           return { ...mentor };
         })
       );
@@ -78,7 +79,7 @@ const NewbieMentorComponent: React.FC = () => {
   };
 
   const fetchAssignedNewbies = async (mentorId: string) => {
-    setLoading(true);
+    // setLoading(true);
     setError('');
     try {
       const newbies = await NewbieMentorService.getAssignmentsByMentor(mentorId);
@@ -87,12 +88,12 @@ const NewbieMentorComponent: React.FC = () => {
       setError(error.message || 'An error occurred while fetching assigned newbies');
       setAssignedNewbies([]);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
   const fetchUnassignedNewbies = async (mentorId: string) => {
-    setLoading(true);
+    //setLoading(true);
     setError('');
     try {
       const newbies = await NewbieMentorService.getAllUnassignedNewbies(mentorId);
@@ -101,10 +102,10 @@ const NewbieMentorComponent: React.FC = () => {
       setError(error.message || 'An error occurred while fetching unassigned newbies');
       setUnassignedNewbies([]);
     } finally {
-      setLoading(false);
+      //setLoading(false);
     }
   };
-  
+
   const handleMentorClick = (mentorId: string, mentorName: string, mentorSubname: string) => {
     setSelectedMentorName(mentorName);
     setSelectedMentorSurname(mentorSubname);
@@ -120,7 +121,7 @@ const NewbieMentorComponent: React.FC = () => {
 
   const handleUnassign = async () => {
     if (deletingNewbieId && selectedMentorId) {
-      setLoading(true);
+      //setLoading(true);
       setError('');
       try {
         await NewbieMentorService.Unassign(deletingNewbieId, selectedMentorId);
@@ -132,14 +133,14 @@ const NewbieMentorComponent: React.FC = () => {
       } catch (error: any) {
         setError(error.message || 'An error occurred while deleting the assignment');
       } finally {
-        setLoading(false);
+        //setLoading(false);
       }
     }
   };
 
   const handleAssignNewbie = async (newbieId: string) => {
     if (selectedMentorId) {
-      setLoading(true);
+      //setLoading(true);
       setError('');
       try {
         await NewbieMentorService.assignNewbieToMentor(newbieId, selectedMentorId);
@@ -149,94 +150,119 @@ const NewbieMentorComponent: React.FC = () => {
       } catch (error: any) {
         setError(error.message || 'An error occurred while assigning the newbie to the mentor');
       } finally {
-        setLoading(false);
+       // setLoading(false);
       }
     }
   };
 
- // Sortowanie mentorów
-const sortedMentors = filteredMentors.sort((a, b) => {
-  const aValue = a[sortConfigMentors.key as keyof UserDto]?.toString().toLowerCase() || '';
-  const bValue = b[sortConfigMentors.key as keyof UserDto]?.toString().toLowerCase() || '';
-  
-  if (aValue < bValue) return sortConfigMentors.direction === 'asc' ? -1 : 1;
-  if (aValue > bValue) return sortConfigMentors.direction === 'asc' ? 1 : -1;
-  return 0;
-});
+  // Sortowanie mentorów
+  const sortedMentors = filteredMentors.sort((a, b) => {
+    const aValue = a[sortConfigMentors.key as keyof UserDto]?.toString().toLowerCase() || '';
+    const bValue = b[sortConfigMentors.key as keyof UserDto]?.toString().toLowerCase() || '';
 
-// Sortowanie przypisanych nowicjuszy
-const sortedAssigned = filteredAssignedNewbies.sort((a, b) => {
-  const aValue = a[sortConfigAssigned.key as keyof UserDto]?.toString().toLowerCase() || '';
-  const bValue = b[sortConfigAssigned.key as keyof UserDto]?.toString().toLowerCase() || '';
-  
-  if (aValue < bValue) return sortConfigAssigned.direction === 'asc' ? -1 : 1;
-  if (aValue > bValue) return sortConfigAssigned.direction === 'asc' ? 1 : -1;
-  return 0;
-});
+    if (aValue < bValue) {
+      return sortConfigMentors.direction === 'asc' ? -1 : 1;
+    }
+    if (aValue > bValue) {
+      return sortConfigMentors.direction === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
 
-// Sortowanie nieprzypisanych nowicjuszy
-const sortedUnassigned = filteredUnassignedNewbies.sort((a, b) => {
-  const aValue = a[sortConfigUnassigned.key as keyof UserDto]?.toString().toLowerCase() || '';
-  const bValue = b[sortConfigUnassigned.key as keyof UserDto]?.toString().toLowerCase() || '';
-  
-  if (aValue < bValue) return sortConfigUnassigned.direction === 'asc' ? -1 : 1;
-  if (aValue > bValue) return sortConfigUnassigned.direction === 'asc' ? 1 : -1;
-  return 0;
-});
+  // Sortowanie przypisanych nowicjuszy
+  const sortedAssigned = filteredAssignedNewbies.sort((a, b) => {
+    const aValue = a[sortConfigAssigned.key as keyof UserDto]?.toString().toLowerCase() || '';
+    const bValue = b[sortConfigAssigned.key as keyof UserDto]?.toString().toLowerCase() || '';
 
-// Funkcja obsługująca sortowanie
-const handleSort = (key: string, table: 'mentors' | 'assigned' | 'unassigned') => {
-  let direction: 'asc' | 'desc' = 'asc';
+    if (aValue < bValue) {
+      return sortConfigAssigned.direction === 'asc' ? -1 : 1;
+    }
+    if (aValue > bValue) {
+      return sortConfigAssigned.direction === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
 
-  // Sprawdzanie, czy klucz to ten sam, który jest już sortowany
-  if (table === 'mentors' && sortConfigMentors.key === key && sortConfigMentors.direction === 'asc') {
-    direction = 'desc';
-    setSortConfigMentors({ key, direction });
-  } 
-  else if (table === 'assigned' && sortConfigAssigned.key === key && sortConfigAssigned.direction === 'asc') {
-    direction = 'desc';
-    setSortConfigAssigned({ key, direction });
-  } 
-  else if (table === 'unassigned' && sortConfigUnassigned.key === key && sortConfigUnassigned.direction === 'asc') {
-    direction = 'desc';
-    setSortConfigUnassigned({ key, direction });
-  } 
-  else {
-    if (table === 'mentors') setSortConfigMentors({ key, direction });
-    else if (table === 'assigned') setSortConfigAssigned({ key, direction });
-    else if (table === 'unassigned') setSortConfigUnassigned({ key, direction });
-  }
-};
+  // Sortowanie nieprzypisanych nowicjuszy
+  const sortedUnassigned = filteredUnassignedNewbies.sort((a, b) => {
+    const aValue = a[sortConfigUnassigned.key as keyof UserDto]?.toString().toLowerCase() || '';
+    const bValue = b[sortConfigUnassigned.key as keyof UserDto]?.toString().toLowerCase() || '';
 
-  
+    if (aValue < bValue) {
+      return sortConfigUnassigned.direction === 'asc' ? -1 : 1;
+    }
+    if (aValue > bValue) {
+      return sortConfigUnassigned.direction === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
+
+  // Funkcja obsługująca sortowanie
+  const handleSort = (key: string, table: 'mentors' | 'assigned' | 'unassigned') => {
+    let direction: 'asc' | 'desc' = 'asc';
+
+    // Sprawdzanie, czy klucz to ten sam, który jest już sortowany
+    if (table === 'mentors' && sortConfigMentors.key === key && sortConfigMentors.direction === 'asc') {
+      direction = 'desc';
+      setSortConfigMentors({ key, direction });
+    }
+    else if (table === 'assigned' && sortConfigAssigned.key === key && sortConfigAssigned.direction === 'asc') {
+      direction = 'desc';
+      setSortConfigAssigned({ key, direction });
+    }
+    else if (table === 'unassigned' && sortConfigUnassigned.key === key && sortConfigUnassigned.direction === 'asc') {
+      direction = 'desc';
+      setSortConfigUnassigned({ key, direction });
+    }
+    else {
+      if (table === 'mentors') setSortConfigMentors({ key, direction });
+      else if (table === 'assigned') setSortConfigAssigned({ key, direction });
+      else if (table === 'unassigned') setSortConfigUnassigned({ key, direction });
+    }
+  };
+
+
 
   return (
     <div className="container mt-5">
       <h2>List of Mentors</h2>
 
       {loading ? (
-          <Loading/>
+        <Loading />
       ) : (
         <div className="row">
           <div className="col-md-6">
             <div className="mt-4">
               <div className="mb-3">
                 <h3>Mentors</h3>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search mentor by name or surname..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+                <div className="input-group">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search mentor by name or surname..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <span className="input-group-text">
+                    <i className="bi bi-search"></i>
+                  </span>
+                </div>
               </div>
               <Table id="mentors" striped bordered hover responsive>
                 <thead>
                   <tr>
-                  <th onClick={() => handleSort('name', 'mentors')} style={{ cursor: 'pointer' }}>Name</th>
-                  <th onClick={() => handleSort('surname', 'mentors')} style={{ cursor: 'pointer' }}>Surname</th>
-                  <th onClick={() => handleSort('position', 'mentors')} style={{ cursor: 'pointer' }}>Position</th>
-                  <th onClick={() => handleSort('newbiesCount', 'mentors')} style={{ cursor: 'pointer' }}>Number of Newbies</th>
+                    <th onClick={() => handleSort('name', 'mentors')} style={{ cursor: 'pointer' }}>
+                      Name <i className="bi bi-arrow-down-up"></i>
+                    </th>
+                    <th onClick={() => handleSort('surname', 'mentors')} style={{ cursor: 'pointer' }}>
+                      Surname <i className="bi bi-arrow-down-up"></i>
+                    </th>
+                    <th onClick={() => handleSort('position', 'mentors')} style={{ cursor: 'pointer' }}>
+                      Position <i className="bi bi-arrow-down-up"></i>
+                    </th>
+                    <th onClick={() => handleSort('assignCount', 'mentors')} style={{ cursor: 'pointer' }}>
+                      Number of Newbies <i className="bi bi-arrow-down-up"></i>
+                    </th>
 
                   </tr>
                 </thead>
@@ -244,13 +270,13 @@ const handleSort = (key: string, table: 'mentors' | 'assigned' | 'unassigned') =
                   {sortedMentors.map((mentor) => (
                     <tr
                       key={mentor.id}
-                      onClick={() => handleMentorClick(mentor.id,mentor.name,mentor.surname)}
+                      onClick={() => handleMentorClick(mentor.id, mentor.name, mentor.surname)}
                       style={{ cursor: 'pointer' }}
                       className={mentor.id === selectedMentorId ? 'table-active' : ''}>
                       <td>{mentor.name}</td>
                       <td>{mentor.surname}</td>
                       <td>{mentor.position}</td>
-                      <td>{mentor.newbiesCount || 0}</td>
+                      <td>{mentor.assignCount || 0}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -262,21 +288,29 @@ const handleSort = (key: string, table: 'mentors' | 'assigned' | 'unassigned') =
               <div className="mt-4">
                 <h3>Assigned Newbies to {selectedMentorName} {selectedMentorSurname}</h3>
                 <div className="mb-3">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search assigned newbies by name or surname..."
-                    value={searchTermAssigned}
-                    onChange={(e) => setSearchTermAssigned(e.target.value)}
-                  />
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search assigned newbies by name or surname..."
+                      value={searchTermAssigned}
+                      onChange={(e) => setSearchTermAssigned(e.target.value)}
+                    />
+                    <span className="input-group-text">
+                      <i className="bi bi-search"></i>
+                    </span>
+                  </div>
                 </div>
                 <Table id="assigned" striped bordered hover responsive>
                   <thead>
                     <tr>
-                    <th onClick={() => handleSort('name', 'assigned')} style={{ cursor: 'pointer' }}>Name</th>
-                    <th onClick={() => handleSort('surname', 'assigned')} style={{ cursor: 'pointer' }}>Surname</th>
-                    <th onClick={() => handleSort('position', 'assigned')} style={{ cursor: 'pointer' }}>Position</th>
-                    <th>Actions</th>
+                      <th onClick={() => handleSort('name', 'assigned')} style={{ cursor: 'pointer' }}>
+                        Name <i className="bi bi-arrow-down-up"></i></th>
+                      <th onClick={() => handleSort('surname', 'assigned')} style={{ cursor: 'pointer' }}>
+                        Surname <i className="bi bi-arrow-down-up"></i></th>
+                      <th onClick={() => handleSort('position', 'assigned')} style={{ cursor: 'pointer' }}>
+                        Position <i className="bi bi-arrow-down-up"></i></th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -298,20 +332,28 @@ const handleSort = (key: string, table: 'mentors' | 'assigned' | 'unassigned') =
               <div className="mt-4">
                 <h3>Unassigned Newbies from {selectedMentorName} {selectedMentorSurname}</h3>
                 <div className="mb-3">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search unassigned newbies by name or surname..."
-                    value={searchTermUnassigned}
-                    onChange={(e) => setSearchTermUnassigned(e.target.value)}
-                  />
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Search unassigned newbies by name or surname..."
+                      value={searchTermUnassigned}
+                      onChange={(e) => setSearchTermUnassigned(e.target.value)}
+                    />
+                    <span className="input-group-text">
+                      <i className="bi bi-search"></i>
+                    </span>
+                  </div>
                 </div>
                 <Table id="unassigned" striped bordered hover responsive>
                   <thead>
                     <tr>
-                    <th onClick={() => handleSort('name', 'unassigned')} style={{ cursor: 'pointer' }}>Name</th>
-                    <th onClick={() => handleSort('surname', 'unassigned')} style={{ cursor: 'pointer' }}>Surname</th>
-                    <th onClick={() => handleSort('position', 'unassigned')} style={{ cursor: 'pointer' }}>Position</th>
+                      <th onClick={() => handleSort('name', 'unassigned')} style={{ cursor: 'pointer' }}>
+                        Name <i className="bi bi-arrow-down-up"></i></th>
+                      <th onClick={() => handleSort('surname', 'unassigned')} style={{ cursor: 'pointer' }}>
+                        Surname <i className="bi bi-arrow-down-up"></i></th>
+                      <th onClick={() => handleSort('position', 'unassigned')} style={{ cursor: 'pointer' }}>
+                        Position <i className="bi bi-arrow-down-up"></i></th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -322,12 +364,12 @@ const handleSort = (key: string, table: 'mentors' | 'assigned' | 'unassigned') =
                         <td>{newbie.surname}</td>
                         <td>{newbie.position}</td>
                         <td>
-                        <Button
-                              variant="primary"
-                              onClick={() => handleAssignNewbie(newbie.id)}
-                            >
-                              Assign
-                            </Button>
+                          <Button
+                            variant="primary"
+                            onClick={() => handleAssignNewbie(newbie.id)}
+                          >
+                            Assign
+                          </Button>
                         </td>
                       </tr>
                     ))}
@@ -357,4 +399,4 @@ const handleSort = (key: string, table: 'mentors' | 'assigned' | 'unassigned') =
   );
 };
 
-export default NewbieMentorComponent;
+export default AssignNewbieToMentorComponent;
