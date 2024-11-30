@@ -204,9 +204,9 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
             </div>
             
           ))}
-          <div className="w-100 justify-content-center d-flex">
+          <hr/>
             <div><FileAdd materialId={material?.id || 0} onFileUploaded={onFileUploaded}/></div>                
-          </div>
+          <hr/>
           <div className="d-flex justify-content-end mt-3 me-3">
             {isEditing &&
             <Button variant="primary" className="me-2" onClick={cancelChanges}>Cancel</Button>}
