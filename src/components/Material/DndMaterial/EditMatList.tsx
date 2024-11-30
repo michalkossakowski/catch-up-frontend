@@ -9,12 +9,21 @@ const EditMatList: React.FC = () => {
   const [state, setState] = useState(0)
   const [assignedFileIds, setAssignedFileIds] = useState<number[]>([])
   const [materialAccordion, setMaterialAccordion] = useState<number | null>(null)
+  const [fileContainerKey, setFileContainerKey] = useState(0);
+
 
 
   const handleMaterialSelect = (materialId: number, fileIds: number[]) => {
-    if (materialAccordion !== materialId) {
+    if (materialAccordion !== materialId ) {
+      console.log("matId")
       setMaterialAccordion(materialId)
       setAssignedFileIds(fileIds);
+    }
+    else if(assignedFileIds.length !== fileIds.length){
+      console.log("len")
+      setMaterialAccordion(materialId)
+      setAssignedFileIds(fileIds);
+      setFileContainerKey(prevKey => prevKey + 1);
     }
     else
       setMaterialAccordion(null)
@@ -55,11 +64,11 @@ const EditMatList: React.FC = () => {
             onMaterialSelect={handleMaterialSelect}
           />
         </div>
-        <div className={`col file-container ${materialAccordion !== null ? "visible" : "invisible"}`}
-        >
-          <FilesContainer excludedFileIds={assignedFileIds} />
-        </div>
-
+        <div className={`col file-container ${materialAccordion !== null ? "visible" : "invisible"}`}>
+        <FilesContainer
+        key={fileContainerKey}
+        excludedFileIds={assignedFileIds}
+      />        </div>
       </DndContext>
     </div>
 

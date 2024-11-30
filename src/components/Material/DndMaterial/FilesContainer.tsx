@@ -12,9 +12,9 @@ const FilesContainer: React.FC<FilesContainerProps> = ({ excludedFileIds }) => {
     const [searchTerm, setSearchTerm] = useState<string>('')
 
     useEffect(() => {
-        console.log("sds")
         const fetchFiles = async () => {
             try {
+                console.log("xd")
                 setFileList(await fileService.getAllFiles())
             } catch (error) {
                 console.error("Error fetching files:", error)

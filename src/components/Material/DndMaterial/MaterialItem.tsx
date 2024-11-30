@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef  } from "react"
 import { MaterialDto } from "../../../dtos/MaterialDto"
 import { useDroppable } from "@dnd-kit/core"
 import materialService from "../../../services/materialService"
 import { Accordion, Button, Form, InputGroup, Modal } from "react-bootstrap"
 import deleteIcon from "../../../assets/deleteIcon.svg"
 import '../Material.css'
+import FileAdd from "../../File/FileAdd"
+import { FileDto } from "../../../dtos/FileDto"
 
 interface MaterialItemProps {
   materialDto: MaterialDto
@@ -13,6 +15,7 @@ interface MaterialItemProps {
   onMaterialSelect: (materialID: number, fileIds: number[] ) => void
 }
 const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDeleteItem, onMaterialSelect}) => {
+  
   const [material, setMaterial] = useState<MaterialDto>()
   const [isEditing, setIsEditing] = useState(false)
 
@@ -112,13 +115,12 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
         : null
     )
   }
-
+  
   const handleAccordionClick = () => {
     if (material?.files && material?.id) {
       const fileIds = material?.files.map((file) => file.id)
       onMaterialSelect(material?.id,fileIds)
     }
-
   }
 
   const cancelChanges = async () => {
@@ -130,6 +132,18 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
     setIsEditing(false)
     setFilesToDelete([])
     setEditedName(material?.name || "")
+  }
+
+  const onFileUploaded = (fileDto: FileDto) => {
+    if (material) {
+      const updatedFiles = [...(material?.files || []), fileDto];
+      setMaterial((material) => ({
+        ...material,
+        files: updatedFiles,
+      }));
+      if(material?.id)
+        onMaterialSelect(material?.id ,updatedFiles.map((file) => file.id)); // przekazanie aktualnej listy plików
+    }
   }
 
   return (
@@ -188,10 +202,14 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
                 onClick={isEditing ? () => handleDeleteFile(file.id) : undefined}
                 alt="Delete file" />
             </div>
+            
           ))}
+          <div className="w-100 justify-content-center d-flex">
+            <div><FileAdd materialId={material?.id || 0} onFileUploaded={onFileUploaded}/></div>                
+          </div>
           <div className="d-flex justify-content-end mt-3 me-3">
             {isEditing &&
-              <Button variant="primary" className="me-2" onClick={cancelChanges}>Cancel</Button>}
+            <Button variant="primary" className="me-2" onClick={cancelChanges}>Cancel</Button>}
             <Button variant="primary" disabled={!!nameError} className="me-2 ms-2 disactive" onClick={toggleEditMode}>{isEditing ? "Save" : "Edit"}</Button>
             <Button variant="danger" className="ms-2" onClick={clickDeleteitem}>Delete</Button>
           </div>
