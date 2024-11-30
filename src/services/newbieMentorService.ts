@@ -6,9 +6,9 @@ const NewbieMentorService = {
     getAllMentors: async (): Promise<UserDto[]> => {
         try 
         {
-            console.log("Trying to getAllMentors");
+            //console.log("Trying to getAllMentors");
             const response = await axios.get< UserDto[] >(`/NewbieMentor/GetAllMentors`);
-            console.log("Mentors got successfully:", response.data);
+            //console.log("Mentors got successfully:", response.data);
             return response.data;
         } 
         catch (error) 
@@ -21,9 +21,9 @@ const NewbieMentorService = {
     getAllNewbies: async (): Promise<UserDto[]> => {
       try 
       {
-          console.log("Trying to getAllNewbies");
+          //console.log("Trying to getAllNewbies");
           const response = await axios.get< UserDto[] >(`/NewbieMentor/GetAllNewbies`);
-          console.log("Newbies got successfully:", response.data);
+          //console.log("Newbies got successfully:", response.data);
           return response.data;
       } 
       catch (error) 

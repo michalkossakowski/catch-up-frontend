@@ -60,7 +60,7 @@ const AssignMentorToNewbieComponent: React.FC = () => {
   }, []);
 
   const fetchNewbies = async () => {
-    setLoading(true);
+   // setLoading(true);
     setError('');
     try {
       const newbies = await NewbieMentorService.getAllNewbies();
@@ -79,12 +79,12 @@ const AssignMentorToNewbieComponent: React.FC = () => {
   };
 
   const fetchAssignedMentors = async (newbieId: string) => {
-    setLoading(true);
-    console.log(newbieId);
+   // setLoading(true);
+    //console.log(newbieId);
     setError('');
     try {
       const mentors = await NewbieMentorService.getAssignmentsByNewbie(newbieId);
-      console.log(mentors);
+      //console.log(mentors);
       setAssignedMentors(mentors);
     } catch (error: any) {
       setError(error.message || 'An error occurred while fetching assigned mentors');
@@ -95,7 +95,7 @@ const AssignMentorToNewbieComponent: React.FC = () => {
   };
 
   const fetchUnassignedMentors = async (newbieId: string) => {
-    setLoading(true);
+   // setLoading(true);
     setError('');
     try {
       const mentors = await NewbieMentorService.getAllUnassignedMentors(newbieId);
@@ -123,7 +123,7 @@ const AssignMentorToNewbieComponent: React.FC = () => {
 
   const handleUnassign = async () => {
     if (deletingMentorId && selectedNewbieId) {
-      setLoading(true);
+  //    setLoading(true);
       setError('');
       try {
         await NewbieMentorService.Unassign(selectedNewbieId, deletingMentorId);
@@ -142,7 +142,7 @@ const AssignMentorToNewbieComponent: React.FC = () => {
 
   const handleAssignMentor = async (mentorId: string) => {
     if (selectedNewbieId) {
-      setLoading(true);
+   //   setLoading(true);
       setError('');
       try {
         await NewbieMentorService.assignNewbieToMentor(selectedNewbieId, mentorId);
