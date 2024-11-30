@@ -1,20 +1,31 @@
 import React, { useState } from 'react'
-import {DndContext} from '@dnd-kit/core'
+import { DndContext } from '@dnd-kit/core'
 import FilesContainer from './FilesContainer'
 import MaterialsContainer from './MaterialsContainer'
 import materialService from '../../../services/materialService'
 
 const EditMatList: React.FC = () => {
-  const [materialIdToUpdate, setMaterialIdToUpdate] = useState<number | undefined>();
-  const [state, setState] = useState(0);
+  const [materialIdToUpdate, setMaterialIdToUpdate] = useState<number | undefined>()
+  const [state, setState] = useState(0)
+  const [assignedFileIds, setAssignedFileIds] = useState<number[]>([])
+  const [materialAccordion, setMaterialAccordion] = useState<number | null>(null)
+
+
+  const handleMaterialSelect = (materialId: number, fileIds: number[]) => {
+    if (materialAccordion !== materialId) {
+      setMaterialAccordion(materialId)
+      setAssignedFileIds(fileIds);
+    }
+    else
+      setMaterialAccordion(null)
+  };
 
   const handleMaterialUpdate = (materialId: number) => {
-    if(materialId!=materialIdToUpdate)
-    {
+    if (materialId != materialIdToUpdate) {
       setState(1)
       setMaterialIdToUpdate(materialId)
     }
-    else{
+    else {
       setState(prevstate => prevstate + 1)
     }
   }
@@ -34,16 +45,21 @@ const EditMatList: React.FC = () => {
       }
     }
   }
-  
   return (
     <div className="row align-items-start m-3">
       <DndContext onDragEnd={handleDragEnd}>
-          <div className="col">
-            <MaterialsContainer materialIdToUpdate={materialIdToUpdate} state={state}/>
-          </div>
-          <div className="col">
-            <FilesContainer/>
-          </div>
+        <div className="col">
+          <MaterialsContainer
+            materialIdToUpdate={materialIdToUpdate}
+            state={state}
+            onMaterialSelect={handleMaterialSelect}
+          />
+        </div>
+        <div className={`col file-container ${materialAccordion !== null ? "visible" : "invisible"}`}
+        >
+          <FilesContainer excludedFileIds={assignedFileIds} />
+        </div>
+
       </DndContext>
     </div>
 

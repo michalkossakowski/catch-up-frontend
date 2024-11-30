@@ -5,12 +5,13 @@ import materialService from "../../../services/materialService";
 import { Accordion, Form } from "react-bootstrap";
 
 interface MaterialsContainerProps {
-  materialIdToUpdate?: number; 
-  state?: number; 
+  materialIdToUpdate?: number
+  state?: number
+  onMaterialSelect: (materialId: number, fileIds: number[] ) => void
 }
 
 
-const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpdate, state}) => {
+const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpdate, state, onMaterialSelect}) => {
   const [materialList, setMaterialList] = useState<MaterialDto[]>([])
   const [searchedList, setSearchedList] = useState<MaterialDto[]>([])
   const [searchTerm, setSearchTerm] = useState<string>('')
@@ -19,16 +20,12 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
     const fetchMaterials = async () => {
       try {
         setMaterialList(await materialService.getAllMaterials())
-        setSearchedList(materialList)
       } catch (error) {
         console.error("Error fetching materials:", error)
       }
     }
     fetchMaterials()
   }, [])
-
-  useEffect ( () => {
-  }, [materialIdToUpdate,state])
 
   useEffect ( () => {
     const filteredMaterials = () => { 
@@ -48,7 +45,7 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
   }
 
   return (
-    <div>
+    <div className="container-md">
       <Form.Control
         size="lg"
         className="mb-4"
@@ -57,7 +54,7 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)} 
       />
-    <Accordion className="container-md flex-wrap">
+    <Accordion className="container-md flex-wrap p-0">
       <hr/>
       <h4>Materials:</h4>
       <hr/>
@@ -69,6 +66,7 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
                 materialDto={material}
                 state={materialIdToUpdate === material.id ? state : 0}
                 onDeleteItem={onDeleteItem}
+                onMaterialSelect={onMaterialSelect}
               />
             </div>
           );

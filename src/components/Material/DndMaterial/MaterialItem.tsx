@@ -10,8 +10,9 @@ interface MaterialItemProps {
   materialDto: MaterialDto
   state?: number
   onDeleteItem: (materialID: number) => void
+  onMaterialSelect: (materialID: number, fileIds: number[] ) => void
 }
-const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDeleteItem }) => {
+const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDeleteItem, onMaterialSelect}) => {
   const [material, setMaterial] = useState<MaterialDto>()
   const [isEditing, setIsEditing] = useState(false)
 
@@ -53,8 +54,6 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
 
   const clickDeleteitem = () => {
     setModalShow(true)
-    // if (material?.id)
-    //   onDeleteItem(material?.id)
   }
   const handleDeleteItem = () => {
     setModalShow(false)
@@ -113,6 +112,15 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
         : null
     )
   }
+
+  const handleAccordionClick = () => {
+    if (material?.files && material?.id) {
+      const fileIds = material?.files.map((file) => file.id)
+      onMaterialSelect(material?.id,fileIds)
+    }
+
+  }
+
   const cancelChanges = async () => {
     if (materialDto.id) {
       const originalMaterial = await materialService.getMaterialWithFiles(materialDto.id)
@@ -149,7 +157,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
       </Modal>
 
       <Accordion.Item eventKey={idString}>
-        <Accordion.Header>
+        <Accordion.Header  onClick={handleAccordionClick}>
           {isEditing ? (
             <InputGroup hasValidation>
               <Form.Control
@@ -183,7 +191,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
           ))}
           <div className="d-flex justify-content-end mt-3 me-3">
             {isEditing &&
-            <Button variant="primary" className="me-2" onClick={cancelChanges}>Cancel</Button>}
+              <Button variant="primary" className="me-2" onClick={cancelChanges}>Cancel</Button>}
             <Button variant="primary" disabled={!!nameError} className="me-2 ms-2 disactive" onClick={toggleEditMode}>{isEditing ? "Save" : "Edit"}</Button>
             <Button variant="danger" className="ms-2" onClick={clickDeleteitem}>Delete</Button>
           </div>
