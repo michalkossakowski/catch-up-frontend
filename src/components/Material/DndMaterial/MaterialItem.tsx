@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef  } from "react"
+import React, { useEffect, useState } from "react"
 import { MaterialDto } from "../../../dtos/MaterialDto"
 import { useDroppable } from "@dnd-kit/core"
 import materialService from "../../../services/materialService"

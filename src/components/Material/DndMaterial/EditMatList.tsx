@@ -15,12 +15,10 @@ const EditMatList: React.FC = () => {
 
   const handleMaterialSelect = (materialId: number, fileIds: number[]) => {
     if (materialAccordion !== materialId ) {
-      console.log("matId")
       setMaterialAccordion(materialId)
       setAssignedFileIds(fileIds);
     }
     else if(assignedFileIds.length !== fileIds.length){
-      console.log("len")
       setMaterialAccordion(materialId)
       setAssignedFileIds(fileIds);
       setFileContainerKey(prevKey => prevKey + 1);
