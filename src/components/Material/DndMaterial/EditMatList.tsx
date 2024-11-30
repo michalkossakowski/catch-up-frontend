@@ -18,6 +18,9 @@ const EditMatList: React.FC = () => {
       setMaterialAccordion(materialId)
       setAssignedFileIds(fileIds);
     }
+    else if(fileIds.length === 0){
+      setMaterialAccordion(null)
+    }
     else if(assignedFileIds.length !== fileIds.length){
       setMaterialAccordion(materialId)
       setAssignedFileIds(fileIds);

@@ -3,7 +3,6 @@ import { MaterialDto } from "../../../dtos/MaterialDto";
 import MaterialItem from "./MaterialItem";
 import materialService from "../../../services/materialService";
 import { Accordion, Button, Form, Modal } from "react-bootstrap";
-import plusSquareIcon from "../../../assets/plusSquareIcon.svg"
 import Material from "../Material";
 import '../Material.css'
 
@@ -48,6 +47,7 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
     try {
       await materialService.deleteMaterial(materialID)
       setMaterialList(materialList.filter((material) => material.id !== materialID));
+      onMaterialSelect(materialID, [])
     } catch (error) {
       console.error("Problem with deleting material:", error)
     }
