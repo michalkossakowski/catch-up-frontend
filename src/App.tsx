@@ -12,15 +12,10 @@ import AssignTask from './components/TaskAssigment/AssignTask';
 import TaskContentManage from './components/Task/TaskContentManage';
 import RoadMapManage from './components/RoadMap/RoadMapManage';
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
+import EditMatList from './components/Material/DndMaterial/EditMatList';
 
 const AppContent = () => {
     const { user } = useAuth();
-
-    const materialCreated = (materialId: number) => {
-        console.log('Zwrócono id nowo utworzonego materiału', materialId);
-        return materialId;
-    };
-
     return (
         <>
             <Navbar expand="lg" className="bg-body-tertiary navbar-expand-lg">
@@ -68,11 +63,9 @@ const AppContent = () => {
                 <Route path="/addfile" element={
                     <ProtectedRoute>
                         <Material
-                            materialId={1060}
                             showRemoveFile={true}
                             showDownloadFile={true}
                             showAddingFile={true}
-                            materialCreated={materialCreated}
                         />
                     </ProtectedRoute>
                 } />
@@ -80,7 +73,6 @@ const AppContent = () => {
                 <Route path="/assigntask" element={<ProtectedRoute><AssignTask /></ProtectedRoute>} />
                 <Route path="/taskcontentmanage" element={<ProtectedRoute><TaskContentManage /></ProtectedRoute>} />
                 <Route path="/editmatlist" element={<ProtectedRoute><EditMatList /></ProtectedRoute>} />
-                <Route path="/editmatlist_sidebar" element={<ProtectedRoute><EditMatList_SideBar /></ProtectedRoute>} />
                 <Route path="/roadmapmanage" element={<ProtectedRoute><RoadMapManage /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>

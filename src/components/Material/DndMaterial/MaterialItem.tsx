@@ -3,7 +3,6 @@ import { MaterialDto } from "../../../dtos/MaterialDto"
 import { useDroppable } from "@dnd-kit/core"
 import materialService from "../../../services/materialService"
 import { Accordion, Button, Form, InputGroup, Modal } from "react-bootstrap"
-import deleteIcon from "../../../assets/deleteIcon.svg"
 import '../Material.css'
 import FileAdd from "../../File/FileAdd"
 import { FileDto } from "../../../dtos/FileDto"
@@ -196,11 +195,10 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
           {material?.files && material.files.map((file) => (
             <div className="badge text-bg-secondary p-3 m-1" key={file.id}>
               {file.name}
-              <img
-                src={deleteIcon}
-                className={"deleteIcon deleteIcon_EditMatList mb-2 p-0 " + (isEditing ? "visible" : "invisible")}
+              <i
+                className={"bi bi-trash3 deleteIcon deleteIcon_EditMatList mb-2 p-0 " + (isEditing ? "visible" : "invisible")}
                 onClick={isEditing ? () => handleDeleteFile(file.id) : undefined}
-                alt="Delete file" />
+                 />
             </div>
             
           ))}

@@ -4,8 +4,6 @@ import { FileDto } from "../../dtos/FileDto";
 import { MaterialDto } from "../../dtos/MaterialDto";
 import materialService from "../../services/materialService";
 import './Material.css';
-import deleteIcon from "../../assets/deleteIcon.svg";
-import downloadIcon from "../../assets/downloadIcon.svg";
 import fileService from "../../services/fileService";
 
 interface MaterialProps {
@@ -108,12 +106,12 @@ const Material: React.FC<MaterialProps> = ({
                 <div>
                   {showRemoveFile && (
                     <a className="pe-2" onClick={() => removeFile(file.id)}>
-                      <img src={deleteIcon} className="deleteIcon hoverIcon icon-size" />
+                      <i className="bi bi-trash3 deleteIcon hoverIcon icon-size" />
                     </a>
                   )}
                   {showDownloadFile && (
                     <a onClick={() => downloadFile(file.id)}>
-                      <img src={downloadIcon} className="downloadIcon hoverIcon icon-size" />
+                      <i className="bi bi-file-earmark-arrow-down downloadIcon hoverIcon icon-size" />
                     </a>
                   )}
                 </div>

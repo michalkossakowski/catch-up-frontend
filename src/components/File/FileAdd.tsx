@@ -5,7 +5,6 @@ import fileService from "../../services/fileService.ts"
 
 import './FileAdd.css'; 
 
-import uploadIcon from "../../assets/uploadIcon.svg"
 interface FileAddProps 
 {
     materialId: number;
@@ -62,7 +61,7 @@ const FileAdd: React.FC<FileAddProps> = ({ materialId, onFileUploaded }) =>
             onDrop={(e) => onDrop(e)}
         >
             <div>
-                <img src={uploadIcon} className={`uploadIcon ${isDragActive ? 'uploadIconOnDrag' : ''}`}/>
+                <i className={`bi bi-upload uploadIcon ${isDragActive ? 'uploadIconOnDrag' : ''}`}/>
             </div>
             <div className="p-3">
                 <p className="text-body-tertiary fs-6 opacity-50 p-0 m-0">Drag and drop file here</p>
