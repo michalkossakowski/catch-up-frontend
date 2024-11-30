@@ -8,12 +8,12 @@ import LoginPage from './components/Login/LoginComponent';
 import FaqComponent from './components/Faq/FaqComponent';
 import Material from './components/Material/Material';
 import FaqManage from './components/Faq/FaqManage';
-import NewbieMentor from './components/NewbieMentor/NewbieMentor';
 import AssignTask from './components/TaskAssigment/AssignTask';
 import TaskContentManage from './components/Task/TaskContentManage';
 import EditMatList from './components/Material/EditMatList';
 import EditMatList_SideBar from './components/Material/EditMatList_SideBar';
 import RoadMapManage from './components/RoadMap/RoadMapManage';
+import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
 
 const AppContent = () => {
     const { user } = useAuth();
@@ -36,7 +36,7 @@ const AppContent = () => {
                             <Nav.Link href="/faq">Faq</Nav.Link>
                             <Nav.Link href="/faqmanage">FaqManage</Nav.Link>
                             <Nav.Link href="/addfile">AddFile</Nav.Link>
-                            <Nav.Link href="/newbiementor">NewbieMentor</Nav.Link>
+                            <Nav.Link href="/employesassignment">EmployesAssignment</Nav.Link>
                             <Nav.Link href="/assigntask">AssignTask</Nav.Link>
                             <Nav.Link href="/taskcontentmanage">TaskContentManage</Nav.Link>
                             <Nav.Link href="/roadmapmanage">RoadMapManage</Nav.Link>
@@ -78,7 +78,7 @@ const AppContent = () => {
                         />
                     </ProtectedRoute>
                 } />
-                <Route path="/newbiementor" element={<ProtectedRoute><NewbieMentor /></ProtectedRoute>} />
+                <Route path="/employesassignment" element={<ProtectedRoute><EmployesAssignmentSelector /></ProtectedRoute>} />
                 <Route path="/assigntask" element={<ProtectedRoute><AssignTask /></ProtectedRoute>} />
                 <Route path="/taskcontentmanage" element={<ProtectedRoute><TaskContentManage /></ProtectedRoute>} />
                 <Route path="/editmatlist" element={<ProtectedRoute><EditMatList /></ProtectedRoute>} />
