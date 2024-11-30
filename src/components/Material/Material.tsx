@@ -45,7 +45,6 @@ const Material: React.FC<MaterialProps> = ({
   };
 
   const onFileUploaded = (fileDto: FileDto) => {
-    console.log(fileDto)
     if (material) {
       setMaterial((material) => ({
         ...material,

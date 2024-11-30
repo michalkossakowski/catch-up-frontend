@@ -14,7 +14,6 @@ const FilesContainer: React.FC<FilesContainerProps> = ({ excludedFileIds }) => {
     useEffect(() => {
         const fetchFiles = async () => {
             try {
-                console.log("xd")
                 setFileList(await fileService.getAllFiles())
             } catch (error) {
                 console.error("Error fetching files:", error)
@@ -29,7 +28,7 @@ const FilesContainer: React.FC<FilesContainerProps> = ({ excludedFileIds }) => {
                 fileList
                     .filter(file => !excludedFileIds.includes(file.id))
                     .filter((file) => (file.name?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()
-                )))
+                    )))
         }
         filtrFiles()
     }, [excludedFileIds, fileList, searchTerm])

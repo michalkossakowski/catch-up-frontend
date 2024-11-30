@@ -18,27 +18,23 @@ const FileAdd: React.FC<FileAddProps> = ({ materialId, onFileUploaded }) =>
     const [isDragActive, setIsDragActive] = useState(false)
 
     const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-        console.log(materialId)
         e.preventDefault()
         setIsDragActive(true)
     }
 
     const onDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault()
-        console.log("dragLEave" + materialId)
         setIsDragActive(false)
     }
 
     const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault()
         setIsDragActive(false)
-        console.log(materialId)
         const files = Array.from(e.dataTransfer.files);
         files.forEach((file) => handleFileUpload(file, materialId));
     }
     const onFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            console.log(materialId)
             const files = Array.from(e.target.files);
             files.forEach((file) => handleFileUpload(file, materialId))
           }
