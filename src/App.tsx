@@ -14,6 +14,7 @@ import EditMatList from './components/Material/EditMatList';
 import EditMatList_SideBar from './components/Material/EditMatList_SideBar';
 import RoadMapManage from './components/RoadMap/RoadMapManage';
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
+import Badge from './components/Badge/BadgeComponent';
 
 const AppContent = () => {
     const { user } = useAuth();
@@ -40,6 +41,7 @@ const AppContent = () => {
                             <Nav.Link href="/assigntask">AssignTask</Nav.Link>
                             <Nav.Link href="/taskcontentmanage">TaskContentManage</Nav.Link>
                             <Nav.Link href="/roadmapmanage">RoadMapManage</Nav.Link>
+                            <Nav.Link href="/badges">Badges</Nav.Link>
                             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                                 <NavDropdown.Item href="/editmatlist">EditMatList</NavDropdown.Item>
                                 <NavDropdown.Item href="/editmatlist_sidebar">EditMatList_SideBar</NavDropdown.Item>
@@ -84,6 +86,7 @@ const AppContent = () => {
                 <Route path="/editmatlist" element={<ProtectedRoute><EditMatList /></ProtectedRoute>} />
                 <Route path="/editmatlist_sidebar" element={<ProtectedRoute><EditMatList_SideBar /></ProtectedRoute>} />
                 <Route path="/roadmapmanage" element={<ProtectedRoute><RoadMapManage /></ProtectedRoute>} />
+                <Route path="/badges" element={<ProtectedRoute><Badge /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
 
