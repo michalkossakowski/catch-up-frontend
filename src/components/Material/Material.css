@@ -1,17 +1,57 @@
-.hoverIcon:hover{
+
+.hoverIcon:hover {
     filter: brightness(0) saturate(100%) invert(77%) sepia(59%) saturate(450%) hue-rotate(59deg) brightness(93%) contrast(94%);
 }
-.deleteIcon{
+
+.deleteIcon {
     filter: brightness(0) saturate(100%) invert(32%) sepia(41%) saturate(7010%) hue-rotate(344deg) brightness(91%) contrast(93%);
 }
-.downloadIcon{
+
+.downloadIcon {
     filter: brightness(0) saturate(100%) invert(93%) sepia(8%) saturate(2447%) hue-rotate(130deg) brightness(96%) contrast(93%);
 }
-.icon-size{
-    width: 20px;
-    height: 20px;
+
+.icon-size {
+    font-size: 20px;
 }
 
-.double-downIcon{
+.double-downIcon {
     filter: brightness(0) saturate(100%) invert(83%) sepia(43%) saturate(336%) hue-rotate(95deg) brightness(89%) contrast(88%);
+}
+
+.deleteIcon_EditMatList {
+    vertical-align:super;
+}
+
+.deleteIcon_EditMatList:hover {
+    filter: brightness(0) saturate(100%) invert(64%) sepia(62%) saturate(3261%) hue-rotate(307deg) brightness(94%) contrast(93%);
+}
+
+.file-container {
+    visibility: hidden;
+    position: sticky;
+    top: 5%;
+    opacity: 0;
+    transform: translateX(100%); 
+    max-width: 0;
+    width: 100%;
+    transition: opacity 0.5s ease, transform 0.5s ease, max-width 2s ease; 
+}
+
+.file-container.visible {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(0); 
+    max-width: 100%;
+}
+
+.file-container.invisible {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(100%);
+    max-width: 0;
+    transition: opacity 0.5s ease, transform 0.5s ease, max-width 1s ease, visibility 3s ease;
+}
+body{
+    overflow-x: hidden;
 }
