@@ -5,6 +5,8 @@ import { TaskContentDto } from '../../dtos/TaskContentDto';
 import { getTaskContents, getByTitle, deleteTaskContent } from '../../services/taskContentService';
 import Material from '../Material/Material';
 import TaskContentEdit from './TaskContentEdit';
+import { CategoryDto } from '../../dtos/CategoryDto';
+import { getCategories } from '../../services/categoryService';
 
 const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
     const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
@@ -17,11 +19,14 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
     let i = 1;
     const [showEdit, setShowEdit] = useState(false);
     const [editedTaskContent, setEditedTaskContent] = useState<TaskContentDto | null>();
+    const [categories, setCategories] = useState<CategoryDto[]>([]);
 
     useEffect(() => {
         getAllTaskContents();
+        getCategories()
+            .then((data) => setCategories(data))
+            .catch((error) => console.error('Error loading categories:', error));
     }, []);
-
 
     const getAllTaskContents = () => {
         console.log('Pobieranie task contents');
@@ -33,7 +38,7 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
                 setShowError(false);
             })
             .catch((error) => {
-                console.error('B³¹d pobierania:', error);
+                console.error('BÅ‚Ä…d pobierania:', error);
                 setShowError(true);
                 setAlertMessage('Error: ' + error.message);
             })
@@ -59,7 +64,6 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
             .finally(() => setLoading(false));
     };
 
-
     const handleDelete = (taskContentId: number) => {
         deleteTaskContent(taskContentId)
             .then(() => {
@@ -76,7 +80,13 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
         setShowEdit(true);
     };
 
-    const handleTaskContentUpdated = () => {
+    const handleTaskContentUpdated = async () => {
+        try {
+            const updatedCategories = await getCategories();
+            setCategories(updatedCategories);
+        } catch (error) {
+            console.error('Error refreshing categories:', error);
+        }
         getAllTaskContents();
         setShowEdit(false);
         setEditedTaskContent(null);
@@ -86,19 +96,24 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
         return materialId
     }
 
+    const getCategoryName = (categoryId: number) => {
+        const category = categories.find(cat => cat.id === categoryId);
+        return category?.name || categoryId;
+    };
+
     return (
         <>
             {isAdmin && (
                 <div>
                     {!showEdit && (
-                        <TaskContentEdit isEditMode={false} onTaskContentEdited={handleTaskContentUpdated} />
+                        <TaskContentEdit isEditMode={false} onTaskContentEdited={handleTaskContentUpdated} categories={categories} />
                     )}
                     {showEdit && editedTaskContent && (
                         <div>
                             <Button variant="primary" onClick={() => setShowEdit(false)}>
                                 Back to Add
                             </Button>
-                            <TaskContentEdit taskContent={editedTaskContent} isEditMode={true} onTaskContentEdited={handleTaskContentUpdated} />
+                            <TaskContentEdit taskContent={editedTaskContent} isEditMode={true} onTaskContentEdited={handleTaskContentUpdated} categories={categories} />
                         </div>
                     )}
                 </div>
@@ -158,6 +173,12 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
                                             <div>
                                                 Additional materials:
                                                 <Material materialId={taskContent.materialsId} showDownloadFile={true} materialCreated={materialCreated} />
+                                            </div>
+                                        )}
+
+                                        {taskContent.categoryId && (
+                                            <div>
+                                                Category: {getCategoryName(taskContent.categoryId)}
                                             </div>
                                         )}
 
