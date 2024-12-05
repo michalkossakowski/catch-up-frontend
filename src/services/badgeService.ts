@@ -21,14 +21,6 @@ export const getBadgeById = async (id: number): Promise<BadgeDto> => {
     }
 };
 
-const handleError = (operation: string, error: any): void => {
-    console.error(`${operation} failed:`, error);
-    if (!error.response) {
-        throw new Error('API is not available');
-    }
-    throw new Error(error.response.data?.message || 'An unexpected error occurred');
-};
-
 export const addBadge = async (badge: BadgeDto): Promise<BadgeDto> => {
     try {
         const response = await axiosInstance.post('/Badge/Add', badge);
@@ -56,4 +48,12 @@ export const deleteBadge = async (id: number): Promise<void> => {
         handleError('deleteBadge', error);
         throw error;
     }
+};
+
+const handleError = (operation: string, error: any): void => {
+    console.error(`${operation} failed:`, error);
+    if (!error.response) {
+        throw new Error('API is not available');
+    }
+    throw new Error(error.response.data?.message || 'An unexpected error occurred');
 };

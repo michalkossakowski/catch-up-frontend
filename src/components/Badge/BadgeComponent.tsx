@@ -78,15 +78,30 @@ const Badge: React.FC = () => {
                 {badges.map((badge) => (
                     <Col key={badge.id}>
                         <Card className="h-100">
-                            <Card.Img
-                                variant="top"
-                                src={badge.iconSource || 'https://via.placeholder.com/150'}
-                                className="p-3"
-                                style={{
-                                    maxHeight: '200px',
-                                    objectFit: 'contain',
-                                }}
-                            />
+                            {badge.iconSource ? (
+                                <Card.Img
+                                    variant="top"
+                                    src={badge.iconSource}
+                                    className="p-3"
+                                    style={{
+                                        maxHeight: '200px',
+                                        objectFit: 'contain',
+                                    }}
+                                />
+                            ) : (
+                                <div
+                                    className="placeholder col-6"
+                                    style={{
+                                        height: '200px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        backgroundColor: '#e9ecef',
+                                        borderRadius: '.25rem',
+                                    }}
+                                >
+                                </div>
+                            )}
                             <Card.Body>
                                 <Card.Title>{badge.name}</Card.Title>
                                 <Card.Text>{badge.description}</Card.Text>
