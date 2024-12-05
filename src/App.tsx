@@ -12,6 +12,7 @@ import AssignTask from './components/TaskAssigment/AssignTask';
 import TaskContentManage from './components/Task/TaskContentManage';
 import RoadMapManage from './components/RoadMap/RoadMapManage';
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
+import Badge from './components/Badge/BadgeComponent';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
 
 const AppContent = () => {
@@ -33,6 +34,7 @@ const AppContent = () => {
                             <Nav.Link href="/assigntask">AssignTask</Nav.Link>
                             <Nav.Link href="/taskcontentmanage">TaskContentManage</Nav.Link>
                             <Nav.Link href="/roadmapmanage">RoadMapManage</Nav.Link>
+                            <Nav.Link href="/badges">Badges</Nav.Link>
                             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                                 <NavDropdown.Item href="/editmatlist">EditMatList</NavDropdown.Item>
                                 <NavDropdown.Item href="/editmatlist_sidebar">EditMatList_SideBar</NavDropdown.Item>
@@ -74,6 +76,7 @@ const AppContent = () => {
                 <Route path="/taskcontentmanage" element={<ProtectedRoute><TaskContentManage /></ProtectedRoute>} />
                 <Route path="/editmatlist" element={<ProtectedRoute><EditMatList /></ProtectedRoute>} />
                 <Route path="/roadmapmanage" element={<ProtectedRoute><RoadMapManage /></ProtectedRoute>} />
+                <Route path="/badges" element={<ProtectedRoute><Badge /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
 
