@@ -14,9 +14,12 @@ import RoadMapManage from './components/RoadMap/RoadMapManage';
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
 import Badge from './components/Badge/BadgeComponent';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
+import AdminPanel from "./components/Admin/AdminPanel.tsx";
 
 const AppContent = () => {
-    const { user } = useAuth();
+    const { user, getRole } = useAuth();
+    const role = getRole(user?.id || "NotFound");
+
     return (
         <>
             <Navbar expand="lg" className="bg-body-tertiary navbar-expand-lg">
@@ -26,7 +29,9 @@ const AppContent = () => {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <Nav.Link href="/">Home</Nav.Link>
+                            {role === 'Admin'  && (
                             <Nav.Link href="/admin">Admin</Nav.Link>
+                            )}
                             <Nav.Link href="/faq">Faq</Nav.Link>
                             <Nav.Link href="/faqmanage">FaqManage</Nav.Link>
                             <Nav.Link href="/addfile">AddFile</Nav.Link>
@@ -59,7 +64,7 @@ const AppContent = () => {
                         </ProtectedRoute>
                     }
                 />
-                <Route path="/admin" element={<ProtectedRoute><h1>Admin</h1></ProtectedRoute>} />
+                <Route path="/admin" element={<ProtectedRoute><AdminPanel/></ProtectedRoute>} />
                 <Route path="/faq" element={<ProtectedRoute><FaqComponent isAdmin={false} /></ProtectedRoute>} />
                 <Route path="/faqmanage" element={<ProtectedRoute><FaqManage /></ProtectedRoute>} />
                 <Route path="/addfile" element={
