@@ -106,9 +106,10 @@ function AdminPanel() {
                             required
                         >
                             <option value="">Select User Type</option>
-                            <option value="admin">Admin</option>
-                            <option value="user">User</option>
-                            <option value="manager">Manager</option>
+                            <option value="Newbie">Admin</option>
+                            <option value="Mentor">User</option>
+                            <option value="HR">Manager</option>
+                            <option value="Admin">HR</option>
                         </select>
                     </div>
 
