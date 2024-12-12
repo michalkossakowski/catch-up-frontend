@@ -3,19 +3,20 @@ import './FaqComponent.css';
 import { Accordion, Alert, Button, Form, InputGroup } from 'react-bootstrap';
 import { FaqDto } from '../../dtos/FaqDto';
 import { getFaqs, getByTitle, deleteFaq } from '../../services/faqService';
-import Material from '../Material/Material';
 import FaqEdit from './FaqEdit';
 import Loading from '../Loading/Loading';
+import FaqItem from './FaqItem';
 
 const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
     const [faqs, setFaqs] = useState<FaqDto[]>([]);
     const [loading, setLoading] = useState(true)
-    const [showError, setShowError] = useState(false)
+    const [showAlert, setShowAlert] = useState(false)
     const [alertMessage, setAlertMessage] = useState('')
     const [showSearchMessage, setShowSearchMessage] = useState(false)
     const [searchMessage, setSearchMessage] = useState('alert')
     const [searchTitle, setSearchTitle] = useState('');
     let i = 1;
+
     const [showEdit, setShowEdit] = useState(false);
     const [editedFaq, setEditedFaq] = useState<FaqDto | null>();
 
@@ -29,10 +30,10 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
         getFaqs()
         .then((data) => {
             setFaqs(data);
-            setShowError(false); 
+            setShowAlert(false); 
         })
         .catch((error) => {
-            setShowError(true);
+            setShowAlert(true);
             setAlertMessage('Error: ' + error.message);
         })
         .finally(() => setLoading(false));
@@ -64,12 +65,12 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
                 setFaqs((prevFaqs) => prevFaqs.filter((faq) => faq.id !== faqId));
             })
             .catch((error) => {
-                setShowError(true)
+                setShowAlert(true)
                 setAlertMessage('Error deleting FAQ: ' + error.message)
             })
     };
 
-    const editClick = (faqId: number) => {
+    const handleEdit= (faqId: number) => {
         setEditedFaq(faqs.find((faq)=> faq.id === faqId));
         setShowEdit(true);
     };
@@ -80,23 +81,19 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
         setEditedFaq(null);
     };
 
-    const materialCreated = (materialId: number) => {
-        return materialId
-    }      
-      
     return (
         <>
             {isAdmin && (
                 <div>
-                    {!showEdit && (
-                        <FaqEdit isEditMode={false} onFaqEdited={handleFaqUpdated}/>
+                    <Button variant="primary" onClick={() => {setShowEdit(true); setEditedFaq(null)}}>
+                        Add new FAQ
+                    </Button>
+                    {showEdit && !editedFaq && (
+                        <FaqEdit isEditMode={false} onFaqEdited={handleFaqUpdated} onCancel={() => setShowEdit(false)}/>
                     )}
                     {showEdit && editedFaq && (
                         <div>
-                            <Button variant="primary" onClick={() => setShowEdit(false)}>
-                                Back to Add
-                            </Button>
-                            <FaqEdit faq={editedFaq} isEditMode={true} onFaqEdited={handleFaqUpdated} />
+                            <FaqEdit faq={editedFaq} isEditMode={true} onFaqEdited={handleFaqUpdated} onCancel={() => setShowEdit(false)}/>
                         </div>
                     )}
                 </div>
@@ -126,7 +123,7 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
                         <Loading/>
                     )}
 
-                    {showError &&(
+                    {showAlert &&(
                         <Alert className='alert' variant='danger'>
                             {alertMessage}
                         </Alert>
@@ -139,40 +136,11 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
                     )}
                 </div>
 
-                {!showSearchMessage && !showError && !loading &&(
+                {!showSearchMessage && !showAlert && !loading &&(
                     <div>
                         <Accordion className='AccordionItem'>
                             {faqs.map((faq) => (
-                                <Accordion.Item eventKey={faq.id.toString()} key={faq.id}>
-                                    <Accordion.Header>
-                                        {i++}. {faq.title}
-                                    </Accordion.Header>
-                                    <Accordion.Body>
-                                        <p>{faq.answer}</p>
-
-                                        {faq.materialsId && (
-                                            <div> 
-                                                Additional materials:                                
-                                                <Material materialId={faq.materialsId} showDownloadFile={true} materialCreated={materialCreated} />
-                                            </div>  
-                                        )}
-
-                                        {isAdmin && (
-                                            <div className='buttonBox'>
-                                                <Button
-                                                    variant="primary"
-                                                    onClick={() => editClick(faq.id)}>
-                                                    Edit
-                                                </Button>
-                                                <Button
-                                                    variant="danger"
-                                                    onClick={() => handleDelete(faq.id)}>
-                                                    Delete
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </Accordion.Body>
-                                </Accordion.Item>
+                              <FaqItem key={faq.id} faq={faq} index={i++} editClick={handleEdit} isAdmin={isAdmin} deleteClick={handleDelete}></FaqItem>
                             ))}
                         </Accordion>
                     </div>

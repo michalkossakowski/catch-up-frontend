@@ -9,12 +9,27 @@ interface FaqEditProps {
     isEditMode: boolean; 
     faq?: FaqDto;  
     onFaqEdited: () => void;
+    onCancel: () => void;
 }
 
-const FaqEdit: React.FC<FaqEditProps> = ({ onFaqEdited, faq, isEditMode }) => {
-    const [title, setTitle] = useState<string>();
-    const [answer, setAnswer] = useState<string>();
-    const [materialsId, setMaterialsId] = useState<number | null>();
+export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqEditProps): React.ReactElement {
+
+    const [title, setTitle] = useState<string>('');
+    const [answer, setAnswer] = useState<string>('');
+    const [materialsId, setMaterialsId] = useState<number | null>(null);
+
+    const [isTitleValid, setTitleValidation] = useState<boolean>(true);
+    const [isAnswerValid, setAnswerValidation] = useState<boolean>(true);
+
+    const validateTitle = (value: string) => {
+        setTitleValidation(/^[A-Z].*\?$/.test(value));
+        setTitle(value);
+    };
+
+    const validateAnswer = (value: string) => {
+        setAnswerValidation( value.length >= 10);
+        setAnswer(value);
+    };
 
     useEffect(() => {
         if (faq) {
@@ -30,6 +45,10 @@ const FaqEdit: React.FC<FaqEditProps> = ({ onFaqEdited, faq, isEditMode }) => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if (!isTitleValid || !isAnswerValid) {
+            return;
+        }
 
         const faqDto: FaqDto = {
             id: isEditMode ? faq!.id : 0,
@@ -55,52 +74,68 @@ const FaqEdit: React.FC<FaqEditProps> = ({ onFaqEdited, faq, isEditMode }) => {
     return (
         <section className='editBox'>
             <form onSubmit={handleSubmit} className="container-lg text-left">
-                <h2>{isEditMode ? 'Edit FAQ' : 'Add FAQ'}</h2>
+                <h2>{isEditMode ? 'Edit FAQ' : 'Add new FAQ'}</h2>
                 <br />
                 <div className="form-group">
                     <label htmlFor="title">Title:</label>
                     <input
                         type="text"
                         id="title"
-                        className="form-control"
+                        className={`form-control ${!isTitleValid ? 'is-invalid' : ''}`}
                         value={title}
-                        onChange={(e) => setTitle(e.target.value)}
+                        onChange={(e) => validateTitle(e.target.value)}
                         required
                     />
+                    {!isTitleValid && (
+                        <div className="invalid-feedback">
+                            The title must start with a capital letter, be at least 5 characters long, and end with "?"
+                        </div>
+                    )}
                 </div>
                 <br />
                 <div className="form-group">
                     <label htmlFor="answer">Answer:</label>
                     <textarea
                         id="answer"
-                        className="form-control"
+                        className={`form-control ${!isAnswerValid ? 'is-invalid' : ''}`}
                         value={answer}
-                        onChange={(e) => setAnswer(e.target.value)}
-                        rows={4}
+                        onChange={(e) => validateAnswer(e.target.value)}
+                        rows={8}
                         required
                     />
+                    {!isAnswerValid && (
+                        <div className="invalid-feedback">
+                            The answer must be at least 10 characters long
+                        </div>
+                    )}
+                </div>
+                <br />
+                <div className="form-group">
+                    <label>Additonal Materials:</label>
+                    <Material
+                        materialId={materialsId ?? 0}
+                        showRemoveFile={true}
+                        showDownloadFile={true}
+                        showAddingFile={true}
+                        materialCreated={materialCreated}
+                    />
+                </div>
+                <div className='buttonBox'>
+                    <Button type="submit" variant="primary">
+                        {isEditMode ? 'Save Changes' : 'Add new FAQ'}
+                    </Button >
+                    <Button type="submit" variant="danger" onClick={() => onCancel()}>
+                        Cancel 
+                    </Button >
+                    {materialsId &&(
+                        <Button variant="secondary" onClick={() => setMaterialsId(null)}>
+                            Remove materials
+                        </Button>
+                    )}
                 </div>
 
-                <Material
-                    materialId={materialsId ?? 0}
-                    showRemoveFile={true}
-                    showDownloadFile={true}
-                    showAddingFile={true}
-                    materialCreated={materialCreated}
-                />
 
-                {materialsId &&(
-                    <Button variant="danger" onClick={() => setMaterialsId(null)}>
-                        Remove materials
-                    </Button>
-                )}
-                <br />
-                <button type="submit" className="btn btn-primary">
-                    {isEditMode ? 'Save Changes' : 'Submit'}
-                </button>
             </form>
         </section>
     );
 };
-
-export default FaqEdit;
