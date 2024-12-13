@@ -18,16 +18,16 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
     const [answer, setAnswer] = useState<string>('');
     const [materialsId, setMaterialsId] = useState<number | null>(null);
 
-    const [isTitleValid, setTitleValidation] = useState<boolean>(true);
-    const [isAnswerValid, setAnswerValidation] = useState<boolean>(true);
+    const [isTitleValid, setTitleValidation] = useState<boolean>(false);
+    const [isAnswerValid, setAnswerValidation] = useState<boolean>(false);
 
     const validateTitle = (value: string) => {
-        setTitleValidation(/^[A-Z].*\?$/.test(value));
+        setTitleValidation(/^[A-Z].*\?$/.test(value) && value.length >= 5);
         setTitle(value);
     };
 
     const validateAnswer = (value: string) => {
-        setAnswerValidation( value.length >= 10);
+        setAnswerValidation(value.length >= 10);
         setAnswer(value);
     };
 
@@ -36,6 +36,8 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
             setTitle(faq.title);
             setAnswer(faq.answer);
             setMaterialsId(faq.materialsId ?? null);
+            setTitleValidation(true)
+            setAnswerValidation(true)
         }
     }, [faq]);
 
@@ -121,10 +123,10 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
                     />
                 </div>
                 <div className='buttonBox'>
-                    <Button type="submit" variant="primary">
+                    <Button type="submit" variant="primary" disabled={!isTitleValid || !isAnswerValid}>
                         {isEditMode ? 'Save Changes' : 'Add new FAQ'}
                     </Button >
-                    <Button type="submit" variant="danger" onClick={() => onCancel()}>
+                    <Button variant="danger" onClick={() => onCancel()}>
                         Cancel 
                     </Button >
                     {materialsId &&(
@@ -133,8 +135,6 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
                         </Button>
                     )}
                 </div>
-
-
             </form>
         </section>
     );
