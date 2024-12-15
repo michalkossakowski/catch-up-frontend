@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import {Button, Container, Nav, Navbar, NavDropdown} from 'react-bootstrap';
 import AuthProvider, { useAuth } from './Provider/authProvider';
 import ProtectedRoute from './Routes/ProtectedRoute';
 import LoginPage from './components/Login/LoginComponent';
@@ -14,10 +14,18 @@ import RoadMapManage from './components/RoadMap/RoadMapManage';
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
 import Badge from './components/Badge/BadgeComponent';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
+import { useNavigate } from 'react-router-dom';
 import PresetManage from './components/Preset/PresetManage';
 
 const AppContent = () => {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    }
+
     return (
         <>
             <Navbar expand="lg" className="bg-body-tertiary navbar-expand-lg">
@@ -49,6 +57,7 @@ const AppContent = () => {
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
+                <Button onClick={handleLogout}>Logout</Button>
             </Navbar>
 
             <Routes>

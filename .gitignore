@@ -23,5 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 /.vs/catch-up-frontend/FileContentIndex
+/.vs/catch-up-frontend/v17
+/.vs/catch-up-frontend/FileContentIndex
 /.vs/slnx.sqlite
 /.vs/slnx.sqlite
