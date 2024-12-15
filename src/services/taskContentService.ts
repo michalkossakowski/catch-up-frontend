@@ -6,10 +6,10 @@ export const getTaskContents = async (): Promise<TaskContentDto[]> => {
     try {
         console.log('URL:', '/TaskContent/GetAll');
         const response = await axiosInstance.get<TaskContentDto[]>('/TaskContent/GetAll');
-        console.log('OdpowiedŸ:', response);
+        console.log('OdpowiedÅº:', response);
         return response.data;
     } catch (error: any) {
-        console.error('B³¹d API:', error.response);
+        console.error('BÅ‚Ä…d API:', error.response);
         handleError('getTaskContents', error);
         throw error;
     }
@@ -57,6 +57,14 @@ export const getByCategoryId = async (categoryId: string): Promise<TaskContentDt
 
 export const addTaskContent = async (taskContent: TaskContentDto): Promise<TaskContentDto> => {
     try {
+
+        console.log('Current User ID:', taskContent.creatorId);
+
+        if (!taskContent.creatorId) {
+            console.error('CreatorId is not set in TaskContentDto');
+            throw new Error('CreatorId is required');
+        }
+        
         const response = await axiosInstance.post<TaskContentDto>('/TaskContent/Add/', taskContent);
         return response.data;
     } catch (error: any) {

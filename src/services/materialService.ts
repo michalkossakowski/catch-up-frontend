@@ -6,9 +6,9 @@ const materialService =
     getMaterial: async(materialId : number): Promise<MaterialDto> => {
         try
         {
-            const response = await axiosInstance.get<{ message: string; materialDto: MaterialDto;}>(`/MaterialGet/${materialId}`)
+            const response = await axiosInstance.get<MaterialDto>(`/MaterialGet/${materialId}`)
             console.log("Material got successfully:", response)
-            return response.data.materialDto
+            return response.data
         }
         catch(error)
         {
@@ -32,9 +32,9 @@ const materialService =
     getMaterialWithFiles: async(materialId : number): Promise<MaterialDto> => {
         try
         {
-            const response = await axiosInstance.get<{ message: string; materialDto: MaterialDto;}>(`/Material/GetWithFiles/${materialId}`)
+            const response = await axiosInstance.get<MaterialDto>(`/Material/GetWithFiles/${materialId}`)
             console.log("Material got successfully:", response)
-            return response.data.materialDto
+            return response.data
         }
         catch(error)
         {
@@ -45,9 +45,9 @@ const materialService =
     createMaterial: async(material : MaterialDto): Promise<MaterialDto> => {
         try
         {
-            const response = await axiosInstance.post<{ message: string; material: MaterialDto;}>(`/Material/Create/`, material)
+            const response = await axiosInstance.post<MaterialDto>(`/Material/Create/`, material)
             console.log("Material created:", response)
-            return response.data.material
+            return response.data
         }
         catch(error)
         {
