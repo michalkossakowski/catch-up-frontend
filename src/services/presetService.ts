@@ -1,6 +1,11 @@
 import axiosInstance from '../../axiosConfig';
 import { PresetDto } from '../dtos/PresetDto';
 
+interface PresetResponse {
+    message: string;
+    preset: PresetDto;
+}
+
 export const getPresets = async (): Promise<PresetDto[]> => {
     try {
         const response = await axiosInstance.get<PresetDto[]>('/Preset/GetAll');
@@ -36,6 +41,9 @@ export const getPresetsByName = async (name: string): Promise<PresetDto[]> => {
         const response = await axiosInstance.get<PresetDto[]>(`/Preset/GetByName/${name}`);
         return response.data;
     } catch (error: any) {
+        if (error.response && error.response.status === 404) {
+            return [];
+        }
         handleError('getPresetsByName', error);
         throw error;
     }
@@ -63,12 +71,9 @@ export const searchPresets = async (searchString: string): Promise<PresetDto[]> 
 
 export const addPreset = async (preset: PresetDto): Promise<PresetDto> => {
     try {
-        console.log('Sending preset data:', preset);
-        const response = await axiosInstance.post<PresetDto>('/Preset/Add', preset);
-        console.log('Server response:', response);
-        return response.data;
+        const response = await axiosInstance.post<PresetResponse>('/Preset/Add', preset);
+        return response.data.preset;
     } catch (error: any) {
-        console.error('Server error details:', error.response?.data);
         handleError('addPreset', error);
         throw error;
     }

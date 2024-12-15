@@ -7,6 +7,8 @@ import Material from '../Material/Material';
 import TaskContentEdit from './TaskContentEdit';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { getCategories } from '../../services/categoryService';
+import { removeTaskFromAllPresets } from '../../services/taskPresetService';
+import axiosInstance from '../../services/axiosInstance';
 
 const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
     const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
@@ -64,15 +66,25 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
             .finally(() => setLoading(false));
     };
 
-    const handleDelete = (taskContentId: number) => {
-        deleteTaskContent(taskContentId)
-            .then(() => {
-                setTaskContents((prevTaskContents) => prevTaskContents.filter((taskContent) => taskContent.id !== taskContentId));
-            })
-            .catch((error) => {
-                setShowError(true)
-                setAlertMessage('Error deleting TaskContent: ' + error.message)
-            })
+    const handleDelete = async (taskContentId: number) => {
+        try {
+            console.log('Starting deletion process for taskContentId:', taskContentId);
+            
+            console.log('Removing task from all presets...');
+            await removeTaskFromAllPresets(taskContentId);
+            console.log('Successfully removed task from all presets');
+            
+            console.log('Deleting task content...');
+            await deleteTaskContent(taskContentId);
+            console.log('Successfully deleted task content');
+            
+            getAllTaskContents();
+            
+        } catch (error: any) {
+            console.error('Error in deletion process:', error);
+            setShowError(true);
+            setAlertMessage('Error deleting TaskContent: ' + error.message);
+        }
     };
 
     const editClick = (taskContentId: number) => {

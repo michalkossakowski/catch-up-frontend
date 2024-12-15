@@ -4,7 +4,7 @@ import { PresetDto } from '../../dtos/PresetDto';
 import { TaskPresetDto } from '../../dtos/TaskPresetDto';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
 import { getPresets, getPresetsByName, deletePreset } from '../../services/presetService';
-import { getTaskPresetsByTaskContent } from '../../services/taskPresetService';
+import { getTaskPresetsByPreset, getTaskPresetsByTaskContent } from '../../services/taskPresetService';
 import { getTaskContents } from '../../services/taskContentService';
 import PresetEdit from './PresetEdit';
 import './PresetComponent.css';
@@ -55,13 +55,16 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
 
     const loadPresetTasks = async (presetsData: PresetDto[]) => {
         const tasksMap = new Map<number, TaskContentDto[]>();
+        const allTaskContents = await getTaskContents();
+        
         for (const preset of presetsData) {
             try {
-                const presetTasks = await getTaskPresetsByTaskContent(preset.id);
-                const taskContents = presetTasks.map(pt => 
-                    taskContents.find(tc => tc.id === pt.taskContentId)
+                const presetTasks = await getTaskPresetsByPreset(preset.id);
+                const matchingTasks = presetTasks.map((pt): TaskContentDto | undefined => 
+                    allTaskContents.find(tc => tc.id === pt.taskContentId)
                 ).filter((tc): tc is TaskContentDto => tc !== undefined);
-                tasksMap.set(preset.id, taskContents);
+                
+                tasksMap.set(preset.id, matchingTasks);
             } catch (error) {
                 console.error(`Error loading tasks for preset ${preset.id}:`, error);
             }
@@ -147,54 +150,61 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
 
                 {!showError && !loading && (
                     <div>
-                        {presets.length > 0 && (
-                            <div className='searchBox'>
-                                <InputGroup className="mb-3">
-                                    <Form.Control
-                                        placeholder="Search by preset name..."
-                                        value={searchName}
-                                        onChange={(e) => setSearchName(e.target.value)}
-                                        onKeyDown={(e) => e.key === 'Enter' && searchPresets()}
-                                    />
-                                    <Button variant="primary" onClick={searchPresets}>
-                                        Search
-                                    </Button>
-                                </InputGroup>
-                            </div>
+                        <div className='searchBox'>
+                            <InputGroup className="mb-3">
+                                <Form.Control
+                                    placeholder="Search by preset name..."
+                                    value={searchName}
+                                    onChange={(e) => setSearchName(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && searchPresets()}
+                                />
+                                <Button variant="primary" onClick={searchPresets}>
+                                    Search
+                                </Button>
+                            </InputGroup>
+                        </div>
+
+                        {presets.length > 0 ? (
+                            <Accordion className='AccordionItem'>
+                                {presets.map((preset, index) => (
+                                    <Accordion.Item eventKey={preset.id.toString()} key={preset.id}>
+                                        <Accordion.Header>
+                                            {index + 1}. {preset.name}
+                                        </Accordion.Header>
+                                        <Accordion.Body>
+                                            <h5>Tasks in preset:</h5>
+                                            <ul className="preset-tasks-list">
+                                                {presetTasks.get(preset.id)?.map(task => (
+                                                    <li key={task.id}>{task.title}</li>
+                                                ))}
+                                            </ul>
+
+                                            {isAdmin && (
+                                                <div className='buttonBox'>
+                                                    <Button
+                                                        variant="primary"
+                                                        onClick={() => editClick(preset.id)}>
+                                                        Edit
+                                                    </Button>
+                                                    <Button
+                                                        variant="danger"
+                                                        onClick={() => handleDelete(preset.id)}>
+                                                        Delete
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </Accordion.Body>
+                                    </Accordion.Item>
+                                ))}
+                            </Accordion>
+                        ) : (
+                            <Alert variant="info">
+                                {searchName 
+                                    ? `No presets found containing: ${searchName}`
+                                    : 'No presets found'
+                                }
+                            </Alert>
                         )}
-
-                        <Accordion className='AccordionItem'>
-                            {presets.map((preset, index) => (
-                                <Accordion.Item eventKey={preset.id.toString()} key={preset.id}>
-                                    <Accordion.Header>
-                                        {index + 1}. {preset.name}
-                                    </Accordion.Header>
-                                    <Accordion.Body>
-                                        <h5>Tasks in preset:</h5>
-                                        <ul className="preset-tasks-list">
-                                            {presetTasks.get(preset.id)?.map(task => (
-                                                <li key={task.id}>{task.title}</li>
-                                            ))}
-                                        </ul>
-
-                                        {isAdmin && (
-                                            <div className='buttonBox'>
-                                                <Button
-                                                    variant="primary"
-                                                    onClick={() => editClick(preset.id)}>
-                                                    Edit
-                                                </Button>
-                                                <Button
-                                                    variant="danger"
-                                                    onClick={() => handleDelete(preset.id)}>
-                                                    Delete
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </Accordion.Body>
-                                </Accordion.Item>
-                            ))}
-                        </Accordion>
                     </div>
                 )}
             </section>

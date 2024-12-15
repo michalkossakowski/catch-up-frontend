@@ -6,7 +6,8 @@ import './TaskContentEdit.css';
 import { Button } from 'react-bootstrap';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { getCategories, searchCategories, addCategory, isUnique } from '../../services/categoryService';
-import { Autocomplete, TextField } from '@mui/material';
+import { Autocomplete, TextField, styled } from '@mui/material';
+import { useAuth } from '../../Provider/authProvider';
 
 interface TaskContentEditProps {
     taskContent?: TaskContentDto;
@@ -14,6 +15,30 @@ interface TaskContentEditProps {
     onTaskContentEdited: () => void;
     categories: CategoryDto[];
 }
+
+const StyledTextField = styled(TextField)({
+    '& .MuiOutlinedInput-root': {
+        '& fieldset': {
+            borderColor: '#ced4da',
+        },
+        '&:hover fieldset': {
+            borderColor: '#ced4da',
+        },
+        '&.Mui-focused fieldset': {
+            borderColor: '#86b7fe',
+        },
+        padding: 0,
+        '& input': {
+            color: '#ffffff',
+        }
+    },
+    '& .MuiInputLabel-root': {
+        display: 'none',
+    },
+    '& .MuiOutlinedInput-input': {
+        padding: '0.375rem 0.75rem',
+    }
+});
 
 const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, taskContent, isEditMode, categories }) => {
     const [title, setTitle] = useState<string>();
@@ -24,6 +49,8 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
     const [selectedCategory, setSelectedCategory] = useState<CategoryDto | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [localCategories, setLocalCategories] = useState<CategoryDto[]>(categories);
+    const { user } = useAuth();
+    const [key, setKey] = useState(0);
 
     useEffect(() => {
         if (taskContent) {
@@ -31,7 +58,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
                 const category = categories.find(c => c.id === taskContent.categoryId);
                 setSelectedCategory(category || null);
             }
-            
+
             setTitle(taskContent.title);
             setDescription(taskContent.description);
             setMaterialsId(taskContent.materialsId ?? null);
@@ -52,7 +79,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
 
     const handleCategorySearch = async (searchValue: string) => {
         if (searchValue.trim()) {
-            const filteredCategories = categories.filter(category => 
+            const filteredCategories = categories.filter(category =>
                 (category.name || '').toLowerCase().includes(searchValue.toLowerCase())
             );
             setLocalCategories(filteredCategories);
@@ -67,7 +94,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+
         let finalCategoryId = categoryId;
         console.log('Submit - Initial values:', {
             selectedCategory,
@@ -80,17 +107,17 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
             try {
                 const isNameUnique = await isUnique(searchTerm);
                 console.log('Is category name unique:', isNameUnique);
-                
+
                 if (isNameUnique) {
                     const newCategory = await addCategory({ id: 0, name: searchTerm });
                     console.log('New category created:', newCategory);
-                    
+
                     const updatedCategories = await getCategories();
-                    const createdCategory = updatedCategories.find(c => 
+                    const createdCategory = updatedCategories.find(c =>
                         (c.name || '').toLowerCase() === searchTerm.toLowerCase()
                     );
                     console.log('Found created category:', createdCategory);
-                    
+
                     if (createdCategory) {
                         finalCategoryId = createdCategory.id;
                         console.log('Set finalCategoryId to:', finalCategoryId);
@@ -103,12 +130,13 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
             console.log('Conditions not met for category creation');
         }
 
+
         const taskContentDto: TaskContentDto = {
             id: isEditMode ? taskContent!.id : 0,
             title: title ?? '',
             description: description ?? '',
             materialsId: materialsId,
-            creatorId: creatorId,
+            creatorId: user?.id,
             categoryId: finalCategoryId
         };
 
@@ -122,6 +150,10 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
                 setMaterialsId(null);
                 setCreatorId(null);
                 setCategoryId(null);
+                setSelectedCategory(null);
+                setSearchTerm('');
+                setLocalCategories(categories);
+                setKey(prev => prev + 1);
             })
             .catch((error) => {
                 console.error('Error saving TaskContent:', error);
@@ -159,7 +191,9 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
                 </div>
 
                 <div className="form-group">
+                    <label htmlFor="category">Kategoria:</label>
                     <Autocomplete
+                        key={key}
                         value={selectedCategory}
                         onChange={(_, newValue) => {
                             console.log('onChange value:', newValue);
@@ -187,34 +221,21 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
                             }
                             handleCategorySearch(newInputValue);
                         }}
-                        options={categories}
-                        getOptionLabel={(option: string | CategoryDto) => 
+                        options={localCategories}
+                        getOptionLabel={(option: string | CategoryDto) =>
                             typeof option === 'string' ? option : (option.name || '')}
                         renderInput={(params) => (
-                            <TextField
+                            <StyledTextField
                                 {...params}
-                                label="Kategoria"
                                 variant="outlined"
                                 fullWidth
+                                id="category"
                             />
                         )}
                         freeSolo
                         className="mb-3"
                     />
                 </div>
-                
-                {/*bez implementacji kategorii zdycha*/}
-                {/*<br />*/} 
-                {/*<div className="form-group">*/}
-                {/*    <label htmlFor="categoryId">Category ID:</label>*/}
-                {/*    <input*/}
-                {/*        type="number"*/}
-                {/*        id="categoryId"*/}
-                {/*        className="form-control"*/}
-                {/*        value={categoryId ?? ''}*/}
-                {/*        onChange={(e) => setCategoryId(e.target.value ? parseInt(e.target.value) : null)}*/}
-                {/*    />*/}
-                {/*</div>*/}
 
                 <Material
                     materialId={materialsId ?? 0}

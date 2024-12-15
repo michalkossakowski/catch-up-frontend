@@ -50,18 +50,9 @@ export const editTaskPreset = async (taskPresetId: number, taskPreset: TaskPrese
     }
 };
 
-export const deleteTaskPreset = async (taskPresetId: number): Promise<void> => {
+export const removeTaskFromPreset = async (presetId: number, taskContentId: number): Promise<void> => {
     try {
-        await axiosInstance.delete(`/TaskPreset/Delete/${taskPresetId}`);
-    } catch (error: any) {
-        handleError('deleteTaskPreset', error);
-        throw error;
-    }
-};
-
-export const removeTaskFromPreset = async (taskPresetId: number, taskContentId: number): Promise<void> => {
-    try {
-        await axiosInstance.delete(`/TaskPreset/RemoveTaskFromPreset/${taskPresetId}/${taskContentId}`);
+        await axiosInstance.delete(`/TaskPreset/RemoveTaskFromPreset/${presetId}/${taskContentId}`);
     } catch (error: any) {
         handleError('removeTaskFromPreset', error);
         throw error;
@@ -70,9 +61,33 @@ export const removeTaskFromPreset = async (taskPresetId: number, taskContentId: 
 
 export const removeTaskFromAllPresets = async (taskContentId: number): Promise<void> => {
     try {
+        console.log('API call URL:', `/TaskPreset/RemoveTaskFromAllPresets/${taskContentId}`);
         await axiosInstance.delete(`/TaskPreset/RemoveTaskFromAllPresets/${taskContentId}`);
     } catch (error: any) {
+        console.error('Error in removeTaskFromAllPresets:', error);
+        if (error.response?.status === 404) {
+            console.error('Endpoint not found. Please check if the API endpoint exists and is correctly configured.');
+        }
         handleError('removeTaskFromAllPresets', error);
+        throw error;
+    }
+};
+
+export const getTaskPresetsByPreset = async (presetId: number): Promise<TaskPresetDto[]> => {
+    try {
+        const response = await axiosInstance.get<TaskPresetDto[]>(`/TaskPreset/GetByPreset/${presetId}`);
+        return response.data;
+    } catch (error) {
+        handleError('getTaskPresetsByPreset', error);
+        throw error;
+    }
+};
+
+export const deleteByPresetId = async (presetId: number): Promise<void> => {
+    try {
+        await axiosInstance.delete(`/TaskPreset/DeleteByPreset/${presetId}`);
+    } catch (error: any) {
+        handleError('deleteByPresetId', error);
         throw error;
     }
 };

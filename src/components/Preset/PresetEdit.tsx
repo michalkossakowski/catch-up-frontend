@@ -8,6 +8,7 @@ import { addPreset, editPreset } from '../../services/presetService';
 import { addTaskPreset } from '../../services/taskPresetService';
 import { Autocomplete, TextField, Chip } from '@mui/material';
 import './PresetEdit.css';
+import { useAuth } from '../../Provider/authProvider';
 
 interface PresetEditProps {
     preset?: PresetDto;
@@ -20,12 +21,11 @@ const PresetEdit: React.FC<PresetEditProps> = ({ preset, isEditMode, onPresetEdi
     const [name, setName] = useState<string>('');
     const [selectedTasks, setSelectedTasks] = useState<TaskContentDto[]>([]);
     const [availableTasks, setAvailableTasks] = useState<TaskContentDto[]>([]);
-    const [creatorId, setCreatorId] = useState<string>(''); // To będzie pobierane z kontekstu auth
+    const { user } = useAuth();
 
     useEffect(() => {
         if (preset) {
             setName(preset.name);
-            setCreatorId(preset.creatorId);
         }
         loadAvailableTasks();
     }, [preset]);
@@ -33,7 +33,6 @@ const PresetEdit: React.FC<PresetEditProps> = ({ preset, isEditMode, onPresetEdi
     const loadAvailableTasks = async () => {
         try {
             const tasks = await getTaskContents();
-            // Filtrowanie tasków, które już są w presecie
             const existingTaskIds = existingTaskContents?.map(tp => tp.taskContentId) || [];
             const filteredTasks = tasks.filter(task => !existingTaskIds.includes(task.id));
             setAvailableTasks(filteredTasks);
@@ -45,31 +44,37 @@ const PresetEdit: React.FC<PresetEditProps> = ({ preset, isEditMode, onPresetEdi
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            console.log('Submitting preset with data:', {
-                name,
-                creatorId,
-                selectedTasks
-            });
+            if (!user?.id) {
+                throw new Error('User not authenticated');
+            }
 
             const presetDto: PresetDto = {
                 id: isEditMode ? preset!.id : 0,
                 name: name,
-                creatorId: creatorId || 'default-creator' // Tymczasowo
+                creatorId: user.id
             };
 
             console.log('PresetDto to be sent:', presetDto);
 
-            const savedPreset = isEditMode 
-                ? await editPreset(presetDto)
-                : await addPreset(presetDto);
+            let response;
+            if (isEditMode) {
+                response = await editPreset(presetDto);
+            } else {
+                response = await addPreset(presetDto);
+            }
+            
+            console.log('Server response:', response);
 
-            console.log('Saved preset:', savedPreset);
+            const presetId = isEditMode ? preset!.id : response.id;
+            
+            if (!presetId) {
+                throw new Error('Failed to get preset ID from response');
+            }
 
-            // Dodawanie powiązań task-preset tylko jeśli są wybrane taski
             if (selectedTasks.length > 0) {
                 for (const task of selectedTasks) {
                     const taskPresetDto: TaskPresetDto = {
-                        presetId: savedPreset.id,
+                        presetId: presetId,
                         taskContentId: task.id
                     };
                     
