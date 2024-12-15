@@ -27,3 +27,8 @@ dist-ssr
 /.vs/catch-up-frontend/FileContentIndex
 /.vs/slnx.sqlite
 /.vs/slnx.sqlite
+/.vs/*
+/.vs/catch-up-frontend/v17/.wsuo
+/.vs/catch-up-frontend/v17/DocumentLayout.json
+/.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json
