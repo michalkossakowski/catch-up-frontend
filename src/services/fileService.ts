@@ -16,7 +16,6 @@ const fileService =
                     headers: {'Content-Type': 'multipart/form-data'},
                 }
             );
-            console.log("File uploaded", response)
             return response.data;
         } 
         catch (error) 
@@ -30,7 +29,6 @@ const fileService =
         try 
         {
             const response = await axiosInstance.get(`/File/Download/${fileId}`, {responseType: 'blob',});
-            console.log("File downloaded")
             return response.data;
         } 
         catch (error) 
@@ -42,9 +40,8 @@ const fileService =
     getAllFiles: async(): Promise<FileDto[]> => {
         try
         {
-            const response = await axiosInstance.get<{message: string, filesDto: FileDto[]}>(`/File/GetAllFiles`)
-            console.log("File all:", response.data.message);
-            return response.data.filesDto
+            const response = await axiosInstance.get<FileDto[]>(`/File/GetAllFiles`)
+            return response.data
         }
         catch(error)
         {

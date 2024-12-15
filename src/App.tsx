@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import {Button, Container, Nav, Navbar, NavDropdown} from 'react-bootstrap';
 import AuthProvider, { useAuth } from './Provider/authProvider';
 import ProtectedRoute from './Routes/ProtectedRoute';
 import LoginPage from './components/Login/LoginComponent';
@@ -15,9 +15,17 @@ import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssign
 import Badge from './components/Badge/BadgeComponent';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
+import { useNavigate } from 'react-router-dom';
 
 const AppContent = () => {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    }
+
     return (
         <>
             <Navbar expand="lg" className="bg-body-tertiary navbar-expand-lg">
