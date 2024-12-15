@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\components",
+    "\\src\\components\\Faq",
+    "\\src\\components\\File",
+    "\\src\\components\\Material",
+    "\\src\\components\\Task",
+    "\\src\\dtos",
+    "\\src\\services"
+  ],
+  "SelectedNode": "\\src\\components\\Task\\TaskContentEdit.tsx",
+  "PreviewInSolutionExplorer": false
+}
