@@ -14,6 +14,7 @@ import RoadMapManage from './components/RoadMap/RoadMapManage';
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
 import Badge from './components/Badge/BadgeComponent';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
+import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
 import { useNavigate } from 'react-router-dom';
 
 const AppContent = () => {
@@ -34,6 +35,7 @@ const AppContent = () => {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <Nav.Link href="/">Home</Nav.Link>
+                            <Nav.Link href="/tasks">Tasks</Nav.Link>
                             <Nav.Link href="/admin">Admin</Nav.Link>
                             <Nav.Link href="/faq">Faq</Nav.Link>
                             <Nav.Link href="/faqmanage">FaqManage</Nav.Link>
@@ -55,7 +57,6 @@ const AppContent = () => {
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
-                <Button onClick={handleLogout}>Logout</Button>
             </Navbar>
 
             <Routes>
@@ -68,6 +69,7 @@ const AppContent = () => {
                         </ProtectedRoute>
                     }
                 />
+                <Route path="/tasks" element={<ProtectedRoute><TaskDashboard/></ProtectedRoute>} />
                 <Route path="/admin" element={<ProtectedRoute><h1>Admin</h1></ProtectedRoute>} />
                 <Route path="/faq" element={<ProtectedRoute><FaqComponent isAdmin={false} /></ProtectedRoute>} />
                 <Route path="/faqmanage" element={<ProtectedRoute><FaqManage /></ProtectedRoute>} />
