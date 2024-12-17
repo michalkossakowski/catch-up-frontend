@@ -1,0 +1,17 @@
+.editBox {
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.editBox h2 {
+    margin-bottom: 20px;
+}
+
+.editBox form {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.task-selection {
+    margin-bottom: 20px;
+} 

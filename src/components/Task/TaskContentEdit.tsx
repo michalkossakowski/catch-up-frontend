@@ -58,7 +58,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
                 const category = categories.find(c => c.id === taskContent.categoryId);
                 setSelectedCategory(category || null);
             }
-            
+
             setTitle(taskContent.title);
             setDescription(taskContent.description);
             setMaterialsId(taskContent.materialsId ?? null);
@@ -79,7 +79,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
 
     const handleCategorySearch = async (searchValue: string) => {
         if (searchValue.trim()) {
-            const filteredCategories = categories.filter(category => 
+            const filteredCategories = categories.filter(category =>
                 (category.name || '').toLowerCase().includes(searchValue.toLowerCase())
             );
             setLocalCategories(filteredCategories);
@@ -94,7 +94,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+
         let finalCategoryId = categoryId;
         console.log('Submit - Initial values:', {
             selectedCategory,
@@ -107,17 +107,17 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
             try {
                 const isNameUnique = await isUnique(searchTerm);
                 console.log('Is category name unique:', isNameUnique);
-                
+
                 if (isNameUnique) {
                     const newCategory = await addCategory({ id: 0, name: searchTerm });
                     console.log('New category created:', newCategory);
-                    
+
                     const updatedCategories = await getCategories();
-                    const createdCategory = updatedCategories.find(c => 
+                    const createdCategory = updatedCategories.find(c =>
                         (c.name || '').toLowerCase() === searchTerm.toLowerCase()
                     );
                     console.log('Found created category:', createdCategory);
-                    
+
                     if (createdCategory) {
                         finalCategoryId = createdCategory.id;
                         console.log('Set finalCategoryId to:', finalCategoryId);
@@ -222,7 +222,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
                             handleCategorySearch(newInputValue);
                         }}
                         options={localCategories}
-                        getOptionLabel={(option: string | CategoryDto) => 
+                        getOptionLabel={(option: string | CategoryDto) =>
                             typeof option === 'string' ? option : (option.name || '')}
                         renderInput={(params) => (
                             <StyledTextField
@@ -236,7 +236,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
                         className="mb-3"
                     />
                 </div>
-                
+
                 <Material
                     materialId={materialsId ?? 0}
                     showRemoveFile={true}
