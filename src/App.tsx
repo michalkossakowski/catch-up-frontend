@@ -15,7 +15,6 @@ import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssign
 import Badge from './components/Badge/BadgeComponent';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
 import { useNavigate } from 'react-router-dom';
-import AdminPanel from "./components/Admin/AdminPanel.tsx";
 
 const AppContent = () => {
     const { user, logout, getRole } = useAuth();
@@ -36,6 +35,7 @@ const AppContent = () => {
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
                             <Nav.Link href="/">Home</Nav.Link>
+                            <Nav.Link href="/tasks">Tasks</Nav.Link>
                             {role === 'Admin'  && (
                             <Nav.Link href="/admin">Admin</Nav.Link>
                             )}
@@ -47,6 +47,7 @@ const AppContent = () => {
                             <Nav.Link href="/taskcontentmanage">TaskContentManage</Nav.Link>
                             <Nav.Link href="/roadmapmanage">RoadMapManage</Nav.Link>
                             <Nav.Link href="/badges">Badges</Nav.Link>
+                            <Nav.Link href="/presetmanage">Preset Manage</Nav.Link>
                             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                                 <NavDropdown.Item href="/editmatlist">EditMatList</NavDropdown.Item>
                                 <NavDropdown.Item href="/editmatlist_sidebar">EditMatList_SideBar</NavDropdown.Item>
@@ -72,7 +73,8 @@ const AppContent = () => {
                         </ProtectedRoute>
                     }
                 />
-                <Route path="/admin" element={<ProtectedRoute><AdminPanel/></ProtectedRoute>} />
+                <Route path="/tasks" element={<ProtectedRoute><TaskDashboard/></ProtectedRoute>} />
+                <Route path="/admin" element={<ProtectedRoute><h1>Admin</h1></ProtectedRoute>} />
                 <Route path="/faq" element={<ProtectedRoute><FaqComponent isAdmin={false} /></ProtectedRoute>} />
                 <Route path="/faqmanage" element={<ProtectedRoute><FaqManage /></ProtectedRoute>} />
                 <Route path="/addfile" element={
@@ -90,6 +92,7 @@ const AppContent = () => {
                 <Route path="/editmatlist" element={<ProtectedRoute><EditMatList /></ProtectedRoute>} />
                 <Route path="/roadmapmanage" element={<ProtectedRoute><RoadMapManage /></ProtectedRoute>} />
                 <Route path="/badges" element={<ProtectedRoute><Badge /></ProtectedRoute>} />
+                <Route path="/presetmanage" element={<ProtectedRoute><PresetManage /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
 
