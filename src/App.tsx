@@ -17,6 +17,7 @@ import EditMatList from './components/Material/DndMaterial/EditMatList';
 import { useNavigate } from 'react-router-dom';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
 import PresetManage from "./components/Preset/PresetManage.tsx";
+import AdminPanel from "./components/Admin/AdminPanel.tsx";
 
 const AppContent = () => {
     const { user, logout, getRole } = useAuth();
@@ -76,7 +77,7 @@ const AppContent = () => {
                     }
                 />
                 <Route path="/tasks" element={<ProtectedRoute><TaskDashboard/></ProtectedRoute>} />
-                <Route path="/admin" element={<ProtectedRoute><h1>Admin</h1></ProtectedRoute>} />
+                <Route path="/admin" element={<ProtectedRoute><AdminPanel/></ProtectedRoute>} />
                 <Route path="/faq" element={<ProtectedRoute><FaqComponent isAdmin={false} /></ProtectedRoute>} />
                 <Route path="/faqmanage" element={<ProtectedRoute><FaqManage /></ProtectedRoute>} />
                 <Route path="/addfile" element={
