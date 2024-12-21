@@ -15,6 +15,8 @@ import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssign
 import Badge from './components/Badge/BadgeComponent';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
 import { useNavigate } from 'react-router-dom';
+import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
+import PresetManage from "./components/Preset/PresetManage.tsx";
 
 const AppContent = () => {
     const { user, logout, getRole } = useAuth();
