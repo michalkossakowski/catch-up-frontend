@@ -14,12 +14,14 @@ import RoadMapManage from './components/RoadMap/RoadMapManage';
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
 import Badge from './components/Badge/BadgeComponent';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
-import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
 import { useNavigate } from 'react-router-dom';
-import PresetManage from './components/Preset/PresetManage';
+import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
+import PresetManage from "./components/Preset/PresetManage.tsx";
+import AdminPanel from "./components/Admin/AdminPanel.tsx";
 
 const AppContent = () => {
-    const { user, logout } = useAuth();
+    const { user, logout, getRole } = useAuth();
+    const role = getRole(user?.id || "NotFound");
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -37,7 +39,9 @@ const AppContent = () => {
                         <Nav className="me-auto">
                             <Nav.Link href="/">Home</Nav.Link>
                             <Nav.Link href="/tasks">Tasks</Nav.Link>
+                            {role === 'Admin'  && (
                             <Nav.Link href="/admin">Admin</Nav.Link>
+                            )}
                             <Nav.Link href="/faq">Faq</Nav.Link>
                             <Nav.Link href="/faqmanage">FaqManage</Nav.Link>
                             <Nav.Link href="/addfile">AddFile</Nav.Link>
@@ -59,6 +63,7 @@ const AppContent = () => {
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
+                <Button onClick={handleLogout}>Logout</Button>
             </Navbar>
 
             <Routes>
@@ -72,7 +77,7 @@ const AppContent = () => {
                     }
                 />
                 <Route path="/tasks" element={<ProtectedRoute><TaskDashboard/></ProtectedRoute>} />
-                <Route path="/admin" element={<ProtectedRoute><h1>Admin</h1></ProtectedRoute>} />
+                <Route path="/admin" element={<ProtectedRoute><AdminPanel/></ProtectedRoute>} />
                 <Route path="/faq" element={<ProtectedRoute><FaqComponent isAdmin={false} /></ProtectedRoute>} />
                 <Route path="/faqmanage" element={<ProtectedRoute><FaqManage /></ProtectedRoute>} />
                 <Route path="/addfile" element={

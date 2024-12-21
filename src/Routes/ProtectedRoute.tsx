@@ -24,7 +24,7 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
         return null;
     }
 
-    if (isAuthorized === false) {
+    if (!isAuthorized) {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
