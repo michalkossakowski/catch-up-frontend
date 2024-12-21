@@ -63,6 +63,7 @@ const AppContent = () => {
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
+                <b>Logged as: {user?.name}</b>
                 <Button onClick={handleLogout}>Logout</Button>
             </Navbar>
 
