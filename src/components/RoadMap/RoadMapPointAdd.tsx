@@ -5,7 +5,9 @@ import { addRoadMapPoint } from '../../services/roadMapPointService';
 const RoadMapPointAdd: React.FC = () => {
     const [roadMapId, setRoadMapId] = useState<number>();
     const [name, setName] = useState<string>('');
-    const [deadline, setDeadline] = useState<number>();
+    const [deadline, setDeadline] = useState<Date>();
+
+
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -13,7 +15,7 @@ const RoadMapPointAdd: React.FC = () => {
         const newRoadMapPoint: RoadMapPointDto = {
             roadMapId,
             name,
-            deadline
+            deadline: deadline ?? undefined
         };
 
         addRoadMapPoint(newRoadMapPoint)
@@ -57,13 +59,13 @@ const RoadMapPointAdd: React.FC = () => {
                 </div>
                 <br />
                 <div className="form-group">
-                    <label htmlFor="deadline">Deadline (in days):</label>
+                    <label htmlFor="deadline">Deadline:</label>
                     <input
-                        type="text"
+                        type="date"
                         id="deadline"
                         className="form-control"
-                        value={deadline ?? ''}
-                        onChange={(e) => setDeadline(Number(e.target.value))}
+                        value={deadline?.toISOString().split('T')[0]}
+                        onChange={(e) => setDeadline(new Date(e.target.value))}
                         required
                     />
                 </div>

@@ -5,8 +5,8 @@ export interface RoadMapPointDto {
     roadMapId?: number;
     name?: string;
     newbieId?: string;
-    assignmentDate?: Date;
-    finalizationDate?: Date;
-    deadline?: number;
+    startDate?: Date;
+    finishDate?: Date;
+    deadline?: Date;
     status?: StatusEnum;
 }

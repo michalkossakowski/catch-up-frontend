@@ -12,9 +12,20 @@ export const addRoadMapPoint = async (roadMapPoint: RoadMapPointDto): Promise<Ro
     }
 };
 
+
+export const editRoadMapPoint = async (roadMapPoint: RoadMapPointDto): Promise<RoadMapPointDto> => {
+    try {
+        const response = await axiosInstance.put<RoadMapPointDto>('/RoadMapPoint/Edit/' + roadMapPoint.id, roadMapPoint);
+        return response.data;
+    } catch (error: any) {
+        handleError('editRoadMap', error);
+        throw error;
+    }
+};
+
 export const setRoadMapPointStatus = async (roadMapPointId: number, status :StatusEnum): Promise<RoadMapPointDto> => {
     try {
-        const response = await axiosInstance.put<RoadMapPointDto>(`/RoadMapPoint/SetStatus/${roadMapPointId}/${status}`);
+        const response = await axiosInstance.patch<RoadMapPointDto>(`/RoadMapPoint/SetStatus/${roadMapPointId}/${status}`);
         return response.data;
     } catch (error: any) {
         handleError('setRoadMapPointStatus', error);

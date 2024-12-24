@@ -6,6 +6,7 @@ import { Alert, Button, Form, InputGroup } from 'react-bootstrap';
 import { getByNewbieId } from '../../services/roadMapService';
 import Loading from '../Loading/Loading';
 import './RoadMapList.css'; 
+import { StatusEnum } from '../../Enums/StatusEnum';
 
 
 const RoadMapList: React.FC = () => {
@@ -71,7 +72,7 @@ const RoadMapList: React.FC = () => {
                                         <div className="card-text">
                                             Finish Date:  {rm.finishDate?.toString()}
                                             <br/>
-                                            Is Finished: {rm.IsFinished}
+                                             Status: {rm.status !== undefined ? StatusEnum[rm.status] : 'Unknown'}
                                         </div>  
                                         
                                     </div>

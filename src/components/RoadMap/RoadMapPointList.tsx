@@ -5,6 +5,7 @@ import { Alert, Button, Form, InputGroup } from 'react-bootstrap';
 import { getByRoadMapId } from '../../services/roadMapPointService';
 import Loading from '../Loading/Loading';
 import './RoadMapPointList.css'; 
+import { StatusEnum } from '../../Enums/StatusEnum';
 
 const RoadMapPointList: React.FC = () => {
     const [roadMapPoints, setRoadMapPoints] = useState<RoadMapPointDto[]>([]);
@@ -66,13 +67,13 @@ const RoadMapPointList: React.FC = () => {
                                 <div className="card">
                                     <div className="card-body">
                                         <h5 className="card-title">#{rmp.id} - {rmp.name}</h5>
-                                        <h6 className="card-subtitle mb-2 text-muted">Assigment Date: {rmp.assignmentDate?.toString()}</h6>
+                                        <h6 className="card-subtitle mb-2 text-muted">Start Date: {rmp.startDate?.toString()}</h6>
                                         <div className="card-text">
-                                            Finalization Date:  {rmp.finalizationDate?.toString()}
+                                            Finish Date:  {rmp.finishDate?.toString()}
                                             <br/>
-                                            Deadline: {rmp.deadline}
+                                            Deadline: {rmp.deadline?.toString()}
                                             <br/>
-                                            Status: {rmp.status}
+                                            Status: {rmp.status !== undefined ? StatusEnum[rmp.status] : 'Unknown'}
                                         </div>  
                                         
                                     </div>

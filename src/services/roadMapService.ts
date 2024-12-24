@@ -1,5 +1,6 @@
 import axiosInstance from '../../axiosConfig';
 import { RoadMapDto } from '../dtos/RoadMapDto';
+import { StatusEnum } from '../Enums/StatusEnum';
 
 
 export const addRoadMap = async (roadMap: RoadMapDto): Promise<RoadMapDto> => {
@@ -12,12 +13,22 @@ export const addRoadMap = async (roadMap: RoadMapDto): Promise<RoadMapDto> => {
     }
 };
 
-export const finishRoadMap = async (roadMapId: number): Promise<RoadMapDto> => {
+export const editRoadMap = async (roadMap: RoadMapDto): Promise<RoadMapDto> => {
     try {
-        const response = await axiosInstance.put<RoadMapDto>('/RoadMap/Finish/' + roadMapId);
+        const response = await axiosInstance.put<RoadMapDto>('/RoadMapPoint/Edit/' + roadMap.id, roadMap);
         return response.data;
     } catch (error: any) {
-        handleError('finishRoadMap', error);
+        handleError('editRoadMap', error);
+        throw error;
+    }
+};
+
+export const setRoadMapStatus = async (roadMapId: number, status :StatusEnum): Promise<RoadMapDto> => {
+    try {
+        const response = await axiosInstance.patch<RoadMapDto>(`/RoadMap/SetStatus/${roadMapId}/${status}`);
+        return response.data;
+    } catch (error: any) {
+        handleError('setRoadMapStatus', error);
         throw error;
     }
 };
