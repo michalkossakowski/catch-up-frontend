@@ -12,12 +12,12 @@ export const getFaqs = async (): Promise<FaqDto[]> => {
 };
 
 
-export const getByTitle = async (title: string): Promise<FaqDto[]> => {
+export const getByQuestion = async (question: string): Promise<FaqDto[]> => {
     try {
-        const response = await axiosInstance.get<FaqDto[]>('/Faq/GetByTitle/'+title);
+        const response = await axiosInstance.get<FaqDto[]>('/Faq/GetByQuestion/'+question);
         return response.data;
     } catch (error: any) {
-        handleError('getByTitle', error);
+        handleError('getByQuestion', error);
         throw error;
     }
 };

@@ -14,16 +14,16 @@ interface FaqEditProps {
 
 export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqEditProps): React.ReactElement {
 
-    const [title, setTitle] = useState<string>('');
+    const [question, setQuestion] = useState<string>('');
     const [answer, setAnswer] = useState<string>('');
-    const [materialsId, setMaterialsId] = useState<number | null>(null);
+    const [materialId, setMaterialId] = useState<number | null>(null);
 
-    const [isTitleValid, setTitleValidation] = useState<boolean>(false);
+    const [isQuestionValid, setQuestionValidation] = useState<boolean>(false);
     const [isAnswerValid, setAnswerValidation] = useState<boolean>(false);
 
-    const validateTitle = (value: string) => {
-        setTitleValidation(/^[A-Z].*\?$/.test(value) && value.length >= 5);
-        setTitle(value);
+    const validateQuestion = (value: string) => {
+        setQuestionValidation(/^[A-Z].*\?$/.test(value) && value.length >= 5);
+        setQuestion(value);
     };
 
     const validateAnswer = (value: string) => {
@@ -33,30 +33,30 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
 
     useEffect(() => {
         if (faq) {
-            setTitle(faq.title);
+            setQuestion(faq.question);
             setAnswer(faq.answer);
-            setMaterialsId(faq.materialsId ?? null);
-            setTitleValidation(true)
+            setMaterialId(faq.materialId ?? null);
+            setQuestionValidation(true)
             setAnswerValidation(true)
         }
     }, [faq]);
 
     const materialCreated = (materialId: number) => {
-        setMaterialsId(materialId);
+        setMaterialId(materialId);
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (!isTitleValid || !isAnswerValid) {
+        if (!isQuestionValid || !isAnswerValid) {
             return;
         }
 
         const faqDto: FaqDto = {
             id: isEditMode ? faq!.id : 0,
-            title: title ?? '',
+            question: question ?? '',
             answer: answer ?? '',
-            materialsId: materialsId,
+            materialId: materialId,
         };
 
         const updateFaq = isEditMode ? editFaq(faqDto) : addFaq(faqDto);  
@@ -64,9 +64,9 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
         updateFaq
             .then(() => {
                 onFaqEdited();
-                setTitle('');
+                setQuestion('');
                 setAnswer('');
-                setMaterialsId(null);
+                setMaterialId(null);
             })
             .catch((error) => {
                 console.error('Error saving FAQ:', error);
@@ -79,18 +79,18 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
                 <h2>{isEditMode ? 'Edit FAQ' : 'Add new FAQ'}</h2>
                 <br />
                 <div className="form-group">
-                    <label htmlFor="title">Title:</label>
+                    <label htmlFor="question">Question:</label>
                     <input
                         type="text"
-                        id="title"
-                        className={`form-control ${!isTitleValid ? 'is-invalid' : ''}`}
-                        value={title}
-                        onChange={(e) => validateTitle(e.target.value)}
+                        id="question"
+                        className={`form-control ${!isQuestionValid ? 'is-invalid' : ''}`}
+                        value={question}
+                        onChange={(e) => validateQuestion(e.target.value)}
                         required
                     />
-                    {!isTitleValid && (
+                    {!isQuestionValid && (
                         <div className="invalid-feedback">
-                            The title must start with a capital letter, be at least 5 characters long, and end with "?"
+                            The question must start with a capital letter, be at least 5 characters long, and end with "?"
                         </div>
                     )}
                 </div>
@@ -115,7 +115,7 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
                 <div className="form-group">
                     <label>Additonal Materials:</label>
                     <Material
-                        materialId={materialsId ?? 0}
+                        materialId={materialId ?? 0}
                         showRemoveFile={true}
                         showDownloadFile={true}
                         showAddingFile={true}
@@ -123,14 +123,14 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
                     />
                 </div>
                 <div className='buttonBox'>
-                    <Button type="submit" variant="primary" disabled={!isTitleValid || !isAnswerValid}>
+                    <Button type="submit" variant="primary" disabled={!isQuestionValid || !isAnswerValid}>
                         {isEditMode ? 'Save Changes' : 'Add new FAQ'}
                     </Button >
                     <Button variant="danger" onClick={() => onCancel()}>
                         Cancel 
                     </Button >
-                    {materialsId &&(
-                        <Button variant="secondary" onClick={() => setMaterialsId(null)}>
+                    {materialId &&(
+                        <Button variant="secondary" onClick={() => setMaterialId(null)}>
                             Remove materials
                         </Button>
                     )}

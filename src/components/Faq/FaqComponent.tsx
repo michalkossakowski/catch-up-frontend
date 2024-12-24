@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './FaqComponent.css'; 
 import { Accordion, Alert, Button, Form, InputGroup} from 'react-bootstrap';
 import { FaqDto } from '../../dtos/FaqDto';
-import { getFaqs, getByTitle, deleteFaq } from '../../services/faqService';
+import { getFaqs, getByQuestion, deleteFaq } from '../../services/faqService';
 import FaqEdit from './FaqEdit';
 import Loading from '../Loading/Loading';
 import FaqItem from './FaqItem';
@@ -18,7 +18,7 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
     
     const [showSearchMessage, setShowSearchMessage] = useState(false)
     const [searchMessage, setSearchMessage] = useState('alert')
-    const [searchTitle, setSearchTitle] = useState('');
+    const [searchQuestion, setSearchQuestion] = useState('');
 
 
     const [showEdit, setShowEdit] = useState(false);
@@ -53,13 +53,13 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
     }
 
     const searchFaq = () => {
-        if (searchTitle.length == 0) {
+        if (searchQuestion.length == 0) {
             getAllFaqs()
             setShowSearchMessage(false);
             return
         }
         setLoading(true);
-        getByTitle(searchTitle)
+        getByQuestion(searchQuestion)
             .then((data) => {
                 setFaqs(data);
                 setShowSearchMessage(false);
@@ -127,14 +127,14 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
 
 
             <section className='container'>
-                <h2 className='title'>Frequently Asked Questions</h2>
+                <h2 className='question'>Frequently Asked Questions</h2>
                 
                 <div className='searchBox'>
                     <InputGroup className="inputGroup mb-3">
                         <Form.Control
-                            placeholder="Enter searching title..."
-                            value={searchTitle} 
-                            onChange={(e) => setSearchTitle(e.target.value)} 
+                            placeholder="Enter searching question..."
+                            value={searchQuestion} 
+                            onChange={(e) => setSearchQuestion(e.target.value)} 
                             onKeyDown={(e) => e.key === 'Enter' && searchFaq()}
                         />
                         <Button variant="primary" id="searchButton" onClick={searchFaq}> 

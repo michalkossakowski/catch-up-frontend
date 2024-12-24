@@ -16,15 +16,15 @@ export default function FaqItem(props: FaqProps): React.ReactElement {
         <>
             <Accordion.Item eventKey={props.faq.id.toString()} key={props.faq.id}>
                 <Accordion.Header>
-                    {props.index}. {props.faq.title}
+                    {props.index}. {props.faq.question}
                 </Accordion.Header>
                 <Accordion.Body>
                     <p>{props.faq.answer}</p>
 
-                    {props.faq.materialsId && (
+                    {props.faq.materialId && (
                         <div> 
                             Additional materials:                                
-                            <Material materialId={props.faq.materialsId} showDownloadFile={true}/>
+                            <Material materialId={props.faq.materialId} showDownloadFile={true}/>
                         </div>  
                     )}
 
