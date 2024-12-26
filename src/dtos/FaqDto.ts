@@ -1,6 +1,6 @@
 export interface FaqDto {
     id: number;
-    title: string;
+    question: string;
     answer: string;
-    materialsId?: number | null;
+    materialId?: number | null;
 }
