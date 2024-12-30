@@ -9,107 +9,97 @@ const axiosInstance = axios.create({
     },
 });
 
-let isRefreshing = false; // flag to not allow multiple refreshesh cus async
-let refreshSubscribers: ((token: string) => void)[] = [];
+let isRefreshing = false;
+let refreshPromise: Promise<any> | null = null;
 
-// refresh queue
-const subscribeTokenRefresh = (cb: (token: string) => void) => {
-    refreshSubscribers.push(cb);
+const handleRefreshToken = async (refreshToken: string, config: any) => {
+    if (isRefreshing && refreshPromise) {
+        const newToken = await refreshPromise;
+        config.headers.Authorization = `Bearer ${newToken}`;
+        return config;
+    }
+
+    const decodedRefreshToken: any = jwtDecode(refreshToken);
+    const isRefreshTokenExpired = decodedRefreshToken.exp * 1000 < Date.now();
+
+    if (isRefreshTokenExpired) {
+        Cookies.remove('accessToken');
+        Cookies.remove('refreshToken');
+        Cookies.remove('user');
+        window.location.href = '/login';
+        throw new Error('Refresh token expired');
+    }
+
+    isRefreshing = true;
+
+    // Create a new refresh promise
+    refreshPromise = axios.post(
+        'https://localhost:7097/api/Auth/Refresh',
+        refreshToken,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }
+    ).then(response => {
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
+
+        Cookies.set('accessToken', newAccessToken, {
+            path: '/',
+            secure: true
+        });
+        Cookies.set('refreshToken', newRefreshToken, {
+            path: '/',
+            secure: true
+        });
+
+        return newAccessToken;
+    }).finally(() => {
+        isRefreshing = false;
+        refreshPromise = null;
+    });
+
+    // Wait for the refresh to complete
+    const newAccessToken = await refreshPromise;
+    config.headers.Authorization = `Bearer ${newAccessToken}`;
+    return config;
 };
 
-const onRefreshed = (token: string) => {
-    refreshSubscribers.forEach(cb => cb(token));
-    refreshSubscribers = [];
-};
+const PUBLIC_URLS = ['Auth/Login', 'Auth/Refresh'];
 
-// Request interceptor
 axiosInstance.interceptors.request.use(
     async (config) => {
+        if (PUBLIC_URLS.some(url => config.url?.includes(url))) {
+            return config;
+        }
+
         const accessToken = Cookies.get('accessToken');
         const refreshToken = Cookies.get('refreshToken');
 
         if (accessToken) {
-            try {
-                const decodedToken: any = jwtDecode(accessToken);
-                const isAccessTokenExpired = decodedToken.exp * 1000 < Date.now();
+            const decodedToken: any = jwtDecode(accessToken);
+            const isAccessTokenExpired = decodedToken.exp * 1000 < Date.now();
 
-                if (isAccessTokenExpired) {
-                    if (!refreshToken) {
-                        Cookies.remove('accessToken');
-                        Cookies.remove('refreshToken');
-                        Cookies.remove('user');
-                        window.location.href = '/login';
-                        throw new Error('No refresh token available');
-                    }
-
-                    const decodedRefreshToken: any = jwtDecode(refreshToken);
-                    const isRefreshTokenExpired = decodedRefreshToken.exp * 1000 < Date.now();
-
-                    if (isRefreshTokenExpired) {
-                        Cookies.remove('accessToken');
-                        Cookies.remove('refreshToken');
-                        Cookies.remove('user');
-                        window.location.href = '/login';
-                        throw new Error('Refresh token expired');
-                    }
-
-                    // If we're not already refreshing, start the refresh process
-                    if (!isRefreshing) {
-                        isRefreshing = true;
-
-                        try {
-                            const response = await axios.post(
-                                'https://localhost:7097/api/Auth/Refresh',
-                                refreshToken,
-                                {
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                    }
-                                }
-                            );
-
-                            const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
-
-                            Cookies.set('accessToken', newAccessToken, {
-                                path: '/',
-                                secure: true
-                            });
-                            Cookies.set('refreshToken', newRefreshToken, {
-                                path: '/',
-                                secure: true
-                            });
-
-                            onRefreshed(newAccessToken);
-                            isRefreshing = false;
-
-                            config.headers.Authorization = `Bearer ${newAccessToken}`;
-                        } catch (refreshError) {
-                            Cookies.remove('accessToken');
-                            Cookies.remove('refreshToken');
-                            Cookies.remove('user');
-                            window.location.href = '/login';
-                            isRefreshing = false;
-                            throw refreshError;
-                        }
-                    } else {
-                        return new Promise((resolve) => {
-                            subscribeTokenRefresh((token) => {
-                                config.headers.Authorization = `Bearer ${token}`;
-                                resolve(config);
-                            });
-                        });
-                    }
+            if (isAccessTokenExpired) {
+                if (!refreshToken) {
+                    Cookies.remove('accessToken');
+                    Cookies.remove('refreshToken');
+                    Cookies.remove('user');
+                    window.location.href = '/login';
+                    throw new Error('No refresh token available');
                 }
 
-                config.headers.Authorization = `Bearer ${accessToken}`;
-                return config;
-            } catch (error) {
-                Cookies.remove('accessToken');
-                Cookies.remove('refreshToken');
-                Cookies.remove('user');
-                window.location.href = '/login';
-                return Promise.reject(error);
+                return handleRefreshToken(refreshToken, config);
             }
+
+            config.headers.Authorization = `Bearer ${accessToken}`;
+        } else if (refreshToken) {
+            return handleRefreshToken(refreshToken, config);
+        } else {
+            Cookies.remove('accessToken');
+            Cookies.remove('refreshToken');
+            Cookies.remove('user');
+            window.location.href = '/login';
         }
 
         return config;
@@ -126,7 +116,6 @@ axiosInstance.interceptors.response.use(
             Cookies.remove('accessToken');
             Cookies.remove('refreshToken');
             Cookies.remove('user');
-
             window.location.href = '/login';
         }
         return Promise.reject(error);
