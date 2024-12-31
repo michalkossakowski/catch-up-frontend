@@ -117,7 +117,7 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
     return (
         <>
             <section className='container'>
-                <h2 className='question'>Frequently Asked Questions</h2>
+                <h2 className='title'>Frequently Asked Questions</h2>
                 
                 <div className='searchBox'>
                     <InputGroup className="inputGroup mb-3">
@@ -133,12 +133,13 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
                     </InputGroup>
                 </div>
 
-                <div className='loaderBox'>
-                    
-                    {loading && (
+                {loading && (
+                    <div className='loaderBox'>
                         <Loading/>
-                    )}
+                    </div>
+                )}
 
+                <div className='alertBox'>
                     {showAlert &&(
                         <Alert className='alert' variant='danger'>
                             {alertMessage}
@@ -153,13 +154,11 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
                 </div>
 
                 {!showSearchMessage && !showAlert && !loading &&(
-                    <div>
-                        <Accordion className='AccordionItem'>
-                            {faqs.map((faq) => (
-                              <FaqItem key={faq.id} faq={faq} index={i++} editClick={startEdit} isAdmin={isAdmin} deleteClick={startDelete}></FaqItem>
-                            ))}
-                        </Accordion>
-                    </div>
+                    <Accordion className='AccordionItem'>
+                        {faqs.map((faq) => (
+                            <FaqItem key={faq.id} faq={faq} index={i++} editClick={startEdit} isAdmin={isAdmin} deleteClick={startDelete}></FaqItem>
+                        ))}
+                    </Accordion>
                 )}
             </section>
             

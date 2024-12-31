@@ -1,11 +1,16 @@
 .title{
-    margin: 20px;
+    margin: 10px;
 }
 .AccordionItem{
     text-align: left;
 }
 
 .loaderBox{
+    display: flex;
+    justify-content: center;
+}
+
+.alertBox{
     display: flex;
     justify-content: center;
 }
