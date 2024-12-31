@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
 import PresetManage from "./components/Preset/PresetManage.tsx";
 import AdminPanel from "./components/Admin/AdminPanel.tsx";
+import PresetAssign from './components/Preset/PresetAssign';
 
 const AppContent = () => {
     const { user, logout, getRole } = useAuth();
@@ -50,7 +51,7 @@ const AppContent = () => {
                             <Nav.Link href="/taskcontentmanage">TaskContentManage</Nav.Link>
                             <Nav.Link href="/roadmapmanage">RoadMapManage</Nav.Link>
                             <Nav.Link href="/badges">Badges</Nav.Link>
-                            <Nav.Link href="/presetmanage">Preset Manage</Nav.Link>
+                            <Nav.Link href="/presetmanage">PresetManage</Nav.Link>
                             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                                 <NavDropdown.Item href="/editmatlist">EditMatList</NavDropdown.Item>
                                 <NavDropdown.Item href="/editmatlist_sidebar">EditMatList_SideBar</NavDropdown.Item>
@@ -97,6 +98,7 @@ const AppContent = () => {
                 <Route path="/roadmapmanage" element={<ProtectedRoute><RoadMapManage /></ProtectedRoute>} />
                 <Route path="/badges" element={<ProtectedRoute><Badge /></ProtectedRoute>} />
                 <Route path="/presetmanage" element={<ProtectedRoute><PresetManage /></ProtectedRoute>} />
+                <Route path="/preset/assign/:presetId" element={<ProtectedRoute><PresetAssign /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../../axiosConfig';
 import { useAuth} from "../../Provider/authProvider.tsx";
+import { StatusEnum } from '../../Enums/StatusEnum';
 
 interface Task {
     id: number;
@@ -18,6 +19,10 @@ interface Task {
     priority: number;
     rate: null | number;
 }
+
+const getStatusName = (status: StatusEnum): string => {
+    return StatusEnum[status];
+};
 
 const TaskDashboard: React.FC = () => {
     const [tasks, setTasks] = useState<Task[]>([]);
@@ -79,7 +84,7 @@ const TaskDashboard: React.FC = () => {
                                         <h4 className="card-title">{task.title}</h4>
                                         <p className="card-text">{task.description}</p>
                                         <div className="d-flex justify-content-between">
-                                            <small>Status: {task.status}</small>
+                                            <small>Status: {getStatusName(Number(task.status) as StatusEnum)}</small>
                                             <small>Priority: {task.priority}</small>
                                         </div>
                                     </div>
