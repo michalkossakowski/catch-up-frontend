@@ -20,7 +20,6 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
     const [searchMessage, setSearchMessage] = useState('alert')
     const [searchQuestion, setSearchQuestion] = useState('');
 
-
     const [showEdit, setShowEdit] = useState(false);
     const [editedFaq, setEditedFaq] = useState<FaqDto | null>();
 
@@ -37,6 +36,12 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
         getAllFaqs();
     }, []);
 
+    useEffect(() => {
+        if (showEdit) {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+    }, [showEdit]);
+    
 
     const getAllFaqs = () => {
         setLoading(true);
@@ -111,21 +116,6 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
 
     return (
         <>
-            {isAdmin && (
-                <div>
-                    <Button variant="primary" onClick={() => {setShowEdit(true); setEditedFaq(null)}}>
-                        Add new FAQ
-                    </Button>
-                    {showEdit && !editedFaq && (
-                        <FaqEdit isEditMode={false} onFaqEdited={handleFaqUpdated} onCancel={() => setShowEdit(false)}/>
-                    )}
-                    {showEdit && editedFaq && (
-                        <FaqEdit faq={editedFaq} isEditMode={true} onFaqEdited={handleFaqUpdated} onCancel={() => setShowEdit(false)}/>
-                    )}
-                </div>
-            )}
-
-
             <section className='container'>
                 <h2 className='question'>Frequently Asked Questions</h2>
                 
@@ -187,6 +177,20 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
                 onConfirm={handleDelete} 
                 onCancel={() => setShowConfirmModal(false)} 
             />
+
+            {isAdmin && (
+                <div>
+                    <Button variant="primary" onClick={() => {setShowEdit(true); setEditedFaq(null)}}>
+                        Add new FAQ
+                    </Button>
+                    {showEdit && !editedFaq && (
+                        <FaqEdit isEditMode={false} onFaqEdited={handleFaqUpdated} onCancel={() => setShowEdit(false)}/>
+                    )}
+                    {showEdit && editedFaq && (
+                        <FaqEdit faq={editedFaq} isEditMode={true} onFaqEdited={handleFaqUpdated} onCancel={() => setShowEdit(false)}/>
+                    )}
+                </div>
+            )}
         </>
     );
 };

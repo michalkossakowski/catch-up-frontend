@@ -6,7 +6,6 @@ import AuthProvider, { useAuth } from './Provider/authProvider';
 import LoginPage from './components/Login/LoginComponent';
 import FaqComponent from './components/Faq/FaqComponent';
 import Material from './components/Material/Material';
-import FaqManage from './components/Faq/FaqManage';
 import AssignTask from './components/TaskAssigment/AssignTask';
 import TaskContentManage from './components/Task/TaskContentManage';
 import RoadMapManage from './components/RoadMap/RoadMapManage';
@@ -52,7 +51,6 @@ const Navigation = () => {
                         <Nav.Link href="/">Home</Nav.Link>
                         <Nav.Link href="/tasks">Tasks</Nav.Link>
                         <Nav.Link href="/faq">FAQ</Nav.Link>
-                        <Nav.Link href="/faqmanage">FAQ Manage</Nav.Link>
                         <Nav.Link href="/addfile">Add File</Nav.Link>
                         <Nav.Link href="/employesassignment">Employes Assignment</Nav.Link>
                         <Nav.Link href="/assigntask">Assign Task</Nav.Link>
@@ -86,8 +84,19 @@ const Navigation = () => {
 };
 
 const AppRoutes = () => {
-    const { user } = useAuth();
+    const { user, getRole } = useAuth();
     const location = useLocation();
+    const [role, setRole] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchRole = async () => {
+            if (user?.id) {
+                const userRole = await getRole(user.id);
+                setRole(userRole);
+            }
+        };
+        fetchRole();
+    }, [user?.id, getRole]);
 
     if (!user && location.pathname !== '/login') {
         return <Navigate to="/login" replace />;
@@ -111,8 +120,7 @@ const AppRoutes = () => {
                 <>
                     <Route path="/tasks" element={<><Navigation /><TaskDashboard /></>} />
                     <Route path="/admin" element={<><Navigation /><AdminPanel /></>} />
-                    <Route path="/faq" element={<><Navigation /><FaqComponent isAdmin={false} /></>} />
-                    <Route path="/faqmanage" element={<><Navigation /><FaqManage /></>} />
+                    <Route path="/faq" element={<><Navigation /><FaqComponent isAdmin={role === "Admin"} /></>} />
                     <Route path="/addfile" element={
                         <>
                             <Navigation />
