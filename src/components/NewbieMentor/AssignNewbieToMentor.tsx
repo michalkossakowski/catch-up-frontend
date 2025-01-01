@@ -2,19 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import NewbieMentorService from '../../services/newbieMentorService';
-import { UserDto } from '../../dtos/UserDto';
+import { UserAssignCountDto } from '../../dtos/UserAssignCountDto';
 import './NewbieMentor.css';
 import Loading from '../Loading/Loading';
 
 const AssignNewbieToMentorComponent: React.FC = () => {
-  const [newbieMentors, setNewbieMentors] = useState<UserDto[]>([]);
+  const [newbieMentors, setNewbieMentors] = useState<UserAssignCountDto[]>([]);
   const [selectedMentorId, setSelectedMentorId] = useState<string | null>(null);
   const [selectedMentorName, setSelectedMentorName] = useState<string | null>(null);
   const [selectedMentorSurname, setSelectedMentorSurname] = useState<string | null>(null);
-  const [assignedNewbies, setAssignedNewbies] = useState<UserDto[]>([]);
+  const [assignedNewbies, setAssignedNewbies] = useState<UserAssignCountDto[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [, setError] = useState<string>('');
-  const [unassignedNewbies, setUnassignedNewbies] = useState<UserDto[]>([]);
+  const [unassignedNewbies, setUnassignedNewbies] = useState<UserAssignCountDto[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [deletingNewbieId, setDeletingNewbieId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>(''); // dla Mentora
@@ -157,8 +157,8 @@ const AssignNewbieToMentorComponent: React.FC = () => {
 
   // Sortowanie mentorów
   const sortedMentors = filteredMentors.sort((a, b) => {
-    const aValue = a[sortConfigMentors.key as keyof UserDto]?.toString().toLowerCase() || '';
-    const bValue = b[sortConfigMentors.key as keyof UserDto]?.toString().toLowerCase() || '';
+    const aValue = a[sortConfigMentors.key as keyof UserAssignCountDto]?.toString().toLowerCase() || '';
+    const bValue = b[sortConfigMentors.key as keyof UserAssignCountDto]?.toString().toLowerCase() || '';
 
     if (aValue < bValue) {
       return sortConfigMentors.direction === 'asc' ? -1 : 1;
@@ -171,8 +171,8 @@ const AssignNewbieToMentorComponent: React.FC = () => {
 
   // Sortowanie przypisanych nowicjuszy
   const sortedAssigned = filteredAssignedNewbies.sort((a, b) => {
-    const aValue = a[sortConfigAssigned.key as keyof UserDto]?.toString().toLowerCase() || '';
-    const bValue = b[sortConfigAssigned.key as keyof UserDto]?.toString().toLowerCase() || '';
+    const aValue = a[sortConfigAssigned.key as keyof UserAssignCountDto]?.toString().toLowerCase() || '';
+    const bValue = b[sortConfigAssigned.key as keyof UserAssignCountDto]?.toString().toLowerCase() || '';
 
     if (aValue < bValue) {
       return sortConfigAssigned.direction === 'asc' ? -1 : 1;
@@ -185,8 +185,8 @@ const AssignNewbieToMentorComponent: React.FC = () => {
 
   // Sortowanie nieprzypisanych nowicjuszy
   const sortedUnassigned = filteredUnassignedNewbies.sort((a, b) => {
-    const aValue = a[sortConfigUnassigned.key as keyof UserDto]?.toString().toLowerCase() || '';
-    const bValue = b[sortConfigUnassigned.key as keyof UserDto]?.toString().toLowerCase() || '';
+    const aValue = a[sortConfigUnassigned.key as keyof UserAssignCountDto]?.toString().toLowerCase() || '';
+    const bValue = b[sortConfigUnassigned.key as keyof UserAssignCountDto]?.toString().toLowerCase() || '';
 
     if (aValue < bValue) {
       return sortConfigUnassigned.direction === 'asc' ? -1 : 1;
