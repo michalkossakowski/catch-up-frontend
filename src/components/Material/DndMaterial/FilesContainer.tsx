@@ -5,6 +5,7 @@ import { FileDto } from "../../../dtos/FileDto";
 import { Form } from "react-bootstrap";
 import ErrorMessage from "../../ErrorMessage";
 import React from "react";
+import Loading from "../../Loading/Loading";
 interface FilesContainerProps {
     excludedFileIds: number[]
 }
@@ -17,6 +18,8 @@ const FilesContainer: React.FC<FilesContainerProps> = ({ excludedFileIds }) => {
     const [errorShow, setErrorShow] = React.useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
+    const [loading, setLoading] = useState(true)
+    
     useEffect(() => {
         const fetchFiles = async () => {
             try {
@@ -24,6 +27,8 @@ const FilesContainer: React.FC<FilesContainerProps> = ({ excludedFileIds }) => {
             } catch (error) {
                 setErrorMessage("Error fetching files: "+ error)
                 setErrorShow(true)
+            } finally {
+                setLoading(false)
             }
         }
         fetchFiles()
@@ -60,16 +65,24 @@ const FilesContainer: React.FC<FilesContainerProps> = ({ excludedFileIds }) => {
             <hr />
             <h4>Files:</h4>
             <hr />
-            <div className="container-md d-flex flex-wrap align-items-start">
-                {fileList && fileList.map((file) => {
-                    const isVisible = filtredFileList.find(f => f.id == file.id);
-                    return (
-                        <div key={file.id} style={{ display: isVisible ? "block" : "none" }}>
-                            <FileItem fileDto={file} />
-                        </div>
-                    )
-                })}
-            </div>
+            {loading && (
+                <div className='mt-3'>
+                <Loading/>
+                </div>
+            )}
+
+            {!loading && (
+                <div className="container-md d-flex flex-wrap align-items-start">
+                    {fileList && fileList.map((file) => {
+                        const isVisible = filtredFileList.find(f => f.id == file.id);
+                        return (
+                            <div key={file.id} style={{ display: isVisible ? "block" : "none" }}>
+                                <FileItem fileDto={file} />
+                            </div>
+                        )
+                    })}
+                </div>
+            )}
         </div>
     )
 }

@@ -12,7 +12,6 @@ const EditMatList: React.FC = () => {
   const [materialAccordion, setMaterialAccordion] = useState<number | null>(null)
   const [fileContainerKey, setFileContainerKey] = useState(0);
 
-
   // Obsługa error-ów
   const [errorShow, setErrorShow] = React.useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

@@ -17,7 +17,7 @@ import PresetManage from "./components/Preset/PresetManage.tsx";
 import AdminPanel from "./components/Admin/AdminPanel.tsx";
 import { useEffect, useState } from 'react';
 import UserProfile from "./components/User/UserProfile.tsx";
-import SchoolingList from "./components/Schooling/SchoolingList.tsx";
+import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
 
 const Navigation = () => {
     const { user, logout, getRole } = useAuth();
@@ -50,7 +50,7 @@ const Navigation = () => {
                     <Nav className="me-auto">
                         <Nav.Link href="/">Home</Nav.Link>
                         <Nav.Link href="/tasks">Tasks</Nav.Link>
-                        <Nav.Link href="/schoolinglist">Schoolings</Nav.Link>
+                        <Nav.Link href="/schoolinglistnewbie">Schoolings</Nav.Link>
                         <Nav.Link href="/faq">FAQ</Nav.Link>
                         <Nav.Link href="/employesassignment">Employes Assignment</Nav.Link>
                         <Nav.Link href="/assigntask">Assign Task</Nav.Link>
@@ -130,7 +130,7 @@ const AppRoutes = () => {
                     <Route path="/badges" element={<><Navigation /><Badge /></>} />
                     <Route path="/presetmanage" element={<><Navigation /><PresetManage /></>} />
                     <Route path="/profile" element={<><Navigation /><UserProfile /></>} />
-                    <Route path="/schoolinglist" element={<><Navigation /><SchoolingList /></>} />
+                    <Route path="/schoolinglistnewbie" element={<><Navigation /><SchoolingListNewbie /></>} />
                 </>
             )}
 
