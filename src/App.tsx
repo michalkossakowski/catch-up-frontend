@@ -5,7 +5,6 @@ import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap';
 import AuthProvider, { useAuth } from './Provider/authProvider';
 import LoginPage from './components/Login/LoginComponent';
 import FaqComponent from './components/Faq/FaqComponent';
-import Material from './components/Material/Material';
 import AssignTask from './components/TaskAssigment/AssignTask';
 import TaskContentManage from './components/Task/TaskContentManage';
 import RoadMapManage from './components/RoadMap/RoadMapManage';
@@ -18,6 +17,7 @@ import PresetManage from "./components/Preset/PresetManage.tsx";
 import AdminPanel from "./components/Admin/AdminPanel.tsx";
 import { useEffect, useState } from 'react';
 import UserProfile from "./components/User/UserProfile.tsx";
+import SchoolingList from "./components/Schooling/SchoolingList.tsx";
 
 const Navigation = () => {
     const { user, logout, getRole } = useAuth();
@@ -50,8 +50,8 @@ const Navigation = () => {
                     <Nav className="me-auto">
                         <Nav.Link href="/">Home</Nav.Link>
                         <Nav.Link href="/tasks">Tasks</Nav.Link>
+                        <Nav.Link href="/schoolinglist">Schoolings</Nav.Link>
                         <Nav.Link href="/faq">FAQ</Nav.Link>
-                        <Nav.Link href="/addfile">Add File</Nav.Link>
                         <Nav.Link href="/employesassignment">Employes Assignment</Nav.Link>
                         <Nav.Link href="/assigntask">Assign Task</Nav.Link>
                         <Nav.Link href="/taskcontentmanage">Task Content Manage</Nav.Link>
@@ -61,6 +61,7 @@ const Navigation = () => {
                         {role === 'Admin' && (
                             <NavDropdown title="Admin Tools" id="basic-nav-dropdown">
                                 <Nav.Link href="/admin">Add User</Nav.Link>
+                                <Nav.Link href="/editmatlist">Manage materials</Nav.Link>
                             </NavDropdown>
                         )}
                     </Nav>
@@ -121,16 +122,6 @@ const AppRoutes = () => {
                     <Route path="/tasks" element={<><Navigation /><TaskDashboard /></>} />
                     <Route path="/admin" element={<><Navigation /><AdminPanel /></>} />
                     <Route path="/faq" element={<><Navigation /><FaqComponent isAdmin={role === "Admin"} /></>} />
-                    <Route path="/addfile" element={
-                        <>
-                            <Navigation />
-                            <Material
-                                showRemoveFile={true}
-                                showDownloadFile={true}
-                                showAddingFile={true}
-                            />
-                        </>
-                    } />
                     <Route path="/employesassignment" element={<><Navigation /><EmployesAssignmentSelector /></>} />
                     <Route path="/assigntask" element={<><Navigation /><AssignTask /></>} />
                     <Route path="/taskcontentmanage" element={<><Navigation /><TaskContentManage /></>} />
@@ -139,6 +130,7 @@ const AppRoutes = () => {
                     <Route path="/badges" element={<><Navigation /><Badge /></>} />
                     <Route path="/presetmanage" element={<><Navigation /><PresetManage /></>} />
                     <Route path="/profile" element={<><Navigation /><UserProfile /></>} />
+                    <Route path="/schoolinglist" element={<><Navigation /><SchoolingList /></>} />
                 </>
             )}
 
