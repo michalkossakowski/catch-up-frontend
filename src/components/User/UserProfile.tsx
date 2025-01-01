@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import { useAuth } from "../../Provider/authProvider";
 import UserInfoCard from "./UserInfoCard";
+import MentorListItem from "./MentorListItem";
 import axiosInstance from "../../../axiosConfig";
 
 interface Mentor {
@@ -11,10 +12,10 @@ interface Mentor {
     position: string;
 }
 
-const UserProfile: React.FC = () => {
+const UserProfile = () => {
     const { user } = useAuth();
     const [mentors, setMentors] = useState<Mentor[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [mentorsLoading, setMentorsLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchMentors = async () => {
@@ -28,7 +29,7 @@ const UserProfile: React.FC = () => {
             } catch (error) {
                 console.error("Failed to fetch mentors:", error);
             } finally {
-                setLoading(false);
+                setMentorsLoading(false);
             }
         };
 
@@ -47,23 +48,25 @@ const UserProfile: React.FC = () => {
                 position={user.position}
             />
 
-            <h3 className="mt-4">Mentors</h3>
-            {loading ? (
-                <p>Loading mentors...</p>
-            ) : mentors.length === 0 ? (
-                <p>No mentors assigned.</p>
-            ) : (
-                <div className="mt-3">
-                    {mentors.map((mentor) => (
-                        <UserInfoCard
-                            key={mentor.id}
-                            name={mentor.name}
-                            surname={mentor.surname}
-                            position={mentor.position}
-                        />
-                    ))}
-                </div>
-            )}
+            <div className="mt-4">
+                <h3 className="text-start">Mentors</h3>
+                {mentorsLoading ? (
+                    <p>Loading mentors...</p>
+                ) : mentors.length === 0 ? (
+                    <p>No mentors assigned.</p>
+                ) : (
+                    <div className="mt-3">
+                        {mentors.map((mentor) => (
+                            <MentorListItem
+                                key={mentor.id}
+                                name={mentor.name}
+                                surname={mentor.surname}
+                                position={mentor.position}
+                            />
+                        ))}
+                    </div>
+                )}
+            </div>
         </Container>
     );
 };
