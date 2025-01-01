@@ -18,6 +18,7 @@ import PresetManage from "./components/Preset/PresetManage.tsx";
 import AdminPanel from "./components/Admin/AdminPanel.tsx";
 import { useEffect, useState } from 'react';
 import UserProfile from "./components/User/UserProfile.tsx";
+import { NavLink } from 'react-router-dom'; 
 
 const Navigation = () => {
     const { user, logout, getRole } = useAuth();
@@ -48,20 +49,18 @@ const Navigation = () => {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="/">Home</Nav.Link>
-                        <Nav.Link href="/tasks">Tasks</Nav.Link>
-                        <Nav.Link href="/faq">FAQ</Nav.Link>
-                        <Nav.Link href="/addfile">Add File</Nav.Link>
-                        <Nav.Link href="/employesassignment">Employes Assignment</Nav.Link>
-                        <Nav.Link href="/assigntask">Assign Task</Nav.Link>
-                        <Nav.Link href="/taskcontentmanage">Task Content Manage</Nav.Link>
-                        <Nav.Link href="/roadmapmanage">RoadMap Manage</Nav.Link>
-                        <Nav.Link href="/presetmanage">Preset Manage</Nav.Link>
-                        <Nav.Link href="/badges">Badges</Nav.Link>
+                        <Nav.Link as={NavLink} to="/" end>Home</Nav.Link>
+                        <Nav.Link as={NavLink} to="/tasks">Tasks</Nav.Link>
+                        <Nav.Link as={NavLink} to="/faq">FAQ</Nav.Link>
+                        <Nav.Link as={NavLink} to="/addfile">Add File</Nav.Link>
+                        <Nav.Link as={NavLink} to="/employesassignment">Employes Assignment</Nav.Link>
+                        <Nav.Link as={NavLink} to="/assigntask">Assign Task</Nav.Link>
+                        <Nav.Link as={NavLink} to="/taskcontentmanage">Task Content Manage</Nav.Link>
+                        <Nav.Link as={NavLink} to="/roadmapmanage">RoadMap Manage</Nav.Link>
+                        <Nav.Link as={NavLink} to="/presetmanage">Preset Manage</Nav.Link>
+                        <Nav.Link as={NavLink} to="/badges">Badges</Nav.Link>
                         {role === 'Admin' && (
-                            <NavDropdown title="Admin Tools" id="basic-nav-dropdown">
-                                <Nav.Link href="/admin">Add User</Nav.Link>
-                            </NavDropdown>
+                            <Nav.Link as={NavLink} to="/admin">Admin Panel</Nav.Link>
                         )}
                     </Nav>
                     <NavDropdown
@@ -69,7 +68,9 @@ const Navigation = () => {
                         id="user-dropdown"
                         align="end"
                     >
-                        <NavDropdown.Item href="/profile"> <i className="bi bi-person-circle"></i> My Profile</NavDropdown.Item>
+                        <NavDropdown.Item as={NavLink} to="/profile">
+                            <i className="bi bi-person-circle"></i> My Profile
+                        </NavDropdown.Item>
                         <NavDropdown.Divider />
                         <NavDropdown.Item
                             onClick={handleLogout}
@@ -119,7 +120,7 @@ const AppRoutes = () => {
             {user && (
                 <>
                     <Route path="/tasks" element={<><Navigation /><TaskDashboard /></>} />
-                    <Route path="/admin" element={<><Navigation /><AdminPanel /></>} />
+                    <Route path="/admin" element={<><Navigation /><AdminPanel isAdmin={role === "Admin"}/></>} />
                     <Route path="/faq" element={<><Navigation /><FaqComponent isAdmin={role === "Admin"} /></>} />
                     <Route path="/addfile" element={
                         <>

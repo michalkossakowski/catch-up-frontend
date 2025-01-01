@@ -21,7 +21,6 @@ export const getById = async (id: string): Promise<FaqDto[]> => {
     }
 };
 
-
 export const addFaq = async (faq: FaqDto): Promise<FaqDto> => {
     try {
         const response = await axiosInstance.post<FaqDto>('/Faq/Add', faq);
