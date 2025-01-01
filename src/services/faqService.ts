@@ -11,17 +11,6 @@ export const getFaqs = async (): Promise<FaqDto[]> => {
     }
 };
 
-
-export const getByQuestion = async (question: string): Promise<FaqDto[]> => {
-    try {
-        const response = await axiosInstance.get<FaqDto[]>('/Faq/GetByQuestion/'+question);
-        return response.data;
-    } catch (error: any) {
-        handleError('getByQuestion', error);
-        throw error;
-    }
-};
-
 export const getById = async (id: string): Promise<FaqDto[]> => {
     try {
         const response = await axiosInstance.get<FaqDto[]>('/Faq/GetById/'+id);

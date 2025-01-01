@@ -75,7 +75,7 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
 
     return (
         <section className='editBox'>
-            <form onSubmit={handleSubmit} className="container-lg text-left">
+            <form onSubmit={handleSubmit} className="container-lg">
                 <h2>{isEditMode ? 'Edit FAQ' : 'Add new FAQ'}</h2>
                 <br />
                 <div className="form-group">

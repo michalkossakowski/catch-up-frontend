@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './FaqComponent.css'; 
 import { Accordion, Alert, Button, Form, InputGroup} from 'react-bootstrap';
 import { FaqDto } from '../../dtos/FaqDto';
-import { getFaqs, getByQuestion, deleteFaq } from '../../services/faqService';
+import { getFaqs, deleteFaq } from '../../services/faqService';
 import FaqEdit from './FaqEdit';
 import Loading from '../Loading/Loading';
 import FaqItem from './FaqItem';
@@ -10,6 +10,7 @@ import NotificationToast from '../Toast/NotificationToast';
 import ConfirmModal from '../Modal/ConfirmModal';
 
 export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.ReactElement{
+    const [allFaqs, setAllFaqs] = useState<FaqDto[]>([]);
     const [faqs, setFaqs] = useState<FaqDto[]>([]);
     const [loading, setLoading] = useState(true)
   
@@ -37,43 +38,50 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
     }, []);
 
     useEffect(() => {
-        if (showEdit) {
+        if (showEdit || editedFaq) {
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
-    }, [showEdit]);
+    }, [showEdit, editedFaq]);
     
 
     const getAllFaqs = () => {
         setLoading(true);
         getFaqs()
-        .then((data) => {
-            setFaqs(data);
-            setShowAlert(false); 
-        })
-        .catch((error) => {
-            setShowAlert(true);
-            setAlertMessage('Error: ' + error.message);
-        })
-        .finally(() => setLoading(false));
+            .then((data) => {
+                setAllFaqs(data);
+                setFaqs(data);
+                setShowAlert(false); 
+            })
+            .catch((error) => {
+                setShowAlert(true);
+                setAlertMessage('Error: ' + error.message);
+            })
+            .finally(() => setLoading(false));
     }
 
     const searchFaq = () => {
         if (searchQuestion.length == 0) {
-            getAllFaqs()
+            setFaqs(allFaqs);
             setShowSearchMessage(false);
             return
         }
         setLoading(true);
-        getByQuestion(searchQuestion)
-            .then((data) => {
-                setFaqs(data);
-                setShowSearchMessage(false);
-            })
-            .catch((error) => {
-                setShowSearchMessage(true);
-                setSearchMessage(error.message);
-            })
-            .finally(() => setLoading(false));
+
+        const filteredFaqs = allFaqs.filter(faq => 
+            faq.question.toLowerCase().includes(searchQuestion.toLowerCase()) 
+            || faq.answer.toLowerCase().includes(searchQuestion.toLowerCase()) 
+        );
+
+        if (filteredFaqs.length === 0) {
+            setShowSearchMessage(true);
+            setSearchMessage(`No Questions with: '${searchQuestion}' inside found.`);
+        } 
+        else {
+            setShowSearchMessage(false);
+        }
+
+        setLoading(false);
+        setFaqs(filteredFaqs);
     };
 
 
