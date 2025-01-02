@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import schoolingService from '../../services/schoolingService'
+import {getCategories} from '../../services/categoryService'
 import ErrorMessage from '../ErrorMessage'
 import { FullSchoolingDto } from '../../dtos/FullSchoolingDto'
 import { useAuth } from '../../Provider/authProvider'
-import { Accordion, Alert, Button } from 'react-bootstrap'
+import { Accordion, Alert, Button, Form } from 'react-bootstrap'
 import Loading from '../Loading/Loading'
+import { CategoryDto } from '../../dtos/CategoryDto'
 
 const SchoolingListNewbie: React.FC = () => {
     
@@ -15,25 +17,45 @@ const SchoolingListNewbie: React.FC = () => {
     const [loading, setLoading] = useState(true)
 
     const [schoolingList, setSchoolingList] = React.useState<FullSchoolingDto[]>([])
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCategoryId, setSelectedCategoryId] = useState<React.ChangeEvent<HTMLSelectElement>>();
+    const [availableCategories, setAvailableCategories] = useState<CategoryDto[]>([]);
+
     const [filteredSchoolings, setFilteredSchoolings] =  React.useState<FullSchoolingDto[]>([])
+
     const { user } = useAuth();
 
     useEffect(() => {
         initSchoolingList()
     }, [user?.id])
+    
+    useEffect(() => {
+        filterSchoolings()
+    }, [schoolingList, searchQuery, selectedCategoryId])
 
     const initSchoolingList  = async () => {
         if(user?.id)
             getSchoolingList(user?.id).then((data) => {
                 setSchoolingList(data)
-                filterSchoolings(data)
+            })     
+            .catch((error) => {
+                setErrorShow(true)
+                setErrorMessage('Error: ' + error.message)
+            })
+            .finally(() => setLoading(false))
+
+            getCategoryList().then((data) => {
+                setAvailableCategories(data)
             })     
             .catch((error) => {
                 setErrorShow(true)
                 setErrorMessage('Error: ' + error.message)
             })
             .finally(() => setLoading(false));
+        
     }
+
     const getSchoolingList = async (userId: string) => {
         try {
             const schoolingsData = await schoolingService.getAllFullSchoolingOfUser(userId)
@@ -43,21 +65,31 @@ const SchoolingListNewbie: React.FC = () => {
         }
     }
 
-    const filterSchoolings = (schoolingList: FullSchoolingDto[]) => {
+    const getCategoryList = async () => {
+        try {
+            const categoryData = await getCategories()
+            return categoryData
+        } catch (error) {
+            throw (error)
+        }
+    }
+
+    const filterSchoolings = () => {
         let filtered = schoolingList
     
-        // if (searchQuery) {
-        //   filtered = filtered.filter(s =>
-        //     s.Schooling.Title.toLowerCase().includes(searchQuery.toLowerCase())
-        //   );
-        // }
+        if (searchQuery) {
+          filtered = filtered.filter(str =>
+            str.schooling?.title?.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        }
     
-        // if (selectedCategoryId) {
-        //   filtered = filtered.filter(s => s.Category.Id === Number(selectedCategoryId));
-        // }
+        if (selectedCategoryId && Number(selectedCategoryId.target.value)) {
+            filtered = filtered.filter(s => s.category?.id === Number(selectedCategoryId.target.value));
+        }
     
         setFilteredSchoolings(filtered)
     }
+
     function setSelectedSchooling(item: FullSchoolingDto): void {
         throw new Error('Function not implemented.')
     }
@@ -72,7 +104,24 @@ const SchoolingListNewbie: React.FC = () => {
                 setErrorMessage(null);
             }} />
             <div className="container mb-3">
+                
                 <h2 className="text-center">List of Schoolings</h2>
+                <div className="text-center">
+                    <Form.Control
+                        placeholder="Search by title"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    <h4 className="mt-3">Filter by Category</h4>
+                    <Form.Select onChange={(el) => setSelectedCategoryId(el)} defaultValue="">
+                        <option value="">Select Category</option>
+                        {availableCategories.map((cat) => (
+                            <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                            </option>
+                        ))}
+                    </Form.Select>
+                </div>
                 {loading && (
                     <div className='mt-3'>
                         <Loading/>
