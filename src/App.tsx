@@ -18,6 +18,7 @@ import AdminPanel from "./components/Admin/AdminPanel.tsx";
 import { useEffect, useState } from 'react';
 import UserProfile from "./components/User/UserProfile.tsx";
 import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
+import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
 
 const Navigation = () => {
     const { user, logout, getRole } = useAuth();
@@ -131,6 +132,7 @@ const AppRoutes = () => {
                     <Route path="/presetmanage" element={<><Navigation /><PresetManage /></>} />
                     <Route path="/profile" element={<><Navigation /><UserProfile /></>} />
                     <Route path="/schoolinglistnewbie" element={<><Navigation /><SchoolingListNewbie /></>} />
+                    <Route path="/schoolingdetails" element={<><Navigation /><SchoolingDetails /></>} />
                 </>
             )}
 

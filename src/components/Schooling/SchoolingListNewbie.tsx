@@ -7,9 +7,13 @@ import { useAuth } from '../../Provider/authProvider'
 import { Accordion, Alert, Button, Form } from 'react-bootstrap'
 import Loading from '../Loading/Loading'
 import { CategoryDto } from '../../dtos/CategoryDto'
-
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setSchooling } from '../../store/schoolingSlice';
 const SchoolingListNewbie: React.FC = () => {
-    
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
     // Obsługa error-ów
     const [errorShow, setErrorShow] = React.useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -90,9 +94,10 @@ const SchoolingListNewbie: React.FC = () => {
         setFilteredSchoolings(filtered)
     }
 
-    function setSelectedSchooling(item: FullSchoolingDto): void {
-        throw new Error('Function not implemented.')
-    }
+    const goToDetails = (schooling: FullSchoolingDto) => {
+        dispatch(setSchooling(schooling));
+        navigate('/schoolingdetails');
+    };
 
     return (
         <section className="container mt-3 p-0">
@@ -145,7 +150,7 @@ const SchoolingListNewbie: React.FC = () => {
                                 <div className="d-flex justify-content-between">
                                 <Button
                                     variant="primary"
-                                    onClick={() => setSelectedSchooling(item)}
+                                    onClick={() => goToDetails(item)}
                                 >
                                     See More
                                 </Button>
