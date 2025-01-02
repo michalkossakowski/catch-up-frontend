@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Image } from "react-bootstrap";
 import AvatarUploadModal from "../File/AvatarUploadModal";
+import { useAuth } from "../../Provider/authProvider.tsx";
+import './UserInfoCard.css';
 
 interface UserInfoCardProps {
     name: string | undefined;
@@ -10,32 +12,32 @@ interface UserInfoCardProps {
 
 const UserInfoCard: React.FC<UserInfoCardProps> = ({ name, surname, position }) => {
     const [showUploadModal, setShowUploadModal] = useState(false);
+    const [isHovering, setIsHovering] = useState(false);
+    const { avatar } = useAuth();
 
     return (
         <div className="p-4">
             <div className="d-flex align-items-center gap-3">
-                <div className="position-relative">
+                <div
+                    className="position-relative"
+                    onMouseEnter={() => setIsHovering(true)}
+                    onMouseLeave={() => setIsHovering(false)}
+                >
                     <Image
-                        src="src/assets/defaultUserIcon.jpg"
+                        src={avatar || 'src/assets/defaultUserIcon.jpg'}
                         roundedCircle
                         width={128}
                         height={128}
-                        className="bg-light cursor-pointer"
+                        className="bg-light cursor-pointer image-padding-cover"
                         alt="User avatar"
-                        onClick={() => setShowUploadModal(true)}
-                        style={{ cursor: 'pointer' }}
                     />
-                    <div
-                        className="position-absolute bottom-0 right-0 p-1 bg-primary rounded-circle"
-                        style={{
-                            cursor: 'pointer',
-                            right: '10px',
-                            bottom: '5px'
-                        }}
-                        onClick={() => setShowUploadModal(true)}
-                    >
-                        <i className="bi bi-camera-fill text-white" style={{ fontSize: '14px' }} />
-                    </div>
+                    {isHovering && (
+                        <div
+                            className="overlay position-absolute top-0 start-0 w-100 h-100 rounded-circle d-flex justify-content-center align-items-center"
+                            onClick={() => setShowUploadModal(true)}>
+                            <i className="bi bi-camera-fill text-white fs-3"></i>
+                        </div>
+                    )}
                 </div>
 
                 <div className="text-start">
@@ -49,7 +51,6 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ name, surname, position }) 
             <AvatarUploadModal
                 show={showUploadModal}
                 onHide={() => setShowUploadModal(false)}
-                currentAvatarUrl="src/assets/defaultUserIcon.jpg"
             />
         </div>
     );

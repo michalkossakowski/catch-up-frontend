@@ -11,6 +11,16 @@ export const addUser = async (user: UserDto): Promise<UserDto> => {
     }
 };
 
+export const editUser = async (userId: string, updateData: Partial<UserDto>): Promise<UserDto> => {
+    try {
+        const response = await axiosInstance.patch<UserDto>(`/User/Edit/${userId}`, updateData);
+        return response.data;
+    } catch (error: any) {
+        handleError('editUser', error);
+        throw error;
+    }
+};
+
 const handleError = (operation: string, error: any): void => {
     console.error(`${operation} failed:`, error);
     if (!error.response) {

@@ -18,10 +18,12 @@ import PresetManage from "./components/Preset/PresetManage.tsx";
 import AdminPanel from "./components/Admin/AdminPanel.tsx";
 import { useEffect, useState } from 'react';
 import UserProfile from "./components/User/UserProfile.tsx";
-import { NavLink } from 'react-router-dom'; 
+import { NavLink } from 'react-router-dom';
+import { Image } from 'react-bootstrap';
+
 
 const Navigation = () => {
-    const { user, logout, getRole } = useAuth();
+    const { user, avatar, logout, getRole } = useAuth();
     const navigate = useNavigate();
     const [role, setRole] = useState<string | null>(null);
 
@@ -64,8 +66,20 @@ const Navigation = () => {
                         )}
                     </Nav>
                     <NavDropdown
-                        title={`${user.name} ${user.surname}`}
+                        title={
+                            <div className="d-flex align-items-center">
+                                {`${user.name} ${user.surname}`}
+                                <Image
+                                    src={avatar || 'src/assets/defaultUserIcon.jpg'}
+                                    className="ms-2 rounded-circle"
+                                    width={30}
+                                    height={30}
+                                    alt="User avatar"
+                                />
+                            </div>
+                        }
                         id="user-dropdown"
+                        className="nav-dropdown"
                         align="end"
                     >
                         <NavDropdown.Item as={NavLink} to="/profile">
