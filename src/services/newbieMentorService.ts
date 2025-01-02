@@ -1,13 +1,13 @@
 import axios from '../../axiosConfig';
-import { UserDto } from '../dtos/UserDto';
+import { UserAssignCountDto } from '../dtos/UserAssignCountDto';
 
 
 const NewbieMentorService = {
-    getAllMentors: async (): Promise<UserDto[]> => {
+    getAllMentors: async (): Promise<UserAssignCountDto[]> => {
         try 
         {
             //console.log("Trying to getAllMentors");
-            const response = await axios.get< UserDto[] >(`/NewbieMentor/GetAllMentors`);
+            const response = await axios.get< UserAssignCountDto[] >(`/NewbieMentor/GetAllMentors`);
             //console.log("Mentors got successfully:", response.data);
             return response.data;
         } 
@@ -18,11 +18,11 @@ const NewbieMentorService = {
             throw error;
         }
     },
-    getAllNewbies: async (): Promise<UserDto[]> => {
+    getAllNewbies: async (): Promise<UserAssignCountDto[]> => {
       try 
       {
           //console.log("Trying to getAllNewbies");
-          const response = await axios.get< UserDto[] >(`/NewbieMentor/GetAllNewbies`);
+          const response = await axios.get< UserAssignCountDto[] >(`/NewbieMentor/GetAllNewbies`);
           //console.log("Newbies got successfully:", response.data);
           return response.data;
       } 
@@ -57,10 +57,10 @@ const NewbieMentorService = {
           throw error;
         }
       },
-    getAssignmentsByMentor: async (mentorId: string): Promise<UserDto[]> => {
+    getAssignmentsByMentor: async (mentorId: string): Promise<UserAssignCountDto[]> => {
         try 
         {
-            const response = await axios.get<UserDto[]>(`/NewbieMentor/GetAssignmentsByMentor/${mentorId}`);
+            const response = await axios.get<UserAssignCountDto[]>(`/NewbieMentor/GetAssignmentsByMentor/${mentorId}`);
             return response.data;
         } 
         catch (error) 
@@ -69,10 +69,10 @@ const NewbieMentorService = {
             throw error;
         }
     },
-    getAssignmentsByNewbie: async (newbieId: string): Promise<UserDto[]> => {
+    getAssignmentsByNewbie: async (newbieId: string): Promise<UserAssignCountDto[]> => {
       try 
       {
-          const response = await axios.get<UserDto[]>(`/NewbieMentor/GetAssignmentsByNewbie/${newbieId}`);
+          const response = await axios.get<UserAssignCountDto[]>(`/NewbieMentor/GetAssignmentsByNewbie/${newbieId}`);
           return response.data;
       } 
       catch (error) 
@@ -81,10 +81,10 @@ const NewbieMentorService = {
           throw error;
       }
   },
-    getAllUnassignedNewbies: async (mentorId: string): Promise<UserDto[]> => {
+    getAllUnassignedNewbies: async (mentorId: string): Promise<UserAssignCountDto[]> => {
         try 
         {
-            const response = await axios.get<UserDto[]>(`/NewbieMentor/GetAllUnassignedNewbies/${mentorId}`);
+            const response = await axios.get<UserAssignCountDto[]>(`/NewbieMentor/GetAllUnassignedNewbies/${mentorId}`);
             return response.data;
         } 
         catch (error) 
@@ -93,10 +93,10 @@ const NewbieMentorService = {
             throw error;
         }
     },
-    getAllUnassignedMentors: async (newbieId: string): Promise<UserDto[]> => {
+    getAllUnassignedMentors: async (newbieId: string): Promise<UserAssignCountDto[]> => {
       try 
       {
-          const response = await axios.get<UserDto[]>(`/NewbieMentor/GetAllUnassignedMentors/${newbieId}`);
+          const response = await axios.get<UserAssignCountDto[]>(`/NewbieMentor/GetAllUnassignedMentors/${newbieId}`);
           return response.data;
       } 
       catch (error) 
