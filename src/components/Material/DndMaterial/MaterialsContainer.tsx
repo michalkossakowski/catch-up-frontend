@@ -12,7 +12,7 @@ import Loading from "../../Loading/Loading";
 interface MaterialsContainerProps {
   materialIdToUpdate?: number
   state?: number
-  onMaterialSelect: (materialId: number, fileIds: number[]) => void
+  onMaterialSelect: (materialId: number, fileIds: number[], action: string) => void
 }
 
 
@@ -55,11 +55,12 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
     setShowMaterial(false)
     return materialId
   }
+
   const onDeleteItem = async (materialID: number) => {
     try {
       await materialService.deleteMaterial(materialID)
       setMaterialList(materialList.filter((material) => material.id !== materialID));
-      onMaterialSelect(materialID, [])
+      onMaterialSelect(materialID, [], "deleteMaterial")
     } catch (error) {
       setErrorMessage("Problem with deleting material: " + error)
       setErrorShow(true)

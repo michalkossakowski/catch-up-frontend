@@ -10,27 +10,36 @@ const EditMatList: React.FC = () => {
   const [state, setState] = useState(0)
   const [assignedFileIds, setAssignedFileIds] = useState<number[]>([])
   const [materialAccordion, setMaterialAccordion] = useState<number | null>(null)
-  const [fileContainerKey, setFileContainerKey] = useState(0);
+  // const [fileContainerKey, setFileContainerKey] = useState(0);
 
   // Obsługa error-ów
   const [errorShow, setErrorShow] = React.useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleMaterialSelect = (materialId: number, fileIds: number[]) => {
-    if (materialAccordion !== materialId) {
-      setMaterialAccordion(materialId)
-      setAssignedFileIds(fileIds);
+  const handleMaterialSelect = (materialId: number, fileIds: number[], action: string) => {
+    switch (action){
+      case "deleteMaterial":
+        setMaterialAccordion(null)
+      break
+
+      case "open/close":
+        if(materialAccordion === materialId)
+          setMaterialAccordion(null)
+        else
+        {
+          setMaterialAccordion(materialId)
+          setAssignedFileIds(fileIds)
+        }
+      break
+
+      case "uploadFile":
+        setAssignedFileIds(fileIds)
+      break
+
+      case "save":
+        setAssignedFileIds(fileIds)
+      break
     }
-    else if (fileIds.length === 0) {
-      setMaterialAccordion(null)
-    }
-    else if (assignedFileIds.length !== fileIds.length) {
-      setMaterialAccordion(materialId)
-      setAssignedFileIds(fileIds);
-      setFileContainerKey(prevKey => prevKey + 1);
-    }
-    else
-      setMaterialAccordion(null)
   };
 
   const handleMaterialUpdate = (materialId: number) => {
@@ -52,6 +61,7 @@ const EditMatList: React.FC = () => {
 
       try {
         await materialService.addFile(targetMaterialId, draggedFileId);
+        setAssignedFileIds([...assignedFileIds, draggedFileId])
         handleMaterialUpdate(targetMaterialId)
       } catch (error) {
         setErrorMessage(`Error adding file ${draggedFileId} to material ${targetMaterialId}: ` + error)
@@ -78,9 +88,9 @@ const EditMatList: React.FC = () => {
         </div>
         <div className={`col file-container ${materialAccordion !== null ? "visible" : "invisible"}`}>
           <FilesContainer
-            key={fileContainerKey}
             excludedFileIds={assignedFileIds}
-          />        </div>
+          />        
+        </div>
       </DndContext>
     </div>
 
