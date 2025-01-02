@@ -1,6 +1,16 @@
 import axiosInstance from '../../axiosConfig';
 import { UserDto } from '../dtos/UserDto';
 
+export const getUserById = async (userId: string): Promise<UserDto> => {
+    try {
+        const response = await axiosInstance.get<UserDto>(`/User/GetById/${userId}`);
+        return response.data;
+    } catch (error: any) {
+        handleError('getUserById', error);
+        throw error;
+    }
+};
+
 export const addUser = async (user: UserDto): Promise<UserDto> => {
     try {
         const response = await axiosInstance.post<UserDto>('/User/Add', user);
