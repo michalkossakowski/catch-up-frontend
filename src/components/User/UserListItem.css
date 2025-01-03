@@ -1,0 +1,8 @@
+.mentor-list-item {
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.mentor-list-item:hover {
+    background-color: #373b3e;
+}
