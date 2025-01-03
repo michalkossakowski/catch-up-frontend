@@ -1,13 +1,16 @@
-export interface TaskDto {
+export interface FullTaskDto {
     id?: number;
     newbieId?: string;
-    taskContentId: number;
+    materialsId: number;
+    categoryId: number;
+    title: string;
+    description: string;
     roadMapPointId?: string | null;
     status: number;
     assignmentDate?: string;
     finalizationDate?: string | null;
     deadline: string;
-    spendTime?: number;
+    spendTime: number;
     priority: number;
     rate?: number | null;
 }

@@ -1,67 +1,97 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
+import { useParams } from "react-router-dom";
 import { useAuth } from "../../Provider/authProvider";
 import UserInfoCard from "./UserInfoCard";
-import axiosInstance from "../../../axiosConfig";
+import { getUserById } from "../../services/userService";
+import fileService from "../../services/fileService";
+import { UserDto } from "../../dtos/UserDto.ts";
+import Loading from "../Loading/Loading.tsx";
+import UserList from "./UserList.tsx";
 
-interface Mentor {
-    id: string;
-    name: string;
-    surname: string;
-    position: string;
-}
+const UserProfile = () => {
+    const { userId } = useParams();
+    const { user, getRole } = useAuth();
+    const [profileUser, setProfileUser] = useState<UserDto | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [profilePicture, setProfilePicture] = useState<string | null>(null);
 
-const UserProfile: React.FC = () => {
-    const { user } = useAuth();
-    const [mentors, setMentors] = useState<Mentor[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+    const isOwnProfile = user?.id === userId;
 
     useEffect(() => {
-        const fetchMentors = async () => {
-            if (!user) return;
+        let blobUrl: string | null = null;
 
+        const fetchProfileData = async () => {
             try {
-                const response = await axiosInstance.get(
-                    `NewbieMentor/GetAssignmentsByNewbie/${user.id}`
-                );
-                setMentors(response.data);
+                if (!userId) return;
+
+                setProfilePicture(null);
+                setIsLoading(true);
+
+                let userData;
+                if (isOwnProfile) {
+                    userData = user;
+                } else {
+                    userData = await getUserById(userId);
+                }
+
+                setProfileUser(userData);
+
+                if (!isOwnProfile && userData?.avatarId) {
+                    const blob = await fileService.downloadFile(userData.avatarId);
+                    blobUrl = URL.createObjectURL(blob);
+                    setProfilePicture(blobUrl);
+                }
             } catch (error) {
-                console.error("Failed to fetch mentors:", error);
+                console.error("Failed to fetch profile data:", error);
+                setProfilePicture(null);
             } finally {
-                setLoading(false);
+                setIsLoading(false);
             }
         };
 
-        fetchMentors();
-    }, [user]);
+        fetchProfileData();
 
-    if (!user) {
-        return <div>Loading user data...</div>;
+        return () => {
+            if (blobUrl) {
+                URL.revokeObjectURL(blobUrl);
+            }
+        };
+    }, [userId, user, isOwnProfile]);
+
+    if (isLoading) {
+        return <Loading />;
     }
+
+    if (!profileUser) {
+        return <div>User not found</div>;
+    }
+
+    const getListTitle = () => {
+        const userRole = getRole(user?.id as string);
+        switch (userRole) {
+            case 'Newbie': return 'My Mentors';
+            case 'Mentor': return 'My Newbies';
+            case 'Admin':
+            case 'HR': return 'All Newbies';
+            default: return '';
+        }
+    };
 
     return (
         <Container className="py-4">
             <UserInfoCard
-                name={user.name}
-                surname={user.surname}
-                position={user.position}
+                name={profileUser?.name}
+                surname={profileUser?.surname}
+                position={profileUser?.position}
+                canEdit={isOwnProfile}
+                avatarUrl={isOwnProfile ? undefined : profilePicture}
             />
 
-            <h3 className="mt-4">Mentors</h3>
-            {loading ? (
-                <p>Loading mentors...</p>
-            ) : mentors.length === 0 ? (
-                <p>No mentors assigned.</p>
-            ) : (
-                <div className="mt-3">
-                    {mentors.map((mentor) => (
-                        <UserInfoCard
-                            key={mentor.id}
-                            name={mentor.name}
-                            surname={mentor.surname}
-                            position={mentor.position}
-                        />
-                    ))}
+            {isOwnProfile && (
+                <div className="mt-4">
+                    <h3 className="text-start">{getListTitle()}</h3>
+                    <UserList userId={userId} />
                 </div>
             )}
         </Container>

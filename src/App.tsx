@@ -18,10 +18,13 @@ import PresetManage from "./components/Preset/PresetManage.tsx";
 import AdminPanel from "./components/Admin/AdminPanel.tsx";
 import { useEffect, useState } from 'react';
 import UserProfile from "./components/User/UserProfile.tsx";
-import { NavLink } from 'react-router-dom'; 
+import { NavLink } from 'react-router-dom';
+import { Image } from 'react-bootstrap';
+import defaultUserIcon from './assets/defaultUserIcon.jpg';
+
 
 const Navigation = () => {
-    const { user, logout, getRole } = useAuth();
+    const { user, avatar, logout, getRole } = useAuth();
     const navigate = useNavigate();
     const [role, setRole] = useState<string | null>(null);
 
@@ -64,11 +67,23 @@ const Navigation = () => {
                         )}
                     </Nav>
                     <NavDropdown
-                        title={`${user.name} ${user.surname}`}
+                        title={
+                            <div className="d-flex align-items-center">
+                                {`${user.name} ${user.surname}`}
+                                <Image
+                                    src={avatar || defaultUserIcon}
+                                    className="ms-2 rounded-circle"
+                                    width={30}
+                                    height={30}
+                                    alt="User avatar"
+                                />
+                            </div>
+                        }
                         id="user-dropdown"
+                        className="nav-dropdown"
                         align="end"
                     >
-                        <NavDropdown.Item as={NavLink} to="/profile">
+                        <NavDropdown.Item as={NavLink} to={`/profile/${user?.id}`}>
                             <i className="bi bi-person-circle"></i> My Profile
                         </NavDropdown.Item>
                         <NavDropdown.Divider />
@@ -139,7 +154,7 @@ const AppRoutes = () => {
                     <Route path="/roadmapmanage" element={<><Navigation /><RoadMapManage /></>} />
                     <Route path="/badges" element={<><Navigation /><Badge /></>} />
                     <Route path="/presetmanage" element={<><Navigation /><PresetManage /></>} />
-                    <Route path="/profile" element={<><Navigation /><UserProfile /></>} />
+                    <Route path="/profile/:userId" element={<><Navigation /><UserProfile /></>} />
                 </>
             )}
 
