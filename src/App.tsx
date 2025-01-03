@@ -20,6 +20,7 @@ import { useEffect, useState } from 'react';
 import UserProfile from "./components/User/UserProfile.tsx";
 import { NavLink } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
+import defaultUserIcon from './assets/defaultUserIcon.jpg';
 
 
 const Navigation = () => {
@@ -70,7 +71,7 @@ const Navigation = () => {
                             <div className="d-flex align-items-center">
                                 {`${user.name} ${user.surname}`}
                                 <Image
-                                    src={avatar || 'src/assets/defaultUserIcon.jpg'}
+                                    src={avatar || defaultUserIcon}
                                     className="ms-2 rounded-circle"
                                     width={30}
                                     height={30}
@@ -82,7 +83,7 @@ const Navigation = () => {
                         className="nav-dropdown"
                         align="end"
                     >
-                        <NavDropdown.Item as={NavLink} to="/profile">
+                        <NavDropdown.Item as={NavLink} to={`/profile/${user?.id}`}>
                             <i className="bi bi-person-circle"></i> My Profile
                         </NavDropdown.Item>
                         <NavDropdown.Divider />
@@ -153,7 +154,7 @@ const AppRoutes = () => {
                     <Route path="/roadmapmanage" element={<><Navigation /><RoadMapManage /></>} />
                     <Route path="/badges" element={<><Navigation /><Badge /></>} />
                     <Route path="/presetmanage" element={<><Navigation /><PresetManage /></>} />
-                    <Route path="/profile" element={<><Navigation /><UserProfile /></>} />
+                    <Route path="/profile/:userId" element={<><Navigation /><UserProfile /></>} />
                 </>
             )}
 

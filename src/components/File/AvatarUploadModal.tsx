@@ -3,6 +3,7 @@ import { Modal, Button, Image, Alert } from 'react-bootstrap';
 import fileService from '../../services/fileService';
 import { editUser } from '../../services/userService';
 import { useAuth } from '../../Provider/authProvider';
+import defaultIcon from '../../assets/defaultUserIcon.jpg';
 
 interface AvatarUploadModalProps {
     show: boolean;
@@ -11,7 +12,6 @@ interface AvatarUploadModalProps {
 
 const AvatarUploadModal: React.FC<AvatarUploadModalProps> = ({ show, onHide }) => {
     const { user, updateAvatar } = useAuth();
-    const defaultIcon = 'src/assets/defaultUserIcon.jpg';
     const [previewUrl, setPreviewUrl] = useState<string>(defaultIcon);
     const [isDragActive, setIsDragActive] = useState<boolean>(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
