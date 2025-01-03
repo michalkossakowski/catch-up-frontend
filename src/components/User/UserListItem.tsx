@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import defaultUserIcon from '../../assets/defaultUserIcon.jpg';
-import './MentorListItem.css';
+import './UserListItem.css';
 
 interface MentorListItemProps {
     id?: string;
