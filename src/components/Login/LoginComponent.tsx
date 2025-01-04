@@ -31,8 +31,16 @@ const LoginComponent = () => {
             setUser(userData);
 
             navigate('/');
-        } catch (err) {
-            setError('Invalid email or password');
+        } catch (err: any) {
+            if (err.response) {
+                if (err.response.status === 404) {
+                    setError('Invalid email or password');
+                } else {
+                    setError('An unexpected error occurred. Please try again.');
+                }
+            } else {
+                setError('API is down, sorry');
+            }
             setAccessToken(null);
             setRefreshToken(null);
             setUser(null);
@@ -40,6 +48,7 @@ const LoginComponent = () => {
             setIsLoading(false);
         }
     };
+
 
     return (
         <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', backgroundColor: '#101010' }}>
