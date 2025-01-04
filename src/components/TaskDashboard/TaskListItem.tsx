@@ -66,7 +66,10 @@ const TaskListItem = ({ task, eventKey }: TaskListItemProps) => {
                 <div className="task-details">
                     <p className="text-start mb-3">{task.description}</p>
                     <div className="text-end justify-content-between text-muted">
-                        <div>Deadline: {new Date(task.deadline).toLocaleDateString()}</div>
+                        Deadline: {task.deadline && new Date(task.deadline).getFullYear() !== 1970
+                        ? new Date(task.deadline).toLocaleDateString()
+                        : 'X'
+                    }
                     </div>
                 </div>
             </Accordion.Body>

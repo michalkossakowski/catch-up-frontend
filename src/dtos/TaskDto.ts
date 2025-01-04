@@ -3,11 +3,11 @@ export interface TaskDto {
     newbieId?: string;
     taskContentId: number;
     roadMapPointId?: string | null;
-    status: number;
+    status?: number;
     assignmentDate?: string;
     finalizationDate?: string | null;
-    deadline: string;
+    deadline: string | null;
     spendTime?: number;
-    priority: number;
+    priority?: number;
     rate?: number | null;
 }
