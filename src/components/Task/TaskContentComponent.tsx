@@ -8,7 +8,6 @@ import TaskContentEdit from './TaskContentEdit';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { getCategories } from '../../services/categoryService';
 import { removeTaskFromAllPresets } from '../../services/taskPresetService';
-import axiosInstance from '../../services/axiosInstance';
 
 interface TaskContentComponentProps {
     isAdmin: boolean;

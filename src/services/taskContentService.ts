@@ -1,6 +1,5 @@
 import axiosInstance from '../../axiosConfig';
 import { TaskContentDto } from '../dtos/TaskContentDto';
-/*const BASE_URL = 'https://localhost:7097/api/TaskContent/';*/
 
 export const getTaskContents = async (): Promise<TaskContentDto[]> => {
     try {
