@@ -1,6 +1,16 @@
  :root {
   text-align: center;
 }
+.downloadIcon {
+  color: #73e2e3
+}
+.hoverIcon:hover {
+  color: #198754;
+}
+
+.deleteIcon {
+  color: #e13231;
+}
 /*
 a {
   font-weight: 500;

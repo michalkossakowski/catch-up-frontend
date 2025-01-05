@@ -5,7 +5,6 @@ import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap';
 import AuthProvider, { useAuth } from './Provider/authProvider';
 import LoginPage from './components/Login/LoginComponent';
 import FaqComponent from './components/Faq/FaqComponent';
-import Material from './components/Material/Material';
 import AssignTask from './components/TaskAssigment/AssignTask';
 import TaskContentManage from './components/Task/TaskContentManage';
 import RoadMapManage from './components/RoadMap/RoadMapManage';
@@ -21,8 +20,8 @@ import UserProfile from "./components/User/UserProfile.tsx";
 import { NavLink } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
 import defaultUserIcon from './assets/defaultUserIcon.jpg';
-
-
+import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
+import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
 const Navigation = () => {
     const { user, avatar, logout, getRole } = useAuth();
     const navigate = useNavigate();
@@ -55,7 +54,7 @@ const Navigation = () => {
                         <Nav.Link as={NavLink} to="/" end>Home</Nav.Link>
                         <Nav.Link as={NavLink} to="/tasks">Tasks</Nav.Link>
                         <Nav.Link as={NavLink} to="/faq">FAQ</Nav.Link>
-                        <Nav.Link as={NavLink} to="/addfile">Add File</Nav.Link>
+                        <Nav.Link as={NavLink} to="/schoolinglistnewbie">Schoolings</Nav.Link>
                         <Nav.Link as={NavLink} to="/employesassignment">Employes Assignment</Nav.Link>
                         <Nav.Link as={NavLink} to="/assigntask">Assign Task</Nav.Link>
                         <Nav.Link as={NavLink} to="/taskcontentmanage">Task Content Manage</Nav.Link>
@@ -63,7 +62,10 @@ const Navigation = () => {
                         <Nav.Link as={NavLink} to="/presetmanage">Preset Manage</Nav.Link>
                         <Nav.Link as={NavLink} to="/badges">Badges</Nav.Link>
                         {role === 'Admin' && (
-                            <Nav.Link as={NavLink} to="/admin">Admin Panel</Nav.Link>
+                            <NavDropdown title="Admin Tools" id="basic-nav-dropdown">
+                                <Nav.Link as={NavLink} to="/admin">Admin Panel</Nav.Link>
+                                <Nav.Link as={NavLink} to="/editMatList">MaterialList</Nav.Link>
+                            </NavDropdown>
                         )}
                     </Nav>
                     <NavDropdown
@@ -137,16 +139,6 @@ const AppRoutes = () => {
                     <Route path="/tasks" element={<><Navigation /><TaskDashboard /></>} />
                     <Route path="/admin" element={<><Navigation /><AdminPanel isAdmin={role === "Admin"}/></>} />
                     <Route path="/faq" element={<><Navigation /><FaqComponent isAdmin={role === "Admin"} /></>} />
-                    <Route path="/addfile" element={
-                        <>
-                            <Navigation />
-                            <Material
-                                showRemoveFile={true}
-                                showDownloadFile={true}
-                                showAddingFile={true}
-                            />
-                        </>
-                    } />
                     <Route path="/employesassignment" element={<><Navigation /><EmployesAssignmentSelector /></>} />
                     <Route path="/assigntask" element={<><Navigation /><AssignTask /></>} />
                     <Route path="/taskcontentmanage" element={<><Navigation /><TaskContentManage /></>} />
@@ -154,6 +146,8 @@ const AppRoutes = () => {
                     <Route path="/roadmapmanage" element={<><Navigation /><RoadMapManage /></>} />
                     <Route path="/badges" element={<><Navigation /><Badge /></>} />
                     <Route path="/presetmanage" element={<><Navigation /><PresetManage /></>} />
+                    <Route path="/schoolinglistnewbie" element={<><Navigation /><SchoolingListNewbie /></>} />
+                    <Route path="/schoolingdetails" element={<><Navigation /><SchoolingDetails /></>} />
                     <Route path="/profile/:userId" element={<><Navigation /><UserProfile /></>} />
                 </>
             )}

@@ -12,7 +12,7 @@ interface MaterialItemProps {
   materialDto: MaterialDto
   state?: number
   onDeleteItem: (materialID: number) => void
-  onMaterialSelect: (materialID: number, fileIds: number[]) => void
+  onMaterialSelect: (materialID: number, fileIds: number[], action: string) => void
 }
 const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDeleteItem, onMaterialSelect }) => {
 
@@ -85,6 +85,10 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
         await materialService.editMaterial(material?.id, editedName)
         material.name = editedName
       }
+      if (material?.files && material?.id) {
+        const fileIds = material?.files.map((file) => file.id)
+        onMaterialSelect(material?.id, fileIds, "save")
+      } 
     }
     setFilesToDelete([])
   }
@@ -128,7 +132,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
   const handleAccordionClick = () => {
     if (material?.files && material?.id) {
       const fileIds = material?.files.map((file) => file.id)
-      onMaterialSelect(material?.id, fileIds)
+      onMaterialSelect(material?.id, fileIds, "open/close")
     }
   }
 
@@ -136,6 +140,10 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
     if (materialDto.id) {
       const originalMaterial = await materialService.getMaterialWithFiles(materialDto.id)
       setMaterial(originalMaterial)
+      // if (material?.files && material?.id) {
+      //   const fileIds = material?.files.map((file) => file.id)
+      //   onMaterialSelect(material?.id, fileIds)
+      // }    
     }
     setNameError(null)
     setIsEditing(false)
@@ -151,7 +159,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
         files: updatedFiles,
       }));
       if (material?.id)
-        onMaterialSelect(material?.id, updatedFiles.map((file) => file.id)); // przekazanie aktualnej listy plików
+        onMaterialSelect(material?.id, updatedFiles.map((file) => file.id), "uploadFile") // przekazanie aktualnej listy plików
     }
   }
 
