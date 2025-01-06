@@ -58,8 +58,8 @@ function App() {
                                     <NavLink to="/badges" className="nav-link">Badges</NavLink>
                                     {role === 'Admin' && (
                                         <NavDropdown title="Admin Tools" id="basic-nav-dropdown">
-                                            <NavLink to="/admin" className="nav-link">Admin Panel</NavLink>
-                                            <NavLink to="/editMatList" className="nav-link">MaterialList</NavLink>
+                                            <NavDropdown.Item as={NavLink} to="/admin" className="nav-link">Admin Panel</NavDropdown.Item>
+                                            <NavDropdown.Item as={NavLink} to="/editMatList" className="nav-link">MaterialList</NavDropdown.Item>
                                         </NavDropdown>
                                     )}
                                 </Nav>
@@ -79,7 +79,7 @@ function App() {
                                     id="user-dropdown"
                                     className="nav-dropdown"
                                     align="end">    
-                                    <NavDropdown.Item href={`/profile/${user?.id}`}>
+                                    <NavDropdown.Item as={NavLink} to={`/profile/${user?.id}`}>
                                         <i className="bi bi-person-circle"></i> My Profile
                                     </NavDropdown.Item>
                                     <NavDropdown.Divider />
