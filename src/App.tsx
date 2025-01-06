@@ -2,7 +2,7 @@ import './App.css';
 import { Image } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import  { useAuth } from './Provider/authProvider';
+import { useAuth } from './Provider/authProvider';
 import Badge from './components/Badge/BadgeComponent';
 import FaqComponent from './components/Faq/FaqComponent';
 import AdminPanel from "./components/Admin/AdminPanel.tsx";
@@ -13,9 +13,9 @@ import LoginComponent from './components/Login/LoginComponent';
 import AssignTask from './components/TaskAssigment/AssignTask';
 import PresetManage from "./components/Preset/PresetManage.tsx";
 import TaskContentManage from './components/Task/TaskContentManage';
-import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap';
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import { Routes, Route, NavLink } from 'react-router-dom';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
 import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
 import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
@@ -31,7 +31,7 @@ function App() {
             setRole(userRole);
         }
     };
-    
+
     useEffect(() => {
         fetchRole();
         console.log(role)
@@ -39,7 +39,7 @@ function App() {
 
     return (
         <>
-            { user &&(
+            {user && (
                 <>
                     <Navbar expand="lg" className="bg-body-tertiary navbar-expand-lg">
                         <Container fluid className="px-4">
@@ -47,20 +47,20 @@ function App() {
                             <Navbar.Toggle aria-controls="basic-navbar-nav" />
                             <Navbar.Collapse id="basic-navbar-nav">
                                 <Nav className="me-auto">
-                                    <Nav.Link href="/">Home</Nav.Link>
-                                    <Nav.Link href="/tasks">Tasks</Nav.Link>
-                                    <Nav.Link href="/faq">FAQ</Nav.Link>
-                                    <Nav.Link href="/schoolinglistnewbie">Schoolings</Nav.Link>
-                                    <Nav.Link href="/employesassignment">Employes Assignment</Nav.Link>
-                                    <Nav.Link href="/assigntask">Assign Task</Nav.Link>
-                                    <Nav.Link href="/taskcontentmanage">Task Content Manage</Nav.Link>
-                                    <Nav.Link href="/roadmapmanage">RoadMap Manage</Nav.Link>
-                                    <Nav.Link href="/presetmanage">Preset Manage</Nav.Link>
-                                    <Nav.Link href="/badges">Badges</Nav.Link>
+                                    <NavLink to="/" className="nav-link">Home</NavLink>
+                                    <NavLink to="/tasks" className="nav-link">Tasks</NavLink>
+                                    <NavLink to="/faq" className="nav-link">FAQ</NavLink>
+                                    <NavLink to="/schoolinglistnewbie" className="nav-link">Schoolings</NavLink>
+                                    <NavLink to="/employesassignment" className="nav-link">Employes Assignment</NavLink>
+                                    <NavLink to="/assigntask" className="nav-link">Assign Task</NavLink>
+                                    <NavLink to="/taskcontentmanage" className="nav-link">Task Content Manage</NavLink>
+                                    <NavLink to="/roadmapmanage" className="nav-link">RoadMap Manage</NavLink>
+                                    <NavLink to="/presetmanage" className="nav-link">Preset Manage</NavLink>
+                                    <NavLink to="/badges" className="nav-link">Badges</NavLink>
                                     {role === 'Admin' && (
                                         <NavDropdown title="Admin Tools" id="basic-nav-dropdown">
-                                            <Nav.Link href="/admin">Admin Panel</Nav.Link>
-                                            <Nav.Link href="/editMatList">MaterialList</Nav.Link>
+                                            <NavLink to="/admin" className="nav-link">Admin Panel</NavLink>
+                                            <NavLink to="/editMatList" className="nav-link">MaterialList</NavLink>
                                         </NavDropdown>
                                     )}
                                 </Nav>
@@ -93,31 +93,30 @@ function App() {
                             </Navbar.Collapse>
                         </Container>
                     </Navbar>
-                    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }} >
-                        <Routes>
-                            <Route path="/" element={<><h1>Welcome back John Lennon</h1></>} />
-                            <Route path="/tasks" element={<TaskDashboard />} />
-                            <Route path="/admin" element={<AdminPanel isAdmin={role === "Admin"}/>} />
-                            <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
-                            <Route path="/employesassignment" element={<EmployesAssignmentSelector />} />
-                            <Route path="/assigntask" element={<AssignTask />} />
-                            <Route path="/taskcontentmanage" element={<TaskContentManage />} />
-                            <Route path="/editmatlist" element={<EditMatList />} />
-                            <Route path="/roadmapmanage" element={<RoadMapManage />} />
-                            <Route path="/badges" element={<Badge />} />
-                            <Route path="/presetmanage" element={<PresetManage />} />
-                            <Route path="/schoolinglistnewbie" element={<SchoolingListNewbie />} />
-                            <Route path="/schoolingdetails" element={<SchoolingDetails />} />
-                            <Route path="/profile/:userId" element={<UserProfile />} />
-                        </Routes>
-                    </Router>
+
+                    <Routes>
+                        <Route path="/" element={<><h1>Welcome back John Lennon</h1></>} />
+                        <Route path="/tasks" element={<TaskDashboard />} />
+                        <Route path="/admin" element={<AdminPanel isAdmin={role === "Admin"} />} />
+                        <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
+                        <Route path="/employesassignment" element={<EmployesAssignmentSelector />} />
+                        <Route path="/assigntask" element={<AssignTask />} />
+                        <Route path="/taskcontentmanage" element={<TaskContentManage />} />
+                        <Route path="/editmatlist" element={<EditMatList />} />
+                        <Route path="/roadmapmanage" element={<RoadMapManage />} />
+                        <Route path="/badges" element={<Badge />} />
+                        <Route path="/presetmanage" element={<PresetManage />} />
+                        <Route path="/schoolinglistnewbie" element={<SchoolingListNewbie />} />
+                        <Route path="/schoolingdetails" element={<SchoolingDetails />} />
+                        <Route path="/profile/:userId" element={<UserProfile />} />
+                    </Routes>
                 </>
             )}
 
-            {!user &&(            
-                <LoginComponent/>
+            {!user && (
+                <LoginComponent />
             )}
-            
+
             <footer className="py-0 my-3 border-top">
                 <p className="text-center text-muted">© 2024 UnhandledException</p>
             </footer>
