@@ -59,6 +59,7 @@ function App() {
                                     {role === 'Admin' && (
                                         <NavDropdown title="Admin Tools" id="basic-nav-dropdown">
                                             <NavDropdown.Item as={NavLink} to="/admin" className="nav-link">Admin Panel</NavDropdown.Item>
+                                            <NavDropdown.Divider />
                                             <NavDropdown.Item as={NavLink} to="/editMatList" className="nav-link">MaterialList</NavDropdown.Item>
                                         </NavDropdown>
                                     )}
