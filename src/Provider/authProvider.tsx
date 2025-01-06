@@ -14,7 +14,7 @@ interface AuthContextType {
     setUser: (newUser: User | null) => void;
     updateAvatar: (avatarBlob: Blob) => Promise<void>;
     logout: () => void;
-    getRole: (userId: string) => string;
+    getRole: (userId: string) => Promise<string>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -124,31 +124,24 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         setAvatar(null);
     };
 
-    const getRole = (userId: string): string => {
-        if (!userId) return 'User';
+    const getRole = async (userId: string): Promise<string> => {
+        if (!userId) {
+            throw new Error("Invalid userId");
+        }
 
         if (roleCache[userId]) {
             return roleCache[userId];
         }
 
         try {
-            const fetchRole = async () => {
-                try {
-                    const response = await axiosInstance.get(`User/GetRole/${userId}`);
-                    const role = response.data || 'User';
-                    setRoleCache((prev) => ({ ...prev, [userId]: role }));
-                    return role;
-                } catch (error) {
-                    console.error('Error fetching user role:', error);
-                    return 'User';
-                }
-            };
+            const response = await axiosInstance.get(`User/GetRole/${userId}`);
+            const role = response.data || "User";
 
-            fetchRole();
-            return roleCache[userId] || 'User';
+            roleCache[userId] = role;
+
+            return role;
         } catch (error) {
-            console.error('Error in getRole:', error);
-            return 'User';
+            throw new Error("Failed to fetch user role");
         }
     };
 
