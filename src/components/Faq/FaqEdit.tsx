@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaqDto } from '../../dtos/FaqDto';
+import { FaqDto, FaqResponse } from '../../dtos/FaqDto';
 import Material from '../Material/Material';
 import { addFaq, editFaq } from '../../services/faqService';
 import './FaqEdit.css';
@@ -8,7 +8,7 @@ import { Button } from 'react-bootstrap';
 interface FaqEditProps {
     isEditMode: boolean; 
     faq?: FaqDto;  
-    onFaqEdited: () => void;
+    onFaqEdited: (response: FaqResponse) => void;
     onCancel: () => void;
 }
 
@@ -59,18 +59,17 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
             materialId: materialId,
         };
 
-        const updateFaq = isEditMode ? editFaq(faqDto) : addFaq(faqDto);  
-
-        updateFaq
-            .then(() => {
-                onFaqEdited();
-                setQuestion('');
-                setAnswer('');
-                setMaterialId(null);
-            })
-            .catch((error) => {
-                console.error('Error saving FAQ:', error);
-            });
+        try {
+            const response = isEditMode 
+                ? await editFaq(faqDto) 
+                : await addFaq(faqDto);
+            onFaqEdited(response);
+            setQuestion('');
+            setAnswer('');
+            setMaterialId(null);
+        } catch (error) {
+            console.error('Error saving FAQ:', error);
+        }
     };
 
     return (
