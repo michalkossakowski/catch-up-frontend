@@ -2,9 +2,11 @@ import './App.css';
 import { Image } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Home from './components/Home/home.tsx';
 import { useAuth } from './Provider/authProvider';
 import Badge from './components/Badge/BadgeComponent';
 import FaqComponent from './components/Faq/FaqComponent';
+import { Routes, Route, NavLink } from 'react-router-dom';
 import AdminPanel from "./components/Admin/AdminPanel.tsx";
 import defaultUserIcon from './assets/defaultUserIcon.jpg';
 import UserProfile from './components/User/UserProfile.tsx';
@@ -15,7 +17,6 @@ import PresetManage from "./components/Preset/PresetManage.tsx";
 import TaskContentManage from './components/Task/TaskContentManage';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
-import { Routes, Route, NavLink } from 'react-router-dom';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
 import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
 import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
@@ -95,7 +96,7 @@ function App() {
                     </Navbar>
 
                     <Routes>
-                        <Route path="/" element={<><h1>Welcome back John Lennon</h1></>} />
+                        <Route path="/" element={<><Home/></>} />
                         <Route path="/tasks" element={<TaskDashboard />} />
                         <Route path="/admin" element={<AdminPanel isAdmin={role === "Admin"} />} />
                         <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
