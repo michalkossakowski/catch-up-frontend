@@ -34,7 +34,7 @@ function App() {
 
     useEffect(() => {
         fetchRole();
-    }, [getRole]);
+    }, [user?.id]);
 
     return (
         <>
