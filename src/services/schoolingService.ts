@@ -39,5 +39,17 @@ const schoolingService =
             throw error
         }  
     },
+    deleteSchooling: async(schoolingId: number) => {
+        try 
+        {
+            const response = await axiosInstance.delete(`/Schooling/ArchiveSchooling/${schoolingId}`)
+            return response
+        } 
+        catch (error) 
+        {
+            console.error('Error removing schooling:', error)
+            throw error
+        }
+    },
 }
 export default schoolingService

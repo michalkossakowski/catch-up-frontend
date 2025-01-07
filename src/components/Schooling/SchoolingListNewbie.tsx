@@ -4,7 +4,7 @@ import {getCategories} from '../../services/categoryService'
 import ErrorMessage from '../ErrorMessage'
 import { FullSchoolingDto } from '../../dtos/FullSchoolingDto'
 import { useAuth } from '../../Provider/authProvider'
-import { Accordion, Alert, Button, Form } from 'react-bootstrap'
+import { Accordion, Alert, Button, Col, Form, Row } from 'react-bootstrap'
 import Loading from '../Loading/Loading'
 import { CategoryDto } from '../../dtos/CategoryDto'
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +25,7 @@ const SchoolingListNewbie: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategoryId, setSelectedCategoryId] = useState<React.ChangeEvent<HTMLSelectElement>>();
     const [availableCategories, setAvailableCategories] = useState<CategoryDto[]>([]);
+    const [minPriority, setMinPriority] = useState<number>(0); // New state for minimum priority
 
     const [filteredSchoolings, setFilteredSchoolings] =  React.useState<FullSchoolingDto[]>([])
 
@@ -36,7 +37,7 @@ const SchoolingListNewbie: React.FC = () => {
     
     useEffect(() => {
         filterSchoolings()
-    }, [schoolingList, searchQuery, selectedCategoryId])
+    }, [schoolingList, searchQuery, selectedCategoryId, minPriority])
 
     const initSchoolingList  = async () => {
         if(user?.id)
@@ -117,15 +118,29 @@ const SchoolingListNewbie: React.FC = () => {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
-                    <h4 className="mt-3">Filter by Category</h4>
-                    <Form.Select onChange={(el) => setSelectedCategoryId(el)} defaultValue="">
-                        <option value="">Select Category</option>
-                        {availableCategories.map((cat) => (
-                            <option key={cat.id} value={cat.id}>
-                            {cat.name}
-                            </option>
-                        ))}
-                    </Form.Select>
+                    <h4 className="mt-3">Advanced Filters</h4>
+                    <Row className="mb-3">
+                        <Form.Group as={Col}  className='col-6' >
+                            <Form.Label>Category</Form.Label>
+                            <Form.Select onChange={(el) => setSelectedCategoryId(el)} defaultValue="">
+                                <option value="">Select Category</option>
+                                {availableCategories.map((cat) => (
+                                    <option key={cat.id} value={cat.id}>
+                                    {cat.name}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                        <Form.Group as={Col} className='col-6'>
+                            <Form.Label>Minimal Priority</Form.Label>
+                            <Form.Control
+                                type="number"
+                                placeholder="Enter minimum priority"
+                                value={minPriority}
+                                onChange={(e) => setMinPriority(Number(e.target.value))}
+                            />
+                        </Form.Group>
+                    </Row>
                 </div>
                 {loading && (
                     <div className='mt-3'>

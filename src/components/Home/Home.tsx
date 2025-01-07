@@ -3,7 +3,7 @@ import './Home.css';
 export default function Home(): React.ReactElement {
     return(
         <>
-            <div className="container">
+            <div className="container home_height">
                 <h2>Welcome in catchUp</h2>
                 <div className="row">
                     <div className="col-md-3">

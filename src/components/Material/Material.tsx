@@ -30,6 +30,7 @@ const Material: React.FC<MaterialProps> = ({
   const [errorShow, setErrorShow] = React.useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
+  const [materialNameValidation, setMaterialNameValidation] = useState<boolean>(false);
 
   useEffect(() => {
     if (materialId === 0 || materialId === null || materialId === undefined) {
@@ -56,6 +57,11 @@ const Material: React.FC<MaterialProps> = ({
         files: [...(material?.files || []), fileDto],
       }))
     }
+  }
+
+  const validateMaterialName = async (materialName: string) => {
+    setMaterialNameValidation(materialName.length >= 5);
+    setMaterialName(materialName)
   }
 
   const createMaterial = async () => {
@@ -140,18 +146,34 @@ const Material: React.FC<MaterialProps> = ({
           )}
         </>
       ) : (
-        <div className="input-group mb-3">
-          <input
-            type="text"
-            placeholder="Material's name"
-            className="form-control"
-            value={materialName}
-            onChange={(e) => setMaterialName(e.target.value)}
-          />
-          <button className="btn btn-outline-secondary" type="button" onClick={createMaterial}>
-            Create
-          </button>
-        </div>
+        <>
+          <div className="input-group mb-3">
+            <input
+              type="text"
+              placeholder="Material's name"
+              className={`form-control ${!materialNameValidation ? 'is-invalid' : ''}`}
+              value={materialName}
+              onChange={(e) => validateMaterialName(e.target.value)}
+              required
+            />
+            <button 
+              className={`btn ${!materialNameValidation ? 'btn-outline-secondary' : 'btn-secondary'}` }
+              type="button" 
+              onClick={createMaterial} 
+              disabled={!materialNameValidation} 
+            >
+              Create
+            </button>
+          </div>
+            {!materialNameValidation && (
+              <>
+              <div className="invalid-feedback" style={{display: 'block'}}>
+                <p>Material name must be at least 5 characters long.</p>
+              </div>
+              </>
+            )}
+        </>
+
       )}
     </section>
   );

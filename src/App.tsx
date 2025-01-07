@@ -20,6 +20,8 @@ import EditMatList from './components/Material/DndMaterial/EditMatList';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
 import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
 import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
+import SchoolingEdit from "./components/Schooling/SchoolingEdit.tsx";
+import SchoolingListMentor from "./components/Schooling/SchoolingListMentor.tsx";
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
 
 function App() {
@@ -50,7 +52,7 @@ function App() {
                                     <NavLink to="/" className="nav-link">Home</NavLink>
                                     <NavLink to="/tasks" className="nav-link">Tasks</NavLink>
                                     <NavLink to="/faq" className="nav-link">FAQ</NavLink>
-                                    <NavLink to="/schoolinglistnewbie" className="nav-link">Schoolings</NavLink>
+                                    <NavLink to="/schoolinglist" className="nav-link">Schoolings</NavLink>
                                     <NavLink to="/employesassignment" className="nav-link">Employes Assignment</NavLink>
                                     <NavLink to="/assigntask" className="nav-link">Assign Task</NavLink>
                                     <NavLink to="/taskcontentmanage" className="nav-link">Task Content Manage</NavLink>
@@ -107,7 +109,13 @@ function App() {
                         <Route path="/roadmapmanage" element={<RoadMapManage />} />
                         <Route path="/badges" element={<Badge />} />
                         <Route path="/presetmanage" element={<PresetManage />} />
-                        <Route path="/schoolinglistnewbie" element={<SchoolingListNewbie />} />
+                        <Route path="/schoolingedit" element={<SchoolingEdit />} />
+                        {(role === 'Admin' || role === 'Mentor') && (
+                            <Route path="/schoolinglist" element={<SchoolingListMentor />} />
+                        )}
+                        {role === 'Newbie' && (
+                            <Route path="/schoolinglist" element={<SchoolingListNewbie />} />
+                        )}
                         <Route path="/schoolingdetails" element={<SchoolingDetails />} />
                         <Route path="/profile/:userId" element={<UserProfile />} />
                     </Routes>
