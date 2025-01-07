@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 import fileService from '../../services/fileService';
 import ErrorMessage from '../ErrorMessage';
 
 const SchoolingDetails: React.FC = () => {
-const fullSchooling = useSelector((state: RootState) => state.schooling.selectedSchooling);
+    const fullSchooling = useSelector((state: RootState) => state.schooling.selectedSchooling);
 
-    const [errorShow, setErrorShow] = React.useState(false);
+    const [errorShow, setErrorShow] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     
     const downloadFile = async (fileId: number) => {
@@ -35,7 +35,7 @@ const fullSchooling = useSelector((state: RootState) => state.schooling.selected
             setErrorMessage(`Error downloading file: ${error instanceof Error ? error.message : String(error)}`);
             setErrorShow(true);
         }
-    };
+    }
     
 
     return (

@@ -3,13 +3,12 @@ import schoolingService from '../../services/schoolingService'
 import {getCategories} from '../../services/categoryService'
 import ErrorMessage from '../ErrorMessage'
 import { FullSchoolingDto } from '../../dtos/FullSchoolingDto'
-import { useAuth } from '../../Provider/authProvider'
 import { Accordion, Alert, Button, Col, Form, Row } from 'react-bootstrap'
 import Loading from '../Loading/Loading'
 import { CategoryDto } from '../../dtos/CategoryDto'
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setSchooling } from '../../store/schoolingSlice';
+import { clearSchooling, setSchooling } from '../../store/schoolingSlice';
 import ConfirmModal from '../Modal/ConfirmModal'
 import NotificationToast from '../Toast/NotificationToast'
 
@@ -40,41 +39,37 @@ const SchoolingListMentor: React.FC = () => {
 
     const [filteredSchoolings, setFilteredSchoolings] =  React.useState<FullSchoolingDto[]>([])
 
-    const { user } = useAuth();
-
     useEffect(() => {
         initSchoolingList()
-    }, [user?.id])
+    }, [])
     
     useEffect(() => {
         filterSchoolings()
     }, [schoolingList, searchQuery, selectedCategoryId, minPriority])
 
     const initSchoolingList  = async () => {
-        if(user?.id)
-            getSchoolingList(user?.id).then((data) => {
-                setSchoolingList(data)
-            })     
-            .catch((error) => {
-                setErrorShow(true)
-                setErrorMessage('Error: ' + error.message)
-            })
-            .finally(() => setLoading(false))
+        getSchoolingList().then((data) => {
+            setSchoolingList(data)
+        })     
+        .catch((error) => {
+            setErrorShow(true)
+            setErrorMessage('Error: ' + error.message)
+        })
+        .finally(() => setLoading(false))
 
-            getCategoryList().then((data) => {
-                setAvailableCategories(data)
-            })     
-            .catch((error) => {
-                setErrorShow(true)
-                setErrorMessage('Error: ' + error.message)
-            })
-            .finally(() => setLoading(false));
-        
+        getCategoryList().then((data) => {
+            setAvailableCategories(data)
+        })     
+        .catch((error) => {
+            setErrorShow(true)
+            setErrorMessage('Error: ' + error.message)
+        })
+        .finally(() => setLoading(false));
     }
 
-    const getSchoolingList = async (userId: string) => {
+    const getSchoolingList = async () => {
         try {
-            const schoolingsData = await schoolingService.getAllFullSchoolingOfUser(userId)
+            const schoolingsData = await schoolingService.getAllFullSchooling()
             return schoolingsData
         } catch (error) {
             throw (error)
@@ -110,12 +105,16 @@ const SchoolingListMentor: React.FC = () => {
     }
 
     const goToDetails = (schooling: FullSchoolingDto) => {
-        dispatch(setSchooling(schooling));
-        navigate('/schoolingdetails');
+        dispatch(setSchooling(schooling))
+        navigate('/schoolingdetails')
     }
     const goToEditSchoolingPage = (schooling: FullSchoolingDto) => {
-        dispatch(setSchooling(schooling));
-        navigate('/schoolingedit');
+        dispatch(setSchooling(schooling))
+        navigate('/schoolingedit')
+    }
+    const goToCreateSchoolingPage = () => {
+        dispatch(clearSchooling())
+        navigate('/schoolingedit')
     }
     
     const handleDelete = () => {
@@ -230,6 +229,9 @@ const SchoolingListMentor: React.FC = () => {
                     )}
                 </Accordion>
                 )}
+                <div className="d-grid gap-2 col-6 mx-auto">
+                    <Button variant="success" onClick={() => goToCreateSchoolingPage()}>Create new schooling</Button>
+                </div>
             </div>
             <NotificationToast 
                     show={showToast} 

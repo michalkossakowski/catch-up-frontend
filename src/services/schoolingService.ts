@@ -1,5 +1,6 @@
 import axiosInstance from "../../axiosConfig";
 import { FullSchoolingDto } from "../dtos/FullSchoolingDto";
+import { SchoolingDto } from "../dtos/SchoolingDto";
 
 const schoolingService = 
 {
@@ -43,6 +44,31 @@ const schoolingService =
         try 
         {
             const response = await axiosInstance.delete(`/Schooling/ArchiveSchooling/${schoolingId}`)
+            return response
+        } 
+        catch (error) 
+        {
+            console.error('Error removing schooling:', error)
+            throw error
+        }
+    },
+    createSchooling: async(schooling: SchoolingDto): Promise<FullSchoolingDto> => {
+        try 
+        {
+            const response = await axiosInstance.post(`/Schooling/Create/`, schooling)
+            return response.data
+        } 
+        catch (error) 
+        {
+            console.error('Error removing schooling:', error)
+            throw error
+        }
+    },
+
+    editSchooling: async(schooling: SchoolingDto) => {
+        try 
+        {
+            const response = await axiosInstance.put(`/Schooling/EditSchooling/`, schooling)
             return response
         } 
         catch (error) 
