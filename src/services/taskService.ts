@@ -12,6 +12,16 @@ export const assignTask = async (task: TaskDto): Promise<TaskDto> => {
     }
 }
 
+export const editTask = async (task: FullTaskDto, taskId: number, mentorId: string): Promise<FullTaskDto> => {
+    try {
+        const response = await axiosInstance.put<{ fullTask: FullTaskDto }>(`/Task/EditFullTask/${taskId}/${mentorId}`, task);
+        return response.data.fullTask;
+    } catch (error: any) {
+        handleError('editTask', error);
+        throw error;
+    }
+}
+
 export const getAllFullTasksByNewbieId = async (newbieId: string): Promise<FullTaskDto[]> => {
     try {
         const response = await axiosInstance.get<FullTaskDto[]>(`/Task/GetAllFullTasksByNewbieId/${newbieId}`);

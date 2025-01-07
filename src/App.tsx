@@ -12,7 +12,6 @@ import defaultUserIcon from './assets/defaultUserIcon.jpg';
 import UserProfile from './components/User/UserProfile.tsx';
 import RoadMapManage from './components/RoadMap/RoadMapManage';
 import LoginComponent from './components/Login/LoginComponent';
-import AssignTask from './components/TaskAssigment/AssignTask';
 import PresetManage from "./components/Preset/PresetManage.tsx";
 import TaskContentManage from './components/Task/TaskContentManage';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
@@ -21,6 +20,7 @@ import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
 import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
 import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
+import TaskManager from "./components/TaskDashboard/TaskManager.tsx";
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -52,7 +52,7 @@ function App() {
                                     <NavLink to="/faq" className="nav-link">FAQ</NavLink>
                                     <NavLink to="/schoolinglistnewbie" className="nav-link">Schoolings</NavLink>
                                     <NavLink to="/employesassignment" className="nav-link">Employes Assignment</NavLink>
-                                    <NavLink to="/assigntask" className="nav-link">Assign Task</NavLink>
+                                    <NavLink to="/taskmanage" className="nav-link">Manage Tasks</NavLink>
                                     <NavLink to="/taskcontentmanage" className="nav-link">Task Content Manage</NavLink>
                                     <NavLink to="/roadmapmanage" className="nav-link">RoadMap Manage</NavLink>
                                     <NavLink to="/presetmanage" className="nav-link">Preset Manage</NavLink>
@@ -101,7 +101,7 @@ function App() {
                         <Route path="/admin" element={<AdminPanel isAdmin={role === "Admin"} />} />
                         <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
                         <Route path="/employesassignment" element={<EmployesAssignmentSelector />} />
-                        <Route path="/assigntask" element={<AssignTask />} />
+                        <Route path="/taskmanage" element={<TaskManager />} />
                         <Route path="/taskcontentmanage" element={<TaskContentManage />} />
                         <Route path="/editmatlist" element={<EditMatList />} />
                         <Route path="/roadmapmanage" element={<RoadMapManage />} />

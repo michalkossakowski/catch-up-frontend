@@ -16,11 +16,20 @@ const UserList = ({ userId }: UserListProps) => {
     const [userRole, setUserRole] = useState<string>('');
 
     useEffect(() => {
-        if (userId) {
-            const role = getRole(userId);
-            setUserRole(role);
-        }
-    }, [userId, getRole]);
+        const fetchUserRole = async () => {
+            if (userId) {
+                try {
+                    const role = await getRole(userId);
+                    setUserRole(role);
+                } catch (err) {
+                    console.error("Failed to fetch user role:", err);
+                }
+            }
+        };
+
+        fetchUserRole();
+    }, [userId]);
+
 
     useEffect(() => {
         const fetchUsers = async () => {

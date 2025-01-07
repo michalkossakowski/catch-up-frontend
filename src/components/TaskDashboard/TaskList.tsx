@@ -5,9 +5,10 @@ import { Accordion } from 'react-bootstrap';
 interface TaskListProps {
     tasks: FullTaskDto[];
     loading: boolean;
+    onTaskUpdate: (task: FullTaskDto) => void;
 }
 
-const TaskList = ({ tasks, loading }: TaskListProps) => {
+const TaskList = ({ tasks, loading, onTaskUpdate }: TaskListProps) => {
     if (loading) {
         return <p>Loading tasks...</p>;
     }
@@ -23,6 +24,7 @@ const TaskList = ({ tasks, loading }: TaskListProps) => {
                     key={task.id ?? index}
                     task={task}
                     eventKey={String(index)}
+                    onTaskUpdate={onTaskUpdate}
                 />
             ))}
         </Accordion>
