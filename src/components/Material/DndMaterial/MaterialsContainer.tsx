@@ -4,7 +4,6 @@ import MaterialItem from "./MaterialItem";
 import materialService from "../../../services/materialService";
 import { Accordion, Button, Form, Modal } from "react-bootstrap";
 import Material from "../Material";
-import '../Material.css'
 import ErrorMessage from "../../ErrorMessage";
 import React from "react";
 import Loading from "../../Loading/Loading";
@@ -23,7 +22,7 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
   const [showMaterial, setShowMaterial] = useState<boolean>(false);
 
   const [loading, setLoading] = useState(true)
-  
+
   // Obsługa error-ów
   const [errorShow, setErrorShow] = React.useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -91,7 +90,7 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
       )}
 
       {!loading && (
-      <Accordion className="container-md flex-wrap p-0">
+      <Accordion className="container-md flex-wrap p-0" >
         <hr />
           <h4>Materials:</h4>
           <div className="d-grid gap-2">
@@ -114,6 +113,7 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
         })}
       </Accordion>
       )}
+      
       {showMaterial && (
         <Modal
           onHide={() => setShowMaterial(false)}

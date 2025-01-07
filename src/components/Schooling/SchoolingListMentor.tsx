@@ -119,7 +119,7 @@ const SchoolingListMentor: React.FC = () => {
     
     const handleDelete = () => {
         if(schoolingIdToDelete){
-            schoolingService.deleteSchooling(schoolingIdToDelete)
+            schoolingService.archiveSchooling(schoolingIdToDelete)
                 .then(() => {
                     const updatedSchoolings = schoolingList.filter((el) => el.schooling?.id !== schoolingIdToDelete);
                     setSchoolingList(updatedSchoolings);

@@ -4,6 +4,7 @@ import FilesContainer from './FilesContainer'
 import MaterialsContainer from './MaterialsContainer'
 import materialService from '../../../services/materialService'
 import ErrorMessage from '../../ErrorMessage'
+import styles from '../Material.module.css';
 
 const EditMatList: React.FC = () => {
   const [materialIdToUpdate, setMaterialIdToUpdate] = useState<number | undefined>()
@@ -86,7 +87,7 @@ const EditMatList: React.FC = () => {
             onMaterialSelect={handleMaterialSelect}
           />
         </div>
-        <div className={`col file-container ${materialAccordion !== null ? "visible" : "invisible"}`}>
+        <div className={`col ${styles.file_container} ${materialAccordion !== null ? styles.visible : styles.invisible}`}>
           <FilesContainer
             excludedFileIds={assignedFileIds}
           />        

@@ -1,9 +1,9 @@
-import './Home.css';
+import styles from './Home.module.css';
 
 export default function Home(): React.ReactElement {
     return(
         <>
-            <div className="container home_height">
+            <div className= {`container ${styles.container}`}>
                 <h2>Welcome in catchUp</h2>
                 <div className="row">
                     <div className="col-md-3">
@@ -27,7 +27,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-book fs-4"></i> Schoolings
                                 </h5>
                                 <p className="card-text">Access your schoolings list.</p>
-                                <a className="btn btn-primary" href="/schoolinglistnewbie">Go to Schoolings</a>
+                                <a className="btn btn-primary" href="/schoolinglist">Go to Schoolings</a>
                             </div>
                         </div>
                     </div>

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react"
 import { MaterialDto } from "../../../dtos/MaterialDto"
 import { useDroppable } from "@dnd-kit/core"
 import materialService from "../../../services/materialService"
-import { Accordion, Button, Form, InputGroup, Modal } from "react-bootstrap"
-import '../Material.css'
+import { Accordion, Button, Form, InputGroup } from "react-bootstrap"
 import FileAdd from "../../File/FileAdd"
 import { FileDto } from "../../../dtos/FileDto"
 import ErrorMessage from "../../ErrorMessage"
+import ConfirmModal from "../../Modal/ConfirmModal"
 
 interface MaterialItemProps {
   materialDto: MaterialDto
@@ -19,11 +19,12 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
   const [material, setMaterial] = useState<MaterialDto>()
   const [isEditing, setIsEditing] = useState(false)
 
-  const [modalShow, setModalShow] = React.useState(false)
-
   const [filesToDelete, setFilesToDelete] = useState<number[]>([])
   const [editedName, setEditedName] = useState<string>()
   const [nameError, setNameError] = useState<string | null>(null)
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState('');
 
   // Obsługa error-ów
   const [errorShow, setErrorShow] = React.useState(false)
@@ -61,10 +62,11 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
   const idString = material ? `item${material.id}` : ""
 
   const clickDeleteitem = () => {
-    setModalShow(true)
+    setConfirmMessage("You are going to delete. Material. Are You sure ?")
+    setShowConfirmModal(true)
   }
   const handleDeleteItem = () => {
-    setModalShow(false)
+    setShowConfirmModal(false)
     if (material?.id)
       onDeleteItem(material?.id)
   }
@@ -130,6 +132,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
   }
 
   const handleAccordionClick = () => {
+    cancelChanges()
     if (material?.files && material?.id) {
       const fileIds = material?.files.map((file) => file.id)
       onMaterialSelect(material?.id, fileIds, "open/close")
@@ -139,11 +142,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
   const cancelChanges = async () => {
     if (materialDto.id) {
       const originalMaterial = await materialService.getMaterialWithFiles(materialDto.id)
-      setMaterial(originalMaterial)
-      // if (material?.files && material?.id) {
-      //   const fileIds = material?.files.map((file) => file.id)
-      //   onMaterialSelect(material?.id, fileIds)
-      // }    
+      setMaterial(originalMaterial)  
     }
     setNameError(null)
     setIsEditing(false)
@@ -172,29 +171,15 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
           setErrorShow(false);
           setErrorMessage(null);
         }} />
-      <Modal
-        onHide={() => setModalShow(false)}
-        show={modalShow}
-        size="lg"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-      >
-        <Modal.Header closeButton>
-        </Modal.Header>
-        <Modal.Body>
-          <p className="p-0 m-0 fs-3">You are going to <span className="text-danger">delete</span> Material. Are You sure ?</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="success" onClick={() => setModalShow(false)}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={() => handleDeleteItem()}>
-            Submit
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        <ConfirmModal 
+            show={showConfirmModal} 
+            title="Material operation confirmation"
+            message={confirmMessage}
+            onConfirm={handleDeleteItem} 
+            onCancel={() => setShowConfirmModal(false)} 
+        />
 
-      <Accordion.Item eventKey={idString}>
+      <Accordion.Item eventKey={idString} >
         <Accordion.Header onClick={handleAccordionClick}>
           {isEditing ? (
             <InputGroup hasValidation>
@@ -218,12 +203,11 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
         </Accordion.Header>
         <Accordion.Body ref={setNodeRef}>
           {material?.files && material.files.map((file) => (
-            <div className="badge text-bg-secondary p-3 m-1" key={file.id}>
+            <div className="badge text-bg-secondary p-3 m-1 position-relative" key={file.id}>
               {file.name}
-              <i
-                className={"bi bi-trash3 deleteIcon deleteIcon_EditMatList mb-2 p-0 " + (isEditing ? "visible" : "invisible")}
-                onClick={isEditing ? () => handleDeleteFile(file.id) : undefined}
-              />
+              <a onClick={isEditing ? () => handleDeleteFile(file.id) : undefined} className={`fs-5 position-absolute top-0 start-100 translate-middle pt-2 pe-2 ${(isEditing ? "visible" : "invisible")}`}>
+                      <i className={`bi bi-trash2-fill deleteIcon `}></i>
+                  </a>
             </div>
 
           ))}
@@ -233,8 +217,8 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
           <div className="d-flex justify-content-end mt-3 me-3">
             {isEditing &&
               <Button variant="primary" className="me-2" onClick={cancelChanges}>Cancel</Button>}
-            <Button variant="primary" disabled={!!nameError} className="me-2 ms-2 disactive" onClick={toggleEditMode}>{isEditing ? "Save" : "Edit"}</Button>
-            <Button variant="danger" className="ms-2" onClick={clickDeleteitem}>Delete</Button>
+              <Button variant="primary" disabled={!!nameError} className="me-2 ms-2 disactive" onClick={toggleEditMode}>{isEditing ? "Save" : "Edit"}</Button>
+              <Button variant="danger" className="ms-2" onClick={clickDeleteitem}>Delete</Button>
           </div>
         </Accordion.Body >
       </Accordion.Item>

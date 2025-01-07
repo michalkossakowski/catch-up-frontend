@@ -4,12 +4,14 @@
 .downloadIcon {
   color: #73e2e3
 }
-.hoverIcon:hover {
-  color: #198754;
+.downloadIcon:hover {
+  color: #1aab67;
 }
-
+.deleteIcon:hover {
+  color: #1aab67;
+}
 .deleteIcon {
-  color: #e13231;
+  color: #f55050;
 }
 /*
 a {
