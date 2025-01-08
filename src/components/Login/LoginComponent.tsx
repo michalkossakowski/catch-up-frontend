@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../axiosConfig';
 import { useAuth } from '../../Provider/authProvider';
 import { jwtDecode } from 'jwt-decode';
@@ -9,6 +10,7 @@ const LoginComponent = () => {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { setAccessToken, setRefreshToken, setUser } = useAuth();
+    const navigate = useNavigate();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -28,8 +30,17 @@ const LoginComponent = () => {
             const userData = userResponse.data;
             setUser(userData);
 
-        } catch (err) {
-            setError('Invalid email or password');
+            navigate('/');
+        } catch (err: any) {
+            if (err.response) {
+                if (err.response.status === 404) {
+                    setError('Invalid email or password');
+                } else {
+                    setError('An unexpected error occurred. Please try again.');
+                }
+            } else {
+                setError('API is down, sorry');
+            }
             setAccessToken(null);
             setRefreshToken(null);
             setUser(null);
