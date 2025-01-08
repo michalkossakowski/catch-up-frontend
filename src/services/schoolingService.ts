@@ -91,10 +91,10 @@ const schoolingService =
             throw error
         }
     },
-    createSchoolingPart: async(schoolingPart: SchoolingPartDto, schoolingId: number) => {
+    createSchoolingPart: async(schoolingPart: SchoolingPartDto, schoolingId: number) : Promise<SchoolingPartDto> => {
         try 
         {
-            const response = await axiosInstance.post(`/Schooling/Create/${schoolingId}`, schoolingPart)
+            const response = await axiosInstance.post<SchoolingPartDto>(`/Schooling/AddSchoolingPart/${schoolingId}`, schoolingPart)
             return response.data
         } 
         catch (error) 
@@ -119,6 +119,7 @@ const schoolingService =
     editSchoolingPart: async(schoolingPart: SchoolingPartDto) => {
         try 
         {
+            console.log("sdsds")
             const response = await axiosInstance.put(`/Schooling/EditSchoolingPart/`, schoolingPart)
             return response
         } 

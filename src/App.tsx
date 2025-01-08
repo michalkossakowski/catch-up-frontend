@@ -2,7 +2,7 @@ import './App.css';
 import { Image } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Home from './components/Home/home.tsx';
+import Home from './components/Home/Home.tsx';
 import { useAuth } from './Provider/authProvider';
 import Badge from './components/Badge/BadgeComponent';
 import FaqComponent from './components/Faq/FaqComponent';
@@ -22,7 +22,7 @@ import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
 import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
 import SchoolingEdit from "./components/Schooling/SchoolingEdit.tsx";
 import SchoolingListMentor from "./components/Schooling/SchoolingListMentor.tsx";
-import SchoolingEditParts from "./components/Schooling/SchoolingListParts.tsx";
+import SchoolingListParts from "./components/Schooling/SchoolingListParts.tsx";
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
 import Loading from './components/Loading/Loading.tsx';
 import SchoolingPartEdit from './components/Schooling/SchoolingPartEdit.tsx';
@@ -120,9 +120,9 @@ function App() {
                             <Route path="/schoolinglist" element={<SchoolingListNewbie />} />
                         )}
                         <Route path="/schoolinglist" element={<div className='mt-4'><span className='mt-4'>Error with loading schooling</span><Loading/></div>} />
-                        <Route path="/Schoolingpartedit" element={<SchoolingPartEdit />} />
+                        <Route path="/Schoolingpartedit/:id?" element={<SchoolingPartEdit />} />
 
-                        <Route path="/Schoolingeditparts" element={<SchoolingEditParts />} />
+                        <Route path="/Schoolinglistparts" element={<SchoolingListParts />} />
                         <Route path="/schoolingdetails" element={<SchoolingDetails />} />
                         <Route path="/profile/:userId" element={<UserProfile />} />
                     </Routes>

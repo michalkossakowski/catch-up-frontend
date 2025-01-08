@@ -119,7 +119,7 @@ const SchoolingEdit: React.FC = () => {
         navigate('/schoolinglist')
     }
     const goToEditSchoolingParts = () => {
-        navigate('/schoolingeditparts')
+        navigate('/schoolinglistparts')
     }
 
     return (

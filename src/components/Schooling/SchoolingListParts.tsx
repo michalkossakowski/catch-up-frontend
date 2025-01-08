@@ -17,7 +17,7 @@ import Loading from "../Loading/Loading";
 import { SchoolingPartDto } from "../../dtos/SchoolingPartDto";
 import Material from "../Material/Material";
 
-const SchoolingEditParts: React.FC = () => {
+const SchoolingListParts: React.FC = () => {
     const fullSchooling = useSelector((state: RootState) => state.schooling.selectedSchooling);
     const dispatch = useDispatch()
     const navigate = useNavigate()
@@ -315,4 +315,4 @@ const SchoolingEditParts: React.FC = () => {
         </section>
     )
 }
-export default SchoolingEditParts;
+export default SchoolingListParts;
