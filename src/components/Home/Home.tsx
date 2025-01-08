@@ -3,7 +3,7 @@ import styles from './Home.module.css';
 export default function Home(): React.ReactElement {
     return(
         <>
-            <div className= {`container ${styles.container}`}>
+            <div className= {`container ${styles.home_container}`}>
                 <h2>Welcome in catchUp</h2>
                 <div className="row">
                     <div className="col-md-3">

@@ -102,7 +102,7 @@ function AssignTask() {
                         onChange={(e) => setSelectedTaskContent(Number(e.target.value))}
                         required
                     >
-                        <option value="0">Choose a task...</option>
+                        <option value="">Choose a task...</option>
                         {taskContents.map((task) => (
                             <option key={task.id} value={task.id}>
                                 {task.title}
