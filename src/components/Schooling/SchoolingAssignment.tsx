@@ -3,7 +3,7 @@ import { RootState } from "../../store/store";
 import { Col, Row } from "react-bootstrap";
 
 const SchoolingAssignment: React.FC = () => {
-    const fullSchooling = useSelector((state: RootState) => state.schooling.selectedSchooling);
+    // const fullSchooling = useSelector((state: RootState) => state.schooling.selectedSchooling);
 
     return(
         <section className="container">
