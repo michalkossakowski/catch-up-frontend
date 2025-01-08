@@ -26,7 +26,7 @@ export default function UserEdit(): React.ReactElement {
     const [isTypeValid, setTypeValid] = useState<boolean>(false);  
 
     const validRoles = ['Newbie', 'Mentor', 'HR', 'Admin'];
-setName
+
     const validateName = (value: string) => {
         setNameValid(value.length >= 3);
         setName(value);
@@ -190,6 +190,7 @@ setName
                         className={`form-control ${!isConfirmPasswordValid ? 'is-invalid' : ''}`}
                         value={confirmPassword}
                         onChange={(e) => validateConfirmPassword(e.target.value)}
+                        autoComplete="new-password"
                         required
                     />
                     {!isConfirmPasswordValid && (

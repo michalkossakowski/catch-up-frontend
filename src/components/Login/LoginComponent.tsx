@@ -49,10 +49,9 @@ const LoginComponent = () => {
         }
     };
 
-
     return (
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', backgroundColor: '#101010' }}>
-            <div className="card shadow-lg p-4" style={{ width: '400px' }}>
+        <div className="d-flex justify-content-center align-items-center mt-5 mb-5 vw-100">
+            <div className="card shadow-lg p-4 w-50">
                 <h2 className="text-center mb-4">Login</h2>
                 <form onSubmit={handleLogin}>
                     <div className="mb-3">
@@ -64,6 +63,7 @@ const LoginComponent = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             disabled={isLoading}
+                            autoComplete="username"
                             required
                         />
                     </div>
@@ -76,6 +76,7 @@ const LoginComponent = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             disabled={isLoading}
+                            autoComplete="password"
                             required
                         />
                     </div>
