@@ -26,6 +26,8 @@ import SchoolingListParts from "./components/Schooling/SchoolingListParts.tsx";
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
 import Loading from './components/Loading/Loading.tsx';
 import SchoolingPartEdit from './components/Schooling/SchoolingPartEdit.tsx';
+import SchoolingAssignment from './components/Schooling/SchoolingAssignment.tsx';
+
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -120,10 +122,11 @@ function App() {
                             <Route path="/schoolinglist" element={<SchoolingListNewbie />} />
                         )}
                         <Route path="/schoolinglist" element={<div className='mt-4'><span className='mt-4'>Error with loading schooling</span><Loading/></div>} />
-                        <Route path="/Schoolingpartedit/:id?" element={<SchoolingPartEdit />} />
+                        <Route path="/schoolingpartedit/:id?" element={<SchoolingPartEdit />} />
 
-                        <Route path="/Schoolinglistparts" element={<SchoolingListParts />} />
+                        <Route path="/schoolinglistparts" element={<SchoolingListParts />} />
                         <Route path="/schoolingdetails" element={<SchoolingDetails />} />
+                        <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
                         <Route path="/profile/:userId" element={<UserProfile />} />
                     </Routes>
                 </>
