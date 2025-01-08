@@ -2,7 +2,7 @@ import './App.css';
 import { Image } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Home from './components/Home/home.tsx';
+import Home from './components/Home/Home.tsx';
 import { useAuth } from './Provider/authProvider';
 import Badge from './components/Badge/BadgeComponent';
 import FaqComponent from './components/Faq/FaqComponent';
