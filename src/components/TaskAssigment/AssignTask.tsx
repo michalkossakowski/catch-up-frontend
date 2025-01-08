@@ -3,21 +3,20 @@ import { Modal, Button } from "react-bootstrap";
 import { TaskContentDto } from "../../dtos/TaskContentDto";
 import { UserAssignCountDto } from "../../dtos/UserAssignCountDto";
 import { getTaskContents } from "../../services/taskContentService";
-import NewbieMentorService from "../../services/newbieMentorService";
 import { assignTask, editTask } from "../../services/taskService.ts";
 import { useAuth } from "../../Provider/authProvider.tsx";
 import {FullTaskDto} from "../../dtos/FullTaskDto.ts";
 
 interface AssignTaskProps {
     isEditMode: boolean;
-    task: FullTaskDto;
+    task: FullTaskDto | null;
     show: boolean;
     handleClose: () => void;
     onTaskUpdate?: (task: FullTaskDto) => void;
+    newbies?: UserAssignCountDto[];
 }
 
-function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate }: AssignTaskProps) {
-    const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
+function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, newbies }: AssignTaskProps) {
     const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
     const [selectedNewbie, setSelectedNewbie] = useState<string>("");
     const [selectedTaskContent, setSelectedTaskContent] = useState<number>(0);
@@ -43,11 +42,9 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate }: Assig
                     setMaterialsId(task.materialsId ?? 1);
                     setCategoryId(task.categoryId ?? 1);
                 } else {
-                    const [newbiesData, taskContentsData] = await Promise.all([
-                        NewbieMentorService.getAllNewbies(),
+                    const [taskContentsData] = await Promise.all([
                         getTaskContents(),
                     ]);
-                    setNewbies(newbiesData);
                     setTaskContents(taskContentsData);
                 }
             } catch (err) {
@@ -79,7 +76,7 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate }: Assig
                     description: description,
                     materialsId: materialsId,
                     categoryId: categoryId,
-                    deadline: deadline ? new Date(deadline).toISOString() : undefined,
+                    deadline: deadline ? deadline : undefined,
                 };
                 const updatedFullTask = await editTask(taskData, task.id!, user?.id);
                 if (onTaskUpdate) {
@@ -93,7 +90,26 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate }: Assig
                     taskContentId: selectedTaskContent,
                     deadline: deadline ? new Date(deadline).toISOString() : null
                 };
-                await assignTask(taskData);
+                const addedTask = await assignTask(taskData);
+
+                const selectedTask = taskContents.find(task => task.id === selectedTaskContent);
+                if (!selectedTask) {
+                    throw new Error("Selected task not found");
+                }
+                const addedFullTask = {
+                    newbieId: addedTask.newbieId,
+                    assigningId: addedTask.assigningId,
+                    title: selectedTask.title!,
+                    description: selectedTask.description!,
+                    materialsId: selectedTask.materialsId!,
+                    categoryId: selectedTask.categoryId!,
+                    deadline: deadline ? deadline : undefined,
+                    status: addedTask.status
+                };
+
+                if (onTaskUpdate) {
+                    onTaskUpdate(addedFullTask);
+                }
                 alert("Task assigned successfully!");
             }
 
@@ -128,7 +144,7 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate }: Assig
                                     required
                                 >
                                     <option value="">Choose a newbie...</option>
-                                    {newbies.map((newbie) => (
+                                    {newbies!.map((newbie) => (
                                         <option key={newbie.id} value={newbie.id}>
                                             {`${newbie.name} ${newbie.surname}`}
                                         </option>

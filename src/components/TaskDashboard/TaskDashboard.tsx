@@ -43,7 +43,7 @@ const TaskDashboard: React.FC = () => {
         <div className="d-flex justify-content-center align-items-center">
             <div className="container">
                 <h1 className="text-center mb-4">My Tasks</h1>
-                <TaskList tasks={tasks} loading={loading} />
+                <TaskList tasks={tasks} loading={loading} onTaskUpdate={() => {}} isEditMode={false}/>
             </div>
         </div>
     );

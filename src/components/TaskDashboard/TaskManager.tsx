@@ -5,6 +5,8 @@ import {useAuth} from "../../Provider/authProvider";
 import {FullTaskDto} from "../../dtos/FullTaskDto";
 import {UserAssignCountDto} from "../../dtos/UserAssignCountDto";
 import TaskList from "./TaskList";
+import {Button} from "react-bootstrap";
+import AssignTask from "../TaskAssigment/AssignTask.tsx";
 
 function TaskManager() {
     const { user } = useAuth();
@@ -17,6 +19,7 @@ function TaskManager() {
     const [selectedNewbie, setSelectedNewbie] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
+    const [showAssignModal, setShowAssignModal] = useState(false);
 
     useEffect(() => {
         const fetchNewbies = async () => {
@@ -69,6 +72,12 @@ function TaskManager() {
         setFilteredTasks(updatedTasks);
     }, [searchTerm, selectedNewbie, tasks]);
 
+    const handleTaskAssigned = (newTask: FullTaskDto) => {
+        console.log(newTask);
+        setTasks(prev => [...prev, newTask]);
+        setShowAssignModal(false);
+    };
+
     const handleTaskUpdate = (updatedTask: FullTaskDto) => {
         setTasks(prevTasks => {
             return prevTasks.map(task =>
@@ -107,7 +116,14 @@ function TaskManager() {
                     </select>
                 </div>
 
-                <div className="col-2">
+                <Button
+                    className="col-1"
+                    disabled={!selectedNewbie}
+                    variant={selectedNewbie ? "primary" : "secondary"}
+                    onClick={() => setShowAssignModal(true)}
+                >Assign</Button>
+
+                <div className="col-1">
                     <button
                         className="btn btn-outline-secondary w-100"
                         disabled={!selectedNewbie}
@@ -116,6 +132,17 @@ function TaskManager() {
                     </button>
                 </div>
             </div>
+
+            {showAssignModal && (
+                <AssignTask
+                    isEditMode={false}
+                    task={null}
+                    show={showAssignModal}
+                    handleClose={() => setShowAssignModal(false)}
+                    onTaskUpdate={handleTaskAssigned}
+                    newbies={newbies}
+                />
+            )}
 
             <div
                 className="border p-3 mt-3"
@@ -132,6 +159,7 @@ function TaskManager() {
                         tasks={filteredTasks}
                         loading={loading}
                         onTaskUpdate={handleTaskUpdate}
+                        isEditMode={true}
                     />
                 )}
             </div>

@@ -6,9 +6,10 @@ interface TaskListProps {
     tasks: FullTaskDto[];
     loading: boolean;
     onTaskUpdate: (task: FullTaskDto) => void;
+    isEditMode: boolean;
 }
 
-const TaskList = ({ tasks, loading, onTaskUpdate }: TaskListProps) => {
+const TaskList = ({ tasks, loading, onTaskUpdate, isEditMode }: TaskListProps) => {
     if (loading) {
         return <p>Loading tasks...</p>;
     }
@@ -25,6 +26,7 @@ const TaskList = ({ tasks, loading, onTaskUpdate }: TaskListProps) => {
                     task={task}
                     eventKey={String(index)}
                     onTaskUpdate={onTaskUpdate}
+                    isEditMode={isEditMode}
                 />
             ))}
         </Accordion>

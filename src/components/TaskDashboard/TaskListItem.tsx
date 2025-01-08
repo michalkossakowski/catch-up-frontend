@@ -8,9 +8,10 @@ interface TaskListItemProps {
     task: FullTaskDto;
     eventKey: string;
     onTaskUpdate: (task: FullTaskDto) => void;
+    isEditMode: boolean;
 }
 
-const TaskListItem = ({ task, eventKey, onTaskUpdate }: TaskListItemProps) => {
+const TaskListItem = ({ task, eventKey, onTaskUpdate, isEditMode }: TaskListItemProps) => {
     const [showModal, setShowModal] = useState(false);
 
     const handleTaskEdit = (updatedTask: FullTaskDto) => {
@@ -68,12 +69,17 @@ const TaskListItem = ({ task, eventKey, onTaskUpdate }: TaskListItemProps) => {
                     <div className="d-flex align-items-center justify-content-between w-100 pe-2">
                         <div className="h5 mb-0">{task.title}</div>
                         <div className="d-flex align-items-center gap-2">
-                            <div onClick={(e) => {
-                                e.stopPropagation();
-                                setShowModal(true);
-                            }} className="btn btn-primary">
-                                Edit
-                            </div>
+                            {isEditMode && (
+                                <div
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setShowModal(true);
+                                    }}
+                                    className="btn btn-primary"
+                                >
+                                    Edit
+                                </div>
+                            )}
                             <span className="text-muted">{text}</span>
                             <i className={`${iconClass} ${colorClass} fs-4`}></i>
                         </div>
@@ -92,13 +98,15 @@ const TaskListItem = ({ task, eventKey, onTaskUpdate }: TaskListItemProps) => {
                 </Accordion.Body>
             </Accordion.Item>
 
-            <AssignTask
-                isEditMode={true}
-                task={task}
-                show={showModal}
-                handleClose={() => setShowModal(false)}
-                onTaskUpdate={handleTaskEdit}
-            />
+            {isEditMode && (
+                <AssignTask
+                    isEditMode={isEditMode}
+                    task={task}
+                    show={showModal}
+                    handleClose={() => setShowModal(false)}
+                    onTaskUpdate={handleTaskEdit}
+                />
+            )}
         </>
     );
 };

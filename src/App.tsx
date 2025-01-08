@@ -52,7 +52,9 @@ function App() {
                                     <NavLink to="/faq" className="nav-link">FAQ</NavLink>
                                     <NavLink to="/schoolinglistnewbie" className="nav-link">Schoolings</NavLink>
                                     <NavLink to="/employesassignment" className="nav-link">Employes Assignment</NavLink>
-                                    <NavLink to="/taskmanage" className="nav-link">Manage Tasks</NavLink>
+                                    {role !== 'Newbie' && (
+                                        <NavLink to="/taskmanage" className="nav-link">Manage Tasks</NavLink>
+                                    )}
                                     <NavLink to="/taskcontentmanage" className="nav-link">Task Content Manage</NavLink>
                                     <NavLink to="/roadmapmanage" className="nav-link">RoadMap Manage</NavLink>
                                     <NavLink to="/presetmanage" className="nav-link">Preset Manage</NavLink>
