@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { TaskContentDto } from "../../dtos/TaskContentDto";
-import { UserAssignCountDto } from "../../dtos/UserAssignCountDto";
 import { getTaskContents } from "../../services/taskContentService";
 import { assignTask, editTask } from "../../services/taskService.ts";
 import { useAuth } from "../../Provider/authProvider.tsx";
 import {FullTaskDto} from "../../dtos/FullTaskDto.ts";
+import {CategoryDto} from "../../dtos/CategoryDto.ts";
+import {MaterialDto} from "../../dtos/MaterialDto.ts";
 
 interface AssignTaskProps {
     isEditMode: boolean;
@@ -13,10 +14,12 @@ interface AssignTaskProps {
     show: boolean;
     handleClose: () => void;
     onTaskUpdate?: (task: FullTaskDto) => void;
-    newbies?: UserAssignCountDto[];
+    selectedNewbieId?: string;
+    categories?: CategoryDto[];
+    materials?: MaterialDto[];
 }
 
-function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, newbies }: AssignTaskProps) {
+function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selectedNewbieId, categories, materials }: AssignTaskProps) {
     const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
     const [selectedNewbie, setSelectedNewbie] = useState<string>("");
     const [selectedTaskContent, setSelectedTaskContent] = useState<number>(0);
@@ -70,7 +73,7 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, newbies
         try {
             if (isEditMode && task) {
                 const taskData = {
-                    newbieId: selectedNewbie,
+                    newbieId: selectedNewbie!,
                     assigningId: currentUserId,
                     title: title,
                     description: description,
@@ -78,14 +81,14 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, newbies
                     categoryId: categoryId,
                     deadline: deadline ? deadline : undefined,
                 };
-                const updatedFullTask = await editTask(taskData, task.id!, user?.id);
+                const updatedFullTask = await editTask(taskData, task.id!, user.id!);
                 if (onTaskUpdate) {
                     onTaskUpdate(updatedFullTask);
                 }
                 alert("Task edited successfully!");
             } else {
                 const taskData = {
-                    newbieId: selectedNewbie,
+                    newbieId: selectedNewbieId!,
                     assigningId: currentUserId,
                     taskContentId: selectedTaskContent,
                     deadline: deadline ? new Date(deadline).toISOString() : null
@@ -97,6 +100,7 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, newbies
                     throw new Error("Selected task not found");
                 }
                 const addedFullTask = {
+                    id: addedTask.id,
                     newbieId: addedTask.newbieId,
                     assigningId: addedTask.assigningId,
                     title: selectedTask.title!,
@@ -135,23 +139,6 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, newbies
                 <form onSubmit={handleSubmit}>
                     {!isEditMode && (
                         <>
-                            <div className="mb-3">
-                                <label className="form-label">Select Newbie</label>
-                                <select
-                                    className="form-select"
-                                    value={selectedNewbie}
-                                    onChange={(e) => setSelectedNewbie(e.target.value)}
-                                    required
-                                >
-                                    <option value="">Choose a newbie...</option>
-                                    {newbies!.map((newbie) => (
-                                        <option key={newbie.id} value={newbie.id}>
-                                            {`${newbie.name} ${newbie.surname}`}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
                             <div className="mb-3">
                                 <label className="form-label">Select Task</label>
                                 <select
@@ -196,25 +183,35 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, newbies
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Materials ID</label>
-                                <input
-                                    type="number"
-                                    className="form-control"
+                                <label className="form-label">Material</label>
+                                <select
+                                    className="form-select"
                                     value={materialsId}
                                     onChange={(e) => setMaterialsId(Number(e.target.value))}
                                     required
-                                />
+                                >
+                                    {materials?.map((material) => (
+                                        <option key={material.id} value={material.id}>
+                                            {material.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Category ID</label>
-                                <input
-                                    type="number"
-                                    className="form-control"
+                                <label className="form-label">Category</label>
+                                <select
+                                    className="form-select"
                                     value={categoryId}
                                     onChange={(e) => setCategoryId(Number(e.target.value))}
                                     required
-                                />
+                                >
+                                    {categories?.map((category) => (
+                                        <option key={category.id} value={category.id}>
+                                            {category.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                         </>
                     )}
@@ -241,7 +238,7 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, newbies
                     {error && <div className="alert alert-danger">{error}</div>}
 
                     <Button type="submit" variant="primary" disabled={loading}>
-                        {loading ? "Saving..." : isEditMode ? "Save Changes" : "Assign Task"}
+                    {loading ? "Saving..." : isEditMode ? "Save Changes" : "Assign Task"}
                     </Button>
                 </form>
             </Modal.Body>

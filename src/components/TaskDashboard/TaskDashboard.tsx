@@ -1,35 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../../axiosConfig';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../store/store.ts';
+import { fetchTasks } from '../../store/taskSlice';
 import { useAuth } from "../../Provider/authProvider";
-import TaskList from './TaskList';
-import { FullTaskDto } from '../../dtos/FullTaskDto';
+import TaskList from "./TaskList.tsx";
 
 const TaskDashboard: React.FC = () => {
-    const [tasks, setTasks] = useState<FullTaskDto[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const dispatch = useDispatch<AppDispatch>();
+    const { tasks, loading, error } = useSelector((state: RootState) => state.tasks);
     const { user } = useAuth();
 
     useEffect(() => {
-        const fetchTasks = async () => {
-            if (!user?.id) return;
-
-            try {
-                setLoading(true);
-                const response = await axiosInstance.get<FullTaskDto[]>(`/Task/GetAllFullTasksByNewbieId/${user.id}`);
-                setTasks(response.data);
-                setError(null);
-            } catch (err) {
-                const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
-                setError(errorMessage);
-                console.error('Error fetching tasks:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchTasks();
-    }, [user]);
+        if (user?.id) {
+            dispatch(fetchTasks(user.id));
+        }
+    }, [dispatch, user]);
 
     if (error) {
         return (

@@ -7,6 +7,10 @@ import {UserAssignCountDto} from "../../dtos/UserAssignCountDto";
 import TaskList from "./TaskList";
 import {Button} from "react-bootstrap";
 import AssignTask from "../TaskAssigment/AssignTask.tsx";
+import {getCategories} from "../../services/categoryService.ts";
+import materialService from "../../services/materialService.ts";
+import {CategoryDto} from "../../dtos/CategoryDto.ts";
+import {MaterialDto} from "../../dtos/MaterialDto.ts";
 
 function TaskManager() {
     const { user } = useAuth();
@@ -20,6 +24,9 @@ function TaskManager() {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
     const [showAssignModal, setShowAssignModal] = useState(false);
+
+    const [categories, setCategories] = useState<CategoryDto[]>([]);
+    const [materials, setMaterials] = useState<MaterialDto[]>([]);
 
     useEffect(() => {
         const fetchNewbies = async () => {
@@ -53,6 +60,24 @@ function TaskManager() {
         fetchTasks();
     }, []);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [categoriesData, materialsData] = await Promise.all([
+                    getCategories(),
+                    materialService.getAllMaterials()
+                ]);
+                setCategories(categoriesData);
+                setMaterials(materialsData);
+            } catch (err) {
+                setError("Failed to fetch categories and materials");
+                console.error(err);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     // filter when something changes
     useEffect(() => {
         let updatedTasks = tasks;
@@ -73,7 +98,6 @@ function TaskManager() {
     }, [searchTerm, selectedNewbie, tasks]);
 
     const handleTaskAssigned = (newTask: FullTaskDto) => {
-        console.log(newTask);
         setTasks(prev => [...prev, newTask]);
         setShowAssignModal(false);
     };
@@ -140,7 +164,9 @@ function TaskManager() {
                     show={showAssignModal}
                     handleClose={() => setShowAssignModal(false)}
                     onTaskUpdate={handleTaskAssigned}
-                    newbies={newbies}
+                    selectedNewbieId={selectedNewbie}
+                    categories={categories}
+                    materials={materials}
                 />
             )}
 
@@ -160,6 +186,8 @@ function TaskManager() {
                         loading={loading}
                         onTaskUpdate={handleTaskUpdate}
                         isEditMode={true}
+                        categories={categories}
+                        materials={materials}
                     />
                 )}
             </div>

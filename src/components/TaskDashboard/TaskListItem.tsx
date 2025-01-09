@@ -3,15 +3,19 @@ import { StatusEnum } from "../../Enums/StatusEnum";
 import { Accordion } from "react-bootstrap";
 import { FullTaskDto } from "../../dtos/FullTaskDto";
 import AssignTask from "../TaskAssigment/AssignTask";
+import {CategoryDto} from "../../dtos/CategoryDto.ts";
+import {MaterialDto} from "../../dtos/MaterialDto.ts";
 
 interface TaskListItemProps {
     task: FullTaskDto;
     eventKey: string;
     onTaskUpdate: (task: FullTaskDto) => void;
     isEditMode: boolean;
+    categories?: CategoryDto[];
+    materials?: MaterialDto[];
 }
 
-const TaskListItem = ({ task, eventKey, onTaskUpdate, isEditMode }: TaskListItemProps) => {
+const TaskListItem = ({ task, eventKey, onTaskUpdate, isEditMode, categories, materials}: TaskListItemProps) => {
     const [showModal, setShowModal] = useState(false);
 
     const handleTaskEdit = (updatedTask: FullTaskDto) => {
@@ -105,6 +109,8 @@ const TaskListItem = ({ task, eventKey, onTaskUpdate, isEditMode }: TaskListItem
                     show={showModal}
                     handleClose={() => setShowModal(false)}
                     onTaskUpdate={handleTaskEdit}
+                    categories={categories}
+                    materials={materials}
                 />
             )}
         </>

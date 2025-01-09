@@ -1,15 +1,19 @@
 import { FullTaskDto } from '../../dtos/FullTaskDto';
 import TaskListItem from './TaskListItem';
 import { Accordion } from 'react-bootstrap';
+import {CategoryDto} from "../../dtos/CategoryDto.ts";
+import {MaterialDto} from "../../dtos/MaterialDto.ts";
 
 interface TaskListProps {
     tasks: FullTaskDto[];
     loading: boolean;
     onTaskUpdate: (task: FullTaskDto) => void;
     isEditMode: boolean;
+    categories?: CategoryDto[];
+    materials?: MaterialDto[];
 }
 
-const TaskList = ({ tasks, loading, onTaskUpdate, isEditMode }: TaskListProps) => {
+const TaskList = ({ tasks, loading, onTaskUpdate, isEditMode, categories, materials }: TaskListProps) => {
     if (loading) {
         return <p>Loading tasks...</p>;
     }
@@ -27,6 +31,8 @@ const TaskList = ({ tasks, loading, onTaskUpdate, isEditMode }: TaskListProps) =
                     eventKey={String(index)}
                     onTaskUpdate={onTaskUpdate}
                     isEditMode={isEditMode}
+                    categories={categories}
+                    materials={materials}
                 />
             ))}
         </Accordion>

@@ -55,7 +55,7 @@ const UserList = ({ userId }: UserListProps) => {
                     const blob = await fileService.downloadFile(user.avatarId);
                     setUserAvatars(prev => ({
                         ...prev,
-                        [user.id]: URL.createObjectURL(blob)
+                        [user.id!]: URL.createObjectURL(blob)
                     }));
                 }
             }
@@ -79,7 +79,7 @@ const UserList = ({ userId }: UserListProps) => {
                     name={user.name}
                     surname={user.surname}
                     position={user.position}
-                    avatarUrl={userAvatars[user.id]}
+                    avatarUrl={userAvatars[user.id!]}
                 />
             ))}
         </div>
