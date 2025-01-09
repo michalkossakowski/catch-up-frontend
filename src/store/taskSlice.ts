@@ -2,32 +2,29 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { FullTaskDto } from '../dtos/FullTaskDto';
 import axiosInstance from '../../axiosConfig';
 
-// Define what our task state looks like
 interface TaskState {
     tasks: FullTaskDto[];
     loading: boolean;
     error: string | null;
 }
 
-// Set initial state
 const initialState: TaskState = {
     tasks: [],
     loading: false,
     error: null,
 };
 
-// Create async thunk for fetching tasks
 export const fetchTasks = createAsyncThunk(
     'tasks/fetchTasks',
-    async (userId: string) => {
-        const response = await axiosInstance.get<FullTaskDto[]>(
-            `/Task/GetAllFullTasksByNewbieId/${userId}`
-        );
+    async (userId?: string) => {
+        const endpoint = userId
+            ? `/Task/GetAllFullTasksByNewbieId/${userId}`
+            : `/Task/GetAllFullTasks`;
+        const response = await axiosInstance.get<FullTaskDto[]>(endpoint);
         return response.data;
     }
 );
 
-// Create the slice
 const taskSlice = createSlice({
     name: 'tasks',
     initialState,
@@ -36,15 +33,16 @@ const taskSlice = createSlice({
             const index = state.tasks.findIndex(task => task.id === action.payload.id);
             if (index !== -1) {
                 state.tasks[index] = action.payload;
+            } else {
+                state.tasks.push(action.payload);
             }
         },
         clearTasks: (state) => {
             state.tasks = [];
             state.error = null;
         },
-    },/*
+    },
     extraReducers: (builder) => {
-        // Handle async action states
         builder
             .addCase(fetchTasks.pending, (state) => {
                 state.loading = true;
@@ -58,7 +56,7 @@ const taskSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message ?? 'Failed to fetch tasks';
             });
-    },*/
+    },
 });
 
 export const { updateTaskLocally, clearTasks } = taskSlice.actions;

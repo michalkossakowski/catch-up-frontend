@@ -1,6 +1,5 @@
 import {useEffect, useState} from "react";
 import NewbieMentorService from '../../services/newbieMentorService';
-import {getAllFullTasks} from "../../services/taskService";
 import {useAuth} from "../../Provider/authProvider";
 import {FullTaskDto} from "../../dtos/FullTaskDto";
 import {UserAssignCountDto} from "../../dtos/UserAssignCountDto";
@@ -11,18 +10,21 @@ import {getCategories} from "../../services/categoryService.ts";
 import materialService from "../../services/materialService.ts";
 import {CategoryDto} from "../../dtos/CategoryDto.ts";
 import {MaterialDto} from "../../dtos/MaterialDto.ts";
+import {fetchTasks, updateTaskLocally} from "../../store/taskSlice.ts";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../store/store.ts";
 
 function TaskManager() {
     const { user } = useAuth();
     const mentorId = user?.id;
 
+    const dispatch: AppDispatch = useDispatch();
+    const { tasks, loading, error } = useSelector((state: RootState) => state.tasks);
+
     const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
-    const [tasks, setTasks] = useState<FullTaskDto[]>([]);
     const [filteredTasks, setFilteredTasks] = useState<FullTaskDto[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedNewbie, setSelectedNewbie] = useState<string>("");
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string>("");
     const [showAssignModal, setShowAssignModal] = useState(false);
 
     const [categories, setCategories] = useState<CategoryDto[]>([]);
@@ -35,7 +37,6 @@ function TaskManager() {
                 const newbieList = await NewbieMentorService.getAssignmentsByMentor(mentorId);
                 setNewbies(newbieList);
             } catch (err) {
-                setError("Failed to fetch newbies.");
                 console.error(err);
             }
         };
@@ -44,21 +45,15 @@ function TaskManager() {
     }, []);
 
     useEffect(() => {
-        const fetchTasks = async () => {
-            try {
-                const taskList = await getAllFullTasks();
-                setTasks(taskList);
-                setFilteredTasks(taskList);
-            } catch (err) {
-                setError("Failed to fetch tasks.");
-                console.error(err);
-            } finally {
-                setLoading(false);
+        if (selectedNewbie) {
+            const tasksForNewbie = tasks.filter((task) => task.newbieId === selectedNewbie);
+            if (tasksForNewbie.length === 0) {
+                dispatch(fetchTasks(selectedNewbie));
             }
-        };
+        }
+    }, [selectedNewbie]);
 
-        fetchTasks();
-    }, []);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -70,7 +65,6 @@ function TaskManager() {
                 setCategories(categoriesData);
                 setMaterials(materialsData);
             } catch (err) {
-                setError("Failed to fetch categories and materials");
                 console.error(err);
             }
         };
@@ -83,13 +77,11 @@ function TaskManager() {
         let updatedTasks = tasks;
 
         if (selectedNewbie) {
-            updatedTasks = updatedTasks.filter(
-                (task) => task.newbieId === selectedNewbie
-            );
+            updatedTasks = updatedTasks.filter((task : FullTaskDto) => task.newbieId === selectedNewbie);
         }
 
         if (searchTerm.trim()) {
-            updatedTasks = updatedTasks.filter((task) =>
+            updatedTasks = updatedTasks.filter((task : FullTaskDto) =>
                 task.title.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
@@ -98,16 +90,12 @@ function TaskManager() {
     }, [searchTerm, selectedNewbie, tasks]);
 
     const handleTaskAssigned = (newTask: FullTaskDto) => {
-        setTasks(prev => [...prev, newTask]);
+        dispatch(updateTaskLocally(newTask));
         setShowAssignModal(false);
     };
 
     const handleTaskUpdate = (updatedTask: FullTaskDto) => {
-        setTasks(prevTasks => {
-            return prevTasks.map(task =>
-                task.id === updatedTask.id ? updatedTask : task
-            );
-        });
+        dispatch(updateTaskLocally(updatedTask));
     };
 
     return (
@@ -131,7 +119,7 @@ function TaskManager() {
                         value={selectedNewbie}
                         onChange={(e) => setSelectedNewbie(e.target.value)}
                     >
-                        <option value="">All Newbies</option>
+                        <option value="">None</option>
                         {newbies.map((newbie) => (
                             <option key={newbie.id} value={newbie.id}>
                                 {`${newbie.name} ${newbie.surname}`}
