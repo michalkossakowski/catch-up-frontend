@@ -4,26 +4,25 @@ import MaterialItem from "./MaterialItem";
 import materialService from "../../../services/materialService";
 import { Accordion, Button, Form, Modal } from "react-bootstrap";
 import Material from "../Material";
-import '../Material.css'
 import ErrorMessage from "../../ErrorMessage";
 import React from "react";
 import Loading from "../../Loading/Loading";
 
 interface MaterialsContainerProps {
   materialIdToUpdate?: number
-  state?: number
+  addedFiles?: number
   onMaterialSelect: (materialId: number, fileIds: number[], action: string) => void
 }
 
 
-const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpdate, state, onMaterialSelect }) => {
+const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpdate, addedFiles, onMaterialSelect }) => {
   const [materialList, setMaterialList] = useState<MaterialDto[]>([])
   const [searchedList, setSearchedList] = useState<MaterialDto[]>([])
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [showMaterial, setShowMaterial] = useState<boolean>(false);
 
   const [loading, setLoading] = useState(true)
-  
+
   // Obsługa error-ów
   const [errorShow, setErrorShow] = React.useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -91,7 +90,7 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
       )}
 
       {!loading && (
-      <Accordion className="container-md flex-wrap p-0">
+      <Accordion className="container-md flex-wrap p-0" >
         <hr />
           <h4>Materials:</h4>
           <div className="d-grid gap-2">
@@ -105,7 +104,7 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
             <div key={material.id} style={{ display: isVisible ? "block" : "none" }}>
               <MaterialItem
                 materialDto={material}
-                state={materialIdToUpdate === material.id ? state : 0}
+                addedFiles={materialIdToUpdate === material.id ? addedFiles : 0}
                 onDeleteItem={onDeleteItem}
                 onMaterialSelect={onMaterialSelect}
               />
@@ -114,6 +113,7 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
         })}
       </Accordion>
       )}
+      
       {showMaterial && (
         <Modal
           onHide={() => setShowMaterial(false)}

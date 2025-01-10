@@ -1,0 +1,15 @@
+.addNewPart{
+    position: fixed;
+    top: 80vh;
+    right: 11vw;
+    z-index: 3;
+}    
+.body_height{
+    min-height: 85vh;
+}
+.flex-basis50{
+    flex-basis: 50%;
+}
+.flex-basis65_5{
+    flex-basis: 67.5%;
+}

@@ -19,8 +19,15 @@ import EditMatList from './components/Material/DndMaterial/EditMatList';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
 import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
 import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
+import SchoolingEdit from "./components/Schooling/SchoolingEdit.tsx";
+import SchoolingListMentor from "./components/Schooling/SchoolingListMentor.tsx";
+import SchoolingListParts from "./components/Schooling/SchoolingListParts.tsx";
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
 import TaskManager from "./components/TaskDashboard/TaskManager.tsx";
+import Loading from './components/Loading/Loading.tsx';
+import SchoolingPartEdit from './components/Schooling/SchoolingPartEdit.tsx';
+import SchoolingAssignment from './components/Schooling/SchoolingAssignment.tsx';
+
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -50,7 +57,7 @@ function App() {
                                     <NavLink to="/" className="nav-link">Home</NavLink>
                                     <NavLink to="/tasks" className="nav-link">Tasks</NavLink>
                                     <NavLink to="/faq" className="nav-link">FAQ</NavLink>
-                                    <NavLink to="/schoolinglistnewbie" className="nav-link">Schoolings</NavLink>
+                                    <NavLink to="/schoolinglist" className="nav-link">Schoolings</NavLink>
                                     <NavLink to="/employesassignment" className="nav-link">Employes Assignment</NavLink>
                                     {role !== 'Newbie' && (
                                         <NavLink to="/taskmanage" className="nav-link">Manage Tasks</NavLink>
@@ -109,8 +116,19 @@ function App() {
                         <Route path="/roadmapmanage" element={<RoadMapManage />} />
                         <Route path="/badges" element={<Badge />} />
                         <Route path="/presetmanage" element={<PresetManage />} />
-                        <Route path="/schoolinglistnewbie" element={<SchoolingListNewbie />} />
+                        <Route path="/schoolingedit" element={<SchoolingEdit />} />
+                        {(role === 'Admin' || role === 'Mentor') && (
+                            <Route path="/schoolinglist" element={<SchoolingListMentor />} />
+                        )}
+                        {role === 'Newbie' && (
+                            <Route path="/schoolinglist" element={<SchoolingListNewbie />} />
+                        )}
+                        <Route path="/schoolinglist" element={<div className='mt-4'><span className='mt-4'>Error with loading schooling</span><Loading/></div>} />
+                        <Route path="/schoolingpartedit/:id?" element={<SchoolingPartEdit />} />
+
+                        <Route path="/schoolinglistparts" element={<SchoolingListParts />} />
                         <Route path="/schoolingdetails" element={<SchoolingDetails />} />
+                        <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
                         <Route path="/profile/:userId" element={<UserProfile />} />
                     </Routes>
                 </>
