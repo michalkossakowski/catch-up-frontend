@@ -27,7 +27,7 @@ const Material: React.FC<MaterialProps> = ({
   const [materialName, setMaterialName] = useState<string>('');
 
   // Obsługa error-ów
-  const [errorShow, setErrorShow] = React.useState(false)
+  const [errorShow, setErrorShow] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const [materialNameValidation, setMaterialNameValidation] = useState<boolean>(false);
