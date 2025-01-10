@@ -98,42 +98,44 @@ function App() {
                         </Container>
                     </Navbar>
 
-            <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route
-                    path="/"
-                    element={
-                        <ProtectedRoute>
-                            <h1>Welcome back {user?.name}</h1>
-                        </ProtectedRoute>
-                    }
-                />
-                <Route path="/tasks" element={<ProtectedRoute><TaskDashboard/></ProtectedRoute>} />
-                <Route path="/admin" element={<ProtectedRoute><AdminPanel/></ProtectedRoute>} />
-                <Route path="/faq" element={<ProtectedRoute><FaqComponent isAdmin={false} /></ProtectedRoute>} />
-                <Route path="/faqmanage" element={<ProtectedRoute><FaqManage /></ProtectedRoute>} />
-                <Route path="/addfile" element={
-                    <ProtectedRoute>
-                        <Material
-                            showRemoveFile={true}
-                            showDownloadFile={true}
-                            showAddingFile={true}
+                    <Routes>
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route
+                            path="/"
+                            element={
+                                <ProtectedRoute>
+                                    <h1>Welcome back {user?.name}</h1>
+                                </ProtectedRoute>
+                            }
                         />
-                    </ProtectedRoute>
-                } />
-                <Route path="/employesassignment" element={<ProtectedRoute><EmployesAssignmentSelector /></ProtectedRoute>} />
-                <Route path="/assigntask" element={<ProtectedRoute><AssignTask /></ProtectedRoute>} />
-                <Route path="/taskcontentmanage" element={<ProtectedRoute><TaskContentManage /></ProtectedRoute>} />
-                <Route path="/editmatlist" element={<ProtectedRoute><EditMatList /></ProtectedRoute>} />
-                <Route path="/roadmapmanage" element={<ProtectedRoute><RoadMapManage /></ProtectedRoute>} />
-                <Route path="/badges" element={<ProtectedRoute><Badge /></ProtectedRoute>} />
-                <Route path="/presetmanage" element={<ProtectedRoute><PresetManage /></ProtectedRoute>} />
-                <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
+                        <Route path="/tasks" element={<ProtectedRoute><TaskDashboard/></ProtectedRoute>} />
+                        <Route path="/admin" element={<ProtectedRoute><AdminPanel/></ProtectedRoute>} />
+                        <Route path="/faq" element={<ProtectedRoute><FaqComponent isAdmin={false} /></ProtectedRoute>} />
+                        <Route path="/faqmanage" element={<ProtectedRoute><FaqManage /></ProtectedRoute>} />
+                        <Route path="/addfile" element={
+                            <ProtectedRoute>
+                                <Material
+                                    showRemoveFile={true}
+                                    showDownloadFile={true}
+                                    showAddingFile={true}
+                                />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/employesassignment" element={<ProtectedRoute><EmployesAssignmentSelector /></ProtectedRoute>} />
+                        <Route path="/assigntask" element={<ProtectedRoute><AssignTask /></ProtectedRoute>} />
+                        <Route path="/taskcontentmanage" element={<ProtectedRoute><TaskContentManage /></ProtectedRoute>} />
+                        <Route path="/editmatlist" element={<ProtectedRoute><EditMatList /></ProtectedRoute>} />
+                        <Route path="/roadmapmanage" element={<ProtectedRoute><RoadMapManage /></ProtectedRoute>} />
+                        <Route path="/badges" element={<ProtectedRoute><Badge /></ProtectedRoute>} />
+                        <Route path="/presetmanage" element={<ProtectedRoute><PresetManage /></ProtectedRoute>} />
+                        <Route path="*" element={<Navigate to="/" />} />
+                    </Routes>
 
-            <footer className="py-0 my-3 border-top">
-                <p className="text-center text-muted">© 2024 UnhandledException</p>
-            </footer>
+                    <footer className="py-0 my-3 border-top">
+                        <p className="text-center text-muted">© 2024 UnhandledException</p>
+                    </footer>
+                </>
+            )}
         </>
     );
 }
