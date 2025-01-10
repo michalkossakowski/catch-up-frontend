@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../../axiosConfig';
 import { useAuth} from "../../Provider/authProvider.tsx";
 import { StatusEnum } from '../../Enums/StatusEnum';
-import { useAuth } from "../../Provider/authProvider";
 import TaskList from './TaskList';
 import { FullTaskDto } from '../../dtos/FullTaskDto';
 

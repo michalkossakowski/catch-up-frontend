@@ -21,8 +21,6 @@ import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
 import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
 import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
-import PresetManage from "./components/Preset/PresetManage.tsx";
-import AdminPanel from "./components/Admin/AdminPanel.tsx";
 import PresetAssign from './components/Preset/PresetAssign';
 
 function App() {
@@ -83,7 +81,7 @@ function App() {
                                     }
                                     id="user-dropdown"
                                     className="nav-dropdown"
-                                    align="end">    
+                                    align="end">
                                     <NavDropdown.Item as={NavLink} to={`/profile/${user?.id}`}>
                                         <i className="bi bi-person-circle"></i> My Profile
                                     </NavDropdown.Item>
@@ -99,43 +97,32 @@ function App() {
                     </Navbar>
 
                     <Routes>
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route
-                            path="/"
-                            element={
-                                <ProtectedRoute>
-                                    <h1>Welcome back {user?.name}</h1>
-                                </ProtectedRoute>
-                            }
-                        />
-                        <Route path="/tasks" element={<ProtectedRoute><TaskDashboard/></ProtectedRoute>} />
-                        <Route path="/admin" element={<ProtectedRoute><AdminPanel/></ProtectedRoute>} />
-                        <Route path="/faq" element={<ProtectedRoute><FaqComponent isAdmin={false} /></ProtectedRoute>} />
-                        <Route path="/faqmanage" element={<ProtectedRoute><FaqManage /></ProtectedRoute>} />
-                        <Route path="/addfile" element={
-                            <ProtectedRoute>
-                                <Material
-                                    showRemoveFile={true}
-                                    showDownloadFile={true}
-                                    showAddingFile={true}
-                                />
-                            </ProtectedRoute>
-                        } />
-                        <Route path="/employesassignment" element={<ProtectedRoute><EmployesAssignmentSelector /></ProtectedRoute>} />
-                        <Route path="/assigntask" element={<ProtectedRoute><AssignTask /></ProtectedRoute>} />
-                        <Route path="/taskcontentmanage" element={<ProtectedRoute><TaskContentManage /></ProtectedRoute>} />
-                        <Route path="/editmatlist" element={<ProtectedRoute><EditMatList /></ProtectedRoute>} />
-                        <Route path="/roadmapmanage" element={<ProtectedRoute><RoadMapManage /></ProtectedRoute>} />
-                        <Route path="/badges" element={<ProtectedRoute><Badge /></ProtectedRoute>} />
-                        <Route path="/presetmanage" element={<ProtectedRoute><PresetManage /></ProtectedRoute>} />
-                        <Route path="*" element={<Navigate to="/" />} />
+                        <Route path="/" element={<><Home /></>} />
+                        <Route path="/tasks" element={<TaskDashboard />} />
+                        <Route path="/admin" element={<AdminPanel isAdmin={role === "Admin"} />} />
+                        <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
+                        <Route path="/employesassignment" element={<EmployesAssignmentSelector />} />
+                        <Route path="/assigntask" element={<AssignTask />} />
+                        <Route path="/taskcontentmanage" element={<TaskContentManage />} />
+                        <Route path="/editmatlist" element={<EditMatList />} />
+                        <Route path="/roadmapmanage" element={<RoadMapManage />} />
+                        <Route path="/badges" element={<Badge />} />
+                        <Route path="/presetmanage" element={<PresetManage />} />
+                        <Route path="/preset/assign/:presetId" element={<PresetAssign />} />
+                        <Route path="/schoolinglistnewbie" element={<SchoolingListNewbie />} />
+                        <Route path="/schoolingdetails" element={<SchoolingDetails />} />
+                        <Route path="/profile/:userId" element={<UserProfile />} />
                     </Routes>
-
-                    <footer className="py-0 my-3 border-top">
-                        <p className="text-center text-muted">© 2024 UnhandledException</p>
-                    </footer>
                 </>
             )}
+
+            {!user && (
+                <LoginComponent />
+            )}
+
+            <footer className="py-0 my-3 border-top">
+                <p className="text-center text-muted">© 2024 UnhandledException</p>
+            </footer>
         </>
     );
 }

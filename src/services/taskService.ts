@@ -22,13 +22,6 @@ export const getAllFullTasksByNewbieId = async (newbieId: string): Promise<FullT
     }
 }
 
-export const assignTask = async (task: TaskDto): Promise<TaskDto> => {
-    try {
-        const response = await axiosInstance.post<TaskDto>('/Task/AddTaskToUser', task);
-        return response.data;
-    } catch (error: any) {
-        handleError('assignTask', error);
-        throw error;
 export const getAllFullTasks = async (): Promise<FullTaskDto[]> => {
     try {
         const response = await axiosInstance.get<FullTaskDto[]>('/Task/GetAllFullTasks');
