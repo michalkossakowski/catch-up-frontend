@@ -1,0 +1,8 @@
+.scrollable-container{
+    border: 1px solid #ddd;
+    padding: 16px;
+    margin-top: 20px;
+    min-height: 650px;
+    max-height: 650px;
+    overflow-y: auto;
+}

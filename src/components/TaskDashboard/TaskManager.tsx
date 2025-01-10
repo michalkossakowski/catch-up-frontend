@@ -13,6 +13,9 @@ import {MaterialDto} from "../../dtos/MaterialDto.ts";
 import {fetchTasks, updateTaskLocally} from "../../store/taskSlice.ts";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../store/store.ts";
+import {TaskContentDto} from "../../dtos/TaskContentDto.ts";
+import {getTaskContents} from "../../services/taskContentService.ts";
+import "./TaskManager.css";
 
 function TaskManager() {
     const { user } = useAuth();
@@ -29,41 +32,29 @@ function TaskManager() {
 
     const [categories, setCategories] = useState<CategoryDto[]>([]);
     const [materials, setMaterials] = useState<MaterialDto[]>([]);
+    const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
 
-    useEffect(() => {
-        const fetchNewbies = async () => {
-            if (!mentorId) return;
-            try {
-                const newbieList = await NewbieMentorService.getAssignmentsByMentor(mentorId);
-                setNewbies(newbieList);
-            } catch (err) {
-                console.error(err);
-            }
-        };
-
-        fetchNewbies();
-    }, []);
-
+    // On change of a newbie
     useEffect(() => {
         if (selectedNewbie) {
-            const tasksForNewbie = tasks.filter((task) => task.newbieId === selectedNewbie);
-            if (tasksForNewbie.length === 0) {
-                dispatch(fetchTasks(selectedNewbie));
-            }
+            dispatch(fetchTasks(selectedNewbie));
         }
     }, [selectedNewbie]);
 
-
-
+    // fetches only once on mount
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [categoriesData, materialsData] = await Promise.all([
+                const [categoriesData, materialsData, newbieList, taskContentsData] = await Promise.all([
                     getCategories(),
-                    materialService.getAllMaterials()
+                    materialService.getAllMaterials(),
+                    NewbieMentorService.getAssignmentsByMentor(mentorId!),
+                    getTaskContents()
                 ]);
                 setCategories(categoriesData);
                 setMaterials(materialsData);
+                setNewbies(newbieList);
+                setTaskContents(taskContentsData);
             } catch (err) {
                 console.error(err);
             }
@@ -89,11 +80,13 @@ function TaskManager() {
         setFilteredTasks(updatedTasks);
     }, [searchTerm, selectedNewbie, tasks]);
 
+    // on task assign
     const handleTaskAssigned = (newTask: FullTaskDto) => {
         dispatch(updateTaskLocally(newTask));
         setShowAssignModal(false);
     };
 
+    // on task edit
     const handleTaskUpdate = (updatedTask: FullTaskDto) => {
         dispatch(updateTaskLocally(updatedTask));
     };
@@ -155,17 +148,12 @@ function TaskManager() {
                     selectedNewbieId={selectedNewbie}
                     categories={categories}
                     materials={materials}
+                    taskContents={taskContents}
                 />
             )}
 
             <div
-                className="border p-3 mt-3"
-                style={{
-                    minHeight: "600px",
-                    maxHeight: "600px",
-                    overflowY: "auto"
-                }}
-            >
+                className="border p-3 mt-3 scrollable-container">
                 {!selectedNewbie ? (
                     <p className="text-muted">Please select a newbie to view tasks.</p>
                 ) : (
@@ -176,6 +164,7 @@ function TaskManager() {
                         isEditMode={true}
                         categories={categories}
                         materials={materials}
+                        taskContents={taskContents}
                     />
                 )}
             </div>

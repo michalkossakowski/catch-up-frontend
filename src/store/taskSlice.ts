@@ -1,44 +1,63 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { FullTaskDto } from '../dtos/FullTaskDto';
-import axiosInstance from '../../axiosConfig';
+import { getAllFullTasksByNewbieId } from "../services/taskService.ts";
 
 interface TaskState {
-    tasks: FullTaskDto[];
+    tasks: FullTaskDto[]; // all tasks in total, might use it for admin in the future
+    tasksByUser: Record<string, FullTaskDto[]>; // tasks grouped by userId
     loading: boolean;
     error: string | null;
 }
 
 const initialState: TaskState = {
     tasks: [],
+    tasksByUser: {},
     loading: false,
     error: null,
 };
 
-export const fetchTasks = createAsyncThunk(
-    'tasks/fetchTasks',
-    async (userId?: string) => {
-        const endpoint = userId
-            ? `/Task/GetAllFullTasksByNewbieId/${userId}`
-            : `/Task/GetAllFullTasks`;
-        const response = await axiosInstance.get<FullTaskDto[]>(endpoint);
-        return response.data;
+// if the tasks were fetched, return them, if not then call the API
+export const fetchTasks = createAsyncThunk("tasks/fetchTasks",
+    async (userId: string, { getState }) => {
+        const state = getState() as { tasks: TaskState };
+
+        if (state.tasks.tasksByUser[userId]) {
+            return { tasks: state.tasks.tasksByUser[userId], userId };
+        }
+
+        const response = await getAllFullTasksByNewbieId(userId)
+        return { tasks: response, userId };
     }
 );
 
 const taskSlice = createSlice({
-    name: 'tasks',
+    name: "tasks",
     initialState,
     reducers: {
         updateTaskLocally: (state, action: PayloadAction<FullTaskDto>) => {
-            const index = state.tasks.findIndex(task => task.id === action.payload.id);
-            if (index !== -1) {
-                state.tasks[index] = action.payload;
+            const { id, newbieId } = action.payload;
+
+            // update task in the total list
+            const taskIndex = state.tasks.findIndex((task) => task.id === id);
+            if (taskIndex !== -1) {
+                state.tasks[taskIndex] = action.payload;
             } else {
                 state.tasks.push(action.payload);
+            }
+
+            // update the task in the cached userId list
+            if (newbieId && state.tasksByUser[newbieId]) {
+                const userTaskIndex = state.tasksByUser[newbieId].findIndex((task) => task.id === id);
+                if (userTaskIndex !== -1) {
+                    state.tasksByUser[newbieId][userTaskIndex] = action.payload;
+                } else {
+                    state.tasksByUser[newbieId].push(action.payload);
+                }
             }
         },
         clearTasks: (state) => {
             state.tasks = [];
+            state.tasksByUser = {};
             state.error = null;
         },
     },
@@ -49,12 +68,14 @@ const taskSlice = createSlice({
                 state.error = null;
             })
             .addCase(fetchTasks.fulfilled, (state, action) => {
-                state.tasks = action.payload;
+                const { tasks, userId } = action.payload;
+                state.tasksByUser[userId] = tasks;
+                state.tasks = tasks;
                 state.loading = false;
             })
             .addCase(fetchTasks.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message ?? 'Failed to fetch tasks';
+                state.error = action.error.message ?? "Failed to fetch tasks";
             });
     },
 });

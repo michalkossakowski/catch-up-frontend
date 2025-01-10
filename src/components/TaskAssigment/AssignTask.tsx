@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { TaskContentDto } from "../../dtos/TaskContentDto";
-import { getTaskContents } from "../../services/taskContentService";
 import { assignTask, editTask } from "../../services/taskService.ts";
 import { useAuth } from "../../Provider/authProvider.tsx";
 import {FullTaskDto} from "../../dtos/FullTaskDto.ts";
@@ -17,10 +16,10 @@ interface AssignTaskProps {
     selectedNewbieId?: string;
     categories?: CategoryDto[];
     materials?: MaterialDto[];
+    taskContents?: TaskContentDto[];
 }
 
-function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selectedNewbieId, categories, materials }: AssignTaskProps) {
-    const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
+function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selectedNewbieId, categories, materials, taskContents }: AssignTaskProps) {
     const [selectedNewbie, setSelectedNewbie] = useState<string>("");
     const [selectedTaskContent, setSelectedTaskContent] = useState<number>(0);
     const [title, setTitle] = useState<string>("");
@@ -44,11 +43,6 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selecte
                     setDescription(task.description ?? "");
                     setMaterialsId(task.materialsId ?? 1);
                     setCategoryId(task.categoryId ?? 1);
-                } else {
-                    const [taskContentsData] = await Promise.all([
-                        getTaskContents(),
-                    ]);
-                    setTaskContents(taskContentsData);
                 }
             } catch (err) {
                 setError("Failed to load data");
@@ -95,7 +89,7 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selecte
                 };
                 const addedTask = await assignTask(taskData);
 
-                const selectedTask = taskContents.find(task => task.id === selectedTaskContent);
+                const selectedTask = taskContents!.find(task => task.id === selectedTaskContent);
                 if (!selectedTask) {
                     throw new Error("Selected task not found");
                 }
@@ -148,7 +142,7 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selecte
                                     required
                                 >
                                     <option value="">Choose a task...</option>
-                                    {taskContents.map((task) => (
+                                    {taskContents!.map((task) => (
                                         <option key={task.id} value={task.id}>
                                             {task.title}
                                         </option>
