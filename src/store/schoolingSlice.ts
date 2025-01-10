@@ -13,7 +13,7 @@ const schoolingSlice = createSlice({
             state.selectedSchooling = action.payload;
         },
         clearSchooling: (state) => {
-            state.selectedSchooling = null;
+            state.selectedSchooling = null
         },
     },
 });

@@ -1,9 +1,9 @@
-//import { FileDto } from '../Dtos/FileDto';
+
 import React, { useState } from "react"
 import { FileDto } from "../../dtos/FileDto.ts";
 import fileService from "../../services/fileService.ts"
 
-import './FileAdd.css';
+import styles from './FileAdd.module.css';
 import ErrorMessage from "../ErrorMessage.tsx";
 
 interface FileAddProps {
@@ -56,7 +56,7 @@ const FileAdd: React.FC<FileAddProps> = ({ materialId, onFileUploaded }) => {
 
 
     return (
-        <div className={`p-3 mt-3 dropzone text-center mb-4 ${isDragActive ? 'borderColorOnDrag' : ''}`}
+        <div className={`p-3 mt-3 ${styles.dropzone} text-center mb-4 ${isDragActive ? ` ${styles.borderColorOnDrag}` : ''}`}
             onDragOver={(e) => onDragOver(e)}
             onDragLeave={(e) => onDragLeave(e)}
             onDrop={(e) => onDrop(e)}
@@ -69,14 +69,14 @@ const FileAdd: React.FC<FileAddProps> = ({ materialId, onFileUploaded }) => {
                     setErrorMessage(null);
                 }} />
             <div>
-                <i className={`bi bi-upload uploadIcon ${isDragActive ? 'uploadIconOnDrag' : ''}`} />
+                <i className={`bi bi-upload ${styles.uploadIcon} ${isDragActive ? ` ${styles.uploadIconOnDrag}` : ''}`} />
             </div>
             <div className="p-3">
                 <p className="text-body-tertiary fs-6 opacity-50 p-0 m-0">Drag and drop file here</p>
                 <p className="text-body-tertiary fs-6 opacity-50 p-0 m-0">or</p>
             </div>
             <div>
-                <input type="file" id={`"${randomValue}"`} onChange={(e) => onFileSelected(e)} multiple />
+                <input type="file" className={styles.input} id={`"${randomValue}"`} onChange={(e) => onFileSelected(e)} multiple />
                 <label className="btn btn-outline-primary" htmlFor={`"${randomValue}"`}>Browse for file</label>
             </div>
         </div>
