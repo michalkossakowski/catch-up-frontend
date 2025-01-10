@@ -1,11 +1,10 @@
 export interface UserDto {
-    id: string;
-    name: string;
+    id: string | undefined;
+    name?: string;
     surname: string;
-    email: string;
-    password: string;
-    type: string;
-    position: string;
-    state: number;      
-    assignCount?: number;
+    email?: string;
+    password?: string;
+    type?: string;
+    position?: string;
+    avatarId?: number;
 }

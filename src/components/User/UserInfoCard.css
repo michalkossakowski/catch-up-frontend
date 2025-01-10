@@ -1,0 +1,18 @@
+.overlay {
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.overlay:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.bi-camera-fill {
+    font-size: 1.5rem;
+    pointer-events: none;
+}
+
+.image-padding-cover{
+    padding: 3px;
+}

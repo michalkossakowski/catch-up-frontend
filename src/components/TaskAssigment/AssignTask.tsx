@@ -1,113 +1,147 @@
-import React, { useState} from 'react';
-import {assignTask} from "../../services/taskService"
-import { TaskDto } from "../../dtos/TaskDto"
+import React, { useState, useEffect } from 'react';
+import { TaskContentDto } from '../../dtos/TaskContentDto';
+import { UserAssignCountDto } from '../../dtos/UserAssignCountDto';
+import { getTaskContents } from '../../services/taskContentService';
+import NewbieMentorService from '../../services/newbieMentorService';
+import { assignTask } from '../../services/taskService.ts';
+import { useAuth } from "../../Provider/authProvider.tsx";
 
-function AssignTask(){
-    const [newbieId, setNewbieId] = useState<string>()
-    const [taskContentId, setTaskContentId] = useState<number>()
-    const [roadMapPointId, setRoadMapPointId] = useState<string>()
-    const [status, setStatus] = useState<string>()
-    const [deadline, setDeadline] = useState<number>()
-    const [priority, setPriority] = useState<number>()
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+function AssignTask() {
+    const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
+    const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
+    const [selectedNewbie, setSelectedNewbie] = useState('');
+    const [selectedTaskContent, setSelectedTaskContent] = useState<number>(0);
+    const [deadline, setDeadline] = useState<string>('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    const { user } = useAuth();
+    const currentUserId = user?.id;
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [newbiesData, taskContentsData] = await Promise.all([
+                    NewbieMentorService.getAllNewbies(),
+                    getTaskContents()
+                ]);
+                setNewbies(newbiesData);
+                setTaskContents(taskContentsData);
+            } catch (err) {
+                setError('Failed to load data');
+                console.error('Error loading data:', err);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const taskDto: TaskDto = {
-            NewbieId: newbieId,
-            TaskContentId: taskContentId ?? 0,
-            RoadMapPointId: roadMapPointId,
-            Status: status ?? '',
-            Deadline: deadline ?? 0,
-            Priority: priority?? 0
+
+        if (!currentUserId) {
+            setError('User not authenticated');
+            return;
         }
-        assignTask(taskDto,taskContentId ?? 0,newbieId ?? '')
-            .then(() => {
-                setNewbieId('')
-                setRoadMapPointId('')
-                setStatus('')
-                setDeadline(0)
-                setPriority(0)
-            })
-            .catch((error: any) => {
-                console.error('Error saving FAQ:', error);
-            });
-    }
-    return(
-        <section>
-        <form onSubmit={handleSubmit} className="container-lg text-left">
-                <div className="form-group">
-                    <label htmlFor="newbieId">NewbieId:</label>
-                    <input
-                        type="text"
-                        id="newbieId"
-                        className="form-control"
-                        value={newbieId}
-                        onChange={(e) => setNewbieId(e.target.value)}
+
+        setLoading(true);
+        setError('');
+
+        try {
+            const taskData = {
+                newbieId: selectedNewbie,
+                assigningId: currentUserId,
+                taskContentId: selectedTaskContent,
+                deadline: deadline ? new Date(deadline).toISOString() : null
+            };
+
+            await assignTask(taskData);
+            setSelectedNewbie('');
+            setSelectedTaskContent(0);
+            setDeadline('');
+            alert('Task assigned successfully!');
+        } catch (err) {
+            setError('Failed to assign task');
+            console.error('Error assigning task:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleResetDeadline = () => {
+        setDeadline('');
+    };
+
+    return (
+        <div className="container mt-4">
+            <h2 className="mb-4">Assign Task</h2>
+
+            <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                    <label className="form-label">Select Newbie</label>
+                    <select
+                        className="form-select"
+                        value={selectedNewbie}
+                        onChange={(e) => setSelectedNewbie(e.target.value)}
                         required
-                    />
+                    >
+                        <option value="">Choose a newbie...</option>
+                        {newbies.map((newbie) => (
+                            <option key={newbie.id} value={newbie.id}>
+                                {`${newbie.name} ${newbie.surname}`}
+                            </option>
+                        ))}
+                    </select>
                 </div>
-                <br />
-                <div className="form-group">
-                    <label htmlFor="taskContentId">TaskContentId:</label>
-                    <input
-                        type="number"
-                        id="taskContentId"
-                        className="form-control"
-                        value={taskContentId}
-                        onChange={(e) => setTaskContentId(parseInt(e.target.value))}
+
+                <div className="mb-3">
+                    <label className="form-label">Select Task</label>
+                    <select
+                        className="form-select"
+                        value={selectedTaskContent}
+                        onChange={(e) => setSelectedTaskContent(Number(e.target.value))}
                         required
-                    />
+                    >
+                        <option value="">Choose a task...</option>
+                        {taskContents.map((task) => (
+                            <option key={task.id} value={task.id}>
+                                {task.title}
+                            </option>
+                        ))}
+                    </select>
                 </div>
-                <br />
-                <div className="form-group">
-                    <label htmlFor="roadMapPointId">RoadMapPointId(optional):</label>
-                    <input
-                        type="text"
-                        id="roadMapPointId"
-                        className="form-control"
-                        value={roadMapPointId}
-                        onChange={(e) => setRoadMapPointId(e.target.value)}
-                    />
+
+                <div className="mb-3">
+                    <label className="form-label">Deadline (optional)</label>
+                    <div className="input-group">
+                        <input
+                            type="datetime-local"
+                            className="form-control"
+                            value={deadline}
+                            onChange={(e) => setDeadline(e.target.value)}
+                        />
+                        <button
+                            type="button"
+                            className="btn btn-outline-secondary"
+                            onClick={handleResetDeadline}
+                        >
+                            Reset
+                        </button>
+                    </div>
                 </div>
-                <div className="form-group">
-                    <label htmlFor="status">Status:</label>
-                    <input
-                        type="text"
-                        id="status"
-                        className="form-control"
-                        value={status}
-                        onChange={(e) => setStatus(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="deadline">Deadline:</label>
-                    <input
-                        type = "number"
-                        id="deadline"
-                        className="form-control"
-                        value={deadline}
-                        onChange={(e) => setDeadline(parseInt(e.target.value))}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="priority">Priority:</label>
-                    <input
-                        type = "number"
-                        id="priority"
-                        className="form-control"
-                        value={priority}
-                        onChange={(e) => setPriority(parseInt(e.target.value))}
-                        required
-                    />
-                </div>
-                <br />
-                <button type="submit" className="btn btn-primary">
-                    Assign
+
+                {error && <div className="alert alert-danger">{error}</div>}
+
+                <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={loading}
+                >
+                    {loading ? 'Assigning...' : 'Assign Task'}
                 </button>
             </form>
-        </section>
-    )
+        </div>
+    );
 }
 
-export default AssignTask
+export default AssignTask;

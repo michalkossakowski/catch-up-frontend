@@ -1,72 +1,102 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
+import { Image } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Button, Container, Nav, Navbar, NavDropdown} from 'react-bootstrap';
-import AuthProvider, { useAuth } from './Provider/authProvider';
-import ProtectedRoute from './Routes/ProtectedRoute';
-import LoginPage from './components/Login/LoginComponent';
-import FaqComponent from './components/Faq/FaqComponent';
-import Material from './components/Material/Material';
-import FaqManage from './components/Faq/FaqManage';
-import AssignTask from './components/TaskAssigment/AssignTask';
-import TaskContentManage from './components/Task/TaskContentManage';
-import RoadMapManage from './components/RoadMap/RoadMapManage';
-import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
+import Home from './components/Home/Home.tsx';
+import { useAuth } from './Provider/authProvider';
 import Badge from './components/Badge/BadgeComponent';
+import FaqComponent from './components/Faq/FaqComponent';
+import { Routes, Route, NavLink } from 'react-router-dom';
+import AdminPanel from "./components/Admin/AdminPanel.tsx";
+import defaultUserIcon from './assets/defaultUserIcon.jpg';
+import UserProfile from './components/User/UserProfile.tsx';
+import RoadMapManage from './components/RoadMap/RoadMapManage';
+import LoginComponent from './components/Login/LoginComponent';
+import AssignTask from './components/TaskAssigment/AssignTask';
+import PresetManage from "./components/Preset/PresetManage.tsx";
+import TaskContentManage from './components/Task/TaskContentManage';
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
-import { useNavigate } from 'react-router-dom';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
+import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
+import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
+import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
 import PresetManage from "./components/Preset/PresetManage.tsx";
 import AdminPanel from "./components/Admin/AdminPanel.tsx";
 import PresetAssign from './components/Preset/PresetAssign';
 
-const AppContent = () => {
-    const { user, logout, getRole } = useAuth();
-    const role = getRole(user?.id || "NotFound");
-    const navigate = useNavigate();
+function App() {
+    const { user, getRole, avatar, logout } = useAuth();
+    const [role, setRole] = useState<string | null>(null);
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
-    }
+    const fetchRole = async () => {
+        if (user?.id) {
+            const userRole = await getRole(user.id);
+            setRole(userRole);
+        }
+    };
+
+    useEffect(() => {
+        fetchRole();
+    }, [user?.id]);
 
     return (
         <>
-            <Navbar expand="lg" className="bg-body-tertiary navbar-expand-lg">
-                <Container>
-                    <Navbar.Brand href="/">catchUp</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="me-auto">
-                            <Nav.Link href="/">Home</Nav.Link>
-                            <Nav.Link href="/tasks">Tasks</Nav.Link>
-                            {role === 'Admin'  && (
-                            <Nav.Link href="/admin">Admin</Nav.Link>
-                            )}
-                            <Nav.Link href="/faq">Faq</Nav.Link>
-                            <Nav.Link href="/faqmanage">FaqManage</Nav.Link>
-                            <Nav.Link href="/addfile">AddFile</Nav.Link>
-                            <Nav.Link href="/employesassignment">EmployesAssignment</Nav.Link>
-                            <Nav.Link href="/assigntask">AssignTask</Nav.Link>
-                            <Nav.Link href="/taskcontentmanage">TaskContentManage</Nav.Link>
-                            <Nav.Link href="/roadmapmanage">RoadMapManage</Nav.Link>
-                            <Nav.Link href="/badges">Badges</Nav.Link>
-                            <Nav.Link href="/presetmanage">PresetManage</Nav.Link>
-                            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                                <NavDropdown.Item href="/editmatlist">EditMatList</NavDropdown.Item>
-                                <NavDropdown.Item href="/editmatlist_sidebar">EditMatList_SideBar</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                                <NavDropdown.Divider />
-                                <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-                            </NavDropdown>
-                        </Nav>
-                    </Navbar.Collapse>
-                </Container>
-                <b>Logged as: {user?.name}</b>
-                <Button onClick={handleLogout}>Logout</Button>
-            </Navbar>
+            {user && (
+                <>
+                    <Navbar expand="lg" className="bg-body-tertiary navbar-expand-lg">
+                        <Container fluid className="px-4">
+                            <Navbar.Brand href="/" className="me-4">catchUp</Navbar.Brand>
+                            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                            <Navbar.Collapse id="basic-navbar-nav">
+                                <Nav className="me-auto">
+                                    <NavLink to="/" className="nav-link">Home</NavLink>
+                                    <NavLink to="/tasks" className="nav-link">Tasks</NavLink>
+                                    <NavLink to="/faq" className="nav-link">FAQ</NavLink>
+                                    <NavLink to="/schoolinglistnewbie" className="nav-link">Schoolings</NavLink>
+                                    <NavLink to="/employesassignment" className="nav-link">Employes Assignment</NavLink>
+                                    <NavLink to="/assigntask" className="nav-link">Assign Task</NavLink>
+                                    <NavLink to="/taskcontentmanage" className="nav-link">Task Content Manage</NavLink>
+                                    <NavLink to="/roadmapmanage" className="nav-link">RoadMap Manage</NavLink>
+                                    <NavLink to="/presetmanage" className="nav-link">Preset Manage</NavLink>
+                                    <NavLink to="/badges" className="nav-link">Badges</NavLink>
+                                    {role === 'Admin' && (
+                                        <NavDropdown title="Admin Tools" id="basic-nav-dropdown">
+                                            <NavDropdown.Item as={NavLink} to="/admin" className="nav-link">Admin Panel</NavDropdown.Item>
+                                            <NavDropdown.Divider />
+                                            <NavDropdown.Item as={NavLink} to="/editMatList" className="nav-link">MaterialList</NavDropdown.Item>
+                                        </NavDropdown>
+                                    )}
+                                </Nav>
+                                <NavDropdown
+                                    title={
+                                        <div className="d-flex align-items-center">
+                                            {`${user.name} ${user.surname}`}
+                                            <Image
+                                                src={avatar || defaultUserIcon}
+                                                className="ms-2 rounded-circle"
+                                                width={30}
+                                                height={30}
+                                                alt="User avatar"
+                                            />
+                                        </div>
+                                    }
+                                    id="user-dropdown"
+                                    className="nav-dropdown"
+                                    align="end">    
+                                    <NavDropdown.Item as={NavLink} to={`/profile/${user?.id}`}>
+                                        <i className="bi bi-person-circle"></i> My Profile
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Divider />
+                                    <NavDropdown.Item
+                                        onClick={logout}
+                                        className="text-primary">
+                                        <i className="bi bi-box-arrow-right"></i> Logout
+                                    </NavDropdown.Item>
+                                </NavDropdown>
+                            </Navbar.Collapse>
+                        </Container>
+                    </Navbar>
 
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
@@ -98,24 +128,13 @@ const AppContent = () => {
                 <Route path="/roadmapmanage" element={<ProtectedRoute><RoadMapManage /></ProtectedRoute>} />
                 <Route path="/badges" element={<ProtectedRoute><Badge /></ProtectedRoute>} />
                 <Route path="/presetmanage" element={<ProtectedRoute><PresetManage /></ProtectedRoute>} />
-                <Route path="/preset/assign/:presetId" element={<ProtectedRoute><PresetAssign /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
 
-            <footer className="py-3 my-4 border-top">
+            <footer className="py-0 my-3 border-top">
                 <p className="text-center text-muted">© 2024 UnhandledException</p>
             </footer>
         </>
-    );
-};
-
-function App() {
-    return (
-        <AuthProvider>
-            <Router>
-                    <AppContent />
-            </Router>
-        </AuthProvider>
     );
 }
 

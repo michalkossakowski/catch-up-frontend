@@ -1,5 +1,5 @@
 import axiosInstance from '../../axiosConfig';
-import { FaqDto } from '../dtos/FaqDto';
+import { FaqDto, FaqResponse } from '../dtos/FaqDto';
 
 export const getFaqs = async (): Promise<FaqDto[]> => {
     try {
@@ -7,17 +7,6 @@ export const getFaqs = async (): Promise<FaqDto[]> => {
         return response.data;
     } catch (error: any) {
         handleError('getFaqs', error);
-        throw error;
-    }
-};
-
-
-export const getByQuestion = async (question: string): Promise<FaqDto[]> => {
-    try {
-        const response = await axiosInstance.get<FaqDto[]>('/Faq/GetByQuestion/'+question);
-        return response.data;
-    } catch (error: any) {
-        handleError('getByQuestion', error);
         throw error;
     }
 };
@@ -32,10 +21,9 @@ export const getById = async (id: string): Promise<FaqDto[]> => {
     }
 };
 
-
-export const addFaq = async (faq: FaqDto): Promise<FaqDto> => {
+export const addFaq = async (faq: FaqDto): Promise<FaqResponse> => {
     try {
-        const response = await axiosInstance.post<FaqDto>('/Faq/Add', faq);
+        const response = await axiosInstance.post('/Faq/Add', faq);
         return response.data;
     } catch (error: any) {
         handleError('addFaq', error);
@@ -43,9 +31,9 @@ export const addFaq = async (faq: FaqDto): Promise<FaqDto> => {
     }
 };
 
-export const editFaq = async (faq: FaqDto): Promise<FaqDto> => {
+export const editFaq = async (faq: FaqDto): Promise<FaqResponse> => {
     try {
-        const response = await axiosInstance.put<FaqDto>('/Faq/Edit/' + faq.id, faq);
+        const response = await axiosInstance.put('/Faq/Edit/' + faq.id, faq);
         return response.data;
     } catch (error: any) {
         handleError('editFaq', error);

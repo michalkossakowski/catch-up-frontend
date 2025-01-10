@@ -1,25 +1,20 @@
 import axiosInstance from "../../axiosConfig";
 import { createContext, useContext, useMemo, useState, ReactNode } from "react";
 import Cookies from "js-cookie";
-
-interface User {
-    id?: string;
-    name?: string;
-    surname?: string;
-    email?: string;
-    type?: string;
-    position?: string;
-}
+import fileService from "../services/fileService.ts";
+import { UserDto as User } from "../dtos/UserDto.ts"
 
 interface AuthContextType {
     accessToken: string | null;
     refreshToken: string | null;
     user: User | null;
+    avatar: string | null;
     setAccessToken: (newToken: string | null) => void;
     setRefreshToken: (newRefreshToken: string | null) => void;
     setUser: (newUser: User | null) => void;
+    updateAvatar: (avatarBlob: Blob) => Promise<void>;
     logout: () => void;
-    getRole: (userId: string) => string;
+    getRole: (userId: string) => Promise<string>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,9 +23,27 @@ interface AuthProviderProps {
     children: ReactNode;
 }
 
+const storeAvatar = (avatarBlob: Blob): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const base64String = reader.result as string;
+            localStorage.setItem('userAvatar', base64String);
+            resolve(base64String);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(avatarBlob);
+    });
+};
+
+const loadStoredAvatar = (): string | null => {
+    return localStorage.getItem('userAvatar');
+};
+
 const AuthProvider = ({ children }: AuthProviderProps) => {
     const [accessToken, setAccessToken_] = useState<string | null>(Cookies.get('accessToken') || null);
     const [refreshToken, setRefreshToken_] = useState<string | null>(Cookies.get('refreshToken') || null);
+    const [avatar, setAvatar] = useState<string | null>(loadStoredAvatar());
     const [user, setUser_] = useState<User | null>(() => {
         const storedUser = Cookies.get('user');
         return storedUser ? JSON.parse(storedUser) : null;
@@ -62,6 +75,27 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         }
     };
 
+    const fetchAndStoreAvatar = async (avatarId: number | null) => {
+        if (!avatarId) {
+            localStorage.removeItem('userAvatar');
+            setAvatar(null);
+            return;
+        }
+
+        try {
+            const blob = await fileService.downloadFile(avatarId);
+            const avatarBase64 = await storeAvatar(blob);
+            setAvatar(avatarBase64);
+        } catch (error) {
+            console.error('Error fetching avatar:', error);
+        }
+    };
+
+    const updateAvatar = async (avatarBlob: Blob) => {
+        const avatarBase64 = await storeAvatar(avatarBlob);
+        setAvatar(avatarBase64);
+    };
+
     const setUser = (newUser: User | null) => {
         if (newUser) {
             const { ...userToStore } = newUser;
@@ -70,8 +104,14 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
                 secure: true
             });
             setUser_(userToStore);
+            if (userToStore.avatarId) {
+                fetchAndStoreAvatar(userToStore.avatarId);
+            }
         } else {
             Cookies.remove('user');
+            localStorage.removeItem('userAvatar');
+            setAvatar(null);
+            setUser_(null);
         }
     };
 
@@ -80,33 +120,28 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         setRefreshToken(null);
         setUser(null);
         setRoleCache({});
+        localStorage.removeItem('userAvatar');
+        setAvatar(null);
     };
 
-    const getRole = (userId: string): string => {
-        if (!userId) return 'User';
+    const getRole = async (userId: string): Promise<string> => {
+        if (!userId) {
+            throw new Error("Invalid userId");
+        }
 
         if (roleCache[userId]) {
             return roleCache[userId];
         }
 
         try {
-            const fetchRole = async () => {
-                try {
-                    const response = await axiosInstance.get(`User/GetRole/${userId}`);
-                    const role = response.data || 'User';
-                    setRoleCache((prev) => ({ ...prev, [userId]: role }));
-                    return role;
-                } catch (error) {
-                    console.error('Error fetching user role:', error);
-                    return 'User';
-                }
-            };
+            const response = await axiosInstance.get(`User/GetRole/${userId}`);
+            const role = response.data || "User";
 
-            fetchRole();
-            return roleCache[userId] || 'User';
+            roleCache[userId] = role;
+
+            return role;
         } catch (error) {
-            console.error('Error in getRole:', error);
-            return 'User';
+            throw new Error("Failed to fetch user role");
         }
     };
 
@@ -115,13 +150,15 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
             accessToken,
             refreshToken,
             user,
+            avatar,
             setAccessToken,
             setRefreshToken,
             setUser,
+            updateAvatar,
             logout,
             getRole
         }),
-        [accessToken, refreshToken, user, roleCache]
+        [accessToken, refreshToken, user, avatar, roleCache]
     );
 
     return (

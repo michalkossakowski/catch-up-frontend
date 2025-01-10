@@ -8,9 +8,12 @@ import TaskContentEdit from './TaskContentEdit';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { getCategories } from '../../services/categoryService';
 import { removeTaskFromAllPresets } from '../../services/taskPresetService';
-import axiosInstance from '../../services/axiosInstance';
 
-const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
+interface TaskContentComponentProps {
+    isAdmin: boolean;
+}
+
+const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) => {
     const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
     const [loading, setLoading] = useState(true)
     const [showError, setShowError] = useState(false)
@@ -219,4 +222,4 @@ const FaqComponent: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
     );
 };
 
-export default FaqComponent;
+export default TaskContentComponent;

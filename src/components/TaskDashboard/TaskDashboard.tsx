@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../../axiosConfig';
 import { useAuth} from "../../Provider/authProvider.tsx";
 import { StatusEnum } from '../../Enums/StatusEnum';
+import { useAuth } from "../../Provider/authProvider";
+import TaskList from './TaskList';
+import { FullTaskDto } from '../../dtos/FullTaskDto';
 
 interface Task {
     id: number;
@@ -25,18 +28,18 @@ const getStatusName = (status: StatusEnum): string => {
 };
 
 const TaskDashboard: React.FC = () => {
-    const [tasks, setTasks] = useState<Task[]>([]);
+    const [tasks, setTasks] = useState<FullTaskDto[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const { user } = useAuth();
 
-    const newbieId = user?.id;
-
     useEffect(() => {
         const fetchTasks = async () => {
+            if (!user?.id) return;
+
             try {
                 setLoading(true);
-                const response = await axiosInstance.get<Task[]>(`/Task/GetAllFullTasksByNewbieId/${newbieId}`);
+                const response = await axiosInstance.get<FullTaskDto[]>(`/Task/GetAllFullTasksByNewbieId/${user.id}`);
                 setTasks(response.data);
                 setError(null);
             } catch (err) {
@@ -49,28 +52,18 @@ const TaskDashboard: React.FC = () => {
         };
 
         fetchTasks();
-    }, []);
-
-    if (loading) {
-        return (
-            <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', backgroundColor: '#101010' }}>
-                <div className="spinner-border text-light" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        );
-    }
+    }, [user]);
 
     if (error) {
         return (
-            <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', backgroundColor: '#101010', color: 'red' }}>
+            <div className="d-flex justify-content-center align-items-center">
                 {error}
             </div>
         );
     }
 
     return (
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', backgroundColor: '#101010', color: 'white' }}>
+        <div className="d-flex justify-content-center align-items-center">
             <div className="container">
                 <h1 className="text-center mb-4">My Tasks</h1>
                 {tasks.length === 0 ? (

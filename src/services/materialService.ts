@@ -6,8 +6,7 @@ const materialService =
     getMaterial: async(materialId : number): Promise<MaterialDto> => {
         try
         {
-            const response = await axiosInstance.get<MaterialDto>(`/MaterialGet/${materialId}`)
-            console.log("Material got successfully:", response)
+            const response = await axiosInstance.get<MaterialDto>(`/Material/Get/${materialId}`)
             return response.data
         }
         catch(error)
@@ -20,7 +19,6 @@ const materialService =
         try
         {
             const response = await axiosInstance.get<MaterialDto[]>(`/Material/GetAllMaterials`)
-            console.log("Material got successfully:", response.data)
             return response.data
         }
         catch(error)
@@ -33,7 +31,6 @@ const materialService =
         try
         {
             const response = await axiosInstance.get<MaterialDto>(`/Material/GetWithFiles/${materialId}`)
-            console.log("Material got successfully:", response)
             return response.data
         }
         catch(error)
@@ -46,7 +43,6 @@ const materialService =
         try
         {
             const response = await axiosInstance.post<MaterialDto>(`/Material/Create/`, material)
-            console.log("Material created:", response)
             return response.data
         }
         catch(error)
@@ -59,7 +55,7 @@ const materialService =
         try 
         {
             const response = await axiosInstance.post(`/Material/RemoveFile/${materialId}/${fileId}`)
-            console.log("File removed:", response)
+            return response
         } 
         catch (error) 
         {
@@ -71,7 +67,7 @@ const materialService =
         try 
         {
             const response = await axiosInstance.delete(`/Material/Delete/${materialId}`)
-            console.log("Material removed:", response)
+            return response
         } 
         catch (error) 
         {
@@ -83,7 +79,7 @@ const materialService =
         try 
         {
             const response = await axiosInstance.post(`/Material/AddFile/${materialId}/${fileId}`)
-            console.log("File added to material:", response)
+            return response
         } 
         catch (error) 
         {

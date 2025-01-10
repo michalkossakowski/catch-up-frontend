@@ -5,7 +5,7 @@ import { addTaskContent, editTaskContent } from '../../services/taskContentServi
 import './TaskContentEdit.css';
 import { Button } from 'react-bootstrap';
 import { CategoryDto } from '../../dtos/CategoryDto';
-import { getCategories, searchCategories, addCategory, isUnique } from '../../services/categoryService';
+import { getCategories, addCategory, isUnique } from '../../services/categoryService';
 import { Autocomplete, TextField, styled } from '@mui/material';
 import { useAuth } from '../../Provider/authProvider';
 
@@ -41,16 +41,37 @@ const StyledTextField = styled(TextField)({
 });
 
 const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, taskContent, isEditMode, categories }) => {
-    const [title, setTitle] = useState<string>();
-    const [description, setDescription] = useState<string>();
-    const [materialsId, setMaterialsId] = useState<number | null>();
-    const [creatorId, setCreatorId] = useState<string | null>();
-    const [categoryId, setCategoryId] = useState<number | null>();
+    const [title, setTitle] = useState<string>(taskContent?.title ?? '');
+    const [description, setDescription] = useState<string>(taskContent?.description ?? '');
+    const [materialsId, setMaterialsId] = useState<number | null>(taskContent?.materialsId ?? null);
+    const [creatorId, setCreatorId] = useState<string | null>(taskContent?.creatorId ?? null);
+    const [categoryId, setCategoryId] = useState<number | null>(taskContent?.categoryId ?? null);
     const [selectedCategory, setSelectedCategory] = useState<CategoryDto | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [localCategories, setLocalCategories] = useState<CategoryDto[]>(categories);
     const { user } = useAuth();
     const [key, setKey] = useState(0);
+
+    const resetForm = () => {
+        setTitle('');
+        setDescription('');
+        setMaterialsId(null);
+        setCategoryId(null);
+        setSelectedCategory(null);
+        setSearchTerm('');
+    };
+
+    const validateForm = (): boolean => {
+        if (!title?.trim()) {
+            alert('Title is required');
+            return false;
+        }
+        if (!user?.id) {
+            alert('User must be logged in');
+            return false;
+        }
+        return true;
+    };
 
     useEffect(() => {
         if (taskContent) {
@@ -145,14 +166,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
         updateTaskContent
             .then(() => {
                 onTaskContentEdited();
-                setTitle('');
-                setDescription('');
-                setMaterialsId(null);
-                setCreatorId(null);
-                setCategoryId(null);
-                setSelectedCategory(null);
-                setSearchTerm('');
-                setLocalCategories(categories);
+                resetForm();
                 setKey(prev => prev + 1);
             })
             .catch((error) => {

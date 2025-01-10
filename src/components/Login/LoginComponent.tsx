@@ -8,41 +8,51 @@ const LoginComponent = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const { setAccessToken, setRefreshToken, setUser } = useAuth();
     const navigate = useNavigate();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
+        setError('');
+
         try {
-            // Step 1: Login and get access token
             const response = await axiosInstance.post('Auth/Login', { email, password });
             const { accessToken, refreshToken } = response.data;
             setAccessToken(accessToken);
             setRefreshToken(refreshToken);
 
-            // Step 2: Decode token to get user ID
             const decodedToken: any = jwtDecode(accessToken);
             const userId = decodedToken.nameid;
 
-            // Step 3: Fetch user details using the ID
             const userResponse = await axiosInstance.get(`User/GetById/${userId}`);
             const userData = userResponse.data;
             setUser(userData);
 
             navigate('/');
-        } catch (err) {
-            setError('Invalid email or password');
+        } catch (err: any) {
+            if (err.response) {
+                if (err.response.status === 404) {
+                    setError('Invalid email or password');
+                } else {
+                    setError('An unexpected error occurred. Please try again.');
+                }
+            } else {
+                setError('API is down, sorry');
+            }
             setAccessToken(null);
             setRefreshToken(null);
             setUser(null);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', backgroundColor: '#101010' }}>
-            <div className="card shadow-lg p-4" style={{ width: '400px' }}>
+        <div className="d-flex justify-content-center align-items-center mt-5 mb-5 vw-100">
+            <div className="card shadow-lg p-4 w-50">
                 <h2 className="text-center mb-4">Login</h2>
-                {error && <div className="alert alert-danger">{error}</div>}
                 <form onSubmit={handleLogin}>
                     <div className="mb-3">
                         <label htmlFor="email" className="form-label">Email</label>
@@ -52,6 +62,8 @@ const LoginComponent = () => {
                             className="form-control"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            disabled={isLoading}
+                            autoComplete="username"
                             required
                         />
                     </div>
@@ -63,10 +75,24 @@ const LoginComponent = () => {
                             className="form-control"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            disabled={isLoading}
+                            autoComplete="password"
                             required
                         />
                     </div>
-                    <button type="submit" className="btn btn-primary w-100">Login</button>
+                    {error && <div className="alert alert-danger">{error}</div>}
+                    <button
+                        type="submit"
+                        className="btn btn-primary w-100"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <>
+                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Loading...
+                            </>
+                        ) : 'Login'}
+                    </button>
                 </form>
             </div>
         </div>

@@ -1,6 +1,6 @@
 import { FileDto } from '../dtos/FileDto';
 import axiosInstance from '../../axiosConfig';
-const fileService = 
+const fileService =
 {
     uploadFile: async (file: File, materialId?: number): Promise<{ message: string; fileDto: FileDto; materialId: number }> => {
         const formData = new FormData();
@@ -17,8 +17,8 @@ const fileService =
                 }
             );
             return response.data;
-        } 
-        catch (error) 
+        }
+        catch (error)
         {
             console.error('File upload error:', error);
             throw error;
@@ -26,17 +26,28 @@ const fileService =
     },
 
     downloadFile: async (fileId: number): Promise<Blob> => {
-        try 
+        try
         {
             const response = await axiosInstance.get(`/File/Download/${fileId}`, {responseType: 'blob',});
             return response.data;
-        } 
-        catch (error) 
+        }
+        catch (error)
         {
             console.error('File download error:', error);
             throw error;
         }
     },
+
+    getFileById: async (fileId: number): Promise<FileDto> => {
+        try {
+            const response = await axiosInstance.get<FileDto>(`/File/Get/${fileId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Get file by id error:', error);
+            throw error;
+        }
+    },
+
     getAllFiles: async(): Promise<FileDto[]> => {
         try
         {
@@ -47,7 +58,7 @@ const fileService =
         {
             console.error('Material get error:', error)
             throw error
-        }   
+        }
     },
 }
 

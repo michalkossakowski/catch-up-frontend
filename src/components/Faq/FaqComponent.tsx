@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './FaqComponent.css'; 
 import { Accordion, Alert, Button, Form, InputGroup} from 'react-bootstrap';
-import { FaqDto } from '../../dtos/FaqDto';
-import { getFaqs, getByQuestion, deleteFaq } from '../../services/faqService';
+import { FaqDto, FaqResponse } from '../../dtos/FaqDto';
+import { getFaqs, deleteFaq } from '../../services/faqService';
 import FaqEdit from './FaqEdit';
 import Loading from '../Loading/Loading';
 import FaqItem from './FaqItem';
@@ -10,6 +10,7 @@ import NotificationToast from '../Toast/NotificationToast';
 import ConfirmModal from '../Modal/ConfirmModal';
 
 export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.ReactElement{
+    const [allFaqs, setAllFaqs] = useState<FaqDto[]>([]);
     const [faqs, setFaqs] = useState<FaqDto[]>([]);
     const [loading, setLoading] = useState(true)
   
@@ -19,7 +20,6 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
     const [showSearchMessage, setShowSearchMessage] = useState(false)
     const [searchMessage, setSearchMessage] = useState('alert')
     const [searchQuestion, setSearchQuestion] = useState('');
-
 
     const [showEdit, setShowEdit] = useState(false);
     const [editedFaq, setEditedFaq] = useState<FaqDto | null>();
@@ -37,42 +37,55 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
         getAllFaqs();
     }, []);
 
+    useEffect(() => {
+        if (showEdit || editedFaq) {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+    }, [showEdit, editedFaq]);
+    
 
     const getAllFaqs = () => {
         setLoading(true);
         getFaqs()
-        .then((data) => {
-            setFaqs(data);
-            setShowAlert(false); 
-        })
-        .catch((error) => {
-            setShowAlert(true);
-            setAlertMessage('Error: ' + error.message);
-        })
-        .finally(() => setLoading(false));
+            .then((data) => {
+                setAllFaqs(data);
+                setFaqs(data);
+                setShowAlert(false); 
+            })
+            .catch((error) => {
+                setShowAlert(true);
+                setAlertMessage('Error: ' + error.message);
+            })
+            .finally(() => setLoading(false));
     }
 
     const searchFaq = () => {
         if (searchQuestion.length == 0) {
-            getAllFaqs()
+            setFaqs(allFaqs);
             setShowSearchMessage(false);
             return
         }
         setLoading(true);
-        getByQuestion(searchQuestion)
-            .then((data) => {
-                setFaqs(data);
-                setShowSearchMessage(false);
-            })
-            .catch((error) => {
-                setShowSearchMessage(true);
-                setSearchMessage(error.message);
-            })
-            .finally(() => setLoading(false));
+
+        const filteredFaqs = allFaqs.filter(faq => 
+            faq.question.toLowerCase().includes(searchQuestion.toLowerCase()) 
+            || faq.answer.toLowerCase().includes(searchQuestion.toLowerCase()) 
+        );
+
+        if (filteredFaqs.length === 0) {
+            setShowSearchMessage(true);
+            setSearchMessage(`No Questions with: '${searchQuestion}' inside found.`);
+        } 
+        else {
+            setShowSearchMessage(false);
+        }
+
+        setLoading(false);
+        setFaqs(filteredFaqs);
     };
 
 
-    const startDelete = (faqId: number) => {
+    const initDelete = (faqId: number) => {
         setFaqIdToDelete(faqId);
         setConfirmMessage("Are you sure you want to delete this FAQ?")
         setShowConfirmModal(true);
@@ -82,7 +95,9 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
         if(faqIdToDelete){
             deleteFaq(faqIdToDelete) 
                 .then(() => {
-                    setFaqs((prevFaqs) => prevFaqs.filter((faq) => faq.id !== faqIdToDelete));
+                    const updatedFaqs = allFaqs.filter((faq) => faq.id !== faqIdToDelete);
+                    setAllFaqs(updatedFaqs);
+                    setFaqs(updatedFaqs);
                 })
                 .catch((error) => {
                     setShowAlert(true)
@@ -95,39 +110,29 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
         }
     };
 
-    const startEdit = (faqId: number) => {
+    const initEdit = (faqId: number) => {
         setEditedFaq(faqs.find((faq)=> faq.id === faqId));
         setShowEdit(true);
     };
 
-    const handleFaqUpdated = () => {
+    const handleFaqUpdated = (response: FaqResponse) => {
         setToastMessage(`FAQ successfully ${editedFaq ? 'edited' : 'added'} !`);
         setShowToast(true);
         
-        getAllFaqs();
+        const updatedFaqs = editedFaq 
+        ? allFaqs.map((faq) => (faq.id == response.faq.id ? response.faq : faq))
+        : [...allFaqs, response.faq]
+
+        setAllFaqs(updatedFaqs);
+        setFaqs(updatedFaqs);
         setShowEdit(false);
         setEditedFaq(null);
     };
 
     return (
         <>
-            {isAdmin && (
-                <div>
-                    <Button variant="primary" onClick={() => {setShowEdit(true); setEditedFaq(null)}}>
-                        Add new FAQ
-                    </Button>
-                    {showEdit && !editedFaq && (
-                        <FaqEdit isEditMode={false} onFaqEdited={handleFaqUpdated} onCancel={() => setShowEdit(false)}/>
-                    )}
-                    {showEdit && editedFaq && (
-                        <FaqEdit faq={editedFaq} isEditMode={true} onFaqEdited={handleFaqUpdated} onCancel={() => setShowEdit(false)}/>
-                    )}
-                </div>
-            )}
-
-
             <section className='container'>
-                <h2 className='question'>Frequently Asked Questions</h2>
+                <h2 className='title'>Frequently Asked Questions</h2>
                 
                 <div className='searchBox'>
                     <InputGroup className="inputGroup mb-3">
@@ -143,12 +148,13 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
                     </InputGroup>
                 </div>
 
-                <div className='loaderBox'>
-                    
-                    {loading && (
+                {loading && (
+                    <div className='loaderBox'>
                         <Loading/>
-                    )}
+                    </div>
+                )}
 
+                <div className='alertBox'>
                     {showAlert &&(
                         <Alert className='alert' variant='danger'>
                             {alertMessage}
@@ -163,13 +169,11 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
                 </div>
 
                 {!showSearchMessage && !showAlert && !loading &&(
-                    <div>
-                        <Accordion className='AccordionItem'>
-                            {faqs.map((faq) => (
-                              <FaqItem key={faq.id} faq={faq} index={i++} editClick={startEdit} isAdmin={isAdmin} deleteClick={startDelete}></FaqItem>
-                            ))}
-                        </Accordion>
-                    </div>
+                    <Accordion className='AccordionItem'>
+                        {faqs.map((faq) => (
+                            <FaqItem key={faq.id} faq={faq} index={i++} editClick={initEdit} isAdmin={isAdmin} deleteClick={initDelete}></FaqItem>
+                        ))}
+                    </Accordion>
                 )}
             </section>
             
@@ -187,6 +191,20 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
                 onConfirm={handleDelete} 
                 onCancel={() => setShowConfirmModal(false)} 
             />
+
+            {isAdmin && (
+                <div>
+                    <Button variant="primary" onClick={() => {setShowEdit(true); setEditedFaq(null)}}>
+                        Add new FAQ
+                    </Button>
+                    {showEdit && !editedFaq && (
+                        <FaqEdit isEditMode={false} onFaqEdited={(response) => handleFaqUpdated(response)} onCancel={() => setShowEdit(false)}/>
+                    )}
+                    {showEdit && editedFaq && (
+                        <FaqEdit faq={editedFaq} isEditMode={true} onFaqEdited={(response) => handleFaqUpdated(response)} onCancel={() => setShowEdit(false)}/>
+                    )}
+                </div>
+            )}
         </>
     );
 };
