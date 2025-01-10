@@ -10,11 +10,11 @@ import ConfirmModal from "../../Modal/ConfirmModal"
 
 interface MaterialItemProps {
   materialDto: MaterialDto
-  state?: number
+  addedFiles?: number
   onDeleteItem: (materialID: number) => void
   onMaterialSelect: (materialID: number, fileIds: number[], action: string) => void
 }
-const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDeleteItem, onMaterialSelect }) => {
+const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, addedFiles, onDeleteItem, onMaterialSelect }) => {
 
   const [material, setMaterial] = useState<MaterialDto>()
   const [isEditing, setIsEditing] = useState(false)
@@ -46,9 +46,9 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
   }, [])
 
   useEffect(() => {
-    if (state != 0)
+    if (addedFiles != 0)
       getWithFiles()
-  }, [state])
+  }, [addedFiles])
 
   useEffect(() => {
     if (material) {
@@ -151,16 +151,28 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, state, onDelet
   }
 
   const onFileUploaded = (fileDto: FileDto) => {
-    if (material) {
-      const updatedFiles = [...(material?.files || []), fileDto];
-      setMaterial((material) => ({
-        ...material,
-        files: updatedFiles,
-      }));
-      if (material?.id)
-        onMaterialSelect(material?.id, updatedFiles.map((file) => file.id), "uploadFile") // przekazanie aktualnej listy plików
-    }
-  }
+    console.log(fileDto);
+    
+    setMaterial((prevMaterial) => {
+      if (prevMaterial) {
+        const updatedFiles = [...(prevMaterial.files || []), fileDto];
+        const updatedMaterial = {
+          ...prevMaterial,
+          files: updatedFiles,
+        };        
+        if (updatedMaterial.id) {
+          onMaterialSelect(
+            updatedMaterial.id,
+            updatedFiles.map((file) => file.id),
+            "uploadFile"
+          );
+        }
+        return updatedMaterial;
+      }
+      return prevMaterial;
+    });
+  };
+  
 
   return (
     <>

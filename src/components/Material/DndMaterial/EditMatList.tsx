@@ -8,7 +8,7 @@ import styles from '../Material.module.css';
 
 const EditMatList: React.FC = () => {
   const [materialIdToUpdate, setMaterialIdToUpdate] = useState<number | undefined>()
-  const [state, setState] = useState(0)
+  const [addedFilesCounter, setAddedFilesCounter] = useState(0)
   const [assignedFileIds, setAssignedFileIds] = useState<number[]>([])
   const [materialAccordion, setMaterialAccordion] = useState<number | null>(null)
   // const [fileContainerKey, setFileContainerKey] = useState(0);
@@ -45,11 +45,11 @@ const EditMatList: React.FC = () => {
 
   const handleMaterialUpdate = (materialId: number) => {
     if (materialId != materialIdToUpdate) {
-      setState(1)
+      setAddedFilesCounter(1)
       setMaterialIdToUpdate(materialId)
     }
     else {
-      setState(prevstate => prevstate + 1)
+      setAddedFilesCounter(prevstate => prevstate + 1)
     }
   }
 
@@ -83,7 +83,7 @@ const EditMatList: React.FC = () => {
         <div className="col">
           <MaterialsContainer
             materialIdToUpdate={materialIdToUpdate}
-            state={state}
+            addedFiles={addedFilesCounter}
             onMaterialSelect={handleMaterialSelect}
           />
         </div>

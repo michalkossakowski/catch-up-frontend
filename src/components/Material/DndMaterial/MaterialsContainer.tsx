@@ -10,12 +10,12 @@ import Loading from "../../Loading/Loading";
 
 interface MaterialsContainerProps {
   materialIdToUpdate?: number
-  state?: number
+  addedFiles?: number
   onMaterialSelect: (materialId: number, fileIds: number[], action: string) => void
 }
 
 
-const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpdate, state, onMaterialSelect }) => {
+const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpdate, addedFiles, onMaterialSelect }) => {
   const [materialList, setMaterialList] = useState<MaterialDto[]>([])
   const [searchedList, setSearchedList] = useState<MaterialDto[]>([])
   const [searchTerm, setSearchTerm] = useState<string>('')
@@ -104,7 +104,7 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
             <div key={material.id} style={{ display: isVisible ? "block" : "none" }}>
               <MaterialItem
                 materialDto={material}
-                state={materialIdToUpdate === material.id ? state : 0}
+                addedFiles={materialIdToUpdate === material.id ? addedFiles : 0}
                 onDeleteItem={onDeleteItem}
                 onMaterialSelect={onMaterialSelect}
               />
