@@ -21,6 +21,8 @@ function TaskManager() {
     const { user } = useAuth();
     const mentorId = user?.id;
 
+    const [localError, setLocalError] = useState<string | null>(null);
+
     const dispatch: AppDispatch = useDispatch();
     const { tasksByUser, loading, error } = useSelector((state: RootState) => state.tasks);
 
@@ -33,6 +35,7 @@ function TaskManager() {
     const [categories, setCategories] = useState<CategoryDto[]>([]);
     const [materials, setMaterials] = useState<MaterialDto[]>([]);
     const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
+    const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
 
     // On change of a newbie
     useEffect(() => {
@@ -43,6 +46,7 @@ function TaskManager() {
 
     // fetches only once on mount
     useEffect(() => {
+        setLocalError(null);
         const fetchData = async () => {
             try {
                 const [categoriesData, materialsData, newbieList, taskContentsData] = await Promise.all([
@@ -56,7 +60,7 @@ function TaskManager() {
                 setNewbies(newbieList);
                 setTaskContents(taskContentsData);
             } catch (err) {
-                console.error(err);
+                setLocalError("Unable to connect to the server. Please try again later.");
             }
         };
 
@@ -67,18 +71,18 @@ function TaskManager() {
     useEffect(() => {
         let updatedTasks = tasksByUser[selectedNewbie] || [];
 
-        if (selectedNewbie) {
-            updatedTasks = updatedTasks.filter((task : FullTaskDto) => task.newbieId === selectedNewbie);
-        }
-
         if (searchTerm.trim()) {
             updatedTasks = updatedTasks.filter((task : FullTaskDto) =>
                 task.title.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
 
+        if (selectedCategoryId !== 0) {
+            updatedTasks = updatedTasks.filter((task: FullTaskDto) => task.categoryId === selectedCategoryId);
+        }
+
         setFilteredTasks(updatedTasks);
-    }, [searchTerm, selectedNewbie, tasksByUser]);
+    }, [searchTerm, selectedNewbie, selectedCategoryId, tasksByUser]);
 
     // on task assign
     const handleTaskAssigned = (newTask: FullTaskDto) => {
@@ -94,8 +98,8 @@ function TaskManager() {
     return (
         <div className="container">
             <h2>Task Manager</h2>
-            <div className="row mb-3">
-                <div className="col-7">
+            <div className="row g-2 mb-3 align-items-center">
+                <div className="col-6">
                     <input
                         type="text"
                         className="form-control"
@@ -121,20 +125,31 @@ function TaskManager() {
                     </select>
                 </div>
 
-                <Button
-                    className="col-1"
-                    disabled={!selectedNewbie}
-                    variant={selectedNewbie ? "primary" : "secondary"}
-                    onClick={() => setShowAssignModal(true)}
-                >Assign</Button>
-
-                <div className="col-1">
-                    <button
-                        className="btn btn-outline-secondary w-100"
+                <div className="col-2">
+                    <select
+                        className="form-select"
+                        value={selectedCategoryId}
+                        onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
                         disabled={!selectedNewbie}
                     >
-                        Sort
-                    </button>
+                        <option value={0}>All</option>
+                        {categories.map((category) => (
+                            <option key={category.id} value={category.id}>
+                                {category.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="col-1">
+                    <Button
+                        className="w-100"
+                        disabled={!selectedNewbie}
+                        variant={selectedNewbie ? "primary" : "secondary"}
+                        onClick={() => setShowAssignModal(true)}
+                    >
+                        Assign
+                    </Button>
                 </div>
             </div>
 
@@ -152,8 +167,7 @@ function TaskManager() {
                 />
             )}
 
-            <div
-                className="border p-3 mt-3 scrollable-container">
+            <div className="border p-3 mt-3 scrollable-container">
                 {!selectedNewbie ? (
                     <p className="text-muted">Please select a newbie to view tasks.</p>
                 ) : (
@@ -169,9 +183,10 @@ function TaskManager() {
                 )}
             </div>
 
-            {error && <div className="alert alert-danger mt-3">{error}</div>}
+            {(error || localError) && (
+                <div className="alert alert-danger mt-3">{error || localError}</div>
+            )}
         </div>
-
     );
 }
 
