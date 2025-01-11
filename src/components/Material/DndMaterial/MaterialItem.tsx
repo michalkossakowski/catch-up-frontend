@@ -108,8 +108,8 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, addedFiles, on
   }
 
   const validateName = (name: string) => {
-    if (!name || name.length === 0) {
-      setNameError("Name is required")
+    if (!name || name.length <= 5) {
+      setNameError("Material name must be at least 5 characters long.")
       return false
     }
     setNameError(null)
@@ -151,7 +151,6 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, addedFiles, on
   }
 
   const onFileUploaded = (fileDto: FileDto) => {
-    console.log(fileDto);
     
     setMaterial((prevMaterial) => {
       if (prevMaterial) {

@@ -35,15 +35,12 @@ const FilesContainer: React.FC<FilesContainerProps> = ({ excludedFileIds }) => {
     }, [])
 
     useEffect(() => {
-        const filtrFiles = () => {
-            setFiltredFileList(
-                fileList
-                    .filter(file => !excludedFileIds.includes(file.id))
-                    .filter((file) => (file.name?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()
-                    )))
-        }
-        filtrFiles()
-    }, [excludedFileIds, fileList, searchTerm])
+        setFiltredFileList(fileList.filter(file => 
+            !excludedFileIds.includes(file.id) &&
+            (file.name?.toLowerCase() ?? '').includes(searchTerm.toLowerCase())
+        ));
+    }, [excludedFileIds, fileList, searchTerm]);
+    
 
     return (
         <div className="container-md">
