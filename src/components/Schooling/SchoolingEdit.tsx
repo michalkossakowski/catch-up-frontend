@@ -236,7 +236,7 @@ const SchoolingEdit: React.FC = () => {
                                 <div className="d-flex justify-content-between btn-group w-50" role="group">
                                     <Button variant="outline-danger" onClick={() => goToBack()}><i className="bi-arrow-left-square fs-5"></i></Button>
                                     <Button variant="primary"  type="submit" className="fs-5">{fullSchooling ? 'Save' : 'Create'}</Button>
-                                    <Button variant="outline-light"  onClick={() => goToEditSchoolingParts()}><i className="bi-arrow-right-square fs-5"></i></Button>
+                                    <Button variant="outline-light"  onClick={() => goToEditSchoolingParts()} disabled={!fullSchooling}><i className="bi-arrow-right-square fs-5"></i></Button>
                                 </div>
                             </div>
                         </Form>
