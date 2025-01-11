@@ -73,7 +73,6 @@ const SchoolingPartEdit: React.FC = () => {
                 if( fullSchooling?.schooling?.id)
                 {
                     const createdPart = await schoolingService.createSchoolingPart(part, fullSchooling?.schooling?.id)
-
                     const updatedParts = [...(fullSchooling?.parts || []), createdPart];
 
                     const updatedSchooling: FullSchoolingDto = {
@@ -166,7 +165,7 @@ const SchoolingPartEdit: React.FC = () => {
                             <div className="d-flex justify-content-center">
                                 <div className="d-flex justify-content-between btn-group w-50" role="group">
                                     <Button variant="outline-danger" onClick={() => goToBack()}><i className="bi-arrow-left-square fs-5"></i></Button>
-                                    <Button variant="primary"  type="submit" className="fs-5">{fullSchooling ? 'Save' : 'Create'}</Button>
+                                    <Button variant="primary"  type="submit" className="fs-5">{id ? 'Save' : 'Create'}</Button>
                                 </div>
                             </div>
                         </Form>
