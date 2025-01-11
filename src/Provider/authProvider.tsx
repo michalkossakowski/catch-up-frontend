@@ -3,6 +3,9 @@ import { createContext, useContext, useMemo, useState, ReactNode } from "react";
 import Cookies from "js-cookie";
 import fileService from "../services/fileService.ts";
 import { UserDto as User } from "../dtos/UserDto.ts"
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../store/store.ts";
+import { clearTasks } from "../store/taskSlice";
 
 interface AuthContextType {
     accessToken: string | null;
@@ -44,6 +47,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     const [accessToken, setAccessToken_] = useState<string | null>(Cookies.get('accessToken') || null);
     const [refreshToken, setRefreshToken_] = useState<string | null>(Cookies.get('refreshToken') || null);
     const [avatar, setAvatar] = useState<string | null>(loadStoredAvatar());
+    const dispatch: AppDispatch = useDispatch();
     const [user, setUser_] = useState<User | null>(() => {
         const storedUser = Cookies.get('user');
         return storedUser ? JSON.parse(storedUser) : null;
@@ -121,6 +125,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(null);
         setRoleCache({});
         localStorage.removeItem('userAvatar');
+        dispatch(clearTasks());
         setAvatar(null);
     };
 

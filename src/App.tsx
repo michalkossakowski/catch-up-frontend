@@ -55,7 +55,9 @@ function App() {
                             <Navbar.Collapse id="basic-navbar-nav">
                                 <Nav className="me-auto">
                                     <NavLink to="/" className="nav-link">Home</NavLink>
+                                    {role == 'Newbie' && (
                                     <NavLink to="/tasks" className="nav-link">Tasks</NavLink>
+                                    )}
                                     <NavLink to="/faq" className="nav-link">FAQ</NavLink>
                                     <NavLink to="/schoolinglist" className="nav-link">Schoolings</NavLink>
                                     <NavLink to="/employesassignment" className="nav-link">Employes Assignment</NavLink>

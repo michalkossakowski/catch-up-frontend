@@ -7,8 +7,10 @@ import TaskList from "./TaskList.tsx";
 
 const TaskDashboard: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { tasks, loading, error } = useSelector((state: RootState) => state.tasks);
+    const { tasksByUser, loading, error } = useSelector((state: RootState) => state.tasks);
     const { user } = useAuth();
+
+    const userTasks = user?.id ? tasksByUser[user.id] || [] : [];
 
     useEffect(() => {
         if (user?.id) {
@@ -28,7 +30,7 @@ const TaskDashboard: React.FC = () => {
         <div className="d-flex justify-content-center align-items-center">
             <div className="container">
                 <h1 className="text-center mb-4">My Tasks</h1>
-                <TaskList tasks={tasks} loading={loading} onTaskUpdate={() => {}} isEditMode={false}/>
+                <TaskList tasks={userTasks} loading={loading} onTaskUpdate={() => {}} isEditMode={false}/>
             </div>
         </div>
     );

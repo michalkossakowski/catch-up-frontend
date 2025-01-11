@@ -22,7 +22,7 @@ function TaskManager() {
     const mentorId = user?.id;
 
     const dispatch: AppDispatch = useDispatch();
-    const { tasks, loading, error } = useSelector((state: RootState) => state.tasks);
+    const { tasksByUser, loading, error } = useSelector((state: RootState) => state.tasks);
 
     const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
     const [filteredTasks, setFilteredTasks] = useState<FullTaskDto[]>([]);
@@ -65,7 +65,7 @@ function TaskManager() {
 
     // filter when something changes
     useEffect(() => {
-        let updatedTasks = tasks;
+        let updatedTasks = tasksByUser[selectedNewbie] || [];
 
         if (selectedNewbie) {
             updatedTasks = updatedTasks.filter((task : FullTaskDto) => task.newbieId === selectedNewbie);
@@ -78,7 +78,7 @@ function TaskManager() {
         }
 
         setFilteredTasks(updatedTasks);
-    }, [searchTerm, selectedNewbie, tasks]);
+    }, [searchTerm, selectedNewbie, tasksByUser]);
 
     // on task assign
     const handleTaskAssigned = (newTask: FullTaskDto) => {

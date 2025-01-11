@@ -3,14 +3,12 @@ import { FullTaskDto } from '../dtos/FullTaskDto';
 import { getAllFullTasksByNewbieId } from "../services/taskService.ts";
 
 interface TaskState {
-    tasks: FullTaskDto[]; // all tasks in total, might use it for admin in the future
     tasksByUser: Record<string, FullTaskDto[]>; // tasks grouped by userId
     loading: boolean;
     error: string | null;
 }
 
 const initialState: TaskState = {
-    tasks: [],
     tasksByUser: {},
     loading: false,
     error: null,
@@ -37,14 +35,6 @@ const taskSlice = createSlice({
         updateTaskLocally: (state, action: PayloadAction<FullTaskDto>) => {
             const { id, newbieId } = action.payload;
 
-            // update task in the total list
-            const taskIndex = state.tasks.findIndex((task) => task.id === id);
-            if (taskIndex !== -1) {
-                state.tasks[taskIndex] = action.payload;
-            } else {
-                state.tasks.push(action.payload);
-            }
-
             // update the task in the cached userId list
             if (newbieId && state.tasksByUser[newbieId]) {
                 const userTaskIndex = state.tasksByUser[newbieId].findIndex((task) => task.id === id);
@@ -56,7 +46,6 @@ const taskSlice = createSlice({
             }
         },
         clearTasks: (state) => {
-            state.tasks = [];
             state.tasksByUser = {};
             state.error = null;
         },
@@ -70,7 +59,6 @@ const taskSlice = createSlice({
             .addCase(fetchTasks.fulfilled, (state, action) => {
                 const { tasks, userId } = action.payload;
                 state.tasksByUser[userId] = tasks;
-                state.tasks = tasks;
                 state.loading = false;
             })
             .addCase(fetchTasks.rejected, (state, action) => {
