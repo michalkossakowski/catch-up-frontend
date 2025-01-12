@@ -257,6 +257,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
                     showDownloadFile={true}
                     showAddingFile={true}
                     materialCreated={materialCreated}
+                    showValidation={false}
                 />
 
                 {materialsId && (

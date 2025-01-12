@@ -13,7 +13,7 @@ interface MaterialProps {
   showDownloadFile?: boolean;
   showAddingFile?: boolean;
   materialCreated?: (materialId: number) => void;
-
+  showValidation?: boolean;
 }
 
 const Material: React.FC<MaterialProps> = ({
@@ -22,6 +22,7 @@ const Material: React.FC<MaterialProps> = ({
   showDownloadFile,
   showAddingFile,
   materialCreated = () => { },
+  showValidation = true,
 }) => {
   const [material, setMaterial] = useState<MaterialDto | null>(null);
   const [materialName, setMaterialName] = useState<string>('');
@@ -151,27 +152,27 @@ const Material: React.FC<MaterialProps> = ({
             <input
               type="text"
               placeholder="Material's name"
-              className={`form-control ${!materialNameValidation ? 'is-invalid' : ''}`}
+              className={`form-control ${!materialNameValidation && showValidation ? 'is-invalid' : ''}`}
               value={materialName}
               onChange={(e) => validateMaterialName(e.target.value)}
-              required
+              required={showValidation}
             />
             <button 
-              className={`btn ${!materialNameValidation ? 'btn-outline-secondary' : 'btn-secondary'}` }
+              className={`btn ${!materialNameValidation && showValidation ? 'btn-outline-secondary' : 'btn-secondary'}` }
               type="button" 
               onClick={createMaterial} 
-              disabled={!materialNameValidation} 
+              disabled={showValidation && !materialNameValidation} 
             >
               Create
             </button>
           </div>
-            {!materialNameValidation && (
-              <>
+          {!materialNameValidation && showValidation && (
+            <>
               <div className="invalid-feedback" style={{display: 'block'}}>
                 <p>Material name must be at least 5 characters long.</p>
               </div>
-              </>
-            )}
+            </>
+          )}
         </>
 
       )}
