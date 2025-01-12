@@ -3,7 +3,6 @@ import { FileDto } from "../../../dtos/FileDto";
 import { useDraggable } from '@dnd-kit/core';
 interface DndFile{
     fileDto: FileDto,
-    materialID?: Number
 }
 const FileItem: React.FC<DndFile> = ({fileDto}) => {
     const {attributes, listeners, setNodeRef, transform} = useDraggable({

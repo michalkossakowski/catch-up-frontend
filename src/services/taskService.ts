@@ -1,13 +1,23 @@
 import axiosInstance from '../../axiosConfig'
-import { TaskDto } from "../dtos/TaskDto"
+import {TaskDto, TaskResponse} from "../dtos/TaskDto"
 import { FullTaskDto } from "../dtos/FullTaskDto.ts";
 
 export const assignTask = async (task: TaskDto): Promise<TaskDto> => {
     try {
-        const response = await axiosInstance.post<TaskDto>('/Task/AddTaskToUser', task);
-        return response.data;
+        const response = await axiosInstance.post<TaskResponse>('/Task/AddTaskToUser', task);
+        return response.data.task;
     } catch (error: any) {
         handleError('assignTask', error);
+        throw error;
+    }
+}
+
+export const editTask = async (task: FullTaskDto, taskId: number, mentorId: string): Promise<FullTaskDto> => {
+    try {
+        const response = await axiosInstance.put<{ fullTask: FullTaskDto }>(`/Task/EditFullTask/${taskId}/${mentorId}`, task);
+        return response.data.fullTask;
+    } catch (error: any) {
+        handleError('editTask', error);
         throw error;
     }
 }

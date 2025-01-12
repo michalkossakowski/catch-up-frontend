@@ -1,22 +1,8 @@
-
-
-.icon-size {
-    font-size: 20px;
-}
-
 .double-downIcon {
     filter: brightness(0) saturate(100%) invert(83%) sepia(43%) saturate(336%) hue-rotate(95deg) brightness(89%) contrast(88%);
 }
 
-.deleteIcon_EditMatList {
-    vertical-align:super;
-}
-
-.deleteIcon_EditMatList:hover {
-    color: #198754;
-}
-
-.file-container {
+.file_container {
     visibility: hidden;
     position: sticky;
     top: 5%;
@@ -27,14 +13,14 @@
     transition: opacity 0.5s ease, transform 0.5s ease, max-width 2s ease; 
 }
 
-.file-container.visible {
+.file_container.visible {
     visibility: visible;
     opacity: 1;
     transform: translateX(0); 
     max-width: 100%;
 }
 
-.file-container.invisible {
+.file_container.invisible {
     visibility: hidden;
     opacity: 0;
     transform: translateX(100%);

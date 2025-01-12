@@ -3,7 +3,7 @@ import FileAdd from '../File/FileAdd';
 import { FileDto } from "../../dtos/FileDto";
 import { MaterialDto } from "../../dtos/MaterialDto";
 import materialService from "../../services/materialService";
-import './Material.css';
+import styles from './Material.module.css';
 import fileService from "../../services/fileService";
 import ErrorMessage from "../ErrorMessage";
 
@@ -27,9 +27,10 @@ const Material: React.FC<MaterialProps> = ({
   const [materialName, setMaterialName] = useState<string>('');
 
   // Obsługa error-ów
-  const [errorShow, setErrorShow] = React.useState(false)
+  const [errorShow, setErrorShow] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
+  const [materialNameValidation, setMaterialNameValidation] = useState<boolean>(false);
 
   useEffect(() => {
     if (materialId === 0 || materialId === null || materialId === undefined) {
@@ -56,6 +57,11 @@ const Material: React.FC<MaterialProps> = ({
         files: [...(material?.files || []), fileDto],
       }))
     }
+  }
+
+  const validateMaterialName = async (materialName: string) => {
+    setMaterialNameValidation(materialName.length >= 5);
+    setMaterialName(materialName)
   }
 
   const createMaterial = async () => {
@@ -116,42 +122,58 @@ const Material: React.FC<MaterialProps> = ({
         }} />
       {material ? (
         <>
-          <ul className="list-group">
+        {material.files && material.files?.length > 0 && (
+          <div className="border rounded-2 p-1">
             {material.files?.map((file) => (
-              <li key={file.id} className="list-group-item d-flex justify-content-between align-items-start">
-                {file.name}
-                <div>
-                  {showRemoveFile && (
-                    <a className="pe-2" onClick={() => removeFile(file.id)}>
-                      <i className="bi bi-trash3 deleteIcon hoverIcon icon-size" />
-                    </a>
-                  )}
+                <div className="badge text-bg-secondary p-4 m-1 me-3 position-relative" key={`${file.id}-${file.name}`}>
+                  <span>{file.name}</span>
                   {showDownloadFile && (
-                    <a onClick={() => downloadFile(file.id)}>
-                      <i className="bi bi-file-earmark-arrow-down downloadIcon hoverIcon icon-size" />
-                    </a>
+                  <a onClick={() => downloadFile(file.id)} className='fs-4 position-absolute top-0 start-100 translate-middle pt-3 pe-2'>
+                      <i className={`bi bi-file-arrow-down-fill downloadIcon `}></i>
+                  </a>
+                  )}
+                  {showRemoveFile && (
+                  <a onClick={() => removeFile(file.id)} className='fs-3 position-absolute   translate-middle ' style={{right: "-20px", bottom:"-20px" }}>
+                    <i className={`bi bi-trash2-fill deleteIcon  fs-4 ${styles.icon_size}`}  />
+                  </a>
                   )}
                 </div>
-              </li>
             ))}
-          </ul>
+          </div>
+          )}
           {showAddingFile && (
             <FileAdd materialId={material.id || 0} onFileUploaded={onFileUploaded} />
           )}
         </>
       ) : (
-        <div className="input-group mb-3">
-          <input
-            type="text"
-            placeholder="Material's name"
-            className="form-control"
-            value={materialName}
-            onChange={(e) => setMaterialName(e.target.value)}
-          />
-          <button className="btn btn-outline-secondary" type="button" onClick={createMaterial}>
-            Create
-          </button>
-        </div>
+        <>
+          <div className="input-group mb-3">
+            <input
+              type="text"
+              placeholder="Material's name"
+              className={`form-control ${!materialNameValidation ? 'is-invalid' : ''}`}
+              value={materialName}
+              onChange={(e) => validateMaterialName(e.target.value)}
+              required
+            />
+            <button 
+              className={`btn ${!materialNameValidation ? 'btn-outline-secondary' : 'btn-secondary'}` }
+              type="button" 
+              onClick={createMaterial} 
+              disabled={!materialNameValidation} 
+            >
+              Create
+            </button>
+          </div>
+            {!materialNameValidation && (
+              <>
+              <div className="invalid-feedback" style={{display: 'block'}}>
+                <p>Material name must be at least 5 characters long.</p>
+              </div>
+              </>
+            )}
+        </>
+
       )}
     </section>
   );

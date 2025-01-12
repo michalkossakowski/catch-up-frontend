@@ -12,7 +12,6 @@ import defaultUserIcon from './assets/defaultUserIcon.jpg';
 import UserProfile from './components/User/UserProfile.tsx';
 import RoadMapManage from './components/RoadMap/RoadMapManage';
 import LoginComponent from './components/Login/LoginComponent';
-import AssignTask from './components/TaskAssigment/AssignTask';
 import PresetManage from "./components/Preset/PresetManage.tsx";
 import TaskContentManage from './components/Task/TaskContentManage';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
@@ -20,7 +19,14 @@ import EditMatList from './components/Material/DndMaterial/EditMatList';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
 import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
 import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
+import SchoolingEdit from "./components/Schooling/SchoolingEdit.tsx";
+import SchoolingListMentor from "./components/Schooling/SchoolingListMentor.tsx";
+import SchoolingListParts from "./components/Schooling/SchoolingListParts.tsx";
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
+import TaskManager from "./components/TaskDashboard/TaskManager.tsx";
+import Loading from './components/Loading/Loading.tsx';
+import SchoolingPartEdit from './components/Schooling/SchoolingPartEdit.tsx';
+import SchoolingAssignment from './components/Schooling/SchoolingAssignment.tsx';
 import PresetAssign from './components/Preset/PresetAssign';
 
 function App() {
@@ -49,11 +55,15 @@ function App() {
                             <Navbar.Collapse id="basic-navbar-nav">
                                 <Nav className="me-auto">
                                     <NavLink to="/" className="nav-link">Home</NavLink>
+                                    {role == 'Newbie' && (
                                     <NavLink to="/tasks" className="nav-link">Tasks</NavLink>
+                                    )}
                                     <NavLink to="/faq" className="nav-link">FAQ</NavLink>
-                                    <NavLink to="/schoolinglistnewbie" className="nav-link">Schoolings</NavLink>
+                                    <NavLink to="/schoolinglist" className="nav-link">Schoolings</NavLink>
                                     <NavLink to="/employesassignment" className="nav-link">Employes Assignment</NavLink>
-                                    <NavLink to="/assigntask" className="nav-link">Assign Task</NavLink>
+                                    {role !== 'Newbie' && (
+                                        <NavLink to="/taskmanage" className="nav-link">Manage Tasks</NavLink>
+                                    )}
                                     <NavLink to="/taskcontentmanage" className="nav-link">Task Content Manage</NavLink>
                                     <NavLink to="/roadmapmanage" className="nav-link">RoadMap Manage</NavLink>
                                     <NavLink to="/presetmanage" className="nav-link">Preset Manage</NavLink>
@@ -81,7 +91,7 @@ function App() {
                                     }
                                     id="user-dropdown"
                                     className="nav-dropdown"
-                                    align="end">
+                                    align="end">    
                                     <NavDropdown.Item as={NavLink} to={`/profile/${user?.id}`}>
                                         <i className="bi bi-person-circle"></i> My Profile
                                     </NavDropdown.Item>
@@ -97,20 +107,31 @@ function App() {
                     </Navbar>
 
                     <Routes>
-                        <Route path="/" element={<><Home /></>} />
+                        <Route path="/" element={<><Home/></>} />
                         <Route path="/tasks" element={<TaskDashboard />} />
                         <Route path="/admin" element={<AdminPanel isAdmin={role === "Admin"} />} />
                         <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
                         <Route path="/employesassignment" element={<EmployesAssignmentSelector />} />
-                        <Route path="/assigntask" element={<AssignTask />} />
+                        <Route path="/taskmanage" element={<TaskManager />} />
                         <Route path="/taskcontentmanage" element={<TaskContentManage />} />
                         <Route path="/editmatlist" element={<EditMatList />} />
                         <Route path="/roadmapmanage" element={<RoadMapManage />} />
                         <Route path="/badges" element={<Badge />} />
                         <Route path="/presetmanage" element={<PresetManage />} />
+                        <Route path="/schoolingedit" element={<SchoolingEdit />} />
+                        {(role === 'Admin' || role === 'Mentor') && (
+                            <Route path="/schoolinglist" element={<SchoolingListMentor />} />
+                        )}
+                        {role === 'Newbie' && (
+                            <Route path="/schoolinglist" element={<SchoolingListNewbie />} />
+                        )}
+                        <Route path="/schoolinglist" element={<div className='mt-4'><span className='mt-4'>Error with loading schooling</span><Loading/></div>} />
+                        <Route path="/schoolingpartedit/:id?" element={<SchoolingPartEdit />} />
+
+                        <Route path="/schoolinglistparts" element={<SchoolingListParts />} />
                         <Route path="/preset/assign/:presetId" element={<PresetAssign />} />
-                        <Route path="/schoolinglistnewbie" element={<SchoolingListNewbie />} />
                         <Route path="/schoolingdetails" element={<SchoolingDetails />} />
+                        <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
                         <Route path="/profile/:userId" element={<UserProfile />} />
                     </Routes>
                 </>

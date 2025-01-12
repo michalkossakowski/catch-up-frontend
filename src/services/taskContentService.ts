@@ -3,9 +3,7 @@ import { TaskContentDto } from '../dtos/TaskContentDto';
 
 export const getTaskContents = async (): Promise<TaskContentDto[]> => {
     try {
-        console.log('URL:', '/TaskContent/GetAll');
         const response = await axiosInstance.get<TaskContentDto[]>('/TaskContent/GetAll');
-        console.log('Odpowiedź:', response);
         return response.data;
     } catch (error: any) {
         console.error('Błąd API:', error.response);

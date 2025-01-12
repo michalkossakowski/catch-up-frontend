@@ -15,6 +15,7 @@ const UserProfile = () => {
     const [profileUser, setProfileUser] = useState<UserDto | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [profilePicture, setProfilePicture] = useState<string | null>(null);
+    const [role, setRole] = useState<string | null>(null);
 
     const isOwnProfile = user?.id === userId;
 
@@ -50,7 +51,19 @@ const UserProfile = () => {
             }
         };
 
+        const fetchUserRole = async () => {
+            if (userId) {
+                try {
+                    const role = await getRole(userId);
+                    setRole(role);
+                } catch (err) {
+                    console.error("Failed to fetch user role:", err);
+                }
+            }
+        };
+
         fetchProfileData();
+        fetchUserRole();
 
         return () => {
             if (blobUrl) {
@@ -68,8 +81,7 @@ const UserProfile = () => {
     }
 
     const getListTitle = () => {
-        const userRole = getRole(user?.id as string);
-        switch (userRole) {
+        switch (role) {
             case 'Newbie': return 'My Mentors';
             case 'Mentor': return 'My Newbies';
             case 'Admin':

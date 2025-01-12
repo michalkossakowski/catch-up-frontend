@@ -16,11 +16,20 @@ const UserList = ({ userId }: UserListProps) => {
     const [userRole, setUserRole] = useState<string>('');
 
     useEffect(() => {
-        if (userId) {
-            const role = getRole(userId);
-            setUserRole(role);
-        }
-    }, [userId, getRole]);
+        const fetchUserRole = async () => {
+            if (userId) {
+                try {
+                    const role = await getRole(userId);
+                    setUserRole(role);
+                } catch (err) {
+                    console.error("Failed to fetch user role:", err);
+                }
+            }
+        };
+
+        fetchUserRole();
+    }, [userId]);
+
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -46,7 +55,7 @@ const UserList = ({ userId }: UserListProps) => {
                     const blob = await fileService.downloadFile(user.avatarId);
                     setUserAvatars(prev => ({
                         ...prev,
-                        [user.id]: URL.createObjectURL(blob)
+                        [user.id!]: URL.createObjectURL(blob)
                     }));
                 }
             }
@@ -70,7 +79,7 @@ const UserList = ({ userId }: UserListProps) => {
                     name={user.name}
                     surname={user.surname}
                     position={user.position}
-                    avatarUrl={userAvatars[user.id]}
+                    avatarUrl={userAvatars[user.id!]}
                 />
             ))}
         </div>

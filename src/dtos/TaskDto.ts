@@ -1,16 +1,19 @@
-import { StatusEnum } from '../Enums/StatusEnum';
-
 export interface TaskDto {
-    Id?: number
-    NewbieId?: string
-    AssigningId?: string
-    TaskContentId: number 
-    RoadMapPointId?: number
-    Status: StatusEnum
-    AssignmentDate: string
-    FinalizationDate?: string
-    Deadline?: string
-    SpendTime: number
-    Priority: number
-    Rate?: number
+    id?: number;
+    newbieId: string;
+    assigningId: string;
+    taskContentId: number;
+    roadMapPointId?: string | null;
+    status?: number;
+    assignmentDate?: string;
+    finalizationDate?: string | null;
+    deadline: string | null;
+    spendTime?: number;
+    priority?: number;
+    rate?: number | null;
+}
+
+export interface TaskResponse {
+    message: string;
+    task: TaskDto;
 }
