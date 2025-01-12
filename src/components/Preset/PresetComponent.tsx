@@ -8,6 +8,7 @@ import { getTaskPresetsByPreset, getTaskPresetsByTaskContent } from '../../servi
 import { getTaskContents } from '../../services/taskContentService';
 import PresetEdit from './PresetEdit';
 import './PresetComponent.css';
+import { useNavigate } from 'react-router-dom';
 
 interface PresetComponentProps {
     isAdmin: boolean;
@@ -23,10 +24,20 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
     const [showEdit, setShowEdit] = useState(false);
     const [editedPreset, setEditedPreset] = useState<PresetDto | null>(null);
     const [presetTasks, setPresetTasks] = useState<Map<number, TaskContentDto[]>>(new Map());
+    const navigate = useNavigate();
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     useEffect(() => {
         getAllPresets();
         loadTaskContents();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const successParam = urlParams.get('success');
+        
+        if (successParam === 'assigned') {
+            showSuccessMessage('Tasks have been successfully assigned to the user');
+            window.history.replaceState({}, '', window.location.pathname);
+        }
     }, []);
 
     const getAllPresets = async () => {
@@ -111,6 +122,15 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
         setEditedPreset(null);
     };
 
+    const handleAssign = (presetId: number) => {
+        navigate(`/preset/assign/${presetId}`);
+    };
+
+    const showSuccessMessage = (message: string) => {
+        setSuccessMessage(message);
+        setTimeout(() => setSuccessMessage(null), 5000);
+    };
+
     return (
         <>
             {isAdmin && (
@@ -144,6 +164,11 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
                     {showError && (
                         <Alert className='alert' variant='danger'>
                             {alertMessage}
+                        </Alert>
+                    )}
+                    {successMessage && (
+                        <Alert className='alert' variant='success'>
+                            {successMessage}
                         </Alert>
                     )}
                 </div>
@@ -190,6 +215,11 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
                                                         variant="danger"
                                                         onClick={() => handleDelete(preset.id)}>
                                                         Delete
+                                                    </Button>
+                                                    <Button
+                                                        variant="success"
+                                                        onClick={() => handleAssign(preset.id)}>
+                                                        Assign
                                                     </Button>
                                                 </div>
                                             )}

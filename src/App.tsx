@@ -27,7 +27,7 @@ import TaskManager from "./components/TaskDashboard/TaskManager.tsx";
 import Loading from './components/Loading/Loading.tsx';
 import SchoolingPartEdit from './components/Schooling/SchoolingPartEdit.tsx';
 import SchoolingAssignment from './components/Schooling/SchoolingAssignment.tsx';
-
+import PresetAssign from './components/Preset/PresetAssign';
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -129,6 +129,7 @@ function App() {
                         <Route path="/schoolingpartedit/:id?" element={<SchoolingPartEdit />} />
 
                         <Route path="/schoolinglistparts" element={<SchoolingListParts />} />
+                        <Route path="/preset/assign/:presetId" element={<PresetAssign />} />
                         <Route path="/schoolingdetails" element={<SchoolingDetails />} />
                         <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
                         <Route path="/profile/:userId" element={<UserProfile />} />

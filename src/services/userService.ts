@@ -1,6 +1,17 @@
 import axiosInstance from '../../axiosConfig';
 import { UserDto } from '../dtos/UserDto';
 
+export const searchUsers = async (searchPhrase: string): Promise<UserDto[]> => {
+    try {
+
+    const response = await axiosInstance.get(`/User/Search/${searchPhrase}`);
+        return response.data;
+    } catch (error: any) {
+        handleError('getUserById', error);
+        throw error;
+    }
+};
+
 export const getUserById = async (userId: string): Promise<UserDto> => {
     try {
         const response = await axiosInstance.get<UserDto>(`/User/GetById/${userId}`);
