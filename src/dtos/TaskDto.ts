@@ -1,6 +1,7 @@
 export interface TaskDto {
     id?: number;
-    newbieId?: string;
+    newbieId: string;
+    assigningId: string;
     taskContentId: number;
     roadMapPointId?: string | null;
     status?: number;
@@ -10,4 +11,9 @@ export interface TaskDto {
     spendTime?: number;
     priority?: number;
     rate?: number | null;
+}
+
+export interface TaskResponse {
+    message: string;
+    task: TaskDto;
 }

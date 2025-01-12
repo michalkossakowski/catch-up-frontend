@@ -1,35 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../../axiosConfig';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../store/store.ts';
+import { fetchTasks } from '../../store/taskSlice';
 import { useAuth } from "../../Provider/authProvider";
-import TaskList from './TaskList';
-import { FullTaskDto } from '../../dtos/FullTaskDto';
+import TaskList from "./TaskList.tsx";
 
 const TaskDashboard: React.FC = () => {
-    const [tasks, setTasks] = useState<FullTaskDto[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const dispatch = useDispatch<AppDispatch>();
+    const { tasksByUser, loading, error } = useSelector((state: RootState) => state.tasks);
     const { user } = useAuth();
 
+    const userTasks = user?.id ? tasksByUser[user.id] || [] : [];
+
     useEffect(() => {
-        const fetchTasks = async () => {
-            if (!user?.id) return;
-
-            try {
-                setLoading(true);
-                const response = await axiosInstance.get<FullTaskDto[]>(`/Task/GetAllFullTasksByNewbieId/${user.id}`);
-                setTasks(response.data);
-                setError(null);
-            } catch (err) {
-                const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
-                setError(errorMessage);
-                console.error('Error fetching tasks:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchTasks();
-    }, [user]);
+        if (user?.id) {
+            dispatch(fetchTasks(user.id));
+        }
+    }, [dispatch, user]);
 
     if (error) {
         return (
@@ -43,7 +30,7 @@ const TaskDashboard: React.FC = () => {
         <div className="d-flex justify-content-center align-items-center">
             <div className="container">
                 <h1 className="text-center mb-4">My Tasks</h1>
-                <TaskList tasks={tasks} loading={loading} />
+                <TaskList tasks={userTasks} loading={loading} onTaskUpdate={() => {}} isEditMode={false}/>
             </div>
         </div>
     );
