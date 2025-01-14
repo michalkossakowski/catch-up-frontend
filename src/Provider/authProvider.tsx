@@ -53,7 +53,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         return storedUser ? JSON.parse(storedUser) : null;
     });
 
-    const [roleCache, setRoleCache] = useState<Record<string, string>>({});
+    const [roleCache, setRoleCache] = useState<string>("");
 
     const setAccessToken = (newToken: string | null) => {
         setAccessToken_(newToken);
@@ -123,7 +123,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         setAccessToken(null);
         setRefreshToken(null);
         setUser(null);
-        setRoleCache({});
+        setRoleCache("");
         localStorage.removeItem('userAvatar');
         dispatch(clearTasks());
         setAvatar(null);
@@ -134,15 +134,16 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
             throw new Error("Invalid userId");
         }
 
-        if (roleCache[userId]) {
-            return roleCache[userId];
+        if (roleCache) {
+            console.log(roleCache);
+            return roleCache;
         }
 
         try {
             const response = await axiosInstance.get(`User/GetRole/${userId}`);
             const role = response.data || "User";
 
-            roleCache[userId] = role;
+            setRoleCache(role);
 
             return role;
         } catch (error) {
