@@ -163,7 +163,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
             logout,
             getRole
         }),
-        [accessToken, refreshToken, user, avatar, roleCache]
+        [user, avatar, roleCache]
     );
 
     return (

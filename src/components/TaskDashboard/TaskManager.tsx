@@ -26,7 +26,7 @@ function TaskManager() {
     const dispatch: AppDispatch = useDispatch();
     const { tasksByUser, loading, error } = useSelector((state: RootState) => state.tasks);
 
-    const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
+    const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
     const [filteredTasks, setFilteredTasks] = useState<FullTaskDto[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedNewbie, setSelectedNewbie] = useState<string>("");
@@ -35,7 +35,7 @@ function TaskManager() {
     const [categories, setCategories] = useState<CategoryDto[]>([]);
     const [materials, setMaterials] = useState<MaterialDto[]>([]);
     const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0);
+    const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
 
     // On change of a newbie
     useEffect(() => {
