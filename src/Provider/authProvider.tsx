@@ -135,7 +135,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         }
 
         if (roleCache) {
-            console.log(roleCache);
             return roleCache;
         }
 

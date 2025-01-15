@@ -1,6 +1,7 @@
 import axiosInstance from '../../axiosConfig'
 import {TaskDto, TaskResponse} from "../dtos/TaskDto"
 import { FullTaskDto } from "../dtos/FullTaskDto.ts";
+import {StatusEnum} from "../Enums/StatusEnum.ts";
 
 interface DeleteTaskResponse {
     message: string;
@@ -52,6 +53,16 @@ export const getAllFullTasks = async (): Promise<FullTaskDto[]> => {
         return response.data;
     } catch (error: any) {
         handleError('getAllFullTasks', error);
+        throw error;
+    }
+}
+
+export const setTaskStatus = async (taskId: number, status: StatusEnum): Promise<FullTaskDto> => {
+    try {
+        const response = await axiosInstance.patch<{ fullTask: FullTaskDto }>(`/Task/SetStatus/${taskId}/${status}`);
+        return response.data.fullTask;
+    } catch (error: any) {
+        handleError('setTaskStatus', error);
         throw error;
     }
 }
