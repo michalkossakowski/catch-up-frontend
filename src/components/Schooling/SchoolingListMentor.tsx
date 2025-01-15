@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import schoolingService from '../../services/schoolingService'
 import {getCategories} from '../../services/categoryService'
-import ErrorMessage from '../ErrorMessage'
 import { FullSchoolingDto } from '../../dtos/FullSchoolingDto'
 import { Accordion, Alert, Button, Col, Form, Row } from 'react-bootstrap'
 import Loading from '../Loading/Loading'
@@ -18,8 +17,8 @@ const SchoolingListMentor: React.FC = () => {
 
     
     // Obsługa error-ów
-    const [errorShow, setErrorShow] = React.useState(false)
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [showAlert, setShowAlert] = useState(false)
+    const [alertMessage, setAlertMessage] = useState('')
 
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [confirmMessage, setConfirmMessage] = useState('');
@@ -55,8 +54,9 @@ const SchoolingListMentor: React.FC = () => {
             setSchoolingList(data)
         })     
         .catch((error) => {
-            setErrorShow(true)
-            setErrorMessage('Error: ' + error.message)
+            setShowAlert(true)
+            setLoading(false)
+            setAlertMessage('Error: ' + error.message)
         })
         .finally(() => setLoading(false))
 
@@ -64,8 +64,9 @@ const SchoolingListMentor: React.FC = () => {
             setAvailableCategories(data)
         })     
         .catch((error) => {
-            setErrorShow(true)
-            setErrorMessage('Error: ' + error.message)
+            setShowAlert(true)
+            setLoading(false)
+            setAlertMessage('Error: ' + error.message)
         })
         .finally(() => setLoading(false));
     }
@@ -134,22 +135,22 @@ const SchoolingListMentor: React.FC = () => {
         dispatch(clearSchooling())
         navigate('/schoolingedit')
     }
-    const gotAssignmentPage = (schooling: FullSchoolingDto) => {
-        dispatch(setSchooling(schooling))
-        navigate('/schoolingassignment')
-    }
+    // const gotAssignmentPage = (schooling: FullSchoolingDto) => {
+    //     dispatch(setSchooling(schooling))
+    //     navigate('/schoolingassignment')
+    // }
     const handleDelete = () => {
         if(schoolingIdToDelete){
             schoolingService.archiveSchooling(schoolingIdToDelete)
                 .then(() => {
                     const updatedSchoolings = schoolingList.filter((el) => el.schooling?.id !== schoolingIdToDelete);
                     setSchoolingList(updatedSchoolings);
-                    setErrorShow(false)
+                    setShowAlert(false)
                     setShowToast(true);
                 })
                 .catch((error) => {
-                    setErrorShow(true)
-                    setErrorMessage('Error deleting Schooling: ' + error.message)
+                    setShowAlert(true)
+                    setAlertMessage('Error deleting Schooling: ' + error.message)
                 })
             setToastMessage(`Schooling successfully deleted !`);
             setShowConfirmModal(false);
@@ -164,13 +165,11 @@ const SchoolingListMentor: React.FC = () => {
 
     return (
         <section className="container mt-3 p-0">
-            <ErrorMessage
-                message={errorMessage || 'Undefine error'}
-                show={errorShow}
-                onHide={() => {
-                setErrorShow(false);
-                setErrorMessage(null);
-            }} />
+            {showAlert &&(
+                <Alert className='alert' variant='danger'>
+                    {alertMessage}
+                </Alert>
+            )}
             <div className="container mb-3">
                 
                 <h2 className="text-center">List of Schoolings</h2>
@@ -259,12 +258,12 @@ const SchoolingListMentor: React.FC = () => {
                                     >
                                         Edit
                                     </Button>
-                                    <Button
+                                    {/* <Button
                                         variant="info"
                                         onClick={() => gotAssignmentPage(item)}
                                     >
                                         Un/Assign Schooling
-                                    </Button>
+                                    </Button> */}
                                     <Button
                                         variant="danger"
                                         onClick={() => handleDeleteButton(item)}

@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { MaterialDto } from "../../../dtos/MaterialDto";
 import MaterialItem from "./MaterialItem";
 import materialService from "../../../services/materialService";
-import { Accordion, Button, Form, Modal } from "react-bootstrap";
+import { Accordion, Alert, Button, Form, Modal } from "react-bootstrap";
 import Material from "../Material";
-import ErrorMessage from "../../ErrorMessage";
 import React from "react";
 import Loading from "../../Loading/Loading";
 
@@ -24,15 +23,15 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
   const [loading, setLoading] = useState(true)
 
   // Obsługa error-ów
-  const [errorShow, setErrorShow] = React.useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [showAlert, setShowAlert] = useState(false)
+  const [alertMessage, setAlertMessage] = useState('')
   
   const fetchMaterials = async () => {
     try {
       setMaterialList(await materialService.getAllMaterials())
     } catch (error) {
-      setErrorMessage("Error fetching materials: " +error)
-      setErrorShow(true)
+      setAlertMessage("Error fetching materials: " +error)
+      setShowAlert(true)
     } finally {
       setLoading(false)
     }
@@ -61,20 +60,18 @@ const MaterialsContainer: React.FC<MaterialsContainerProps> = ({ materialIdToUpd
       setMaterialList(materialList.filter((material) => material.id !== materialID));
       onMaterialSelect(materialID, [], "deleteMaterial")
     } catch (error) {
-      setErrorMessage("Problem with deleting material: " + error)
-      setErrorShow(true)
+      setAlertMessage("Problem with deleting material: " + error)
+      setShowAlert(true)
     }
   }
 
   return (
     <div className="container-md">
-      <ErrorMessage
-        message={errorMessage || 'Undefine error'}
-        show={errorShow}
-        onHide={() => {
-          setErrorShow(false);
-          setErrorMessage(null);
-        }} />
+      {showAlert &&(
+          <Alert className='alert' variant='danger'>
+          {alertMessage}
+          </Alert>
+      )}
       <Form.Control
         size="lg"
         className="mb-4"

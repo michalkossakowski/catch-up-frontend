@@ -39,6 +39,21 @@ const Material: React.FC<MaterialProps> = ({
     } else {
       getMaterial(materialId);
     }
+
+    const refreshMaterialHandler = () => {
+      if (materialId) {
+          getMaterial(materialId);
+      }
+    };
+    const element = document.querySelector(`[data-material-id="${materialId}"]`);
+    if (element) {
+        element.addEventListener('refreshMaterial', refreshMaterialHandler);
+    }
+    return () => {
+      if (element) {
+          element.removeEventListener('refreshMaterial', refreshMaterialHandler);
+      }
+    };
   }, [materialId]);
 
   const getMaterial = async (materialId: number) => {
@@ -155,7 +170,6 @@ const Material: React.FC<MaterialProps> = ({
               className={`form-control ${!materialNameValidation && showValidation ? 'is-invalid' : ''}`}
               value={materialName}
               onChange={(e) => validateMaterialName(e.target.value)}
-              required={showValidation}
             />
             <button 
               className={`btn ${!materialNameValidation && showValidation ? 'btn-outline-secondary' : 'btn-secondary'}` }
