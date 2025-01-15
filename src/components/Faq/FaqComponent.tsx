@@ -123,6 +123,11 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
         ? allFaqs.map((faq) => (faq.id == response.faq.id ? response.faq : faq))
         : [...allFaqs, response.faq]
 
+        const materialElement = document.querySelector(`[data-material-id="${response.faq.materialId}"]`);
+        if (materialElement) {
+            const event = new CustomEvent('refreshMaterial');
+            materialElement.dispatchEvent(event);
+        }
         setAllFaqs(updatedFaqs);
         setFaqs(updatedFaqs);
         setShowEdit(false);
@@ -131,22 +136,23 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
 
     return (
         <>
+            <h2 className='title'>Frequently Asked Questions</h2>
             <section className='container'>
-                <h2 className='title'>Frequently Asked Questions</h2>
-                
-                <div className='searchBox'>
-                    <InputGroup className="inputGroup mb-3">
-                        <Form.Control
-                            placeholder="Enter searching question..."
-                            value={searchQuestion} 
-                            onChange={(e) => setSearchQuestion(e.target.value)} 
-                            onKeyDown={(e) => e.key === 'Enter' && searchFaq()}
-                        />
-                        <Button variant="primary" id="searchButton" onClick={searchFaq}> 
-                            Search
-                        </Button>
-                    </InputGroup>
-                </div>
+                {!showAlert && !loading && (
+                    <div className='searchBox'>
+                        <InputGroup className="inputGroup mb-3">
+                            <Form.Control
+                                placeholder="Enter searching question..."
+                                value={searchQuestion} 
+                                onChange={(e) => setSearchQuestion(e.target.value)} 
+                                onKeyDown={(e) => e.key === 'Enter' && searchFaq()}
+                            />
+                            <Button variant="primary" id="searchButton" onClick={searchFaq}> 
+                                Search
+                            </Button>
+                        </InputGroup>
+                    </div>
+                )}
 
                 {loading && (
                     <div className='loaderBox'>
@@ -154,11 +160,13 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
                     </div>
                 )}
 
-                <div className='alertBox'>
+
                     {showAlert &&(
-                        <Alert className='alert' variant='danger'>
-                            {alertMessage}
-                        </Alert>
+                        <div className='alertBox'>
+                            <Alert className='alert' variant='danger'>
+                                {alertMessage}
+                            </Alert>
+                        </div>
                     )}
 
                     {showSearchMessage &&(
@@ -166,7 +174,7 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
                             {searchMessage}
                         </Alert>
                     )}
-                </div>
+
 
                 {!showSearchMessage && !showAlert && !loading &&(
                     <Accordion className='AccordionItem'>
@@ -192,7 +200,7 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
                 onCancel={() => setShowConfirmModal(false)} 
             />
 
-            {isAdmin && (
+            {isAdmin && !showAlert && (
                 <div>
                     <Button variant="primary" onClick={() => {setShowEdit(true); setEditedFaq(null)}}>
                         Add new FAQ

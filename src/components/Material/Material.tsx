@@ -39,6 +39,21 @@ const Material: React.FC<MaterialProps> = ({
     } else {
       getMaterial(materialId);
     }
+
+    const refreshMaterialHandler = () => {
+      if (materialId) {
+          getMaterial(materialId);
+      }
+    };
+    const element = document.querySelector(`[data-material-id="${materialId}"]`);
+    if (element) {
+        element.addEventListener('refreshMaterial', refreshMaterialHandler);
+    }
+    return () => {
+      if (element) {
+          element.removeEventListener('refreshMaterial', refreshMaterialHandler);
+      }
+    };
   }, [materialId]);
 
   const getMaterial = async (materialId: number) => {
