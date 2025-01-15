@@ -1,60 +1,70 @@
 import { StatusEnum } from "../../Enums/StatusEnum";
-import { Accordion, Card } from "react-bootstrap";
+import { Card, Form } from "react-bootstrap";
 import { FullTaskDto } from "../../dtos/FullTaskDto";
-import { FeedbackButton } from '../Feedback/FeedbackButton';
-import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
+import { setTaskStatus } from "../../services/taskService";
 
 interface TaskListItemProps {
     task: FullTaskDto;
-    eventKey: string;
     onEditClick: (task: FullTaskDto) => void;
     onDeleteClick: (task: FullTaskDto) => void;
+    onStatusChange: (task: FullTaskDto) => void;
     isEditMode: boolean;
+    role: string;
 }
 
-const TaskListItem = ({ task, eventKey, onEditClick, onDeleteClick, isEditMode }: TaskListItemProps) => {
-    const getStatusInfo = (status: StatusEnum): { iconClass: string; text: string; colorClass: string } => {
+const TaskListItem = ({ task, onEditClick, onDeleteClick, isEditMode, onStatusChange, role }: TaskListItemProps) => {
+    const getStatusInfo = (status: StatusEnum): { iconClass: string; colorClass: string } => {
         switch (status) {
             case StatusEnum.ToDo:
                 return {
                     iconClass: "bi bi-journal",
-                    text: "To Do",
                     colorClass: "text-secondary",
                 };
             case StatusEnum.InProgress:
                 return {
                     iconClass: "bi bi-journal-text",
-                    text: "In Progress",
                     colorClass: "text-primary",
                 };
             case StatusEnum.ToReview:
                 return {
                     iconClass: "bi bi-journal-arrow-up",
-                    text: "To Review",
                     colorClass: "text-warning",
                 };
             case StatusEnum.ReOpen:
                 return {
                     iconClass: "bi bi-journal-x",
-                    text: "Reopened",
                     colorClass: "text-danger",
                 };
             case StatusEnum.Done:
                 return {
                     iconClass: "bi bi-journal-check",
-                    text: "Done",
                     colorClass: "text-success",
                 };
             default:
                 return {
                     iconClass: "bi bi-journal",
-                    text: "Unknown",
                     colorClass: "text-secondary",
                 };
         }
     };
 
-    const { iconClass, text, colorClass } = getStatusInfo(task.status!);
+    const handleStatusChange = async (newStatus: string) => {
+        try {
+            const statusEnum = parseInt(newStatus) as StatusEnum;
+            await setTaskStatus(task.id!, statusEnum);
+
+            const updatedTask: FullTaskDto = {
+                ...task,
+                status: statusEnum
+            };
+
+            onStatusChange(updatedTask);
+        } catch (error) {
+            console.error('Failed to update task status:', error);
+        }
+    };
+
+    const { iconClass, colorClass } = getStatusInfo(task.status!);
 
     return (
         <Card className="mb-3">
@@ -83,7 +93,22 @@ const TaskListItem = ({ task, eventKey, onEditClick, onDeleteClick, isEditMode }
                             </div>
                         </>
                     )}
-                    <span className="text-muted">{text}</span>
+                    <Form.Select
+                        value={task.status}
+                        onChange={(e) => handleStatusChange(e.target.value)}
+                        className="w-auto"
+                    >
+
+                        <option value={StatusEnum.ToDo}>To Do</option>
+                        <option value={StatusEnum.InProgress}>In Progress</option>
+                        <option value={StatusEnum.ToReview}>To Review</option>
+                        {role !== "Newbie" && (
+                            <>
+                                <option value={StatusEnum.ReOpen}>Reopened</option>
+                                <option value={StatusEnum.Done}>Done</option>
+                            </>
+                        )}
+                    </Form.Select>
                     <i className={`${iconClass} ${colorClass} fs-4`}></i>
                 </div>
             </Card.Header>
@@ -97,7 +122,6 @@ const TaskListItem = ({ task, eventKey, onEditClick, onDeleteClick, isEditMode }
                             : "X"}
                     </div>
                 </div>
-                <FeedbackButton resourceId={task.id ?? 0} resourceType={ResourceTypeEnum.Task} />
             </Card.Body>
         </Card>
     );

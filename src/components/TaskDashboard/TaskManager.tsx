@@ -36,6 +36,7 @@ function TaskManager() {
     const [materials, setMaterials] = useState<MaterialDto[]>([]);
     const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
     const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
+    const [userRole, setUserRole] = useState<string | null>(null);
 
     // On change of a newbie
     useEffect(() => {
@@ -49,7 +50,8 @@ function TaskManager() {
         setLocalError(null);
         const fetchData = async () => {
             try {
-                const userRole = await getRole(user?.id!);
+                const role = await getRole(user?.id!);
+                setUserRole(role);
 
                 const [categoriesData, materialsData, taskContentsData] = await Promise.all([
                     getCategories(),
@@ -58,9 +60,9 @@ function TaskManager() {
                 ]);
 
                 let newbieList;
-                if (userRole === "Admin") {
+                if (role === "Admin") {
                     newbieList = await NewbieMentorService.getAllNewbies();
-                } else if (userRole === "Mentor") {
+                } else if (role === "Mentor") {
                     newbieList = await NewbieMentorService.getAssignmentsByMentor(mentorId!);
                 } else {
                     throw new Error("Unauthorized access");
@@ -202,6 +204,7 @@ function TaskManager() {
                         categories={categories}
                         materials={materials}
                         taskContents={taskContents}
+                        role={userRole!}
                     />
                 )}
             </div>

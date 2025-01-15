@@ -1,6 +1,6 @@
 import { FullTaskDto } from '../../dtos/FullTaskDto';
 import TaskListItem from './TaskListItem';
-import { Accordion, Container } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import {CategoryDto} from "../../dtos/CategoryDto.ts";
 import {MaterialDto} from "../../dtos/MaterialDto.ts";
 import Loading from "../Loading/Loading.tsx";
@@ -18,9 +18,10 @@ interface TaskListProps {
     materials?: MaterialDto[];
     taskContents?: TaskContentDto[];
     onTaskDelete?: (taskId: number) => void;
+    role: string;
 }
 
-const TaskList = ({ tasks, loading, onTaskDelete, onTaskUpdate, isEditMode, categories, materials, taskContents }: TaskListProps) => {
+const TaskList = ({ tasks, loading, onTaskDelete, onTaskUpdate, isEditMode, categories, materials, taskContents, role }: TaskListProps) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState<FullTaskDto | null>(null);
 
@@ -33,6 +34,10 @@ const TaskList = ({ tasks, loading, onTaskDelete, onTaskUpdate, isEditMode, cate
         onTaskUpdate(updatedTask);
         setShowModal(false);
         setSelectedTask(null);
+    };
+
+    const handleTaskStatusChange = (updatedTask: FullTaskDto) => {
+        onTaskUpdate(updatedTask);
     };
 
     const handleDeleteClick = async (task: FullTaskDto) => {
@@ -61,10 +66,11 @@ const TaskList = ({ tasks, loading, onTaskDelete, onTaskUpdate, isEditMode, cate
                     <TaskListItem
                         key={task.id ?? index}
                         task={task}
-                        eventKey={String(index)}
                         onEditClick={handleEditClick}
                         onDeleteClick={handleDeleteClick}
                         isEditMode={isEditMode}
+                        onStatusChange={handleTaskStatusChange}
+                        role={role}
                     />
                 ))}
             </Container>
