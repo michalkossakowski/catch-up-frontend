@@ -119,12 +119,14 @@ function App() {
                         <Route path="/badges" element={<Badge />} />
                         <Route path="/presetmanage" element={<PresetManage />} />
                         <Route path="/schoolingedit" element={<SchoolingEdit />} />
-                        {(role === 'Admin' || role === 'Mentor') && (
-                            <Route path="/schoolinglist" element={<SchoolingListMentor />} />
-                        )}
-                        {role === 'Newbie' && (
-                            <Route path="/schoolinglist" element={<SchoolingListNewbie />} />
-                        )}
+                        <Route 
+                            path="/schoolinglist" 
+                            element={
+                                role === 'Admin' || role === 'Mentor' 
+                                    ? <SchoolingListMentor /> 
+                                    : <SchoolingListNewbie />
+                            } 
+                        />
                         <Route path="/schoolinglist" element={<div className='mt-4'><span className='mt-4'>Error with loading schooling</span><Loading/></div>} />
                         <Route path="/schoolingpartedit/:id?" element={<SchoolingPartEdit />} />
 
