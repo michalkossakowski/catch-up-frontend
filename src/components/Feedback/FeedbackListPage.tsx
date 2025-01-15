@@ -6,7 +6,7 @@ import NotificationToast from '../Toast/NotificationToast';
 import Loading from '../Loading/Loading';
 import axiosInstance from '../../../axiosConfig';
 import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
-import { getUserById } from '../../services/userService';
+import { getRole, getUserById } from '../../services/userService';
 import FeedbackItem from './FeedbackItem';
 import { FaqDto } from '../../dtos/FaqDto';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
@@ -55,14 +55,15 @@ const FeedbackListPage: React.FC = () => {
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [toastColor, setToastColor] = useState('');
+    const [apiError, setApiError] = useState(false);
 
     useEffect(() => {
         const loadFeedbacks = async () => {
             if (!user) return;
             try {
-                const userRoleResponse = await axiosInstance.get(`User/GetRole/${user.id}`);
-                setIsAdmin(userRoleResponse.data !== 'Newbie');
-                const feedbackList = await getFeedbacks(user.id ?? 'defaultId', userRoleResponse.data !== 'Newbie');
+                const userRoleResponse = await getRole(user.id ?? 'defaultId');
+                setIsAdmin(userRoleResponse !== 'Newbie');
+                const feedbackList = await getFeedbacks(user.id ?? 'defaultId', userRoleResponse !== 'Newbie');
                 const feedbacksWithDetails = await Promise.all(feedbackList.map(async (feedback) => {
                     const sender = await getUserById(feedback.senderId);
                     const receiver = await getUserById(feedback.receiverId);
@@ -80,8 +81,7 @@ const FeedbackListPage: React.FC = () => {
     
                 setFeedbacks(feedbacksWithDetails);
             } catch (error) {
-                setToastMessage('Failed to load feedbacks');
-                setToastColor('red');
+                setApiError(true);
             } finally {
                 setIsLoading(false);
             }
@@ -110,6 +110,10 @@ const FeedbackListPage: React.FC = () => {
 
     if (isLoading) {
         return <Loading />;
+    }
+
+    if (apiError) {
+        return <div className="alert alert-danger text-center">Error: API is not available</div>;
     }
 
     return (

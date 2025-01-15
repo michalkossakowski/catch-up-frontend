@@ -22,6 +22,16 @@ export const getUserById = async (userId: string): Promise<UserDto> => {
     }
 };
 
+export const getRole = async (userId: string): Promise<string> => {
+    try {
+        const response = await axiosInstance.get<string>(`/User/GetRole/${userId}`);
+        return response.data;
+    } catch (error: any) {
+        handleError('getRole', error);
+        throw error;
+    }
+};
+
 export const addUser = async (user: UserDto): Promise<UserDto> => {
     try {
         const response = await axiosInstance.post<UserDto>('/User/Add', user);

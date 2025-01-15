@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 import ErrorMessage from '../ErrorMessage';
 import Material from '../Material/Material';
+import { FeedbackButton } from '../Feedback/FeedbackButton';
+import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 
 const SchoolingDetails: React.FC = () => {
     const fullSchooling = useSelector((state: RootState) => state.schooling.selectedSchooling);
@@ -41,6 +43,7 @@ const SchoolingDetails: React.FC = () => {
                                 ))}
                             </ol>
                             }
+                            {/* <FeedbackButton resourceId={fullSchooling?.schooling?.id} resourceType={ResourceTypeEnum.Schooling} /> */}
                         </div>
                     </div>
                 ))}
