@@ -28,6 +28,7 @@ import Loading from './components/Loading/Loading.tsx';
 import SchoolingPartEdit from './components/Schooling/SchoolingPartEdit.tsx';
 import SchoolingAssignment from './components/Schooling/SchoolingAssignment.tsx';
 import PresetAssign from './components/Preset/PresetAssign';
+import FeedbackList from './components/Feedback/FeedbackListPage.tsx';
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -67,6 +68,7 @@ function App() {
                                     <NavLink to="/taskcontentmanage" className="nav-link">Task Content Manage</NavLink>
                                     <NavLink to="/roadmapmanage" className="nav-link">RoadMap Manage</NavLink>
                                     <NavLink to="/presetmanage" className="nav-link">Preset Manage</NavLink>
+                                    <NavLink to="/feedbacks" className="nav-link">Feedbacks</NavLink>
                                     <NavLink to="/badges" className="nav-link">Badges</NavLink>
                                     {role === 'Admin' && (
                                         <NavDropdown title="Admin Tools" id="basic-nav-dropdown">
@@ -116,6 +118,7 @@ function App() {
                         <Route path="/taskcontentmanage" element={<TaskContentManage />} />
                         <Route path="/editmatlist" element={<EditMatList />} />
                         <Route path="/roadmapmanage" element={<RoadMapManage />} />
+                        <Route path="/feedbacks" element={<FeedbackList />} />
                         <Route path="/badges" element={<Badge />} />
                         <Route path="/presetmanage" element={<PresetManage />} />
                         <Route path="/schoolingedit" element={<SchoolingEdit />} />

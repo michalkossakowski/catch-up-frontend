@@ -1,6 +1,8 @@
 import { Accordion, Button } from 'react-bootstrap';
 import { FaqDto } from '../../dtos/FaqDto';
 import Material from '../Material/Material';
+import { FeedbackButton } from '../Feedback/FeedbackButton';
+import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 
 type FaqProps = {
     faq: FaqDto;
@@ -42,6 +44,7 @@ export default function FaqItem(props: FaqProps): React.ReactElement {
                             </Button>
                         </div>
                     )}
+                    <FeedbackButton resourceId={props.faq.id} resourceType={ResourceTypeEnum.Faq} />
                 </Accordion.Body>
             </Accordion.Item>
         </>

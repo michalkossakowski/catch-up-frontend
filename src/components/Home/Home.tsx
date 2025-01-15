@@ -40,7 +40,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-pencil-square fs-4"></i> Feedbacks
                                 </h5>
                                 <p className="card-text">Submit and view feedbacks.</p>
-                                <a className="btn btn-primary" href="/feedback">Go to Feedbacks</a>
+                                <a className="btn btn-primary" href="/feedbacks">Go to Feedbacks</a>
                             </div>
                         </div>
                     </div>

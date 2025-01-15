@@ -42,6 +42,16 @@ export const editUser = async (userId: string, updateData: Partial<UserDto>): Pr
     }
 };
 
+export const getAdmins = async (): Promise<UserDto[]> => {
+    try {
+        const response = await axiosInstance.get<UserDto[]>('/User/GetMentorAdmin');
+        return response.data;
+    } catch (error: any) {
+        handleError('getAdmins', error);
+        throw error;
+    }
+};
+
 const handleError = (operation: string, error: any): void => {
     console.error(`${operation} failed:`, error);
     if (!error.response) {
