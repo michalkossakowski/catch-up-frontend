@@ -24,7 +24,7 @@ const FeedbackItem: React.FC<FeedbackItemProps> = ({ feedback, isAdmin, onDelete
             </td>
             <td>{new Date(feedback.createdDate).toLocaleDateString()}</td>
             <td>{ResourceTypeEnum[feedback.resourceType]}</td>
-            <td>{feedback.resourceTitle || 'No title'}</td>
+            <td>{feedback.resourceName || 'No title'}</td>
             <td>
                 {isAdmin && (
                     <button

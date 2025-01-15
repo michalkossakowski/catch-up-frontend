@@ -43,7 +43,7 @@ const SchoolingDetails: React.FC = () => {
                                 ))}
                             </ol>
                             }
-                            {/* <FeedbackButton resourceId={fullSchooling?.schooling?.id} resourceType={ResourceTypeEnum.Schooling} /> */}
+                            <FeedbackButton resourceId={fullSchooling?.schooling?.id ?? 0} resourceType={ResourceTypeEnum.Schooling} />
                         </div>
                     </div>
                 ))}

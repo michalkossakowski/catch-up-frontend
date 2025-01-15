@@ -4,47 +4,10 @@ import { getFeedbacks, deleteFeedback } from '../../services/feedbackService';
 import { FeedbackDto } from '../../dtos/FeedbackDto';
 import NotificationToast from '../Toast/NotificationToast';
 import Loading from '../Loading/Loading';
-import axiosInstance from '../../../axiosConfig';
-import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 import { getRole, getUserById } from '../../services/userService';
 import FeedbackItem from './FeedbackItem';
-import { FaqDto } from '../../dtos/FaqDto';
-import { TaskContentDto } from '../../dtos/TaskContentDto';
-import { FullSchoolingDto } from '../../dtos/FullSchoolingDto';
 import ConfirmModal from '../Modal/ConfirmModal'; 
 
-const fetchResourceTitle = async (resourceId: number, resourceType: ResourceTypeEnum): Promise<string> => {
-    if (resourceType === ResourceTypeEnum.Faq) {
-        try {
-            const response  = await axiosInstance.get<FaqDto>(`/Faq/GetById/${resourceId}`);
-            const faq = response.data;
-            return faq.question.length > 0 ? faq.question : 'Unknown FAQ';
-        } catch (error) {
-            console.error('Failed to fetch FAQ title', error);
-            return 'Unknown FAQ';
-        }
-    }else if(resourceType === ResourceTypeEnum.Task){
-        try {
-            const response  = await axiosInstance.get<TaskContentDto>(`/Task/GetFullTaskById/${resourceId}`);
-            const task = response.data;
-            return task.title.length > 0 ? task.title : 'Unknown Task';
-        } catch (error) {
-            console.error('Failed to fetch Task title', error);
-            return 'Unknown Task';
-        }
-    }else if (resourceType === ResourceTypeEnum.Schooling) {
-        try {
-            const response = await axiosInstance.get<FullSchoolingDto>(`/Schooling/GetFull/${resourceId}`);
-            const schooling = response.data.schooling;
-            return schooling?.title && schooling.title.length > 0 ? schooling.title: 'Unknown Schooling';
-
-        } catch (error) {
-            console.error('Failed to fetch Schooling title', error);
-            return 'Unknown Schooling';
-        }
-    }
-    return 'Unknown Resource';
-};
 
 const FeedbackListPage: React.FC = () => {
     const { user } = useAuth();
@@ -67,7 +30,6 @@ const FeedbackListPage: React.FC = () => {
                 const feedbacksWithDetails = await Promise.all(feedbackList.map(async (feedback) => {
                     const sender = await getUserById(feedback.senderId);
                     const receiver = await getUserById(feedback.receiverId);
-                    const resourceTitle = await fetchResourceTitle(feedback.resourceId, feedback.resourceType);
     
                     return { 
                         ...feedback, 
@@ -75,7 +37,6 @@ const FeedbackListPage: React.FC = () => {
                         senderSurname: sender.surname,
                         receiverName: receiver.name, 
                         receiverSurname: receiver.surname,
-                        resourceTitle 
                     };
                 }));
     

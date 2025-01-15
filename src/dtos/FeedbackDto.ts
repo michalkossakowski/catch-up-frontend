@@ -13,5 +13,5 @@ export interface FeedbackDto {
     senderSurname?: string;
     receiverName?: string;
     receiverSurname?: string;
-    resourceTitle?: string;
+    resourceName?: string;
 }
