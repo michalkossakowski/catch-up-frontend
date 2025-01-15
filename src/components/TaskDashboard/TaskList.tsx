@@ -1,6 +1,6 @@
 import { FullTaskDto } from '../../dtos/FullTaskDto';
 import TaskListItem from './TaskListItem';
-import { Accordion } from 'react-bootstrap';
+import { Accordion, Container } from 'react-bootstrap';
 import {CategoryDto} from "../../dtos/CategoryDto.ts";
 import {MaterialDto} from "../../dtos/MaterialDto.ts";
 import Loading from "../Loading/Loading.tsx";
@@ -56,7 +56,7 @@ const TaskList = ({ tasks, loading, onTaskDelete, onTaskUpdate, isEditMode, cate
 
     return (
         <>
-            <Accordion alwaysOpen className="mt-3">
+            <Container>
                 {tasks.map((task, index) => (
                     <TaskListItem
                         key={task.id ?? index}
@@ -67,7 +67,7 @@ const TaskList = ({ tasks, loading, onTaskDelete, onTaskUpdate, isEditMode, cate
                         isEditMode={isEditMode}
                     />
                 ))}
-            </Accordion>
+            </Container>
 
             {isEditMode && (
                 <AssignTask

@@ -1,5 +1,5 @@
 import { StatusEnum } from "../../Enums/StatusEnum";
-import { Accordion } from "react-bootstrap";
+import { Accordion, Card } from "react-bootstrap";
 import { FullTaskDto } from "../../dtos/FullTaskDto";
 
 interface TaskListItemProps {
@@ -55,50 +55,48 @@ const TaskListItem = ({ task, eventKey, onEditClick, onDeleteClick, isEditMode }
     const { iconClass, text, colorClass } = getStatusInfo(task.status!);
 
     return (
-        <Accordion.Item eventKey={eventKey} className="">
-            <Accordion.Header>
-                <div className="d-flex align-items-center justify-content-between w-100 pe-2">
-                    <div className="h5 mb-0">{task.title}</div>
-                    <div className="d-flex align-items-center gap-2">
-                        {isEditMode && (
-                            <>
-                                <div
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onEditClick(task);
-                                    }}
-                                    className="btn btn-primary"
-                                >
-                                    Edit
-                                </div>
-                                <div
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onDeleteClick(task);
-                                    }}
-                                    className="btn btn-danger"
-                                >
-                                    Delete
-                                </div>
-                            </>
-                        )}
-                        <span className="text-muted">{text}</span>
-                        <i className={`${iconClass} ${colorClass} fs-4`}></i>
-                    </div>
+        <Card className="mb-3">
+            <Card.Header className="d-flex align-items-center justify-content-between">
+                <div className="h5 mb-0">{task.title}</div>
+                <div className="d-flex align-items-center gap-2">
+                    {isEditMode && (
+                        <>
+                            <div
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onEditClick(task);
+                                }}
+                                className="btn btn-primary"
+                            >
+                                Edit
+                            </div>
+                            <div
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDeleteClick(task);
+                                }}
+                                className="btn btn-danger"
+                            >
+                                Delete
+                            </div>
+                        </>
+                    )}
+                    <span className="text-muted">{text}</span>
+                    <i className={`${iconClass} ${colorClass} fs-4`}></i>
                 </div>
-            </Accordion.Header>
-            <Accordion.Body>
+            </Card.Header>
+            <Card.Body>
                 <div className="task-details">
                     <p className="text-start mb-3">{task.description}</p>
-                    <div className="text-end justify-content-between text-muted">
+                    <div className="text-end text-muted">
                         Deadline:{" "}
                         {task.deadline && new Date(task.deadline).getFullYear() !== 1970
                             ? new Date(task.deadline).toLocaleDateString()
                             : "X"}
                     </div>
                 </div>
-            </Accordion.Body>
-        </Accordion.Item>
+            </Card.Body>
+        </Card>
     );
 };
 
