@@ -27,6 +27,7 @@ export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId
         receiverId: '',
         resourceType,
         resourceId,
+        resourceName: '',
         createdDate: new Date(),
     });
 
@@ -54,10 +55,9 @@ export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId
             setToastColor('green');
             setShowToast(true);
 
-            // Delay the modal close to allow the toast to show
             setTimeout(() => {
                 onClose();
-            }, 2000); // 2 seconds delay
+            }, 2000);
         } catch {
             setToastMessage('Failed to submit feedback');
             setToastColor('red');
@@ -121,7 +121,6 @@ export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId
                 </Modal.Body>
             </Modal>
 
-            {/* Toast outside of modal lifecycle */}
             <NotificationToast
                 show={showToast}
                 title="Feedback Operation"

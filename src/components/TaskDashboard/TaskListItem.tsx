@@ -1,6 +1,8 @@
 import { StatusEnum } from "../../Enums/StatusEnum";
 import { Accordion } from "react-bootstrap";
 import { FullTaskDto } from "../../dtos/FullTaskDto";
+import { FeedbackButton } from '../Feedback/FeedbackButton';
+import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 
 interface TaskListItemProps {
     task: FullTaskDto;
@@ -85,6 +87,7 @@ const TaskListItem = ({ task, eventKey, onEditClick, isEditMode }: TaskListItemP
                             : "X"}
                     </div>
                 </div>
+                <FeedbackButton resourceId={task.id ?? 0} resourceType={ResourceTypeEnum.Task} />
             </Accordion.Body>
         </Accordion.Item>
     );
