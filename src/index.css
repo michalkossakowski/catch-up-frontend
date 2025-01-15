@@ -2,16 +2,16 @@
   text-align: center;
 }
 .downloadIcon {
-  color: #73e2e3
+  color: #00fbff
 }
 .downloadIcon:hover {
-  color: #1aab67;
+  color: #73ff00;
 }
 .deleteIcon:hover {
-  color: #1aab67;
+  color: #73ff00;
 }
 .deleteIcon {
-  color: #f55050;
+  color: #ff0000;
 }
 /*
 a {

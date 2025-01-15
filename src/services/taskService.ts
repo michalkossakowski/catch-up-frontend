@@ -2,6 +2,10 @@ import axiosInstance from '../../axiosConfig'
 import {TaskDto, TaskResponse} from "../dtos/TaskDto"
 import { FullTaskDto } from "../dtos/FullTaskDto.ts";
 
+interface DeleteTaskResponse {
+    message: string;
+}
+
 export const assignTask = async (task: TaskDto): Promise<TaskDto> => {
     try {
         const response = await axiosInstance.post<TaskResponse>('/Task/AddTaskToUser', task);
@@ -18,6 +22,16 @@ export const editTask = async (task: FullTaskDto, taskId: number, mentorId: stri
         return response.data.fullTask;
     } catch (error: any) {
         handleError('editTask', error);
+        throw error;
+    }
+}
+
+export const deleteTask = async (taskId: number): Promise<string> => {
+    try {
+        const response = await axiosInstance.delete<DeleteTaskResponse>(`/Task/Delete/${taskId}`);
+        return response.data.message;
+    } catch (error: any) {
+        handleError('deleteTask', error);
         throw error;
     }
 }
