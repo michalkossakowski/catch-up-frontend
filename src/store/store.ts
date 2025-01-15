@@ -13,6 +13,7 @@ const persistConfig = {
   key: 'root',
   storage,
     //   blacklist: ['schooling'], // Wyklucz schooling z persystencji
+    blacklist: ['tasks'], // now we get fresh tasks after refresh
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

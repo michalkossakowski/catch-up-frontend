@@ -10,7 +10,7 @@ import {getCategories} from "../../services/categoryService.ts";
 import materialService from "../../services/materialService.ts";
 import {CategoryDto} from "../../dtos/CategoryDto.ts";
 import {MaterialDto} from "../../dtos/MaterialDto.ts";
-import {fetchTasks, updateTaskLocally} from "../../store/taskSlice.ts";
+import {fetchTasks, updateTaskLocally, deleteTaskLocally } from "../../store/taskSlice.ts";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch, RootState} from "../../store/store.ts";
 import {TaskContentDto} from "../../dtos/TaskContentDto.ts";
@@ -95,6 +95,13 @@ function TaskManager() {
         dispatch(updateTaskLocally(updatedTask));
     };
 
+    // on task delete
+    const handleTaskDelete = (taskId: number) => {
+        if (selectedNewbie) {
+            dispatch(deleteTaskLocally({ taskId, newbieId: selectedNewbie }));
+        }
+    };
+
     return (
         <div className="container">
             <h2>Task Manager</h2>
@@ -175,6 +182,7 @@ function TaskManager() {
                         tasks={filteredTasks}
                         loading={loading}
                         onTaskUpdate={handleTaskUpdate}
+                        onTaskDelete={handleTaskDelete}
                         isEditMode={true}
                         categories={categories}
                         materials={materials}
