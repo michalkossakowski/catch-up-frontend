@@ -95,6 +95,7 @@ const TaskListItem = ({ task, onEditClick, onDeleteClick, isEditMode, onStatusCh
                             </div>
                         </>
                     )}
+                    <FeedbackButton resourceId={task.id ?? 0} resourceType={ResourceTypeEnum.Task} />
                     <Form.Select
                         value={task.status}
                         onChange={(e) => handleStatusChange(e.target.value)}
@@ -124,7 +125,6 @@ const TaskListItem = ({ task, onEditClick, onDeleteClick, isEditMode, onStatusCh
                             : "X"}
                     </div>
                 </div>
-                <FeedbackButton resourceId={task.id ?? 0} resourceType={ResourceTypeEnum.Task} />
             </Card.Body>
         </Card>
     );
