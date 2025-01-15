@@ -2,6 +2,8 @@ import { StatusEnum } from "../../Enums/StatusEnum";
 import { Card, Form } from "react-bootstrap";
 import { FullTaskDto } from "../../dtos/FullTaskDto";
 import { setTaskStatus } from "../../services/taskService";
+import { FeedbackButton } from '../Feedback/FeedbackButton';
+import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 
 interface TaskListItemProps {
     task: FullTaskDto;
@@ -122,6 +124,7 @@ const TaskListItem = ({ task, onEditClick, onDeleteClick, isEditMode, onStatusCh
                             : "X"}
                     </div>
                 </div>
+                <FeedbackButton resourceId={task.id ?? 0} resourceType={ResourceTypeEnum.Task} />
             </Card.Body>
         </Card>
     );
