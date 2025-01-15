@@ -6,10 +6,11 @@ interface TaskListItemProps {
     task: FullTaskDto;
     eventKey: string;
     onEditClick: (task: FullTaskDto) => void;
+    onDeleteClick: (task: FullTaskDto) => void;
     isEditMode: boolean;
 }
 
-const TaskListItem = ({ task, eventKey, onEditClick, isEditMode }: TaskListItemProps) => {
+const TaskListItem = ({ task, eventKey, onEditClick, onDeleteClick, isEditMode }: TaskListItemProps) => {
     const getStatusInfo = (status: StatusEnum): { iconClass: string; text: string; colorClass: string } => {
         switch (status) {
             case StatusEnum.ToDo:
@@ -60,15 +61,26 @@ const TaskListItem = ({ task, eventKey, onEditClick, isEditMode }: TaskListItemP
                     <div className="h5 mb-0">{task.title}</div>
                     <div className="d-flex align-items-center gap-2">
                         {isEditMode && (
-                            <div
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onEditClick(task);
-                                }}
-                                className="btn btn-primary"
-                            >
-                                Edit
-                            </div>
+                            <>
+                                <div
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onEditClick(task);
+                                    }}
+                                    className="btn btn-primary"
+                                >
+                                    Edit
+                                </div>
+                                <div
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onDeleteClick(task);
+                                    }}
+                                    className="btn btn-danger"
+                                >
+                                    Delete
+                                </div>
+                            </>
                         )}
                         <span className="text-muted">{text}</span>
                         <i className={`${iconClass} ${colorClass} fs-4`}></i>

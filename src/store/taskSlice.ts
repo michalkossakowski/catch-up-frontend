@@ -45,6 +45,14 @@ const taskSlice = createSlice({
                 }
             }
         },
+        deleteTaskLocally: (state, action: PayloadAction<{ taskId: number, newbieId: string }>) => {
+            const { taskId, newbieId } = action.payload;
+            if (state.tasksByUser[newbieId]) {
+                state.tasksByUser[newbieId] = state.tasksByUser[newbieId].filter(
+                    task => task.id !== taskId
+                );
+            }
+        },
         clearTasks: (state) => {
             state.tasksByUser = {};
             state.error = null;
@@ -68,5 +76,5 @@ const taskSlice = createSlice({
     },
 });
 
-export const { updateTaskLocally, clearTasks } = taskSlice.actions;
+export const { updateTaskLocally, deleteTaskLocally, clearTasks } = taskSlice.actions;
 export default taskSlice.reducer;
