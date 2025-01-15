@@ -60,7 +60,6 @@ function App() {
                                     )}
                                     <NavLink to="/faq" className="nav-link">FAQ</NavLink>
                                     <NavLink to="/schoolinglist" className="nav-link">Schoolings</NavLink>
-                                    <NavLink to="/employesassignment" className="nav-link">Employes Assignment</NavLink>
                                     {role !== 'Newbie' && (
                                         <NavLink to="/taskmanage" className="nav-link">Manage Tasks</NavLink>
                                     )}
@@ -73,6 +72,8 @@ function App() {
                                             <NavDropdown.Item as={NavLink} to="/admin" className="nav-link">Admin Panel</NavDropdown.Item>
                                             <NavDropdown.Divider />
                                             <NavDropdown.Item as={NavLink} to="/editMatList" className="nav-link">MaterialList</NavDropdown.Item>
+                                            <NavDropdown.Divider />
+                                            <NavDropdown.Item as={NavLink} to="/employesassignment" className="nav-link">Employes Assignment</NavDropdown.Item>
                                         </NavDropdown>
                                     )}
                                 </Nav>
