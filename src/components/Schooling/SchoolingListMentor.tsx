@@ -135,10 +135,10 @@ const SchoolingListMentor: React.FC = () => {
         dispatch(clearSchooling())
         navigate('/schoolingedit')
     }
-    const gotAssignmentPage = (schooling: FullSchoolingDto) => {
-        dispatch(setSchooling(schooling))
-        navigate('/schoolingassignment')
-    }
+    // const gotAssignmentPage = (schooling: FullSchoolingDto) => {
+    //     dispatch(setSchooling(schooling))
+    //     navigate('/schoolingassignment')
+    // }
     const handleDelete = () => {
         if(schoolingIdToDelete){
             schoolingService.archiveSchooling(schoolingIdToDelete)
@@ -258,12 +258,12 @@ const SchoolingListMentor: React.FC = () => {
                                     >
                                         Edit
                                     </Button>
-                                    <Button
+                                    {/* <Button
                                         variant="info"
                                         onClick={() => gotAssignmentPage(item)}
                                     >
                                         Un/Assign Schooling
-                                    </Button>
+                                    </Button> */}
                                     <Button
                                         variant="danger"
                                         onClick={() => handleDeleteButton(item)}
