@@ -14,7 +14,7 @@ export default function FaqItem(props: FaqProps): React.ReactElement {
 
     return(
         <>
-            <Accordion.Item eventKey={props.faq.id.toString()} key={props.faq.id}>
+            <Accordion.Item eventKey={props.faq.id.toString()} key={props.faq.id} data-material-id={props.faq.materialId}>
                 <Accordion.Header>
                     {props.index}. {props.faq.question}
                 </Accordion.Header>
