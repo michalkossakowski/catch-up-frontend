@@ -25,6 +25,8 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     const [showEdit, setShowEdit] = useState(false);
     const [editedTaskContent, setEditedTaskContent] = useState<TaskContentDto | null>();
     const [categories, setCategories] = useState<CategoryDto[]>([]);
+    const [debouncedSearchTitle, setDebouncedSearchTitle] = useState('');
+    const debounceTimeout = 200;
 
     useEffect(() => {
         getAllTaskContents();
@@ -32,6 +34,26 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
             .then((data) => setCategories(data))
             .catch((error) => console.error('Error loading categories:', error));
     }, []);
+
+    useEffect(() => {
+        const handler = setTimeout(() => setDebouncedSearchTitle(searchTitle), debounceTimeout);
+        return () => clearTimeout(handler);
+    }, [searchTitle]);
+
+    useEffect(() => {
+        if (debouncedSearchTitle) {
+            setLoading(true);
+            getByTitle(debouncedSearchTitle)
+                .then((data) => setTaskContents(data))
+                .catch((error) => console.error('Error during search:', error))
+                .finally(() => setLoading(false));
+        } else {
+            getTaskContents()
+                .then((data) => setTaskContents(data))
+                .catch((error) => console.error('Error loading task contents:', error))
+                .finally(() => setLoading(false));
+        }
+    }, [debouncedSearchTitle]);
 
     const getAllTaskContents = () => {
         console.log('Pobieranie task contents');
