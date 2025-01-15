@@ -54,7 +54,7 @@ const TaskListItem = ({ task, eventKey, onEditClick, isEditMode }: TaskListItemP
     const { iconClass, text, colorClass } = getStatusInfo(task.status!);
 
     return (
-        <Accordion.Item eventKey={eventKey} className="mb-2">
+        <Accordion.Item eventKey={eventKey} className="">
             <Accordion.Header>
                 <div className="d-flex align-items-center justify-content-between w-100 pe-2">
                     <div className="h5 mb-0">{task.title}</div>
