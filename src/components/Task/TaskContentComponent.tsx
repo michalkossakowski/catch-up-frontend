@@ -8,8 +8,6 @@ import TaskContentEdit from './TaskContentEdit';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { getCategories } from '../../services/categoryService';
 import { removeTaskFromAllPresets } from '../../services/taskPresetService';
-import { FeedbackButton } from '../Feedback/FeedbackButton';
-import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 
 interface TaskContentComponentProps {
     isAdmin: boolean;
@@ -213,7 +211,6 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                                                 </Button>
                                             </div>
                                         )}
-                                        <FeedbackButton resourceId={taskContent.id} resourceType={ResourceTypeEnum.Task} />
                                     </Accordion.Body>
                                 </Accordion.Item>
                             ))}
