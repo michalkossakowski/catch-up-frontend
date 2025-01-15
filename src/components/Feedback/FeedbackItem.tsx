@@ -26,7 +26,7 @@ const FeedbackItem: React.FC<FeedbackItemProps> = ({ feedback, isAdmin, onDelete
             <td>{ResourceTypeEnum[feedback.resourceType]}</td>
             <td>{feedback.resourceName || 'No title'}</td>
             <td>
-                {isAdmin && (
+                {(
                     <button
                         className="btn btn-danger"
                         data-bs-toggle="modal"
