@@ -170,13 +170,12 @@ const Material: React.FC<MaterialProps> = ({
               className={`form-control ${!materialNameValidation && showValidation ? 'is-invalid' : ''}`}
               value={materialName}
               onChange={(e) => validateMaterialName(e.target.value)}
-              required={showValidation}
             />
             <button 
               className={`btn ${!materialNameValidation && showValidation ? 'btn-outline-secondary' : 'btn-secondary'}` }
               type="button" 
               onClick={createMaterial} 
-              disabled={showValidation && !materialNameValidation || (materialName.length == 0)} 
+              disabled={showValidation && !materialNameValidation} 
             >
               Create
             </button>
