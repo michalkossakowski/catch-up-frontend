@@ -119,6 +119,7 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
                         showDownloadFile={true}
                         showAddingFile={true}
                         materialCreated={materialCreated}
+                        showValidation={isEditMode}
                     />
                 </div>
                 <div className='buttonBox'>

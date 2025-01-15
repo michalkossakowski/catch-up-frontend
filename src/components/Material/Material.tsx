@@ -176,7 +176,7 @@ const Material: React.FC<MaterialProps> = ({
               className={`btn ${!materialNameValidation && showValidation ? 'btn-outline-secondary' : 'btn-secondary'}` }
               type="button" 
               onClick={createMaterial} 
-              disabled={showValidation && !materialNameValidation} 
+              disabled={showValidation && !materialNameValidation || (materialName.length == 0)} 
             >
               Create
             </button>
