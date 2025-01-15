@@ -18,7 +18,7 @@ import {getTaskContents} from "../../services/taskContentService.ts";
 import "./TaskManager.css";
 
 function TaskManager() {
-    const { user } = useAuth();
+    const { user, getRole } = useAuth();
     const mentorId = user?.id;
 
     const [localError, setLocalError] = useState<string | null>(null);
@@ -49,18 +49,33 @@ function TaskManager() {
         setLocalError(null);
         const fetchData = async () => {
             try {
-                const [categoriesData, materialsData, newbieList, taskContentsData] = await Promise.all([
+                const userRole = await getRole(user?.id!);
+
+                const [categoriesData, materialsData, taskContentsData] = await Promise.all([
                     getCategories(),
                     materialService.getAllMaterials(),
-                    NewbieMentorService.getAssignmentsByMentor(mentorId!),
                     getTaskContents()
                 ]);
+
+                let newbieList;
+                if (userRole === "Admin") {
+                    newbieList = await NewbieMentorService.getAllNewbies();
+                } else if (userRole === "Mentor") {
+                    newbieList = await NewbieMentorService.getAssignmentsByMentor(mentorId!);
+                } else {
+                    throw new Error("Unauthorized access");
+                }
+
                 setCategories(categoriesData);
                 setMaterials(materialsData);
                 setNewbies(newbieList);
                 setTaskContents(taskContentsData);
             } catch (err) {
-                setLocalError("Unable to connect to the server. Please try again later.");
+                if (err instanceof Error) {
+                    setLocalError(err.message);
+                } else {
+                    setLocalError("Unable to connect to the server. Please try again later.");
+                }
             }
         };
 
