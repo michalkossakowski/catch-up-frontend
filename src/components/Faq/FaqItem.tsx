@@ -23,7 +23,6 @@ export default function FaqItem(props: FaqProps): React.ReactElement {
 
                     {props.faq.materialId && (
                         <div>
-                            Additional materials:
                             <Material materialId={props.faq.materialId} showDownloadFile={true}/>
                         </div>  
                     )}
