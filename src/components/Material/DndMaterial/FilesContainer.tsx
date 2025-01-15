@@ -2,8 +2,7 @@ import FileItem from "./FileItem";
 import fileService from "../../../services/fileService";
 import { useEffect, useState } from "react";
 import { FileDto } from "../../../dtos/FileDto";
-import { Form } from "react-bootstrap";
-import ErrorMessage from "../../ErrorMessage";
+import { Alert, Form } from "react-bootstrap";
 import React from "react";
 import Loading from "../../Loading/Loading";
 interface FilesContainerProps {
@@ -15,8 +14,8 @@ const FilesContainer: React.FC<FilesContainerProps> = ({ excludedFileIds }) => {
     const [searchTerm, setSearchTerm] = useState<string>('')
 
     // Obsługa error-ów
-    const [errorShow, setErrorShow] = React.useState(false)
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [showAlert, setShowAlert] = useState(false)
+    const [alertMessage, setAlertMessage] = useState('')
 
     const [loading, setLoading] = useState(true)
     
@@ -25,8 +24,8 @@ const FilesContainer: React.FC<FilesContainerProps> = ({ excludedFileIds }) => {
             try {
                 setFileList(await fileService.getAllFiles())
             } catch (error) {
-                setErrorMessage("Error fetching files: "+ error)
-                setErrorShow(true)
+                setAlertMessage("Error fetching files: "+ error)
+                setShowAlert(true)
             } finally {
                 setLoading(false)
             }
@@ -44,13 +43,11 @@ const FilesContainer: React.FC<FilesContainerProps> = ({ excludedFileIds }) => {
 
     return (
         <div className="container-md">
-            <ErrorMessage
-                message={errorMessage || 'Undefine error'}
-                show={errorShow}
-                onHide={() => {
-                    setErrorShow(false);
-                    setErrorMessage(null);
-                }} />
+        {showAlert &&(
+            <Alert className='alert' variant='danger'>
+                {alertMessage}
+            </Alert>
+        )}
             <Form.Control
                 size="lg"
                 className="mb-4"

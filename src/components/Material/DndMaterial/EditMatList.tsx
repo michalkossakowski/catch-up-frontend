@@ -3,19 +3,18 @@ import { DndContext } from '@dnd-kit/core'
 import FilesContainer from './FilesContainer'
 import MaterialsContainer from './MaterialsContainer'
 import materialService from '../../../services/materialService'
-import ErrorMessage from '../../ErrorMessage'
 import styles from '../Material.module.css';
+import { Alert } from 'react-bootstrap'
 
 const EditMatList: React.FC = () => {
   const [materialIdToUpdate, setMaterialIdToUpdate] = useState<number | undefined>()
   const [addedFilesCounter, setAddedFilesCounter] = useState(0)
   const [assignedFileIds, setAssignedFileIds] = useState<number[]>([])
   const [materialAccordion, setMaterialAccordion] = useState<number | null>(null)
-  // const [fileContainerKey, setFileContainerKey] = useState(0);
 
   // Obsługa error-ów
-  const [errorShow, setErrorShow] = React.useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showAlert, setShowAlert] = useState(false)
+  const [alertMessage, setAlertMessage] = useState('')
 
   const handleMaterialSelect = (materialId: number, fileIds: number[], action: string) => {
     switch (action){
@@ -65,20 +64,18 @@ const EditMatList: React.FC = () => {
         setAssignedFileIds([...assignedFileIds, draggedFileId])
         handleMaterialUpdate(targetMaterialId)
       } catch (error) {
-        setErrorMessage(`Error adding file ${draggedFileId} to material ${targetMaterialId}: ` + error)
-        setErrorShow(true)
+        setAlertMessage(`Error adding file ${draggedFileId} to material ${targetMaterialId}: ` + error)
+        setShowAlert(true)
       }
     }
   }
   return (
     <div className="row align-items-start m-3">
-      <ErrorMessage
-        message={errorMessage || 'Undefine error'}
-        show={errorShow}
-        onHide={() => {
-          setErrorShow(false);
-          setErrorMessage(null);
-        }} />
+    {showAlert &&(
+    <Alert className='alert' variant='danger'>
+      {alertMessage}
+    </Alert>
+      )}
       <DndContext onDragEnd={handleDragEnd}>
         <div className="col">
           <MaterialsContainer

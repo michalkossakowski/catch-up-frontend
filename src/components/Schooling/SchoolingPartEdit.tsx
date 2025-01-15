@@ -56,16 +56,15 @@ const SchoolingPartEdit: React.FC = () => {
             id: editedPart?.id ?? undefined,
             name: values.name,
             content: values.content,
-            materials: []
+            materials: editedPart?.materials ?? []
         }
         try {
             if (id && fullSchooling) {
-                await schoolingService.editSchoolingPart(part)                
+                await schoolingService.editSchoolingPart(part)
                 const updatedParts = fullSchooling.parts?.map(p => p.id === part.id ? {... p, ...part} : p)
                 const updatedSchooling: FullSchoolingDto = {
                     ...fullSchooling,
                     parts: updatedParts || []
-
                 }
                 dispatch(setSchooling(updatedSchooling));
                 setToastMessage("Schooling part edited successfully");

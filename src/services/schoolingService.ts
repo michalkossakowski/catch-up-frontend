@@ -119,7 +119,6 @@ const schoolingService =
     editSchoolingPart: async(schoolingPart: SchoolingPartDto) => {
         try 
         {
-            console.log("sdsds")
             const response = await axiosInstance.put(`/Schooling/EditSchoolingPart/`, schoolingPart)
             return response
         } 
