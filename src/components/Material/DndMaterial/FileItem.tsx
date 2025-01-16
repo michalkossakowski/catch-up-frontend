@@ -8,6 +8,12 @@ const FileItem: React.FC<DndFile> = ({fileDto}) => {
     const {attributes, listeners, setNodeRef, transform} = useDraggable({
         id: fileDto.id.toString()
       });
+    const shortedFileName =  (fileDto: FileDto, limit: number = 32) => {
+        if (fileDto?.name && fileDto.name.length > limit) {
+            return fileDto.name.slice(0, limit) + "...";
+        }
+        return fileDto?.name;
+    }
 
     const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
@@ -19,7 +25,7 @@ const FileItem: React.FC<DndFile> = ({fileDto}) => {
             {...attributes}
             style={style}
         >
-            {fileDto.name}
+            {shortedFileName(fileDto, 32)}
         </div>
     )
   }
