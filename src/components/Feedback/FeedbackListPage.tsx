@@ -109,7 +109,6 @@ const FeedbackListPage: React.FC = () => {
                     </table>
                 )}
 
-                {/* Confirmation Modal */}
                 <ConfirmModal
                     show={!!feedbackToDelete}
                     title="Delete Feedback"
@@ -119,7 +118,6 @@ const FeedbackListPage: React.FC = () => {
                 />
             </div>
 
-            {/* Toast outside of modal lifecycle */}
             <NotificationToast
                 show={showToast}
                 title="Feedback Operation"
