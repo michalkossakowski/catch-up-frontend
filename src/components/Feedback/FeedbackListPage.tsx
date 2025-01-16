@@ -4,7 +4,7 @@ import { getFeedbacks, deleteFeedback } from '../../services/feedbackService';
 import { FeedbackDto } from '../../dtos/FeedbackDto';
 import NotificationToast from '../Toast/NotificationToast';
 import Loading from '../Loading/Loading';
-import { getRole, getUserById } from '../../services/userService';
+import { getRole } from '../../services/userService';
 import FeedbackItem from './FeedbackItem';
 import ConfirmModal from '../Modal/ConfirmModal'; 
 
@@ -27,20 +27,7 @@ const FeedbackListPage: React.FC = () => {
                 const userRoleResponse = await getRole(user.id ?? 'defaultId');
                 setIsAdmin(userRoleResponse !== 'Newbie');
                 const feedbackList = await getFeedbacks(user.id ?? 'defaultId', userRoleResponse !== 'Newbie');
-                const feedbacksWithDetails = await Promise.all(feedbackList.map(async (feedback) => {
-                    const sender = await getUserById(feedback.senderId);
-                    const receiver = await getUserById(feedback.receiverId);
-    
-                    return { 
-                        ...feedback, 
-                        senderName: sender.name, 
-                        senderSurname: sender.surname,
-                        receiverName: receiver.name, 
-                        receiverSurname: receiver.surname,
-                    };
-                }));
-    
-                setFeedbacks(feedbacksWithDetails);
+                setFeedbacks(feedbackList);
             } catch (error) {
                 setApiError(true);
             } finally {

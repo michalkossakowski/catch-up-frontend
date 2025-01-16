@@ -8,7 +8,7 @@ type FeedbackItemProps = {
     onDeleteClick: (feedback: FeedbackDto) => void;
 };
 
-const FeedbackItem: React.FC<FeedbackItemProps> = ({ feedback, isAdmin, onDeleteClick }) => {
+const FeedbackItem: React.FC<FeedbackItemProps> = ({ feedback, onDeleteClick }) => {
     const truncateDescription = (description: string): string => {
         return description.length > 300 ? description.substring(0, 300) + '...' : description;
     };
@@ -17,11 +17,7 @@ const FeedbackItem: React.FC<FeedbackItemProps> = ({ feedback, isAdmin, onDelete
         <tr key={feedback.id}>
             <td>{feedback.title}</td>
             <td>{truncateDescription(feedback.description)}</td>
-            <td>
-                {isAdmin
-                    ? `${feedback.senderName} ${feedback.senderSurname}`
-                    : `${feedback.receiverName} ${feedback.receiverSurname}`}
-            </td>
+            <td>{feedback.userName}</td>
             <td>{new Date(feedback.createdDate).toLocaleDateString()}</td>
             <td>{ResourceTypeEnum[feedback.resourceType]}</td>
             <td>{feedback.resourceName || 'No title'}</td>
