@@ -185,7 +185,7 @@ const SchoolingListNewbie: React.FC = () => {
                     </Row>
                 </div>
                 {loading && (
-                    <div className='mt-3'>
+                    <div className='mt-4 mb-4'>
                         <Loading/>
                     </div>
                 )}
