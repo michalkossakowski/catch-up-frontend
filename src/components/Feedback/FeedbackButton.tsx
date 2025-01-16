@@ -20,11 +20,9 @@ export const FeedbackButton: React.FC<FeedbackButtonProps> = ({ resourceId, reso
 
     return (
         <>
-            <div className="d-flex mt-3 mb-3 btn-group">
                 <button type="button" className="btn btn-info" onClick={handleOpenDialog}>
                     Feedback
                 </button>
-            </div>
             {showDialog && (
                 <AddFeedbackDialog
                     resourceId={resourceId}
