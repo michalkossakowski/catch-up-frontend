@@ -117,38 +117,38 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
         e.preventDefault();
 
         let finalCategoryId = categoryId;
-        console.log('Submit - Initial values:', {
-            selectedCategory,
-            searchTerm,
-            categoryId
-        });
+        // console.log('Submit - Initial values:', {
+        //     selectedCategory,
+        //     searchTerm,
+        //     categoryId
+        // });
 
         if (selectedCategory && !selectedCategory.id && typeof searchTerm === 'string' && searchTerm.trim()) {
-            console.log('Attempting to create new category:', searchTerm);
+            // console.log('Attempting to create new category:', searchTerm);
             try {
                 const isNameUnique = await isUnique(searchTerm);
-                console.log('Is category name unique:', isNameUnique);
+                // console.log('Is category name unique:', isNameUnique);
 
                 if (isNameUnique) {
                     const newCategory = await addCategory({ id: 0, name: searchTerm });
-                    console.log('New category created:', newCategory);
+                    // console.log('New category created:', newCategory);
 
                     const updatedCategories = await getCategories();
                     const createdCategory = updatedCategories.find(c =>
                         (c.name || '').toLowerCase() === searchTerm.toLowerCase()
                     );
-                    console.log('Found created category:', createdCategory);
+                    // console.log('Found created category:', createdCategory);
 
                     if (createdCategory) {
                         finalCategoryId = createdCategory.id;
-                        console.log('Set finalCategoryId to:', finalCategoryId);
+                        // console.log('Set finalCategoryId to:', finalCategoryId);
                     }
                 }
             } catch (error) {
                 console.error('Error creating category:', error);
             }
         } else {
-            console.log('Conditions not met for category creation');
+            // console.log('Conditions not met for category creation');
         }
 
 
@@ -210,7 +210,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
                         key={key}
                         value={selectedCategory}
                         onChange={(_, newValue) => {
-                            console.log('onChange value:', newValue);
+                            // console.log('onChange value:', newValue);
                             if (typeof newValue === 'string') {
                                 const newCategory = { id: 0, name: newValue };
                                 setSelectedCategory(newCategory);
@@ -227,7 +227,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
                             }
                         }}
                         onInputChange={(_, newInputValue) => {
-                            console.log('onInputChange value:', newInputValue);
+                            // console.log('onInputChange value:', newInputValue);
                             setSearchTerm(newInputValue);
                             if (newInputValue) {
                                 const newCategory = { id: 0, name: newInputValue };

@@ -35,11 +35,11 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     }, []);
 
     const getAllTaskContents = () => {
-        console.log('Pobieranie task contents');
+        // console.log('Pobieranie task contents');
         setLoading(true);
         getTaskContents()
             .then((data) => {
-                console.log('Pobrane dane:', data);
+                // console.log('Pobrane dane:', data);
                 setTaskContents(data);
                 setShowError(false);
             })
@@ -72,15 +72,15 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
 
     const handleDelete = async (taskContentId: number) => {
         try {
-            console.log('Starting deletion process for taskContentId:', taskContentId);
+            // console.log('Starting deletion process for taskContentId:', taskContentId);
             
-            console.log('Removing task from all presets...');
+            // console.log('Removing task from all presets...');
             await removeTaskFromAllPresets(taskContentId);
-            console.log('Successfully removed task from all presets');
+            // console.log('Successfully removed task from all presets');
             
-            console.log('Deleting task content...');
+            // console.log('Deleting task content...');
             await deleteTaskContent(taskContentId);
-            console.log('Successfully deleted task content');
+            // console.log('Successfully deleted task content');
             
             getAllTaskContents();
             
