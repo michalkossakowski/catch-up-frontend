@@ -57,7 +57,11 @@ const FeedbackListPage: React.FC = () => {
     };
 
     if (isLoading) {
-        return <Loading />;
+        return (
+            <div className="m-3">
+                <Loading />
+            </div>
+        );
     }
 
     if (apiError) {
