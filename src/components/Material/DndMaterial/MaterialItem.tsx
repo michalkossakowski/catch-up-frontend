@@ -171,7 +171,12 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, addedFiles, on
       return prevMaterial;
     });
   };
-  
+  const shortedFileName =  (fileDto: FileDto, limit: number = 32) => {
+      if (fileDto?.name && fileDto.name.length > limit) {
+          return fileDto.name.slice(0, limit) + "...";
+      }
+      return fileDto?.name;
+  }
 
   return (
     <>
@@ -215,7 +220,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, addedFiles, on
         <Accordion.Body ref={setNodeRef}>
           {material?.files && material.files.map((file) => (
             <div className="badge text-bg-secondary p-3 m-1 position-relative" key={file.id}>
-              {file.name}
+              {shortedFileName(file, 64)}
               <a onClick={isEditing ? () => handleDeleteFile(file.id) : undefined} className={`fs-5 position-absolute top-0 start-100 translate-middle pt-2 pe-2 ${(isEditing ? "visible" : "invisible")}`}>
                       <i className={`bi bi-trash2-fill deleteIcon `}></i>
                   </a>

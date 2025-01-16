@@ -126,6 +126,13 @@ const Material: React.FC<MaterialProps> = ({
     }
   };
 
+  const shortedFileName =  (fileDto: FileDto, limit: number = 32) => {
+      if (fileDto?.name && fileDto.name.length > limit) {
+          return fileDto.name.slice(0, limit) + "...";
+      }
+      return fileDto?.name;
+  }
+
   return (
     <section className="container mt-3 p-0">
       <ErrorMessage
@@ -141,7 +148,7 @@ const Material: React.FC<MaterialProps> = ({
           <div className="border rounded-2 p-1">
             {material.files?.map((file) => (
                 <div className="badge text-bg-secondary p-4 m-2 me-3 position-relative" key={`${file.id}-${file.name}`}>
-                  <span>{file.name}</span>
+                  <span>{shortedFileName(file, 128)}</span>
                   {showDownloadFile && (
                   <a onClick={() => downloadFile(file.id)} className='position-absolute translate-middle' style={{left: "100%", top:"15%" }}>
                       <i className={`bi bi-file-arrow-down-fill fs-3 downloadIcon `}></i>
