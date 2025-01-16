@@ -65,7 +65,7 @@ const FeedbackListPage: React.FC = () => {
     }
 
     if (apiError) {
-        return <div className="alert alert-danger text-center">Error: API is not available</div>;
+        return <div className="alert alert-danger text-center mt-5 mb-5 ms-6 me-6 container">Error: API is not available</div>;
     }
 
     return (
