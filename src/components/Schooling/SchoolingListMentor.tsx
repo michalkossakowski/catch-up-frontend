@@ -233,7 +233,7 @@ const SchoolingListMentor: React.FC = () => {
                 {!loading && (
                 <Accordion className="text-start mt-3 mb-3">
                     {filteredSchoolings.length === 0 ? (
-                    <Alert variant="warning">No schoolings found</Alert>
+                    <> </>
                     ) : (
                     filteredSchoolings.map((item, index) => (
                         <Accordion.Item key={index} eventKey={index.toString()}>

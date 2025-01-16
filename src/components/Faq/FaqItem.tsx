@@ -29,8 +29,9 @@ export default function FaqItem(props: FaqProps): React.ReactElement {
                         </div>  
                     )}
 
+                <div className='buttonBox'>
                     {props.isAdmin && (
-                        <div className='buttonBox'>
+                        <>
                             <Button
                                 variant="primary"
                                 onClick={() => props.editClick(props.faq.id)}>
@@ -41,9 +42,11 @@ export default function FaqItem(props: FaqProps): React.ReactElement {
                                 onClick={() => props.deleteClick(props.faq.id)}>
                                 Delete
                             </Button>
-                        </div>
+                        </>
+
                     )}
                     <FeedbackButton resourceId={props.faq.id} resourceType={ResourceTypeEnum.Faq} />
+                    </div>
                 </Accordion.Body>
             </Accordion.Item>
         </>
