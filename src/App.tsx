@@ -29,6 +29,7 @@ import SchoolingPartEdit from './components/Schooling/SchoolingPartEdit.tsx';
 import SchoolingAssignment from './components/Schooling/SchoolingAssignment.tsx';
 import PresetAssign from './components/Preset/PresetAssign';
 import FeedbackList from './components/Feedback/FeedbackListPage.tsx';
+import '../css/catchUpNight.css';
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();

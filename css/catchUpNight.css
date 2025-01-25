@@ -1,0 +1,145 @@
+[data-bs-theme=catchUpNight] {
+    color-scheme: dark;
+    --bs-body-color: #dee2e6;
+    --bs-body-color-rgb: 222, 226, 230;
+    --bs-body-bg: #000000;
+    --bs-body-bg-rgb: 33, 37, 41;
+    --bs-emphasis-color: #fff;
+    --bs-emphasis-color-rgb: 255, 255, 255;
+    --bs-secondary-color: rgba(222, 226, 230, 0.75);
+    --bs-secondary-color-rgb: 222, 226, 230;
+    --bs-secondary-bg: #343a40;
+    --bs-secondary-bg-rgb: 52, 58, 64;
+    --bs-tertiary-color: rgba(222, 226, 230, 0.5);
+    --bs-tertiary-color-rgb: 222, 226, 230;
+    --bs-tertiary-bg: #2b3035;
+    --bs-tertiary-bg-rgb: 43, 48, 53;
+    --bs-primary-text-emphasis: #6ea8fe;
+    --bs-secondary-text-emphasis: #a7acb1;
+    --bs-success-text-emphasis: #75b798;
+    --bs-info-text-emphasis: #6edff6;
+    --bs-warning-text-emphasis: #ffda6a;
+    --bs-danger-text-emphasis: #ea868f;
+    --bs-light-text-emphasis: #f8f9fa;
+    --bs-dark-text-emphasis: #dee2e6;
+    --bs-primary-bg-subtle: #031633;
+    --bs-secondary-bg-subtle: #161719;
+    --bs-success-bg-subtle: #051b11;
+    --bs-info-bg-subtle: #032830;
+    --bs-warning-bg-subtle: #332701;
+    --bs-danger-bg-subtle: #2c0b0e;
+    --bs-light-bg-subtle: #343a40;
+    --bs-dark-bg-subtle: #1a1d20;
+    --bs-primary-border-subtle: #084298;
+    --bs-secondary-border-subtle: #41464b;
+    --bs-success-border-subtle: #0f5132;
+    --bs-info-border-subtle: #087990;
+    --bs-warning-border-subtle: #997404;
+    --bs-danger-border-subtle: #842029;
+    --bs-light-border-subtle: #495057;
+    --bs-dark-border-subtle: #343a40;
+    --bs-heading-color: inherit;
+    --bs-link-color: #6ea8fe;
+    --bs-link-hover-color: #8bb9fe;
+    --bs-link-color-rgb: 110, 168, 254;
+    --bs-link-hover-color-rgb: 139, 185, 254;
+    --bs-code-color: #e685b5;
+    --bs-highlight-color: #dee2e6;
+    --bs-highlight-bg: #664d03;
+    --bs-border-color: #495057;
+    --bs-border-color-translucent: rgba(255, 255, 255, 0.15);
+    --bs-form-valid-color: #75b798;
+    --bs-form-valid-border-color: #75b798;
+    --bs-form-invalid-color: #ea868f;
+    --bs-form-invalid-border-color: #ea868f;
+}
+
+
+.bg-body-tertiary {
+    --bs-bg-opacity: 1;
+    background-image: linear-gradient(0deg, #000000, #343a40) !important;
+    background-color: transparent !important; /* Ustawione na transparent, aby gradient dominował */
+}
+
+.nav-link {
+    color: #FFFFFF;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    border-radius: 10px;
+    margin: 0px 2px;
+    padding: 4px;
+}
+
+.nav-link:focus, .nav-link:hover {
+    color: #DB91D1;
+}
+
+.navbar-nav .nav-link.active, .navbar-nav .nav-link.show {
+    color: #FFFFFF;
+    background-color: #DB91D1;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #DB91D1;
+    --bs-btn-border-color: #DB91D1;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #db52c9;
+    --bs-btn-hover-border-color: #db52c9;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #db52c9;;
+    --bs-btn-active-border-color: #db52c9;;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #885a82;
+    --bs-btn-disabled-border-color: #885a82;
+}
+
+.btn-success {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #5CD3B4;
+    --bs-btn-border-color: #5CD3B4;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #0bd19c;
+    --bs-btn-hover-border-color: #0bd19c;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #0a58ca;
+    --bs-btn-active-border-color: #0a53be;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #0d6efd;
+    --bs-btn-disabled-border-color: #0d6efd;
+}
+
+i {
+    color:#5CD3B4;
+}
+
+.accordion-button:not(.collapsed) {
+    color: #FFFFFF;
+    background-color: #DB91D1;
+    box-shadow: inset 0 calc(-1* var(--bs-accordion-border-width)) 0 #DB91D1;
+}
+
+.accordion-button:focus {
+    z-index: 3;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem #DB91D1;
+}
+
+.text-primary {
+    --bs-text-opacity: 1;
+    color:#DB91D1  !important;
+}
+
+/* Colors:
+pink
+#DB91D1
+green
+#5CD3B4
+yellow
+#F2E267
+*/
