@@ -294,6 +294,10 @@ i {
     box-shadow: var(--bs-toast-box-shadow);
     border-radius: var(--bs-toast-border-radius);
 }
+
+.spinner-border{
+    color: #FFFFFF !important;
+}
 /* Colors:
 pink
 #DB91D1
