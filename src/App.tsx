@@ -1,5 +1,5 @@
 import './App.css';
-import { Image } from 'react-bootstrap';
+import { Button, Image } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './components/Home/Home.tsx';
@@ -34,6 +34,7 @@ import { useLocation } from 'react-router-dom';
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
+    const [isSidebarVisible, setSidebarVisible] = useState(true); // Sidebar visibility state
 
     const fetchRole = async () => {
         if (user?.id) {
@@ -63,50 +64,163 @@ function App() {
         <>
             {user && (
                 <>
-                    <div className="d-flex">
-                        {/* Pionowy navbar po lewej stronie */}
+                <div className="d-flex">
+                    {/* Left Sidebar */}
+                    <div
+                        className={`left-sidebar ${
+                            isSidebarVisible ? "visible" : "hidden"
+                        }`}
+                    >
                         <Navbar
                             expand="lg"
-                            className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-sidebar"
+                            className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-navbar"
                         >
-                            <Navbar.Brand href="/" className="nav-brand">catchUp</Navbar.Brand>
+                            <Navbar.Brand href="/" className="nav-brand">
+                                catchUp
+                            </Navbar.Brand>
                             <Nav className="flex-column w-100">
-                                <NavLink to="/" className="nav-link"><i className="bi bi-house-door" /> Home</NavLink>
-                                {role === 'Newbie' && (
-                                    <NavLink to="/tasks" className="nav-link left-sidebar"><i className="bi bi-list-task" /> Tasks</NavLink>
+                                <NavLink to="/" className="nav-link">
+                                    <i className="bi bi-house-door" /> Home
+                                </NavLink>
+                                {role === "Newbie" && (
+                                    <NavLink
+                                        to="/tasks"
+                                        className="nav-link left-sidebar"
+                                    >
+                                        <i className="bi bi-list-task" /> Tasks
+                                    </NavLink>
                                 )}
-                                <NavLink to="/schoolinglist" className="nav-link"><i className="bi bi-book" /> Schoolings</NavLink>
-                                <NavLink to="/feedbacks" className="nav-link"><i className="bi bi-arrow-clockwise" /> Feedbacks</NavLink>
-                                <NavLink to="/badges" className="nav-link"><i className="bi bi-shield" /> Badges</NavLink>
-                                <NavLink to="/faq" className="nav-link"><i className="bi bi-question-circle" /> FAQ</NavLink>
-                                {role !== 'Newbie' && (
-                                    <NavDropdown className={isManageToolsActive ? "navdropdown-active" : ""} title={<><i className="bi bi-pencil-square" /> <a>Manage Tools</a></>}>
-                                        <NavDropdown.Item as={NavLink} to="/taskmanage" className="nav-dropdown-item"><i className="bi bi-list-task" /> Tasks</NavDropdown.Item>
+                                <NavLink
+                                    to="/schoolinglist"
+                                    className="nav-link"
+                                >
+                                    <i className="bi bi-book" /> Schoolings
+                                </NavLink>
+                                <NavLink to="/feedbacks" className="nav-link">
+                                    <i className="bi bi-arrow-clockwise" />{" "}
+                                    Feedbacks
+                                </NavLink>
+                                <NavLink to="/badges" className="nav-link">
+                                    <i className="bi bi-shield" /> Badges
+                                </NavLink>
+                                <NavLink to="/faq" className="nav-link">
+                                    <i className="bi bi-question-circle" /> FAQ
+                                </NavLink>
+                                {role !== "Newbie" && (
+                                    <NavDropdown
+                                        className={
+                                            isManageToolsActive
+                                                ? "navdropdown-active"
+                                                : ""
+                                        }
+                                        title={
+                                            <>
+                                                <i className="bi bi-pencil-square" />{" "}
+                                                <a>Manage Tools</a>
+                                            </>
+                                        }
+                                    >
+                                        <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/taskmanage"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-list-task" />{" "}
+                                            Tasks
+                                        </NavDropdown.Item>
                                         <NavDropdown.Divider />
-                                        <NavDropdown.Item as={NavLink} to="/taskcontentmanage" className="nav-dropdown-item"><i className="bi bi-kanban" /> Task Contents</NavDropdown.Item>
+                                        <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/taskcontentmanage"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-kanban" /> Task
+                                            Contents
+                                        </NavDropdown.Item>
                                         <NavDropdown.Divider />
-                                        <NavDropdown.Item as={NavLink} to="/presetmanage" className="nav-dropdown-item"><i className="bi bi-stack-overflow" /> Task Presets</NavDropdown.Item>
+                                        <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/presetmanage"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-stack-overflow" />{" "}
+                                            Task Presets
+                                        </NavDropdown.Item>
                                         <NavDropdown.Divider />
-                                        <NavDropdown.Item as={NavLink} to="/roadmapmanage" className="nav-dropdown-item"><i className="bi bi-compass" /> Road Maps</NavDropdown.Item>
+                                        <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/roadmapmanage"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-compass" /> Road
+                                            Maps
+                                        </NavDropdown.Item>
                                         <NavDropdown.Divider />
-                                        <NavDropdown.Item as={NavLink} to="/editMatList" className="nav-dropdown-item"><i className="bi bi-tools" /> Material Lists</NavDropdown.Item>
+                                        <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/editMatList"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-tools" />{" "}
+                                            Material Lists
+                                        </NavDropdown.Item>
                                     </NavDropdown>
                                 )}
-                                {role === 'Admin' && (
-                                    <NavDropdown className={isAdminToolsActive ? "navdropdown-active" : ""} title={<><i className="bi bi-person-lock" /> <a>Admin Tools</a></>}>
-                                        <NavDropdown.Item as={NavLink} to="/adminpanel" className="nav-dropdown-item"><i className="bi bi-shield-lock" /> Panel</NavDropdown.Item>
+                                {role === "Admin" && (
+                                    <NavDropdown
+                                        className={
+                                            isAdminToolsActive
+                                                ? "navdropdown-active"
+                                                : ""
+                                        }
+                                        title={
+                                            <>
+                                                <i className="bi bi-person-lock" />{" "}
+                                                <a>Admin Tools</a>
+                                            </>
+                                        }
+                                    >
+                                        <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/adminpanel"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-shield-lock" />{" "}
+                                            Panel
+                                        </NavDropdown.Item>
                                         <NavDropdown.Divider />
-                                        <NavDropdown.Item as={NavLink} to="/employesassignment" className="nav-dropdown-item"><i className="bi bi-people" /> Assignment</NavDropdown.Item>
+                                        <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/employesassignment"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-people" />{" "}
+                                            Assignment
+                                        </NavDropdown.Item>
                                     </NavDropdown>
                                 )}
                             </Nav>
                             <footer className="mt-auto">
-                                <p className="text-center text-muted small">© 2024 Made by UnhandledException</p>
+                                <p className="text-center text-muted small">
+                                    © 2024 Made by UnhandledException
+                                </p>
                             </footer>
                         </Navbar>
+                    </div>
+
+                    {/* Toggle Sidebar Button */}
+                    <Button title="Show/hide sidebar"
+                        className="btn-secondary toggle-sidebar-btn"
+                        onClick={() => setSidebarVisible(!isSidebarVisible)}
+                    >
+                        {isSidebarVisible ? <i className="bi bi-arrow-left-square"/> : <i className="bi bi-arrow-right-square"/>}
+                    </Button>
 
                         {/* Główna treść strony */}
-                        <Container fluid className="main-content">
+                        <Container
+                            fluid
+                            className={`main-content ${isSidebarVisible ? "sidebar-visible" : "sidebar-hidden"}`}
+                        >
                         <Navbar expand="lg" className="bg-body-tertiary navbar-horizontal">
                             <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap">
                                 <NavLink className="nav-link" to={`/profile/${user?.id}`}>
@@ -121,8 +235,8 @@ function App() {
                                         />
                                     </div>
                                 </NavLink>
-                                <NavLink to="/notifications" className="nav-link"><i className="bi bi-bell" /></NavLink>
-                                <NavLink to="/settings" className="nav-link"><i className="bi bi-gear" /></NavLink>
+                                <NavLink title="Notifications" to="/notifications" className="nav-link"><i className="bi bi-bell" /></NavLink>
+                                <NavLink title="Settings" to="/settings" className="nav-link"><i className="bi bi-gear" /></NavLink>
                                 <NavLink title="Logout" to="/logout" onClick={logout} className="nav-link">
                                     <i className="bi bi-box-arrow-right" />
                                 </NavLink>
