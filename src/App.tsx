@@ -24,12 +24,12 @@ import SchoolingListMentor from "./components/Schooling/SchoolingListMentor.tsx"
 import SchoolingListParts from "./components/Schooling/SchoolingListParts.tsx";
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
 import TaskManager from "./components/TaskDashboard/TaskManager.tsx";
-import Loading from './components/Loading/Loading.tsx';
 import SchoolingPartEdit from './components/Schooling/SchoolingPartEdit.tsx';
 import SchoolingAssignment from './components/Schooling/SchoolingAssignment.tsx';
 import PresetAssign from './components/Preset/PresetAssign';
 import FeedbackList from './components/Feedback/FeedbackListPage.tsx';
 import '../css/catchUpNight.css';
+import { useLocation } from 'react-router-dom';
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -45,6 +45,19 @@ function App() {
     useEffect(() => {
         fetchRole();
     }, [user?.id]);
+
+    const location = useLocation();
+    const isManageToolsActive = [
+        "/taskmanage",
+        "/taskcontentmanage",
+        "/presetmanage",
+        "/roadmapmanage",
+        "/editMatList"
+    ].some(path => location.pathname.startsWith(path));
+    const isAdminToolsActive = [
+        "/admin",
+        "/employesassignment"
+    ].some(path => location.pathname.startsWith(path));
 
     return (
         <>
@@ -67,12 +80,12 @@ function App() {
                                 <NavLink to="/badges" className="nav-link"><i className="bi bi-shield" /> Badges</NavLink>
                                 <NavLink to="/faq" className="nav-link"><i className="bi bi-question-circle" /> FAQ</NavLink>
                                 {role !== 'Newbie' && (
-                                    <NavDropdown title={<><i className="bi bi-pencil-square" /> Manage Tools</>} id="basic-nav-dropdown">
+                                    <NavDropdown className={isManageToolsActive ? "navdropdown-active" : ""} title={<><i className="bi bi-pencil-square" /> <a>Manage Tools</a></>}>
                                         <NavDropdown.Item as={NavLink} to="/taskmanage" className="nav-dropdown-item"><i className="bi bi-list-task" /> Tasks</NavDropdown.Item>
                                         <NavDropdown.Divider />
                                         <NavDropdown.Item as={NavLink} to="/taskcontentmanage" className="nav-dropdown-item"><i className="bi bi-kanban" /> Task Contents</NavDropdown.Item>
                                         <NavDropdown.Divider />
-                                        <NavDropdown.Item as={NavLink} to="/presetmanage" className="nav-dropdown-item"><i className="bi bi-stack-overflow" /> Presets</NavDropdown.Item>
+                                        <NavDropdown.Item as={NavLink} to="/presetmanage" className="nav-dropdown-item"><i className="bi bi-stack-overflow" /> Task Presets</NavDropdown.Item>
                                         <NavDropdown.Divider />
                                         <NavDropdown.Item as={NavLink} to="/roadmapmanage" className="nav-dropdown-item"><i className="bi bi-compass" /> Road Maps</NavDropdown.Item>
                                         <NavDropdown.Divider />
@@ -80,40 +93,45 @@ function App() {
                                     </NavDropdown>
                                 )}
                                 {role === 'Admin' && (
-                                    <NavDropdown title={<><i className="bi bi-person-lock" /> Admin Tools</>} id="basic-nav-dropdown">
-                                        <NavDropdown.Item as={NavLink} to="/admin" className="nav-dropdown-item"><i className="bi bi-shield-lock" /> Admin Panel</NavDropdown.Item>
+                                    <NavDropdown className={isAdminToolsActive ? "navdropdown-active" : ""} title={<><i className="bi bi-person-lock" /> <a>Admin Tools</a></>}>
+                                        <NavDropdown.Item as={NavLink} to="/adminpanel" className="nav-dropdown-item"><i className="bi bi-shield-lock" /> Panel</NavDropdown.Item>
                                         <NavDropdown.Divider />
                                         <NavDropdown.Item as={NavLink} to="/employesassignment" className="nav-dropdown-item"><i className="bi bi-people" /> Assignment</NavDropdown.Item>
                                     </NavDropdown>
                                 )}
                             </Nav>
+                            <footer className="mt-auto">
+                                <p className="text-center text-muted small">© 2024 Made by UnhandledException</p>
+                            </footer>
                         </Navbar>
 
                         {/* Główna treść strony */}
                         <Container fluid className="main-content">
-                            <Navbar expand="lg" className="bg-body-tertiary navbar-horizontal">
-                                <Nav className="ms-auto d-flex align-items-center">
-                                    <NavLink className="nav-link" to={`/profile/${user?.id}`}>
-                                        <div className="d-flex align-items-center">
-                                            {`${user.name} ${user.surname}`}
-                                            <Image
-                                                src={avatar || defaultUserIcon}
-                                                className="ms-2 rounded-circle"
-                                                width={30}
-                                                height={30}
-                                                alt="User avatar"
-                                            />
-                                        </div>
-                                    </NavLink>
-                                    <NavLink to="/notifications" className="nav-link"><i className="bi bi-bell" /></NavLink>
-                                    <NavLink to="/settings" className="nav-link"><i className="bi bi-gear" /></NavLink>
-                                    <NavLink title='Logout' to="/logout" onClick={logout} className="nav-link"><i className="bi bi-box-arrow-right"/></NavLink>
-                                </Nav>
-                            </Navbar>
+                        <Navbar expand="lg" className="bg-body-tertiary navbar-horizontal">
+                            <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap">
+                                <NavLink className="nav-link" to={`/profile/${user?.id}`}>
+                                    <div className="d-flex align-items-center">
+                                        {`${user.name} ${user.surname}`}
+                                        <Image
+                                            src={avatar || defaultUserIcon}
+                                            className="ms-2 rounded-circle"
+                                            width={30}
+                                            height={30}
+                                            alt="User avatar"
+                                        />
+                                    </div>
+                                </NavLink>
+                                <NavLink to="/notifications" className="nav-link"><i className="bi bi-bell" /></NavLink>
+                                <NavLink to="/settings" className="nav-link"><i className="bi bi-gear" /></NavLink>
+                                <NavLink title="Logout" to="/logout" onClick={logout} className="nav-link">
+                                    <i className="bi bi-box-arrow-right" />
+                                </NavLink>
+                            </Nav>
+                        </Navbar>
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/tasks" element={<TaskDashboard />} />
-                                <Route path="/admin" element={<AdminPanel isAdmin={role === "Admin"} />} />
+                                <Route path="/adminpanel" element={<AdminPanel isAdmin={role === "Admin"} />} />
                                 <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
                                 <Route path="/employesassignment" element={<EmployesAssignmentSelector />} />
                                 <Route path="/taskmanage" element={<TaskManager />} />
@@ -141,9 +159,6 @@ function App() {
                                 <Route path="/settings" element={<><h1>Settings</h1></>} />
                                 <Route path="/notifications" element={<><h1>Notifications</h1></>} />
                             </Routes>
-                            <footer className="py-0 my-3 border-top">
-                <p className="text-center text-muted">© 2024 UnhandledException</p>
-            </footer>
                         </Container>
                     </div>
                 </>
