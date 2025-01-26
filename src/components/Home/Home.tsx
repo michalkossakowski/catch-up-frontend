@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import styles from './Home.module.css';
 
 export default function Home(): React.ReactElement {
@@ -14,7 +15,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-list-task fs-4"></i> Tasks
                                 </h5>
                                 <p className="card-text">Manage and track your tasks.</p>
-                                <a className="btn btn-primary" href="/tasks">See more</a>
+                                <NavLink className="btn btn-primary" to="/tasks">See more</NavLink>
                             </div>
                         </div>
                     </div>
@@ -27,7 +28,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-book fs-4"></i> Schoolings
                                 </h5>
                                 <p className="card-text">Access your schoolings list.</p>
-                                <a className="btn btn-primary" href="/schoolinglist">See more</a>
+                                <NavLink className="btn btn-primary" to="/schoolinglist">See more</NavLink>
                             </div>
                         </div>
                     </div>
@@ -40,7 +41,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-pencil-square fs-4"></i> Feedbacks
                                 </h5>
                                 <p className="card-text">Submit and view feedbacks.</p>
-                                <a className="btn btn-primary" href="/feedbacks">See more</a>
+                                <NavLink  className="btn btn-primary" to="/feedbacks">See more</NavLink>
                             </div>
                         </div>
                     </div>
@@ -53,7 +54,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-question-circle fs-4"></i> FAQ
                                 </h5>
                                 <p className="card-text">Find answers to hard questions.</p>
-                                <a className="btn btn-primary" href="/faq">See more</a>
+                                <NavLink className="btn btn-primary" to="/faq">See more</NavLink>
                             </div>
                         </div>
                     </div>
@@ -67,7 +68,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-browser-firefox fs-4"></i>  Placeholder
                                 </h5>
                                 <p className="card-text">Placeholder.</p>
-                                <a className="btn btn-primary" href="/">See more</a>
+                                <NavLink className="btn btn-primary" to="/x">See more</NavLink>
                             </div>
                         </div>
                     </div>
@@ -80,7 +81,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-browser-firefox fs-4"></i>  Placeholder
                                 </h5>
                                 <p className="card-text">Placeholder.</p>
-                                <a className="btn btn-primary" href="/">See more</a>
+                                <NavLink className="btn btn-primary" to="/x">See more</NavLink>
                             </div>
                         </div>
                     </div>
@@ -93,7 +94,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-browser-firefox fs-4"></i>  Placeholder
                                 </h5>
                                 <p className="card-text">Placeholder.</p>
-                                <a className="btn btn-primary" href="/">See more</a>
+                                <NavLink className="btn btn-primary" to="/x">See more</NavLink>
                             </div>
                         </div>
                     </div>
@@ -106,7 +107,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-browser-firefox fs-4"></i>  Placeholder
                                 </h5>
                                 <p className="card-text">Placeholder.</p>
-                                <a className="btn btn-primary" href="/">See more</a>
+                                <NavLink className="btn btn-primary" to="/x">See more</NavLink>
                             </div>
                         </div>
                     </div>
