@@ -29,6 +29,7 @@ import SchoolingPartEdit from './components/Schooling/SchoolingPartEdit.tsx';
 import SchoolingAssignment from './components/Schooling/SchoolingAssignment.tsx';
 import PresetAssign from './components/Preset/PresetAssign';
 import FeedbackList from './components/Feedback/FeedbackListPage.tsx';
+import '../css/catchUpNight.css';
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -49,38 +50,50 @@ function App() {
         <>
             {user && (
                 <>
-                    <Navbar expand="lg" className="bg-body-tertiary navbar-expand-lg">
-                        <Container fluid className="px-4">
-                            <Navbar.Brand href="/" className="me-4">catchUp</Navbar.Brand>
-                            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                            <Navbar.Collapse id="basic-navbar-nav">
-                                <Nav className="me-auto">
-                                    <NavLink to="/" className="nav-link">Home</NavLink>
-                                    {role == 'Newbie' && (
-                                    <NavLink to="/tasks" className="nav-link">Tasks</NavLink>
-                                    )}
-                                    <NavLink to="/faq" className="nav-link">FAQ</NavLink>
-                                    <NavLink to="/schoolinglist" className="nav-link">Schoolings</NavLink>
-                                    {role !== 'Newbie' && (
-                                        <NavLink to="/taskmanage" className="nav-link">Manage Tasks</NavLink>
-                                    )}
-                                    <NavLink to="/taskcontentmanage" className="nav-link">Task Content Manage</NavLink>
-                                    <NavLink to="/roadmapmanage" className="nav-link">RoadMap Manage</NavLink>
-                                    <NavLink to="/presetmanage" className="nav-link">Preset Manage</NavLink>
-                                    <NavLink to="/feedbacks" className="nav-link">Feedbacks</NavLink>
-                                    <NavLink to="/badges" className="nav-link">Badges</NavLink>
-                                    {role === 'Admin' && (
-                                        <NavDropdown title="Admin Tools" id="basic-nav-dropdown">
-                                            <NavDropdown.Item as={NavLink} to="/admin" className="nav-link">Admin Panel</NavDropdown.Item>
-                                            <NavDropdown.Divider />
-                                            <NavDropdown.Item as={NavLink} to="/editMatList" className="nav-link">MaterialList</NavDropdown.Item>
-                                            <NavDropdown.Divider />
-                                            <NavDropdown.Item as={NavLink} to="/employesassignment" className="nav-link">Employes Assignment</NavDropdown.Item>
-                                        </NavDropdown>
-                                    )}
-                                </Nav>
-                                <NavDropdown
-                                    title={
+                    <div className="d-flex">
+                        {/* Pionowy navbar po lewej stronie */}
+                        <Navbar
+                            expand="lg"
+                            className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-sidebar"
+                        >
+                            <Navbar.Brand href="/" className="nav-brand">catchUp</Navbar.Brand>
+                            <Nav className="flex-column w-100">
+                                <NavLink to="/" className="nav-link"><i className="bi bi-house-door" /> Home</NavLink>
+                                {role === 'Newbie' && (
+                                    <NavLink to="/tasks" className="nav-link left-sidebar"><i className="bi bi-list-task" /> Tasks</NavLink>
+                                )}
+                                <NavLink to="/schoolinglist" className="nav-link"><i className="bi bi-book" /> Schoolings</NavLink>
+                                <NavLink to="/feedbacks" className="nav-link"><i className="bi bi-arrow-clockwise" /> Feedbacks</NavLink>
+                                <NavLink to="/badges" className="nav-link"><i className="bi bi-shield" /> Badges</NavLink>
+                                <NavLink to="/faq" className="nav-link"><i className="bi bi-question-circle" /> FAQ</NavLink>
+                                {role !== 'Newbie' && (
+                                    <NavDropdown title={<><i className="bi bi-pencil-square" /> Manage Tools</>} id="basic-nav-dropdown">
+                                        <NavDropdown.Item as={NavLink} to="/taskmanage" className="nav-dropdown-item"><i className="bi bi-list-task" /> Tasks</NavDropdown.Item>
+                                        <NavDropdown.Divider />
+                                        <NavDropdown.Item as={NavLink} to="/taskcontentmanage" className="nav-dropdown-item"><i className="bi bi-kanban" /> Task Contents</NavDropdown.Item>
+                                        <NavDropdown.Divider />
+                                        <NavDropdown.Item as={NavLink} to="/presetmanage" className="nav-dropdown-item"><i className="bi bi-stack-overflow" /> Presets</NavDropdown.Item>
+                                        <NavDropdown.Divider />
+                                        <NavDropdown.Item as={NavLink} to="/roadmapmanage" className="nav-dropdown-item"><i className="bi bi-compass" /> Road Maps</NavDropdown.Item>
+                                        <NavDropdown.Divider />
+                                        <NavDropdown.Item as={NavLink} to="/editMatList" className="nav-dropdown-item"><i className="bi bi-tools" /> Material Lists</NavDropdown.Item>
+                                    </NavDropdown>
+                                )}
+                                {role === 'Admin' && (
+                                    <NavDropdown title={<><i className="bi bi-person-lock" /> Admin Tools</>} id="basic-nav-dropdown">
+                                        <NavDropdown.Item as={NavLink} to="/admin" className="nav-dropdown-item"><i className="bi bi-shield-lock" /> Admin Panel</NavDropdown.Item>
+                                        <NavDropdown.Divider />
+                                        <NavDropdown.Item as={NavLink} to="/employesassignment" className="nav-dropdown-item"><i className="bi bi-people" /> Assignment</NavDropdown.Item>
+                                    </NavDropdown>
+                                )}
+                            </Nav>
+                        </Navbar>
+
+                        {/* Główna treść strony */}
+                        <Container fluid className="main-content">
+                            <Navbar expand="lg" className="bg-body-tertiary navbar-horizontal">
+                                <Nav className="ms-auto d-flex align-items-center">
+                                    <NavLink className="nav-link" to={`/profile/${user?.id}`}>
                                         <div className="d-flex align-items-center">
                                             {`${user.name} ${user.surname}`}
                                             <Image
@@ -91,65 +104,54 @@ function App() {
                                                 alt="User avatar"
                                             />
                                         </div>
+                                    </NavLink>
+                                    <NavLink to="/notifications" className="nav-link"><i className="bi bi-bell" /></NavLink>
+                                    <NavLink to="/settings" className="nav-link"><i className="bi bi-gear" /></NavLink>
+                                    <NavLink title='Logout' to="/logout" onClick={logout} className="nav-link"><i className="bi bi-box-arrow-right"/></NavLink>
+                                </Nav>
+                            </Navbar>
+                            <Routes>
+                                <Route path="/" element={<Home />} />
+                                <Route path="/tasks" element={<TaskDashboard />} />
+                                <Route path="/admin" element={<AdminPanel isAdmin={role === "Admin"} />} />
+                                <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
+                                <Route path="/employesassignment" element={<EmployesAssignmentSelector />} />
+                                <Route path="/taskmanage" element={<TaskManager />} />
+                                <Route path="/taskcontentmanage" element={<TaskContentManage />} />
+                                <Route path="/editmatlist" element={<EditMatList />} />
+                                <Route path="/roadmapmanage" element={<RoadMapManage />} />
+                                <Route path="/feedbacks" element={<FeedbackList />} />
+                                <Route path="/badges" element={<Badge />} />
+                                <Route path="/presetmanage" element={<PresetManage />} />
+                                <Route path="/schoolingedit" element={<SchoolingEdit />} />
+                                <Route
+                                    path="/schoolinglist"
+                                    element={
+                                        role === 'Admin' || role === 'Mentor'
+                                            ? <SchoolingListMentor />
+                                            : <SchoolingListNewbie />
                                     }
-                                    id="user-dropdown"
-                                    className="nav-dropdown"
-                                    align="end">    
-                                    <NavDropdown.Item as={NavLink} to={`/profile/${user?.id}`}>
-                                        <i className="bi bi-person-circle"></i> My Profile
-                                    </NavDropdown.Item>
-                                    <NavDropdown.Divider />
-                                    <NavDropdown.Item
-                                        onClick={logout}
-                                        className="text-primary">
-                                        <i className="bi bi-box-arrow-right"></i> Logout
-                                    </NavDropdown.Item>
-                                </NavDropdown>
-                            </Navbar.Collapse>
+                                />
+                                <Route path="/schoolingpartedit/:id?" element={<SchoolingPartEdit />} />
+                                <Route path="/schoolinglistparts" element={<SchoolingListParts />} />
+                                <Route path="/preset/assign/:presetId" element={<PresetAssign />} />
+                                <Route path="/schoolingdetails" element={<SchoolingDetails />} />
+                                <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
+                                <Route path="/profile/:userId" element={<UserProfile />} />
+                                <Route path="/settings" element={<><h1>Settings</h1></>} />
+                                <Route path="/notifications" element={<><h1>Notifications</h1></>} />
+                            </Routes>
+                            <footer className="py-0 my-3 border-top">
+                <p className="text-center text-muted">© 2024 UnhandledException</p>
+            </footer>
                         </Container>
-                    </Navbar>
-
-                    <Routes>
-                        <Route path="/" element={<><Home/></>} />
-                        <Route path="/tasks" element={<TaskDashboard />} />
-                        <Route path="/admin" element={<AdminPanel isAdmin={role === "Admin"} />} />
-                        <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
-                        <Route path="/employesassignment" element={<EmployesAssignmentSelector />} />
-                        <Route path="/taskmanage" element={<TaskManager />} />
-                        <Route path="/taskcontentmanage" element={<TaskContentManage />} />
-                        <Route path="/editmatlist" element={<EditMatList />} />
-                        <Route path="/roadmapmanage" element={<RoadMapManage />} />
-                        <Route path="/feedbacks" element={<FeedbackList />} />
-                        <Route path="/badges" element={<Badge />} />
-                        <Route path="/presetmanage" element={<PresetManage />} />
-                        <Route path="/schoolingedit" element={<SchoolingEdit />} />
-                        <Route 
-                            path="/schoolinglist" 
-                            element={
-                                role === 'Admin' || role === 'Mentor' 
-                                    ? <SchoolingListMentor /> 
-                                    : <SchoolingListNewbie />
-                            } 
-                        />
-                        <Route path="/schoolinglist" element={<div className='mt-4'><span className='mt-4'>Error with loading schooling</span><Loading/></div>} />
-                        <Route path="/schoolingpartedit/:id?" element={<SchoolingPartEdit />} />
-
-                        <Route path="/schoolinglistparts" element={<SchoolingListParts />} />
-                        <Route path="/preset/assign/:presetId" element={<PresetAssign />} />
-                        <Route path="/schoolingdetails" element={<SchoolingDetails />} />
-                        <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
-                        <Route path="/profile/:userId" element={<UserProfile />} />
-                    </Routes>
+                    </div>
                 </>
             )}
 
             {!user && (
                 <LoginComponent />
             )}
-
-            <footer className="py-0 my-3 border-top">
-                <p className="text-center text-muted">© 2024 UnhandledException</p>
-            </footer>
         </>
     );
 }
