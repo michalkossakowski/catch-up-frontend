@@ -29,12 +29,14 @@ import SchoolingAssignment from './components/Schooling/SchoolingAssignment.tsx'
 import PresetAssign from './components/Preset/PresetAssign';
 import FeedbackList from './components/Feedback/FeedbackListPage.tsx';
 import '../css/catchUpNight.css';
+import '../css/catchUpDay.css';
 import { useLocation } from 'react-router-dom';
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
     const [isSidebarVisible, setSidebarVisible] = useState(true); // Sidebar visibility state
+    const [theme, setTheme] = useState<'night' | 'day'>('night');
 
     const fetchRole = async () => {
         if (user?.id) {
@@ -55,13 +57,24 @@ function App() {
         "/roadmapmanage",
         "/editMatList"
     ].some(path => location.pathname.startsWith(path));
+
     const isAdminToolsActive = [
         "/admin",
         "/employesassignment"
     ].some(path => location.pathname.startsWith(path));
 
+    const toggleTheme = () => {
+        const newTheme = theme === 'night' ? 'day' : 'night';
+        setTheme(newTheme);
+    };
+
     return (
         <>
+            {/* Dynamically load the theme CSS */}
+            <link
+                rel="stylesheet"
+                href={theme === 'night' ? '/css/catchUpNight.css' : '/css/catchUpDay.css'}
+            />
             {user && (
                 <>
                 <div className="d-flex">
@@ -222,7 +235,15 @@ function App() {
                             className={`main-content ${isSidebarVisible ? "sidebar-visible" : "sidebar-hidden"}`}
                         >
                         <Navbar expand="lg" className="bg-body-tertiary navbar-horizontal">
-                            <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap">                          
+                            <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap"> 
+                                {/* Theme Switcher Button */}
+                                <Button
+                                    onClick={toggleTheme}
+                                    className='theme-btn'
+                                    title='Dark/Light theme'
+                                >
+                                    {theme === 'night' ? <i className="bi bi-brightness-high"/> : <i className="bi bi-moon"/>}
+                                </Button>                         
                                 <NavLink className="nav-link" to={`/profile/${user?.id}`}>
                                     <div className="d-flex align-items-center">
                                         {`${user.name} ${user.surname}`}
