@@ -1,5 +1,5 @@
 import './App.css';
-import { Button, Image } from 'react-bootstrap';
+import { Alert, Button, Image } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './components/Home/Home.tsx';
@@ -106,7 +106,7 @@ function App() {
                                 <NavLink to="/faq" className="nav-link">
                                     <i className="bi bi-question-circle" /> FAQ
                                 </NavLink>
-                                {role !== "Newbie" && (
+                                {role !== "Newbie" && role != null && (
                                     <NavDropdown
                                         className={
                                             isManageToolsActive
@@ -222,7 +222,7 @@ function App() {
                             className={`main-content ${isSidebarVisible ? "sidebar-visible" : "sidebar-hidden"}`}
                         >
                         <Navbar expand="lg" className="bg-body-tertiary navbar-horizontal">
-                            <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap">
+                            <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap">                          
                                 <NavLink className="nav-link" to={`/profile/${user?.id}`}>
                                     <div className="d-flex align-items-center">
                                         {`${user.name} ${user.surname}`}
@@ -242,6 +242,11 @@ function App() {
                                 </NavLink>
                             </Nav>
                         </Navbar>
+                            { role == null &&(
+                                <Alert className='alert api-alert' variant='danger'>
+                                    <i className="bi bi-exclamation-triangle"/> Api is offline try refreshing the page <i className="bi bi-exclamation-triangle"/>
+                                </Alert>
+                            )}
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/tasks" element={<TaskDashboard />} />

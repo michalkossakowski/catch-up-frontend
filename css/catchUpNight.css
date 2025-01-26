@@ -103,6 +103,14 @@
     border-radius: 5px;
 }
 
+.api-alert{
+    max-width: 350px;
+    margin: 20px auto auto auto;
+    color: #FFFFFF;
+}
+.api-alert > i {
+    color: #FFFFFF;
+}
 .dropdown-menu {
     padding: 0px;
 }
