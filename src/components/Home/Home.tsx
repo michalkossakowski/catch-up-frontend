@@ -14,7 +14,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-list-task fs-4"></i> Tasks
                                 </h5>
                                 <p className="card-text">Manage and track your tasks.</p>
-                                <a className="btn btn-primary" href="/tasks">Go to Tasks</a>
+                                <a className="btn btn-primary" href="/tasks">See more</a>
                             </div>
                         </div>
                     </div>
@@ -27,7 +27,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-book fs-4"></i> Schoolings
                                 </h5>
                                 <p className="card-text">Access your schoolings list.</p>
-                                <a className="btn btn-primary" href="/schoolinglist">Go to Schoolings</a>
+                                <a className="btn btn-primary" href="/schoolinglist">See more</a>
                             </div>
                         </div>
                     </div>
@@ -40,7 +40,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-pencil-square fs-4"></i> Feedbacks
                                 </h5>
                                 <p className="card-text">Submit and view feedbacks.</p>
-                                <a className="btn btn-primary" href="/feedbacks">Go to Feedbacks</a>
+                                <a className="btn btn-primary" href="/feedbacks">See more</a>
                             </div>
                         </div>
                     </div>
@@ -53,7 +53,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-question-circle fs-4"></i> FAQ
                                 </h5>
                                 <p className="card-text">Find answers to hard questions.</p>
-                                <a className="btn btn-primary" href="/faq">Go to FAQ</a>
+                                <a className="btn btn-primary" href="/faq">See more</a>
                             </div>
                         </div>
                     </div>
@@ -67,7 +67,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-browser-firefox fs-4"></i>  Placeholder
                                 </h5>
                                 <p className="card-text">Placeholder.</p>
-                                <a className="btn btn-primary" href="/">Go to Placeholder</a>
+                                <a className="btn btn-primary" href="/">See more</a>
                             </div>
                         </div>
                     </div>
@@ -80,7 +80,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-browser-firefox fs-4"></i>  Placeholder
                                 </h5>
                                 <p className="card-text">Placeholder.</p>
-                                <a className="btn btn-primary" href="/">Go to Placeholder</a>
+                                <a className="btn btn-primary" href="/">See more</a>
                             </div>
                         </div>
                     </div>
@@ -93,7 +93,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-browser-firefox fs-4"></i>  Placeholder
                                 </h5>
                                 <p className="card-text">Placeholder.</p>
-                                <a className="btn btn-primary" href="/">Go to Placeholder</a>
+                                <a className="btn btn-primary" href="/">See more</a>
                             </div>
                         </div>
                     </div>
@@ -106,7 +106,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-browser-firefox fs-4"></i>  Placeholder
                                 </h5>
                                 <p className="card-text">Placeholder.</p>
-                                <a className="btn btn-primary" href="/">Go to Placeholder</a>
+                                <a className="btn btn-primary" href="/">See more</a>
                             </div>
                         </div>
                     </div>
