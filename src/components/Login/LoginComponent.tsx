@@ -53,6 +53,7 @@ const LoginComponent = () => {
     return (
         <>
         <h1 className='welcome'>Welcome in catchUp</h1>
+        <h2 className='subtitle'>The coldest onboarding app on the market</h2>
         <div className="d-flex justify-content-center align-items-center">
             <div className="card shadow-lg p-4   login-container">
                 <h2 className="text-center mb-4">Login</h2>
@@ -99,6 +100,11 @@ const LoginComponent = () => {
                 </form>
             </div>
         </div>
+        <footer className="mt-auto">
+            <p className="text-center text-muted small">
+                © 2024 Made by UnhandledException
+            </p>
+        </footer>
         </>
     );
 };
