@@ -10,7 +10,7 @@ const LoadingAnimation: React.FC = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const width = 164; 
+    const width = 190; 
     const height = 86;
     canvas.width = width;
     canvas.height = height;
@@ -18,10 +18,11 @@ const LoadingAnimation: React.FC = () => {
     const lines = [
       { text: "catch", color: "#DB91D1", fontSize: 24, offsetY: 24, offsetX: 4 },
       { text: "(", color: "#FFFFFF", fontSize: 24, offsetY: 24, offsetX: 62 },
-      { text: "Up", color: "#5CD3B4", fontSize: 24, offsetY: 24, offsetX: 72 },
-      { text: "){", color: "#FFFFFF", fontSize: 24, offsetY: 24, offsetX: 105 },
+      { text: "Up", color: "#5CD3B4", fontSize: 24, offsetY: 24, offsetX: 70 },
+      { text: ") {", color: "#FFFFFF", fontSize: 24, offsetY: 24, offsetX: 100 },
       { text: "OnBoarding", color: "#F2E267", fontSize: 24, offsetY: 50, offsetX: 34 },
-      { text: "}", color: "#FFFFFF", fontSize: 24, offsetY: 76, offsetX: 4 }, 
+      { text: "();", color: "#FFFFFF", fontSize: 24, offsetY: 50, offsetX: 162 }, 
+      { text: "};", color: "#FFFFFF", fontSize: 24, offsetY: 76, offsetX: 4 }, 
     ];
 
     let currentLineIndex = 0;
@@ -83,7 +84,7 @@ const LoadingAnimation: React.FC = () => {
       ref={canvasRef}
       style={{
         display: "block",
-        //border: "solid black 1px",
+        //border: "solid red 1px",
         margin: "auto",
       }}
     />

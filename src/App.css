@@ -1,7 +1,0 @@
-#user-dropdown::after {
-    display: none;
-}
-
-.nav-dropdown:hover, .nav-dropdown:focus {
-    color: #fff;
-}
