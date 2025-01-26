@@ -57,7 +57,59 @@ export default function Home(): React.ReactElement {
                             </div>
                         </div>
                     </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-3">
+                        <div className="card">
+                            <img src="HomeImages/faq-batman-image.jpg" className="card-img-top" alt="Placegolder Image"/>
+                            <div className="card-body">
+                                <h5 className="card-title">
+                                    <i className="bi bi-browser-firefox fs-4"></i>  Placeholder
+                                </h5>
+                                <p className="card-text">Placeholder.</p>
+                                <a className="btn btn-primary" href="/">Go to Placeholder</a>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div className="col-md-3">
+                        <div className="card">
+                            <img src="HomeImages/faq-batman-image.jpg" className="card-img-top" alt="Placegolder Image"/>
+                            <div className="card-body">
+                                <h5 className="card-title">
+                                    <i className="bi bi-browser-firefox fs-4"></i>  Placeholder
+                                </h5>
+                                <p className="card-text">Placeholder.</p>
+                                <a className="btn btn-primary" href="/">Go to Placeholder</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-md-3">
+                        <div className="card">
+                            <img src="HomeImages/faq-batman-image.jpg" className="card-img-top" alt="Placegolder Image"/>
+                            <div className="card-body">
+                                <h5 className="card-title">
+                                    <i className="bi bi-browser-firefox fs-4"></i>  Placeholder
+                                </h5>
+                                <p className="card-text">Placeholder.</p>
+                                <a className="btn btn-primary" href="/">Go to Placeholder</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-md-3">
+                        <div className="card">
+                            <img src="HomeImages/faq-batman-image.jpg" className="card-img-top" alt="Placegolder Image"/>
+                            <div className="card-body">
+                                <h5 className="card-title">
+                                    <i className="bi bi-browser-firefox fs-4"></i>  Placeholder
+                                </h5>
+                                <p className="card-text">Placeholder.</p>
+                                <a className="btn btn-primary" href="/">Go to Placeholder</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

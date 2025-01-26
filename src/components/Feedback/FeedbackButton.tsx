@@ -20,7 +20,7 @@ export const FeedbackButton: React.FC<FeedbackButtonProps> = ({ resourceId, reso
 
     return (
         <>
-                <button type="button" className="btn btn-info" onClick={handleOpenDialog}>
+                <button type="button" className="btn btn-success" onClick={handleOpenDialog}>
                     Feedback
                 </button>
             {showDialog && (

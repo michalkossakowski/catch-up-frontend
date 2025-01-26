@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../axiosConfig';
 import { useAuth } from '../../Provider/authProvider';
 import { jwtDecode } from 'jwt-decode';
+import './LoginComponent.css';
 
 const LoginComponent = () => {
     const [email, setEmail] = useState('');
@@ -50,8 +51,10 @@ const LoginComponent = () => {
     };
 
     return (
-        <div className="d-flex justify-content-center align-items-center mt-5 mb-5 vw-100">
-            <div className="card shadow-lg p-4 w-50">
+        <>
+        <h1 className='welcome'>Welcome in catchUp</h1>
+        <div className="d-flex justify-content-center align-items-center">
+            <div className="card shadow-lg p-4   login-container">
                 <h2 className="text-center mb-4">Login</h2>
                 <form onSubmit={handleLogin}>
                     <div className="mb-3">
@@ -96,6 +99,7 @@ const LoginComponent = () => {
                 </form>
             </div>
         </div>
+        </>
     );
 };
 
