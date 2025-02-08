@@ -46,6 +46,7 @@ function App() {
 
     useEffect(() => {
         fetchRole();
+        loadTheme();
     }, [user?.id]);
 
     const location = useLocation();
@@ -65,7 +66,15 @@ function App() {
     const toggleTheme = () => {
         const newTheme = theme === 'night' ? 'day' : 'night';
         setTheme(newTheme);
+        localStorage.setItem('theme', newTheme);
     };
+
+    const loadTheme = () => {
+        const savedTheme = localStorage.getItem('theme') as 'night' | 'day' | null;
+        if (savedTheme) {
+            setTheme(savedTheme);
+        }
+    }
 
     return (
         <>
@@ -79,9 +88,7 @@ function App() {
                 <div className="d-flex">
                     {/* Left Sidebar */}
                     <div
-                        className={`left-sidebar ${
-                            isSidebarVisible ? "visible" : "hidden"
-                        }`}
+                        className={`left-sidebar ${isSidebarVisible ? "visible" : "hidden"}`}
                     >
                         <Navbar
                             expand="lg"
@@ -119,11 +126,7 @@ function App() {
                                 </NavLink>
                                 {role !== "Newbie" && role != null && (
                                     <NavDropdown
-                                        className={
-                                            isManageToolsActive
-                                                ? "navdropdown-active"
-                                                : ""
-                                        }
+                                        className={isManageToolsActive ? "navdropdown-active" : ""}
                                         title={
                                             <>
                                                 <i className="bi bi-pencil-square" />{" "}
@@ -179,11 +182,7 @@ function App() {
                                 )}
                                 {role === "Admin" && (
                                     <NavDropdown
-                                        className={
-                                            isAdminToolsActive
-                                                ? "navdropdown-active"
-                                                : ""
-                                        }
+                                        className={isAdminToolsActive ? "navdropdown-active" : ""}
                                         title={
                                             <>
                                                 <i className="bi bi-person-lock" />{" "}
