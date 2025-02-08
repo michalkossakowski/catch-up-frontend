@@ -83,3 +83,7 @@
 .spinner-border{
     color: #FFFFFF !important;
 }
+
+.api-alert > i {
+    color: #FFFFFF;
+}

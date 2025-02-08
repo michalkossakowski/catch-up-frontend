@@ -129,11 +129,11 @@
 }
 
 .navbar-horizontal{
-    background-image: linear-gradient(270deg, rgba(34, 133, 93, 0.1), rgb(220, 220, 220)) !important;
+    background-image: linear-gradient(270deg, rgba(34, 133, 93, 0.1), rgb(235, 235, 235)) !important;
 }
 
 .left-navbar {
-   background-image: linear-gradient(60deg, rgba(190, 92, 190, 0.2), rgb(220, 220, 220)) !important;
+   background-image: linear-gradient(60deg, rgba(190, 92, 190, 0.2), rgb(235, 235, 235)) !important;
 }
 
 .toggle-sidebar-btn {
@@ -146,4 +146,8 @@
 
 .spinner-border{
     color: #DB91D1 !important;
+}
+
+.api-alert > i {
+    color: #ff0000;
 }
