@@ -129,11 +129,11 @@
 }
 
 .navbar-horizontal{
-    background-image: linear-gradient(270deg, rgba(161, 230, 202, 0.1), rgb(255, 255, 255)) !important;
+    background-image: linear-gradient(270deg, rgba(161, 230, 202, 0.2), rgb(255, 255, 255)) !important;
 }
 
 .left-navbar {
-   background-image: linear-gradient(60deg, rgba(248, 138, 248, 0.1), rgb(255, 255, 255)) !important;
+   background-image: linear-gradient(75deg, rgba(248, 138, 248, 0.2), rgb(255, 255, 255)) !important;
 }
 
 .toggle-sidebar-btn {
