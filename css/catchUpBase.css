@@ -115,6 +115,10 @@ i {
     border-radius: 5px;
 }
 
+.navdropdown-active > a {
+    box-shadow: 0 0 4px 0 #DB91D1;
+}
+
 .nav-link {
     transition: color 0.2s ease, background-color 0.2s ease;
     border-radius: 10px;
