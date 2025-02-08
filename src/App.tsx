@@ -92,31 +92,30 @@ function App() {
                             </Navbar.Brand>
                             <Nav className="flex-column w-100">
                                 <NavLink to="/" className="nav-link">
-                                    <i className="bi bi-house-door" /> Home
+                                    <i className="bi bi-house-door" /> <span>Home</span>
                                 </NavLink>
                                 {role === "Newbie" && (
                                     <NavLink
                                         to="/tasks"
                                         className="nav-link left-sidebar"
                                     >
-                                        <i className="bi bi-list-task" /> Tasks
+                                        <i className="bi bi-list-task" /> <span>Tasks</span>
                                     </NavLink>
                                 )}
                                 <NavLink
                                     to="/schoolinglist"
                                     className="nav-link"
                                 >
-                                    <i className="bi bi-book" /> Schoolings
+                                    <i className="bi bi-book" />  <span>Schoolings</span>
                                 </NavLink>
                                 <NavLink to="/feedbacks" className="nav-link">
-                                    <i className="bi bi-arrow-clockwise" />{" "}
-                                    Feedbacks
+                                    <i className="bi bi-arrow-clockwise" /> <span>Feedbacks</span>
                                 </NavLink>
                                 <NavLink to="/badges" className="nav-link">
-                                    <i className="bi bi-shield" /> Badges
+                                    <i className="bi bi-shield" /> <span>Badges</span>
                                 </NavLink>
                                 <NavLink to="/faq" className="nav-link">
-                                    <i className="bi bi-question-circle" /> FAQ
+                                    <i className="bi bi-question-circle" /> <span>FAQ</span>
                                 </NavLink>
                                 {role !== "Newbie" && role != null && (
                                     <NavDropdown
@@ -128,7 +127,7 @@ function App() {
                                         title={
                                             <>
                                                 <i className="bi bi-pencil-square" />{" "}
-                                                <a>Manage Tools</a>
+                                                <span>Manage Tools</span>
                                             </>
                                         }
                                     >
@@ -188,7 +187,7 @@ function App() {
                                         title={
                                             <>
                                                 <i className="bi bi-person-lock" />{" "}
-                                                <a>Admin Tools</a>
+                                                <span>Admin Tools</span>
                                             </>
                                         }
                                     >
@@ -243,12 +242,12 @@ function App() {
                                 >
                                     {theme === 'night' ? <i className="bi bi-brightness-high"/> : <i className="bi bi-moon"/>}
                                 </Button>                         
-                                <NavLink className="nav-link" to={`/profile/${user?.id}`}>
-                                    <div className="d-flex align-items-center">
-                                        {`${user.name} ${user.surname}`}
+                                <NavLink className="nav-link  nav-user" to={`/profile/${user?.id}`}>
+                                    <div className="d-flex align-items-center ">
+                                        <span>{user.name} {user.surname}</span>
                                         <Image
                                             src={avatar || defaultUserIcon}
-                                            className="ms-2 rounded-circle"
+                                            className="avatar rounded-circle"
                                             width={30}
                                             height={30}
                                             alt="User avatar"

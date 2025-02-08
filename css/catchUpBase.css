@@ -21,7 +21,7 @@ yellow
 .accordion-button:focus {
     z-index: 3;
     outline: 0;
-    box-shadow: 0 0 0 0.25rem #DB91D1;
+    box-shadow: 0 0 0 0.35rem #DB91D1;
 }
 
 /* Alert Styles */
@@ -120,11 +120,16 @@ i {
 }
 
 .nav-link {
-    transition: color 0.2s ease, background-color 0.2s ease;
+    transition: color 0.3s ease, background-color 0.3s ease;
     border-radius: 10px;
-    margin: 2px 2px;
+    margin: 2px;
     padding: 4px;
     font-size: 18px;
+}
+
+.navbar-expand-lg .navbar-nav .nav-link {
+    padding-right: 0.5rem;
+    padding-left:  0.5rem;
 }
 
 .navbar-brand {
@@ -141,7 +146,7 @@ i {
     color: #FFFFFF;
     background-color: #DB91D1;
     box-shadow: 0 0 4px 0 #DB91D1;
-    transition: color 0.2s ease, background-color 0.2s ease;
+    transition: color 0.3s ease, background-color 0.3s ease;
 }
 
 .navbar-nav .nav-link.active > i {
@@ -159,6 +164,18 @@ i {
     position: sticky;
     top: 0;
     z-index: 10;
+    transition: width 0.3s ease;
+}
+/* Media query for user name */
+@media (max-width: 800px) {
+    .nav-user  span {
+        display: none;
+        visibility: collapse !important;
+    }
+}
+
+.nav-user  span {
+    margin-right: 0.5rem;
 }
 
 /* Sidebar Styles */
@@ -205,7 +222,7 @@ i {
 }
 
 .toggle-sidebar-btn > i{
-    transition: color 0.2s ease;
+    transition: color 0.3s ease;
 }
 
 .toggle-sidebar-btn:hover, .toggle-sidebar-btn:active {
@@ -232,7 +249,7 @@ i {
     font-size: 18px;
     margin: 0px;
     padding: 0px;
-    transition: color 0.2s ease;
+    transition: color 0.3s ease;
 }
 
 .theme-btn:hover > i{
