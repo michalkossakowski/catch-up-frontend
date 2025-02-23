@@ -3,10 +3,12 @@ import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // Używa localStorage
 import schoolingReducer from './schoolingSlice'
 import taskReducer from './taskSlice'
+import notificationReducer from './notificationSlice';
 
 const rootReducer = combineReducers({
     schooling: schoolingReducer,
     tasks: taskReducer,
+    notifications: notificationReducer,
 })
 
 const persistConfig = {

@@ -30,24 +30,57 @@ import PresetAssign from './components/Preset/PresetAssign';
 import FeedbackList from './components/Feedback/FeedbackListPage.tsx';
 import '../css/catchUpBase.css';
 import { useLocation } from 'react-router-dom';
+import NotificationPage from './components/Notification/NotificationPage.tsx';
+import { startConnection, connection } from "./services/signalRService";
+import { NotificationDto } from './dtos/NotificationDto.ts';
+import NotificationToast from './components/Toast/NotificationToast.tsx';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from './store/store';
+import { setNotifications, addNotification } from './store/notificationSlice';
+import { getNotifications } from './services/notificationService';
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
     const [isSidebarVisible, setSidebarVisible] = useState(true); // Sidebar visibility state
     const [theme, setTheme] = useState<'night' | 'day'>('night');
+  
+    const dispatch = useDispatch();
+    const { hasUnread } = useSelector((state: RootState) => state.notifications);
+
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastSource, setToastSource] = useState('');
+    const notificationSound = new Audio('/Notifications/notification.mp3');
 
     const fetchRole = async () => {
         if (user?.id) {
             const userRole = await getRole(user.id);
             setRole(userRole);
+            startConnection();
+            handleNotifications();
         }
     };
 
     useEffect(() => {
-        fetchRole();
         loadTheme();
+        fetchRole();
     }, [user?.id]);
+
+    const handleNotifications = async () => { 
+        const data = await getNotifications();
+        dispatch(setNotifications(data));
+
+        connection.on("ReceiveNotification", (notification: NotificationDto) => {
+            notificationSound.play().catch(() => {
+                console.log("Sound is locked. Waiting for user interaction.");
+            });
+            dispatch(addNotification(notification));
+            setToastMessage(notification.title);
+            setToastSource("/notifications");
+            setShowToast(true);
+        });
+    };
 
     const location = useLocation();
     const isManageToolsActive = [
@@ -253,7 +286,16 @@ function App() {
                                         />
                                     </div>
                                 </NavLink>
-                                <NavLink title="Notifications" to="/notifications" className="nav-link"><i className="bi bi-bell" /></NavLink>
+                                <NavLink
+                                    title="Notifications"
+                                    to="/notifications"
+                                    className="nav-link"
+                                >
+                                    <span className="notification-wrapper">
+                                        <i className="bi bi-bell" />
+                                        {hasUnread && <span className="unread-dot" />}
+                                    </span>
+                                </NavLink>
                                 <NavLink title="Settings" to="/settings" className="nav-link"><i className="bi bi-gear" /></NavLink>
                                 <NavLink title="Logout" to="/logout" onClick={logout} className="nav-link">
                                     <i className="bi bi-box-arrow-right" />
@@ -294,13 +336,20 @@ function App() {
                                 <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
                                 <Route path="/profile/:userId" element={<UserProfile />} />
                                 <Route path="/settings" element={<><h1>Settings</h1></>} />
-                                <Route path="/notifications" element={<><h1>Notifications</h1></>} />
+                                <Route path="/notifications" element={<><NotificationPage/></>} />
                             </Routes>
                         </Container>
+                        <NotificationToast 
+                            show={showToast} 
+                            title={"New Notification"} 
+                            message={toastMessage} 
+                            color={"#DB91D1"} 
+                            time={4000}
+                            source={toastSource} 
+                            onClose={() => setShowToast(false)} />
                     </div>
                 </>
             )}
-
             {!user && (
                 <LoginComponent />
             )}
