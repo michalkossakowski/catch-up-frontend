@@ -27,7 +27,7 @@ yellow
 /* Alert Styles */
 .api-alert{
     max-width: 350px;
-    margin: 20px auto auto auto;
+    margin: 20px auto 20px  auto;
 }
 
 /* Button Styles */
@@ -286,4 +286,55 @@ i {
     border: 1px solid #DB91D1;
     box-shadow: var(--bs-toast-box-shadow);
     border-radius: var(--bs-toast-border-radius);
+}
+
+/* notificaitons page*/
+.notification-container{
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.notification-card{
+    width: 50vw;
+    margin-bottom: 16px;
+    margin-top: 2px;
+}
+
+.notification-card-unread{
+    border: 2px #DB91D1 solid;
+}
+
+.notification-footer{
+    display: flex;
+    justify-content: space-between;
+}
+
+.notification-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.notification-new{
+    font-size: 16px;
+}
+
+/* notificaitons icon*/
+.unread-dot {
+    position: absolute;
+    top: -3px;
+    right: -5px; 
+    width: 10px;
+    height: 10px;
+    background-color: #DB91D1;
+    border-radius: 50%;
+}
+
+.toast-body{
+    display: flex;
+    flex-direction: column;
+}
+
+.toast-body small{
+    cursor: pointer;    
 }

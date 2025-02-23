@@ -1,25 +1,24 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import store, { persistor } from './store/store.ts';
-import 'bootstrap-icons/font/bootstrap-icons.css';
-
+//import { StrictMode } from 'react';
 import './index.css';
 import App from './App.tsx';
-import AuthProvider from './Provider/authProvider';
+import { Provider } from 'react-redux';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import AuthProvider from './Provider/authProvider';
+import store, { persistor } from './store/store.ts';
+import { PersistGate } from 'redux-persist/integration/react';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  //<StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <AuthProvider>
-          <BrowserRouter future={{v7_startTransition: true,v7_relativeSplatPath: true}}> 
+          <BrowserRouter> 
             <App />
           </BrowserRouter>
         </AuthProvider>
       </PersistGate>
     </Provider>
-  </StrictMode>
+  //</StrictMode>
 );
