@@ -1,0 +1,39 @@
+.task-content-details .details-title {
+    font-weight: 600;
+    color: #5CD3B4;
+}
+
+.task-content-details .description-box {
+    border: 1px solid var(--bs-border-color);
+    min-height: 120px;
+}
+
+.task-content-details .description-text {
+    font-size: 1.1rem;
+    white-space: pre-line;
+}
+
+.task-content-details .category-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.task-content-details .category-label {
+    margin-bottom: 0;
+}
+
+.task-content-details .card {
+    overflow: hidden;
+    background-color: var(--bs-body-bg);
+    border-color: var(--bs-border-color);
+}
+
+.task-content-details .card-header {
+    background-color: #5CD3B4;
+    border-bottom-color: var(--bs-border-color);
+}
+
+.task-content-details h4 {
+    color: #5CD3B4;
+} 

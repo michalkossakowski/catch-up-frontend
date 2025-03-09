@@ -1,0 +1,58 @@
+.AccordionItem .accordion-button:not(.collapsed) {
+    background-color: rgba(92, 211, 180, 0.1);
+    color: var(--bs-accordion-active-color);
+}
+
+.loaderBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loaderBox.loading {
+    min-height: 100px;
+}
+
+.buttonBox {
+    margin-top: 20px;
+}
+
+.task-category {
+    margin-bottom: 15px;
+}
+
+.task-description {
+    margin-bottom: 20px;
+    white-space: pre-line;
+    max-height: 150px;
+    overflow: hidden;
+    position: relative;
+}
+
+.task-description::after {
+    content: "...";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 0 5px;
+    background-color: var(--bs-accordion-bg);
+    font-weight: bold;
+}
+
+.admin-buttons {
+    display: flex;
+}
+
+.btn-info {
+    background-color: #5CD3B4;
+    border-color: #5CD3B4;
+}
+
+.btn-info:hover, .btn-info:focus {
+    background-color: #4ab99d;
+    border-color: #4ab99d;
+}
+
+.badge.bg-info {
+    background-color: #5CD3B4 !important;
+}

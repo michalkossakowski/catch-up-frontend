@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './TaskContentComponent.css';
-import { Accordion, Alert, Button, Form, InputGroup } from 'react-bootstrap';
+import { Accordion, Alert, Button, Form, InputGroup, Row, Col } from 'react-bootstrap';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
 import { getTaskContents, getByTitle, deleteTaskContent } from '../../services/taskContentService';
 import Material from '../Material/Material';
@@ -8,7 +8,8 @@ import TaskContentEdit from './TaskContentEdit';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { getCategories } from '../../services/categoryService';
 import { removeTaskFromAllPresets } from '../../services/taskPresetService';
-
+import Loading from '../Loading/Loading';
+import { useNavigate } from 'react-router-dom';
 
 interface TaskContentComponentProps {
     isAdmin: boolean;
@@ -16,16 +17,20 @@ interface TaskContentComponentProps {
 
 const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) => {
     const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
-    const [loading, setLoading] = useState(true)
-    const [showError, setShowError] = useState(false)
-    const [alertMessage, setAlertMessage] = useState('')
-    const [showSearchMessage, setShowSearchMessage] = useState(false)
-    const [searchMessage, setSearchMessage] = useState('alert')
+    const [filteredTaskContents, setFilteredTaskContents] = useState<TaskContentDto[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [showError, setShowError] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [showSearchMessage, setShowSearchMessage] = useState(false);
+    const [searchMessage, setSearchMessage] = useState('alert');
     const [searchTitle, setSearchTitle] = useState('');
     let i = 1;
-    const [showEdit, setShowEdit] = useState(false);
-    const [editedTaskContent, setEditedTaskContent] = useState<TaskContentDto | null>();
     const [categories, setCategories] = useState<CategoryDto[]>([]);
+    const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
+    const [sortOption, setSortOption] = useState<string>('title');
+    const [sortDirection, setSortDirection] = useState<string>('asc');
+    
+    const navigate = useNavigate();
 
     useEffect(() => {
         getAllTaskContents();
@@ -34,40 +39,64 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
             .catch((error) => console.error('Error loading categories:', error));
     }, []);
 
+    useEffect(() => {
+        filterTaskContents();
+    }, [taskContents, searchTitle, selectedCategoryId, sortOption, sortDirection]);
+
     const getAllTaskContents = () => {
-        // console.log('Pobieranie task contents');
         setLoading(true);
         getTaskContents()
             .then((data) => {
-                // console.log('Pobrane dane:', data);
                 setTaskContents(data);
-                setShowError(false);
+                setFilteredTaskContents(data);
+                setShowSearchMessage(false);
             })
             .catch((error) => {
-                console.error('Błąd pobierania:', error);
                 setShowError(true);
-                setAlertMessage('Error: ' + error.message);
+                setAlertMessage(error.message);
             })
             .finally(() => setLoading(false));
     }
 
-    const searchTaskContents = () => {
-        if (searchTitle.length == 0) {
-            getAllTaskContents()
-            setShowSearchMessage(false);
-            return
+    const filterTaskContents = () => {
+        let filtered = taskContents;
+        
+        // Filter by title
+        if (searchTitle) {
+            filtered = filtered.filter(content => 
+                content.title.toLowerCase().includes(searchTitle.toLowerCase())
+            );
         }
-        setLoading(true);
-        getByTitle(searchTitle)
-            .then((data) => {
-                setTaskContents(data);
-                setShowSearchMessage(false);
-            })
-            .catch((error) => {
-                setShowSearchMessage(true);
-                setSearchMessage(error.message);
-            })
-            .finally(() => setLoading(false));
+        
+        // Filter by category
+        if (selectedCategoryId && Number(selectedCategoryId)) {
+            filtered = filtered.filter(content => 
+                content.categoryId === Number(selectedCategoryId)
+            );
+        }
+        
+        // Sort
+        if (sortOption) {
+            filtered = [...filtered].sort((a, b) => {
+                const direction = sortDirection === 'asc' ? 1 : -1;
+                switch (sortOption) {
+                    case 'title':
+                        return direction * (a.title || '').localeCompare(b.title || '');
+                    case 'category':
+                        const catA = categories.find(cat => cat.id === a.categoryId)?.name || '';
+                        const catB = categories.find(cat => cat.id === b.categoryId)?.name || '';
+                        return direction * catA.localeCompare(catB);
+                    default:
+                        return 0;
+                }
+            });
+        }
+        
+        setFilteredTaskContents(filtered);
+    }
+
+    const searchTaskContents = () => {
+        filterTaskContents();
     };
 
     const handleDelete = async (taskContentId: number) => {
@@ -92,8 +121,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     };
 
     const editClick = (taskContentId: number) => {
-        setEditedTaskContent(taskContents.find((taskContent) => taskContent.id === taskContentId));
-        setShowEdit(true);
+        navigate(`/taskcontent/edit/${taskContentId}`);
     };
 
     const handleTaskContentUpdated = async () => {
@@ -104,12 +132,14 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
             console.error('Error refreshing categories:', error);
         }
         getAllTaskContents();
-        setShowEdit(false);
-        setEditedTaskContent(null);
+    };
+
+    const goToCreateTaskContent = () => {
+        navigate('/taskcontent/create');
     };
 
     const materialCreated = (materialId: number) => {
-        return materialId
+        return materialId;
     }
 
     const getCategoryName = (categoryId: number) => {
@@ -117,73 +147,101 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
         return category?.name || categoryId;
     };
 
+    const viewDetails = (taskContentId: number) => {
+        navigate(`/taskcontent/details/${taskContentId}`);
+    };
+
     return (
-        <>
-            {isAdmin && (
-                <div>
-                    {!showEdit && (
-                        <TaskContentEdit isEditMode={false} onTaskContentEdited={handleTaskContentUpdated} categories={categories} />
-                    )}
-                    {showEdit && editedTaskContent && (
-                        <div>
-                            <Button variant="primary" onClick={() => setShowEdit(false)}>
-                                Back to Add
-                            </Button>
-                            <TaskContentEdit taskContent={editedTaskContent} isEditMode={true} onTaskContentEdited={handleTaskContentUpdated} categories={categories} />
-                        </div>
-                    )}
+        <section className='container'>
+            <h2 className='title'>Task Contents</h2>
+
+            {/* Filters and Search */}
+            <div className="container mb-3 p-3 bg-body-tertiary rounded">
+                <Form.Control
+                    className="mb-3"
+                    type="text"
+                    placeholder="Search by title..."
+                    value={searchTitle}
+                    onChange={(e) => setSearchTitle(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && searchTaskContents()}
+                />
+                <h4 className="mt-3">Advanced Filters</h4>
+                <Row className="mb-3">
+                    <Form.Group as={Col} className='col-4'>
+                        <Form.Label>Category</Form.Label>
+                        <Form.Select onChange={(e) => setSelectedCategoryId(e.target.value)} defaultValue="">
+                            <option value="">Select Category</option>
+                            {categories.map((cat) => (
+                                <option key={cat.id} value={cat.id}>
+                                    {cat.name}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+                    <Form.Group as={Col} className='col-4'>
+                        <Form.Label>Sort By</Form.Label>
+                        <Form.Select
+                            value={sortOption}
+                            onChange={(e) => setSortOption(e.target.value)}
+                        >
+                            <option value="title">Title</option>
+                            <option value="category">Category</option>
+                        </Form.Select>
+                    </Form.Group>
+                    <Form.Group as={Col} className='col-2'>
+                        <Form.Label>Sort Direction</Form.Label>
+                        <Form.Select
+                            value={sortDirection}
+                            onChange={(e) => setSortDirection(e.target.value as 'asc' | 'desc')}
+                        >
+                            <option value="asc">Ascending</option>
+                            <option value="desc">Descending</option>
+                        </Form.Select>
+                    </Form.Group>
+                </Row>
+            </div>
+
+            {loading && (
+                <div className='loaderBox loading'>
+                    <Loading/>
                 </div>
             )}
 
+            {showSearchMessage && !loading && (
+                <Alert variant='warning'>
+                    {searchMessage}
+                </Alert>
+            )}
 
-            <section className='container'>
-                <h2 className='title'>TaskContents</h2>
+            {showError && !loading && (
+                <Alert variant='danger'>
+                    {alertMessage}
+                </Alert>
+            )}
 
-                <div className='loaderBox'>
-                    {loading && (
-                        <span className='loader'></span>
-                    )}
-
-                    {showError && (
-                        <Alert className='alert' variant='danger'>
-                            {alertMessage}
-                        </Alert>
-                    )}
-
-                    {showSearchMessage && (
-                        <Alert className='alert' variant='warning'>
-                            {searchMessage}
-                        </Alert>
-                    )}
-                </div>
-
-                {!showSearchMessage && !showError && !loading && (
-                    <div>
-                        {taskContents.length > 0 && (
-                            <div className='searchBox'>
-                                <InputGroup className="inputGroup mb-3">
-                                    <Form.Control
-                                        placeholder="Enter searched title..."
-                                        value={searchTitle}
-                                        onChange={(e) => setSearchTitle(e.target.value)}
-                                        onKeyDown={(e) => e.key === 'Enter' && searchTaskContents()}
-                                    />
-                                    <Button variant="primary" id="searchButton" onClick={searchTaskContents}>
-                                        Search
-                                    </Button>
-                                </InputGroup>
+            {!showSearchMessage && !showError && !loading && (
+                <div>
+                    <Accordion className='AccordionItem text-start mt-3 mb-3'>
+                        {filteredTaskContents.length === 0 ? (
+                            <div className="text-center p-3">
+                                <p>No task contents found</p>
                             </div>
-                        )}
-
-
-                        <Accordion className='AccordionItem'>
-                            {taskContents.map((taskContent) => (
+                        ) : (
+                            filteredTaskContents.map((taskContent) => (
                                 <Accordion.Item eventKey={taskContent.id.toString()} key={taskContent.id}>
                                     <Accordion.Header>
-                                        {i++}. {taskContent.title}
+                                        <strong>{i++}. {taskContent.title}</strong>
                                     </Accordion.Header>
                                     <Accordion.Body>
-                                        <p>{taskContent.description}</p>
+                                        {taskContent.categoryId && (
+                                            <p className="fs-5 mb-3 task-category">
+                                                <span className="badge bg-info">
+                                                    {getCategoryName(taskContent.categoryId)}
+                                                </span>
+                                            </p>
+                                        )}
+
+                                        <p className="task-description">{taskContent.description}</p>
 
                                         {taskContent.materialsId && (
                                             <div>
@@ -192,34 +250,45 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                                             </div>
                                         )}
 
-                                        {taskContent.categoryId && (
-                                            <div>
-                                                Category: {getCategoryName(taskContent.categoryId)}
-                                            </div>
-                                        )}
-
-                                        {isAdmin && (
-                                            <div className='buttonBox'>
-                                                <Button
-                                                    variant="primary"
-                                                    onClick={() => editClick(taskContent.id)}>
-                                                    Edit
-                                                </Button>
-                                                <Button
-                                                    variant="danger"
-                                                    onClick={() => handleDelete(taskContent.id)}>
-                                                    Delete
-                                                </Button>
-                                            </div>
-                                        )}
+                                        <div className='buttonBox d-flex justify-content-between mt-4'>
+                                            <Button
+                                                variant="success"
+                                                onClick={() => viewDetails(taskContent.id)}>
+                                                View Details
+                                            </Button>
+                                            
+                                            {isAdmin && (
+                                                <div className="admin-buttons">
+                                                    <Button
+                                                        variant="outline-success"
+                                                        onClick={() => editClick(taskContent.id)}
+                                                        className="me-2">
+                                                        Edit
+                                                    </Button>
+                                                    <Button
+                                                        variant="danger"
+                                                        onClick={() => handleDelete(taskContent.id)}>
+                                                        Delete
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </div>
                                     </Accordion.Body>
                                 </Accordion.Item>
-                            ))}
-                        </Accordion>
-                    </div>
-                )}
-            </section>
-        </>
+                            ))
+                        )}
+                    </Accordion>
+                    
+                    {isAdmin && (
+                        <div className="d-grid gap-2 col-6 mx-auto">
+                            <Button variant="success" onClick={() => goToCreateTaskContent()}>
+                                Create new task content
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            )}
+        </section>
     );
 };
 

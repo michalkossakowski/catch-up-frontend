@@ -1,0 +1,21 @@
+.editBox {
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.btn-group {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}

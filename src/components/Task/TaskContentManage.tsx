@@ -5,7 +5,7 @@ import TaskContentComponent from './TaskContentComponent';
 const TaskContentManage: React.FC = () => {
     return (
         <>
-            <h1 className='title'>Manage TaskContents</h1>
+            <h1 className='title'>Manage Task Contents</h1>
             <Container>
                 <TaskContentComponent isAdmin={true} />
             </Container>
