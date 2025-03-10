@@ -19,17 +19,17 @@ interface TaskContentEditProps {
 const StyledTextField = styled(TextField)({
     '& .MuiOutlinedInput-root': {
         '& fieldset': {
-            borderColor: '#ced4da',
+            borderColor: 'var(--bs-border-color)',
         },
         '&:hover fieldset': {
-            borderColor: '#ced4da',
+            borderColor: 'var(--bs-border-color)',
         },
         '&.Mui-focused fieldset': {
             borderColor: '#86b7fe',
         },
         padding: 0,
         '& input': {
-            color: '#ffffff',
+            color: 'var(--bs-body-color)',
         }
     },
     '& .MuiInputLabel-root': {
@@ -37,6 +37,7 @@ const StyledTextField = styled(TextField)({
     },
     '& .MuiOutlinedInput-input': {
         padding: '0.375rem 0.75rem',
+        backgroundColor: 'var(--bs-body-bg)',
     }
 });
 
@@ -260,15 +261,18 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
                     showValidation={false}
                 />
 
-                {materialsId && (
-                    <Button variant="danger" onClick={() => setMaterialsId(null)}>
-                        Remove materials
+                <div className="d-flex justify-content-between mt-3">
+                    {materialsId && (
+                        <Button variant="danger" onClick={() => setMaterialsId(null)}>
+                            Remove materials
+                        </Button>
+                    )}
+                    {!materialsId && <div></div>}
+                    
+                    <Button type="submit" variant="primary">
+                        {isEditMode ? 'Save Changes' : 'Submit'}
                     </Button>
-                )}
-                <br />
-                <button type="submit" className="btn btn-primary">
-                    {isEditMode ? 'Save Changes' : 'Submit'}
-                </button>
+                </div>
             </form>
         </section>
     );
