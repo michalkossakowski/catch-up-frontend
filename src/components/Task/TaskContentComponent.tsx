@@ -151,53 +151,75 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
         navigate(`/taskcontent/details/${taskContentId}`);
     };
 
+    const toggleSortDirection = () => {
+        setSortDirection(prevDirection => prevDirection === 'asc' ? 'desc' : 'asc');
+    };
+
     return (
         <section className='container'>
             <h2 className='title'>Task Contents</h2>
 
             {/* Filters and Search */}
-            <div className="container mb-3 p-3 bg-body-tertiary rounded">
-                <Form.Control
-                    className="mb-3"
-                    type="text"
-                    placeholder="Search by title..."
-                    value={searchTitle}
-                    onChange={(e) => setSearchTitle(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && searchTaskContents()}
-                />
-                <h4 className="mt-3">Advanced Filters</h4>
+            <div className="filter-container">
                 <Row className="mb-3">
-                    <Form.Group as={Col} className='col-4'>
-                        <Form.Label>Category</Form.Label>
-                        <Form.Select onChange={(e) => setSelectedCategoryId(e.target.value)} defaultValue="">
-                            <option value="">Select Category</option>
-                            {categories.map((cat) => (
-                                <option key={cat.id} value={cat.id}>
-                                    {cat.name}
-                                </option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-                    <Form.Group as={Col} className='col-4'>
-                        <Form.Label>Sort By</Form.Label>
-                        <Form.Select
-                            value={sortOption}
-                            onChange={(e) => setSortOption(e.target.value)}
-                        >
-                            <option value="title">Title</option>
-                            <option value="category">Category</option>
-                        </Form.Select>
-                    </Form.Group>
-                    <Form.Group as={Col} className='col-2'>
-                        <Form.Label>Sort Direction</Form.Label>
-                        <Form.Select
-                            value={sortDirection}
-                            onChange={(e) => setSortDirection(e.target.value as 'asc' | 'desc')}
-                        >
-                            <option value="asc">Ascending</option>
-                            <option value="desc">Descending</option>
-                        </Form.Select>
-                    </Form.Group>
+                    <Col sm={12} md={6} lg={4}>
+                        <Form.Group>
+                            <Form.Label>Search by title:</Form.Label>
+                            <InputGroup>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Enter title..."
+                                    value={searchTitle}
+                                    onChange={(e) => setSearchTitle(e.target.value)}
+                                />
+                                <Button variant="primary" onClick={searchTaskContents}>
+                                    Search
+                                </Button>
+                            </InputGroup>
+                        </Form.Group>
+                    </Col>
+                    
+                    <Col sm={12} md={6} lg={4}>
+                        <Form.Group>
+                            <Form.Label>Filter by category:</Form.Label>
+                            <Form.Select
+                                value={selectedCategoryId}
+                                onChange={(e) => setSelectedCategoryId(e.target.value)}
+                            >
+                                <option value="">All Categories</option>
+                                {categories.map(category => (
+                                    <option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                    </Col>
+                    
+                    <Col sm={12} md={6} lg={4}>
+                        <Form.Group>
+                            <Form.Label>Sort by:</Form.Label>
+                            <Row>
+                                <Col sm={8}>
+                                    <Form.Select
+                                        value={sortOption}
+                                        onChange={(e) => setSortOption(e.target.value)}
+                                    >
+                                        <option value="title">Title</option>
+                                        <option value="category">Category</option>
+                                    </Form.Select>
+                                </Col>
+                                <Col sm={4}>
+                                    <Button 
+                                        variant="outline-secondary"
+                                        onClick={toggleSortDirection}
+                                    >
+                                        {sortDirection === 'asc' ? '↑' : '↓'}
+                                    </Button>
+                                </Col>
+                            </Row>
+                        </Form.Group>
+                    </Col>
                 </Row>
             </div>
 

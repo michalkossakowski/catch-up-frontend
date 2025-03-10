@@ -1,16 +1,18 @@
 .task-content-details .details-title {
     font-weight: 600;
-    color: #5CD3B4;
+    color: var(--bs-body-color);
 }
 
 .task-content-details .description-box {
     border: 1px solid var(--bs-border-color);
     min-height: 120px;
+    background-color: var(--bs-body-bg);
 }
 
 .task-content-details .description-text {
     font-size: 1.1rem;
     white-space: pre-line;
+    color: var(--bs-body-color);
 }
 
 .task-content-details .category-badge {
@@ -21,6 +23,7 @@
 
 .task-content-details .category-label {
     margin-bottom: 0;
+    color: var(--bs-body-color);
 }
 
 .task-content-details .card {
@@ -30,10 +33,11 @@
 }
 
 .task-content-details .card-header {
-    background-color: #5CD3B4;
+    background-color: var(--bs-body-color);
     border-bottom-color: var(--bs-border-color);
+    color: var(--bs-body-bg);
 }
 
 .task-content-details h4 {
-    color: #5CD3B4;
+    color: var(--bs-body-color);
 } 
