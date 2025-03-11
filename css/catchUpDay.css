@@ -151,3 +151,21 @@
 .api-alert > i {
     color: #ff0000;
 }
+
+/*ai assistant*/
+.user-message {
+    background: #DB91D1;
+    color: #ffffff;
+}
+.ai-message {
+    background: #e4e4e4;
+    color: #000000;
+}
+.ai-footer{
+    background-color: #ffffff;
+    border-color: #dadada;
+}
+.chat-body {
+    background: #ffffff;
+}
+  
