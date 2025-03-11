@@ -14,8 +14,6 @@ import RoadMapManage from './components/RoadMap/RoadMapManage';
 import LoginComponent from './components/Login/LoginComponent';
 import PresetManage from "./components/Preset/PresetManage.tsx";
 import TaskContentManage from './components/Task/TaskContentManage';
-import TaskContentCreate from './components/Task/TaskContentCreate';
-import TaskContentEditPage from './components/Task/TaskContentEditPage';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
@@ -40,8 +38,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './store/store';
 import { setNotifications, addNotification } from './store/notificationSlice';
 import { getNotifications } from './services/notificationService';
-import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
+import TaskContentDetails from './components/Task/TaskContentDetails';
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
