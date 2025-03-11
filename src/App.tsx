@@ -38,6 +38,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './store/store';
 import { setNotifications, addNotification } from './store/notificationSlice';
 import { getNotifications } from './services/notificationService';
+import AIComponent from './components/AI/AIComponent.tsx';
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -287,6 +288,15 @@ function App() {
                                     </div>
                                 </NavLink>
                                 <NavLink
+                                    title="Ask AI"
+                                    to="/AIComponent"
+                                    className="nav-link"
+                                >
+                                    <span className="notification-wrapper">
+                                        <i className="bi bi-stars"/>
+                                    </span>
+                                </NavLink>
+                                <NavLink
                                     title="Notifications"
                                     to="/notifications"
                                     className="nav-link"
@@ -337,6 +347,7 @@ function App() {
                                 <Route path="/profile/:userId" element={<UserProfile />} />
                                 <Route path="/settings" element={<><h1>Settings</h1></>} />
                                 <Route path="/notifications" element={<><NotificationPage/></>} />
+                                <Route path="/AIComponent" element={<><AIComponent/></>} />
                             </Routes>
                         </Container>
                         <NotificationToast 
