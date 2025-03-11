@@ -39,6 +39,7 @@ import { RootState } from './store/store';
 import { setNotifications, addNotification } from './store/notificationSlice';
 import { getNotifications } from './services/notificationService';
 import AIAssistant from './components/AI/AIAssistant.tsx';
+import TaskContentDetails from './components/Task/TaskContentDetails';
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -322,6 +323,10 @@ function App() {
                                 <Route path="/employesassignment" element={<EmployesAssignmentSelector />} />
                                 <Route path="/taskmanage" element={<TaskManager />} />
                                 <Route path="/taskcontentmanage" element={<TaskContentManage />} />
+                                <Route path="/taskcontent" element={<TaskContentManage />} />
+                                <Route path="/taskcontent/create" element={<TaskContentCreate />} />
+                                <Route path="/taskcontent/edit/:id" element={<TaskContentEditPage />} />
+                                <Route path="/taskcontent/details/:id" element={<TaskContentDetails />} />
                                 <Route path="/editmatlist" element={<EditMatList />} />
                                 <Route path="/roadmapmanage" element={<RoadMapManage />} />
                                 <Route path="/feedbacks" element={<FeedbackList />} />
