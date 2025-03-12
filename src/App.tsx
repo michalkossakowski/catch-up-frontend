@@ -41,6 +41,7 @@ import { RootState } from './store/store';
 import { setNotifications, addNotification } from './store/notificationSlice';
 import { getNotifications } from './services/notificationService';
 import TaskContentDetails from './components/Task/TaskContentDetails';
+import AIAssistant from './components/AI/AIAssistant.tsx';
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -111,6 +112,12 @@ function App() {
             setTheme(savedTheme);
         }
     }
+
+    const [showAIChat, setShowAIChat] = useState(false);
+
+    const handleToggleAIChat = () => {
+      setShowAIChat(prev => !prev); // Przełączanie widoczności
+    };
 
     return (
         <>
@@ -355,6 +362,16 @@ function App() {
                             source={toastSource} 
                             onClose={() => setShowToast(false)} />
                     </div>
+                    <Button
+                        variant="primary"
+                        className='ai-button'
+                        title="Ask AI"
+                        onClick={handleToggleAIChat}
+                    >
+                        <i className="bi bi-stars" style={{ fontSize: '1.5rem' }} />
+                    </Button>
+
+                    <AIAssistant show={showAIChat} onHide={() => setShowAIChat(false)} />
                 </>
             )}
             {!user && (
