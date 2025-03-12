@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { GetAIChatResponse } from "../../services/aiService";
 import { Row, Col, Form, Button, Card, Spinner } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -14,6 +14,79 @@ export default function AIAssistant({ show, onHide }: AIAssistantProps): React.R
   const [messages, setMessages] = useState<{ text: string; sender: string; timestamp: string }[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const card = cardRef.current;
+    const header = headerRef.current;
+    
+    if (!card || !header) return;
+
+    let isDragging = false;
+    let currentX: number;
+    let currentY: number;
+    let initialX: number;
+    let initialY: number;
+
+    const adjustPosition = () => {
+      if (!card) return;
+      const cardWidth = card.offsetWidth;
+      const cardHeight = card.offsetHeight;
+      currentX = Math.max(0, Math.min(currentX, window.innerWidth - cardWidth));
+      currentY = Math.max(0, Math.min(currentY, window.innerHeight - cardHeight));
+      card.style.left = `${currentX}px`;
+      card.style.top = `${currentY}px`;
+    };
+
+    const startDragging = (e: MouseEvent) => {
+      isDragging = true;
+      initialX = e.clientX - currentX;
+      initialY = e.clientY - currentY;
+      card.style.transition = 'none';
+    };
+
+    const drag = (e: MouseEvent) => {
+      if (isDragging) {
+        e.preventDefault();
+        let newX = e.clientX - initialX;
+        let newY = e.clientY - initialY;
+        const cardWidth = card.offsetWidth;
+        const cardHeight = card.offsetHeight;
+        newX = Math.max(0, Math.min(newX, window.innerWidth - cardWidth));
+        newY = Math.max(0, Math.min(newY, window.innerHeight - cardHeight));
+        currentX = newX;
+        currentY = newY;
+        card.style.left = `${newX}px`;
+        card.style.top = `${newY}px`;
+      }
+    };
+
+    const stopDragging = () => {
+      isDragging = false;
+      card.style.transition = 'transform 0.3s ease-in-out, opacity 0.3s ease-in-out';
+    };
+
+    currentX = window.innerWidth - 360;
+    currentY = window.innerHeight - 420;
+    adjustPosition();
+
+    const handleResize = () => {
+      adjustPosition();
+    };
+
+    header.addEventListener('mousedown', startDragging);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', stopDragging);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      header.removeEventListener('mousedown', startDragging);
+      document.removeEventListener('mousemove', drag);
+      document.removeEventListener('mouseup', stopDragging);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,8 +120,16 @@ export default function AIAssistant({ show, onHide }: AIAssistantProps): React.R
   };
 
   return (
-    <Card className={`chat-window ${show ? 'show' : 'hide'}`}>
-      <Card.Header className="ai-header d-flex justify-content-between align-items-center">
+    <Card 
+      ref={cardRef}
+      className={`chat-window ${show ? 'show' : 'hide'}`}
+      style={{ resize: 'both', overflow: 'auto' }}
+    >
+      <Card.Header 
+        ref={headerRef}
+        className="ai-header d-flex justify-content-between align-items-center"
+        style={{ cursor: 'move' }}
+      >
         <h6 className="mb-0"><i className="bi bi-stars"/> AI assistant</h6>
         <Button variant="link" className="text-white p-0" onClick={onHide}>
           <i className="bi bi-x-lg" />
@@ -74,7 +155,7 @@ export default function AIAssistant({ show, onHide }: AIAssistantProps): React.R
             </div>
           </div>
         ))}
-          {messages.length != 0 && !loading && !error && (
+        {messages.length !== 0 && !loading && !error && (
           <div className="empty-chat-prompt">
             You can ask another question...
           </div>

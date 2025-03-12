@@ -4,6 +4,12 @@
   right: 10px;
   width: 350px;
   height: 400px;
+  min-width: 350px;
+  min-height: 400px;
+  max-width: 90vw;
+  max-height: 90vh;
+  resize: both;
+  overflow: auto;
   z-index: 100;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
@@ -62,6 +68,7 @@
   background: #DB91D1;
   border-color: #DB91D1;
   color: #ffffff;
+  cursor: move;
 }
 
 .chat-window .bi {
