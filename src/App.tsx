@@ -365,7 +365,7 @@ function App() {
                     <Button
                         variant="primary"
                         className='ai-button'
-                        title="Ask Assistant"
+                        title="AI Assistant"
                         onClick={handleToggleAIChat}
                     >
                         <i className="bi bi-stars" style={{ fontSize: '1.5rem' }} />
