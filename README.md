@@ -2,20 +2,26 @@
 
 ## Overview
 
-Catch-Up Frontend is a web application designed to be  . This project is built using modern web technologies and follows best practices for frontend development.
+Catch-Up Frontend is a web application designed to assist with onboarding. This project represents only the frontend part of the entire application.
+The complete system also includes:
+
+- [Backend](https://github.com/InterfectoremCubiculum/catch_up_Backend) built with .NET
+- [Mobile app](https://github.com/InterfectoremCubiculum/catch_up_Mobile) developed using .NET MAUI
 
 ## Features
 
-- Feature 1: [Tutaj link do tej sekcji](#feature1)
+- Feature 1: [Login](#Login)
 - Feature 2: [Describe feature 2]
 - Feature 3: [Describe feature 3]
 
 ## Technologies Used
 
 - React
-- Redux
 - TypeScript
-
+- Vite
+- [Bootstrap](https://getbootstrap.com/)
+- [DnD Kit](https://dndkit.com/)
+- [Redux Toolkit](https://redux-toolkit.js.org/)
 ## Getting Started
 
 ### Prerequisites
@@ -51,7 +57,7 @@ npm run dev
 
 The application will be available at `http://localhost:5173`.
 
-## Feature1
+## Login
 
 
 ## Buddies/Ziomy 
