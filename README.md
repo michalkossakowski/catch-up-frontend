@@ -63,3 +63,4 @@ The application will be available at `http://localhost:5173`.
 ## Buddies/Ziomy 
 
 - Ziom 1
+- Urszula Konopko
