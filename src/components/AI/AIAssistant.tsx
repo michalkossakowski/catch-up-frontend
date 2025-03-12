@@ -15,10 +15,6 @@ export default function AIAssistant({ show, onHide }: AIAssistantProps): React.R
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const cleanText = (text: string) => {
-    return text.replace(/\*\*/g, '\n').replace(/\*/g, '\n');
-  };
-
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim()) return;
@@ -35,9 +31,8 @@ export default function AIAssistant({ show, onHide }: AIAssistantProps): React.R
       setError(null);
 
       const aiResponseText = await GetAIChatResponse(message);
-      const cleanedResponseText = cleanText(aiResponseText);
       const aiResponse = {
-        text: cleanedResponseText,
+        text: aiResponseText,
         sender: 'ai',
         timestamp: new Date().toLocaleTimeString()
       };
