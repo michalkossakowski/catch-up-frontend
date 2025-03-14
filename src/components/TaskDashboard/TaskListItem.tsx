@@ -95,7 +95,7 @@ const TaskListItem = ({ task, onEditClick, onDeleteClick, isEditMode, onStatusCh
                             </div>
                         </>
                     )}
-                    <FeedbackButton resourceId={task.id ?? 0} resourceType={ResourceTypeEnum.Task} />
+                    <FeedbackButton resourceId={task.id ?? 0} resourceType={ResourceTypeEnum.Task} receiverId={task.assigningId} />
                     <Form.Select
                         value={task.status}
                         onChange={(e) => handleStatusChange(e.target.value)}

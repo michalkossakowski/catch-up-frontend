@@ -45,7 +45,7 @@ export default function FaqItem(props: FaqProps): React.ReactElement {
                         </>
 
                     )}
-                    <FeedbackButton resourceId={props.faq.id} resourceType={ResourceTypeEnum.Faq} />
+                    <FeedbackButton resourceId={props.faq.id} resourceType={ResourceTypeEnum.Faq} receiverId={""} />
                     </div>
                 </Accordion.Body>
             </Accordion.Item>
