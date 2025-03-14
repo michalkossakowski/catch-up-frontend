@@ -10,7 +10,7 @@ The complete system also includes:
 
 ## Features
 
-- Feature 1: [Login](#Login)
+- Feature 1: [User management](#User management)
 - Feature 2: [Describe feature 2]
 - Feature 3: [Describe feature 3]
 
@@ -22,45 +22,113 @@ The complete system also includes:
 - [Bootstrap](https://getbootstrap.com/)
 - [DnD Kit](https://dndkit.com/)
 - [Redux Toolkit](https://redux-toolkit.js.org/)
-## Getting Started
+- React Context APi
+- Axios
+- js-cookie
+- LocalStorage
 
-### Prerequisites
 
-Make sure you have the following installed:
+## User management
+AuthProvider.tsx is a React Context Provider that manages user authentication, including access tokens, refresh tokens, user details, roles, and avatars. It provides a centralized way to handle authentication across the application using React Context API, Redux, Axios, Cookies, and LocalStorage.
 
-- Node.js
-- npm or yarn
+### Features
+✅ Global Authentication State – Manages user authentication data across the app.\
+✅ Secure Token Storage – Uses Cookies to store access and refresh tokens.\
+✅ User Role Management – Fetches and caches user roles from the API.\
+✅ Avatar Handling – Downloads and stores user avatars in LocalStorage.\
+✅ Session Management – Handles login, logout, and token updates.\
+✅ Redux Integration – Dispatches actions upon logout (e.g., clearing user tasks).
 
-### Installation
+<details>
+<summary>How It Works?</summary>
 
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/InterfectoremCubiculum/catch_up_frontend.git
-    ```
-
-2. Navigate to the project directory:
-    ```bash
-    cd catch-up-frontend
-    ```
-
-3. Install dependencies:
-    ```bash
-    npm install
-    ```
-
-### Running the Application
-
-To start the development server, run:
-```bash
-npm run dev 
+#### Initializing Authentication State
+On component mount, retrieves:
+- accessToken & refreshToken from Cookies.
+- user data from Cookies.
+- avatar from LocalStorage.
+```tsx
+const [accessToken, setAccessToken_] = useState<string | null>(Cookies.get('accessToken') || null);
+const [refreshToken, setRefreshToken_] = useState<string | null>(Cookies.get('refreshToken') || null);
+const [user, setUser_] = useState<User | null>(() => {
+    const storedUser = Cookies.get('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+});
+const [avatar, setAvatar] = useState<string | null>(loadStoredAvatar());
 ```
+#### Managing Authentication Tokens
+- Set Access Token: Stores token in Cookies when a user logs in.
+- Set Refresh Token: Stores refresh token for session persistence.
+- Remove Tokens on Logout: Deletes them from Cookies.
+```tsx
+    const setAccessToken = (newToken: string | null) => {
+        setAccessToken_(newToken);
+        if (newToken) {
+            Cookies.set('accessToken', newToken, {
+                path: '/',
+                secure: true
+            });
+        } else {
+            Cookies.remove('accessToken');
+        }
+    };
+```
+#### Managing User Data
+- Saves user details in Cookies on login.
+- Removes user data on logout.
+- Fetches and stores user avatars using LocalStorage.
+```tsx
+   const setUser = (newUser: User | null) => {
+        if (newUser) {
+            const { ...userToStore } = newUser;
+            Cookies.set('user', JSON.stringify(userToStore), {
+                path: '/',
+                secure: true
+            });
+            setUser_(userToStore);
+            if (userToStore.avatarId) {
+                fetchAndStoreAvatar(userToStore.avatarId);
+            }
+        } else {
+            Cookies.remove('user');
+            localStorage.removeItem('userAvatar');
+            setAvatar(null);
+            setUser_(null);
+        }
+    };
+```
+#### User Role Management
+Fetches the user role from API and caches it to avoid redundant requests.
+```tsx
+  const getRole = async (userId: string): Promise<string> => {
+        if (!userId) { throw new Error("Invalid userId");}
+        try {
+            const response = await axiosInstance.get(`User/GetRole/${userId}`);
+            const role = response.data || "User";
 
-The application will be available at `http://localhost:5173`.
-
-## Login
-
-
-## Buddies/Ziomy 
-
-- Ziom 1
-- Urszula Konopko
+            setRoleCache(role);
+            return role;
+        } catch (error) {  throw new Error("Failed to fetch user role");}
+    };
+```
+#### Logout Functionality
+- Clears all authentication-related data, including Redux state.
+```tsx
+const logout = () => {
+    setAccessToken(null);
+    setRefreshToken(null);
+    setUser(null);
+    setRoleCache("");
+    localStorage.removeItem('userAvatar');
+    dispatch(clearTasks());
+};
+```
+#### Usage
+Wrapping the App with AuthProvider
+- Include AuthProvider in the root component (main.tsx) to provide authentication context across the app.
+```tsx
+<AuthProvider>
+    <App />
+</AuthProvider>
+```
+</details>
