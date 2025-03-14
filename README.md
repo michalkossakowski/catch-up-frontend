@@ -7,12 +7,33 @@ The complete system also includes:
 
 - [Backend](https://github.com/InterfectoremCubiculum/catch_up_Backend) built with .NET
 - [Mobile app](https://github.com/InterfectoremCubiculum/catch_up_Mobile) developed using .NET MAUI
+  
 
 ## Features
-
-- Feature 1: [User management](#User management)
+- [Application preview](#Application_preview)
+- Feature 1: [Authentication and User managment](#User_management)
 - Feature 2: [Describe feature 2]
 - Feature 3: [Describe feature 3]
+
+## Application preview
+<details>
+<summary>See more</summary>
+
+### Home View
+<img src="https://github.com/user-attachments/assets/fdc361e1-2431-423e-b07a-e633a42d8970">
+
+### Login Page
+<img src="https://github.com/user-attachments/assets/7492db27-6879-47e7-a9fa-9a519ff26b73"  width="300">
+
+### Adding new user by admin in Admin Panel
+<img src="https://github.com/user-attachments/assets/dc4e4f53-7555-45f4-b62b-ca08fe269b9f"  width="300">
+
+### Changing between dark and light mode
+![ChangeMode](https://github.com/user-attachments/assets/42ddab0b-d17e-4159-b8fc-62d542cf1b0b)
+
+</details>
+
+
 
 ## Technologies Used
 
