@@ -150,7 +150,7 @@ const AssignNewbieToMentorComponent: React.FC = () => {
       } catch (error: any) {
         setError(error.message || 'An error occurred while assigning the newbie to the mentor');
       } finally {
-       // setLoading(false);
+        // setLoading(false);
       }
     }
   };
@@ -252,17 +252,37 @@ const AssignNewbieToMentorComponent: React.FC = () => {
                 <Table id="mentors" striped bordered hover responsive>
                   <thead>
                     <tr>
-                      <th onClick={() => handleSort('name', 'mentors')} style={{ cursor: 'pointer' }}>
-                        Name <i className="bi bi-arrow-down-up"></i>
+                      <th
+                        onClick={() => handleSort('name', 'mentors')}
+                        style={{ cursor: 'pointer' }}
+                        className={sortConfigMentors.key === 'name' ? 'sorted-column' : ''}
+                      >
+                        <div>Name</div> 
+                        <div><i className="bi bi-arrow-down-up"></i></div>
                       </th>
-                      <th onClick={() => handleSort('surname', 'mentors')} style={{ cursor: 'pointer' }}>
-                        Surname <i className="bi bi-arrow-down-up"></i>
+                      <th
+                        onClick={() => handleSort('surname', 'mentors')}
+                        style={{ cursor: 'pointer' }}
+                        className={sortConfigMentors.key === 'surname' ? 'sorted-column' : ''}
+                      >
+                       <div>Surname</div> 
+                       <div><i className="bi bi-arrow-down-up"></i></div>
                       </th>
-                      <th onClick={() => handleSort('position', 'mentors')} style={{ cursor: 'pointer' }}>
-                        Position <i className="bi bi-arrow-down-up"></i>
+                      <th
+                        onClick={() => handleSort('position', 'mentors')}
+                        style={{ cursor: 'pointer' }}
+                        className={sortConfigMentors.key === 'position' ? 'sorted-column' : ''}
+                      >
+                        <div>Position</div> 
+                        <div><i className="bi bi-arrow-down-up"></i></div>
                       </th>
-                      <th onClick={() => handleSort('assignCount', 'mentors')} style={{ cursor: 'pointer' }}>
-                        Number of Newbies <i className="bi bi-arrow-down-up"></i>
+                      <th
+                        onClick={() => handleSort('assignCount', 'mentors')}
+                        style={{ cursor: 'pointer' }}
+                        className={sortConfigMentors.key === 'assignCount' ? 'sorted-column' : ''}
+                      >
+                        <div>Number of Newbies</div> 
+                        <div><i className="bi bi-arrow-down-up"></i></div>
                       </th>
                     </tr>
                   </thead>
@@ -272,7 +292,7 @@ const AssignNewbieToMentorComponent: React.FC = () => {
                         key={mentor.id}
                         onClick={() => handleMentorClick(mentor.id, mentor.name, mentor.surname)}
                         style={{ cursor: 'pointer' }}
-                        className={mentor.id === selectedMentorId ? 'table-active' : ''}>
+                        className={mentor.id === selectedMentorId ? 'selected-row ' : ''}>
                         <td>{mentor.name}</td>
                         <td>{mentor.surname}</td>
                         <td>{mentor.position}</td>
@@ -308,13 +328,34 @@ const AssignNewbieToMentorComponent: React.FC = () => {
                   <Table id="assigned" striped bordered hover responsive>
                     <thead>
                       <tr>
-                        <th onClick={() => handleSort('name', 'assigned')} style={{ cursor: 'pointer' }}>
-                          Name <i className="bi bi-arrow-down-up"></i></th>
-                        <th onClick={() => handleSort('surname', 'assigned')} style={{ cursor: 'pointer' }}>
-                          Surname <i className="bi bi-arrow-down-up"></i></th>
-                        <th onClick={() => handleSort('position', 'assigned')} style={{ cursor: 'pointer' }}>
-                          Position <i className="bi bi-arrow-down-up"></i></th>
-                        <th>Actions</th>
+                        <th
+                          onClick={() => handleSort('name', 'assigned')}
+                          style={{ cursor: 'pointer' }}
+                          className={sortConfigAssigned.key === 'name' ? 'sorted-column' : ''}
+                        >
+                          <div>Name</div> 
+                          <div><i className="bi bi-arrow-down-up"></i></div>
+                        </th>
+                        <th
+                          onClick={() => handleSort('surname', 'assigned')}
+                          style={{ cursor: 'pointer' }}
+                          className={sortConfigAssigned.key === 'surname' ? 'sorted-column' : ''}
+                        >
+                          <div>Surname</div> 
+                          <div><i className="bi bi-arrow-down-up"></i></div>
+                        </th>
+                        <th
+                          onClick={() => handleSort('position', 'assigned')}
+                          style={{ cursor: 'pointer' }}
+                          className={sortConfigAssigned.key === 'position' ? 'sorted-column' : ''}
+                        >
+                          <div>Position</div> 
+                          <div><i className="bi bi-arrow-down-up"></i></div>
+                        </th>
+                        <th>
+                        <div>Actions</div> 
+                        <div><i className="bi bi-gear-fill"></i></div>
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -356,13 +397,34 @@ const AssignNewbieToMentorComponent: React.FC = () => {
                   <Table id="unassigned" striped bordered hover responsive>
                     <thead>
                       <tr>
-                        <th onClick={() => handleSort('name', 'unassigned')} style={{ cursor: 'pointer' }}>
-                          Name <i className="bi bi-arrow-down-up"></i></th>
-                        <th onClick={() => handleSort('surname', 'unassigned')} style={{ cursor: 'pointer' }}>
-                          Surname <i className="bi bi-arrow-down-up"></i></th>
-                        <th onClick={() => handleSort('position', 'unassigned')} style={{ cursor: 'pointer' }}>
-                          Position <i className="bi bi-arrow-down-up"></i></th>
-                        <th>Actions</th>
+                        <th
+                          onClick={() => handleSort('name', 'unassigned')}
+                          style={{ cursor: 'pointer' }}
+                          className={sortConfigUnassigned.key === 'name' ? 'sorted-column' : ''}
+                        >
+                          <div>Name</div> 
+                          <div><i className="bi bi-arrow-down-up"></i></div>
+                        </th>
+                        <th
+                          onClick={() => handleSort('surname', 'unassigned')}
+                          style={{ cursor: 'pointer' }}
+                          className={sortConfigUnassigned.key === 'surname' ? 'sorted-column' : ''}
+                        >
+                          <div>Surname</div> 
+                          <div><i className="bi bi-arrow-down-up"></i></div>
+                        </th>
+                        <th
+                          onClick={() => handleSort('position', 'unassigned')}
+                          style={{ cursor: 'pointer' }}
+                          className={sortConfigUnassigned.key === 'position' ? 'sorted-column' : ''}
+                        >
+                         <div>Position</div> 
+                         <div><i className="bi bi-arrow-down-up"></i></div>
+                        </th>
+                        <th>
+                          <div>Actions</div> 
+                          <div><i className="bi bi-gear-fill"></i></div>
+                        </th>
                       </tr>
                     </thead>
                     <tbody>

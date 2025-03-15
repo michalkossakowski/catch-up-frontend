@@ -10,7 +10,12 @@
     flex: 1;
     padding: 0 15px;
   }
-  .table-active {
-  background-color: #01080f;
-  color: white;
+  
+  .selected-row {
+    background-color: gray !important; 
+    font-weight: bold; 
+  }
+th.sorted-column {
+  background-color: gray; 
+  font-weight: bold;
 }
