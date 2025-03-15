@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal } from 'react-bootstrap';
+import { Table, Button, Modal, Alert } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import NewbieMentorService from '../../services/newbieMentorService';
 import { UserAssignCountDto } from '../../dtos/UserAssignCountDto';
@@ -221,8 +221,6 @@ const AssignNewbieToMentorComponent: React.FC = () => {
     }
   };
 
-
-
   return (
     <div className="container mt-5">
       <h2>List of Mentors</h2>
@@ -248,39 +246,42 @@ const AssignNewbieToMentorComponent: React.FC = () => {
                   </span>
                 </div>
               </div>
-              <Table id="mentors" striped bordered hover responsive>
-                <thead>
-                  <tr>
-                    <th onClick={() => handleSort('name', 'mentors')} style={{ cursor: 'pointer' }}>
-                      Name <i className="bi bi-arrow-down-up"></i>
-                    </th>
-                    <th onClick={() => handleSort('surname', 'mentors')} style={{ cursor: 'pointer' }}>
-                      Surname <i className="bi bi-arrow-down-up"></i>
-                    </th>
-                    <th onClick={() => handleSort('position', 'mentors')} style={{ cursor: 'pointer' }}>
-                      Position <i className="bi bi-arrow-down-up"></i>
-                    </th>
-                    <th onClick={() => handleSort('assignCount', 'mentors')} style={{ cursor: 'pointer' }}>
-                      Number of Newbies <i className="bi bi-arrow-down-up"></i>
-                    </th>
-
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedMentors.map((mentor) => (
-                    <tr
-                      key={mentor.id}
-                      onClick={() => handleMentorClick(mentor.id, mentor.name, mentor.surname)}
-                      style={{ cursor: 'pointer' }}
-                      className={mentor.id === selectedMentorId ? 'table-active' : ''}>
-                      <td>{mentor.name}</td>
-                      <td>{mentor.surname}</td>
-                      <td>{mentor.position}</td>
-                      <td>{mentor.assignCount || 0}</td>
+              {sortedMentors.length === 0 ? (
+                <Alert variant="warning">This list is empty</Alert>
+              ) : (
+                <Table id="mentors" striped bordered hover responsive>
+                  <thead>
+                    <tr>
+                      <th onClick={() => handleSort('name', 'mentors')} style={{ cursor: 'pointer' }}>
+                        Name <i className="bi bi-arrow-down-up"></i>
+                      </th>
+                      <th onClick={() => handleSort('surname', 'mentors')} style={{ cursor: 'pointer' }}>
+                        Surname <i className="bi bi-arrow-down-up"></i>
+                      </th>
+                      <th onClick={() => handleSort('position', 'mentors')} style={{ cursor: 'pointer' }}>
+                        Position <i className="bi bi-arrow-down-up"></i>
+                      </th>
+                      <th onClick={() => handleSort('assignCount', 'mentors')} style={{ cursor: 'pointer' }}>
+                        Number of Newbies <i className="bi bi-arrow-down-up"></i>
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </Table>
+                  </thead>
+                  <tbody>
+                    {sortedMentors.map((mentor) => (
+                      <tr
+                        key={mentor.id}
+                        onClick={() => handleMentorClick(mentor.id, mentor.name, mentor.surname)}
+                        style={{ cursor: 'pointer' }}
+                        className={mentor.id === selectedMentorId ? 'table-active' : ''}>
+                        <td>{mentor.name}</td>
+                        <td>{mentor.surname}</td>
+                        <td>{mentor.position}</td>
+                        <td>{mentor.assignCount || 0}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              )}
             </div>
           </div>
           <div className="col-md-6">
@@ -301,31 +302,35 @@ const AssignNewbieToMentorComponent: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                <Table id="assigned" striped bordered hover responsive>
-                  <thead>
-                    <tr>
-                      <th onClick={() => handleSort('name', 'assigned')} style={{ cursor: 'pointer' }}>
-                        Name <i className="bi bi-arrow-down-up"></i></th>
-                      <th onClick={() => handleSort('surname', 'assigned')} style={{ cursor: 'pointer' }}>
-                        Surname <i className="bi bi-arrow-down-up"></i></th>
-                      <th onClick={() => handleSort('position', 'assigned')} style={{ cursor: 'pointer' }}>
-                        Position <i className="bi bi-arrow-down-up"></i></th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sortedAssigned.map((newbie) => (
-                      <tr key={newbie.id}>
-                        <td>{newbie.name}</td>
-                        <td>{newbie.surname}</td>
-                        <td>{newbie.position}</td>
-                        <td>
-                          <Button variant="danger" onClick={() => handleDeleteClick(newbie.id)}>Unassign</Button>
-                        </td>
+                {sortedAssigned.length === 0 ? (
+                  <Alert variant="warning">This list is empty</Alert>
+                ) : (
+                  <Table id="assigned" striped bordered hover responsive>
+                    <thead>
+                      <tr>
+                        <th onClick={() => handleSort('name', 'assigned')} style={{ cursor: 'pointer' }}>
+                          Name <i className="bi bi-arrow-down-up"></i></th>
+                        <th onClick={() => handleSort('surname', 'assigned')} style={{ cursor: 'pointer' }}>
+                          Surname <i className="bi bi-arrow-down-up"></i></th>
+                        <th onClick={() => handleSort('position', 'assigned')} style={{ cursor: 'pointer' }}>
+                          Position <i className="bi bi-arrow-down-up"></i></th>
+                        <th>Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </Table>
+                    </thead>
+                    <tbody>
+                      {sortedAssigned.map((newbie) => (
+                        <tr key={newbie.id}>
+                          <td>{newbie.name}</td>
+                          <td>{newbie.surname}</td>
+                          <td>{newbie.position}</td>
+                          <td>
+                            <Button variant="danger" onClick={() => handleDeleteClick(newbie.id)}>Unassign</Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                )}
               </div>
             )}
             {selectedMentorId && (
@@ -345,36 +350,40 @@ const AssignNewbieToMentorComponent: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                <Table id="unassigned" striped bordered hover responsive>
-                  <thead>
-                    <tr>
-                      <th onClick={() => handleSort('name', 'unassigned')} style={{ cursor: 'pointer' }}>
-                        Name <i className="bi bi-arrow-down-up"></i></th>
-                      <th onClick={() => handleSort('surname', 'unassigned')} style={{ cursor: 'pointer' }}>
-                        Surname <i className="bi bi-arrow-down-up"></i></th>
-                      <th onClick={() => handleSort('position', 'unassigned')} style={{ cursor: 'pointer' }}>
-                        Position <i className="bi bi-arrow-down-up"></i></th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sortedUnassigned.map((newbie) => (
-                      <tr key={newbie.id}>
-                        <td>{newbie.name}</td>
-                        <td>{newbie.surname}</td>
-                        <td>{newbie.position}</td>
-                        <td>
-                          <Button
-                            variant="primary"
-                            onClick={() => handleAssignNewbie(newbie.id)}
-                          >
-                            Assign
-                          </Button>
-                        </td>
+                {sortedUnassigned.length === 0 ? (
+                  <Alert variant="warning">This list is empty</Alert>
+                ) : (
+                  <Table id="unassigned" striped bordered hover responsive>
+                    <thead>
+                      <tr>
+                        <th onClick={() => handleSort('name', 'unassigned')} style={{ cursor: 'pointer' }}>
+                          Name <i className="bi bi-arrow-down-up"></i></th>
+                        <th onClick={() => handleSort('surname', 'unassigned')} style={{ cursor: 'pointer' }}>
+                          Surname <i className="bi bi-arrow-down-up"></i></th>
+                        <th onClick={() => handleSort('position', 'unassigned')} style={{ cursor: 'pointer' }}>
+                          Position <i className="bi bi-arrow-down-up"></i></th>
+                        <th>Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </Table>
+                    </thead>
+                    <tbody>
+                      {sortedUnassigned.map((newbie) => (
+                        <tr key={newbie.id}>
+                          <td>{newbie.name}</td>
+                          <td>{newbie.surname}</td>
+                          <td>{newbie.position}</td>
+                          <td>
+                            <Button
+                              variant="primary"
+                              onClick={() => handleAssignNewbie(newbie.id)}
+                            >
+                              Assign
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                )}
               </div>
             )}
           </div>

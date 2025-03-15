@@ -222,34 +222,34 @@ const AssignMentorToNewbieComponent: React.FC = () => {
       else if (table === 'unassigned') setSortConfigUnassigned({ key, direction });
     }
   };
-
-
-
   return (
-    <div className="container mt-5">
-      <h2>List of Newbies</h2>
+  <div className="container mt-5">
+    <h2>List of Newbies</h2>
 
-      {loading ? (
-        <Loading />
-      ) : (
-        <div className="row">
-          <div className="col-md-6">
-            <div className="mt-4">
-              <div className="mb-3">
-                <h3>Newbies</h3>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search newbie by name or surname..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                  <span className="input-group-text">
-                    <i className="bi bi-search"></i>
-                  </span>
-                </div>
+    {loading ? (
+      <Loading />
+    ) : (
+      <div className="row">
+        <div className="col-md-6">
+          <div className="mt-4">
+            <div className="mb-3">
+              <h3>Newbies</h3>
+              <div className="input-group">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search newbie by name or surname..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <span className="input-group-text">
+                  <i className="bi bi-search"></i>
+                </span>
               </div>
+            </div>
+            {sortedNewbies.length === 0 ? (
+              <Alert variant="warning">This list is empty</Alert>
+            ) : (
               <Table id="newbies" striped bordered hover responsive>
                 <thead>
                   <tr>
@@ -265,7 +265,6 @@ const AssignMentorToNewbieComponent: React.FC = () => {
                     <th onClick={() => handleSort('assignCount', 'newbies')} style={{ cursor: 'pointer' }}>
                       Number of Newbies <i className="bi bi-arrow-down-up"></i>
                     </th>
-
                   </tr>
                 </thead>
                 <tbody>
@@ -283,26 +282,30 @@ const AssignMentorToNewbieComponent: React.FC = () => {
                   ))}
                 </tbody>
               </Table>
-            </div>
+            )}
           </div>
-          <div className="col-md-6">
-            {selectedNewbieId && (
-              <div className="mt-4">
-                <h3>Assigned Mentor to {selectedNewbieName} {selectedNewbieSurname}</h3>
-                <div className="mb-3">
-                  <div className="input-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Search assigned mentor by name or surname..."
-                      value={searchTermAssigned}
-                      onChange={(e) => setSearchTermAssigned(e.target.value)}
-                    />
-                    <span className="input-group-text">
-                      <i className="bi bi-search"></i>
-                    </span>
-                  </div>
+        </div>
+        <div className="col-md-6">
+          {selectedNewbieId && (
+            <div className="mt-4">
+              <h3>Assigned Mentor to {selectedNewbieName} {selectedNewbieSurname}</h3>
+              <div className="mb-3">
+                <div className="input-group">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search assigned mentor by name or surname..."
+                    value={searchTermAssigned}
+                    onChange={(e) => setSearchTermAssigned(e.target.value)}
+                  />
+                  <span className="input-group-text">
+                    <i className="bi bi-search"></i>
+                  </span>
                 </div>
+              </div>
+              {sortedAssigned.length === 0 ? (
+                <Alert variant="warning">This list is empty</Alert>
+              ) : (
                 <Table id="assigned" striped bordered hover responsive>
                   <thead>
                     <tr>
@@ -328,25 +331,29 @@ const AssignMentorToNewbieComponent: React.FC = () => {
                     ))}
                   </tbody>
                 </Table>
-              </div>
-            )}
-            {selectedNewbieId && (
-              <div className="mt-4">
-                <h3>Unassigned Mentor from {selectedNewbieName} {selectedNewbieSurname}</h3>
-                <div className="mb-3">
-                  <div className="input-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Search unassigned mentor by name or surname..."
-                      value={searchTermUnassigned}
-                      onChange={(e) => setSearchTermUnassigned(e.target.value)}
-                    />
-                    <span className="input-group-text">
-                      <i className="bi bi-search"></i>
-                    </span>
-                  </div>
+              )}
+            </div>
+          )}
+          {selectedNewbieId && (
+            <div className="mt-4">
+              <h3>Unassigned Mentor from {selectedNewbieName} {selectedNewbieSurname}</h3>
+              <div className="mb-3">
+                <div className="input-group">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search unassigned mentor by name or surname..."
+                    value={searchTermUnassigned}
+                    onChange={(e) => setSearchTermUnassigned(e.target.value)}
+                  />
+                  <span className="input-group-text">
+                    <i className="bi bi-search"></i>
+                  </span>
                 </div>
+              </div>
+              {sortedUnassigned.length === 0 ? (
+                <Alert variant="warning">This list is empty</Alert>
+              ) : (
                 <Table id="unassigned" striped bordered hover responsive>
                   <thead>
                     <tr>
@@ -377,28 +384,29 @@ const AssignMentorToNewbieComponent: React.FC = () => {
                     ))}
                   </tbody>
                 </Table>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
-      )}
+      </div>
+    )}
 
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Unassignment</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to unassign this newbie from this mentor?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleUnassign}>
-            Unassign
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
-  );
+    <Modal show={showModal} onHide={() => setShowModal(false)}>
+      <Modal.Header closeButton>
+        <Modal.Title>Confirm Unassignment</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>Are you sure you want to unassign this newbie from this mentor?</Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={() => setShowModal(false)}>
+          Cancel
+        </Button>
+        <Button variant="danger" onClick={handleUnassign}>
+          Unassign
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  </div>
+);
 };
 
 export default AssignMentorToNewbieComponent;
