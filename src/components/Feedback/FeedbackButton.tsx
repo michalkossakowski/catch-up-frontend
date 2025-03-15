@@ -5,9 +5,10 @@ import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 interface FeedbackButtonProps {
     resourceId: number;
     resourceType: ResourceTypeEnum;
+    receiverId: string;
 }
 
-export const FeedbackButton: React.FC<FeedbackButtonProps> = ({ resourceId, resourceType }) => {
+export const FeedbackButton: React.FC<FeedbackButtonProps> = ({ resourceId, resourceType, receiverId }) => {
     const [showDialog, setShowDialog] = useState(false);
 
     const handleOpenDialog = () => {
@@ -27,6 +28,7 @@ export const FeedbackButton: React.FC<FeedbackButtonProps> = ({ resourceId, reso
                 <AddFeedbackDialog
                     resourceId={resourceId}
                     resourceType={resourceType}
+                    receiverId={receiverId}
                     onClose={handleCloseDialog}
                 />
             )}

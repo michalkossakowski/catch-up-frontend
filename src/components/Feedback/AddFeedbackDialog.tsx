@@ -11,26 +11,27 @@ import { useAuth } from '../../Provider/authProvider';
 interface AddFeedbackDialogProps {
     resourceId: number;
     resourceType: ResourceTypeEnum;
+    receiverId: string;
     onClose: () => void;
 }
 
-export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId, resourceType, onClose }) => {
+export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId, resourceType, receiverId, onClose }) => {
     const { user } = useAuth();
     const [admins, setAdmins] = useState<UserDto[]>([]);
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [toastColor, setToastColor] = useState('');
+    const [chosen, setChosen] = useState(false);
     const [feedback, setFeedback] = useState<FeedbackDto>({
         title: '',
         description: '',
         senderId: user?.id || '',
-        receiverId: '',
+        receiverId,
         resourceType,
         resourceId,
         resourceName: '',
         createdDate: new Date(),
     });
-
     useEffect(() => {
         const loadAdmins = async () => {
             try {
@@ -93,21 +94,26 @@ export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId
                             />
                         </Form.Group>
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Receiver</Form.Label>
-                            <Form.Select
-                                required
-                                value={feedback.receiverId}
-                                onChange={(e) => setFeedback({ ...feedback, receiverId: e.target.value })}
-                            >
-                                <option value="">Select an admin</option>
-                                {admins.map((admin) => (
-                                    <option key={admin.id} value={admin.id}>
-                                        {admin.name} {admin.surname}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
+                        {(feedback.receiverId === ""  || chosen == true) && (
+                            <Form.Group className="mb-3">
+                                <Form.Label>Receiver</Form.Label>
+                                <Form.Select
+                                    required
+                                    value={feedback.receiverId}
+                                    onChange={(e) => {
+                                        setFeedback({ ...feedback, receiverId: e.target.value });
+                                        setChosen(true);
+                                    }}
+                                >
+                                    <option value="">Select an admin or mentor</option>
+                                    {admins.map((admin) => (
+                                        <option key={admin.id} value={admin.id}>
+                                            {admin.name} {admin.surname}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+                        )}
 
                         <div className="d-flex justify-content-end gap-2">
                             <Button variant="secondary" onClick={onClose}>

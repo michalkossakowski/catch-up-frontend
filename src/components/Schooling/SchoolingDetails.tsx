@@ -46,7 +46,7 @@ const SchoolingDetails: React.FC = () => {
                         </div>
                     </div>
                 ))}
-                <FeedbackButton resourceId={fullSchooling?.schooling?.id ?? 0} resourceType={ResourceTypeEnum.Schooling} />
+                <FeedbackButton resourceId={fullSchooling?.schooling?.id ?? 0} resourceType={ResourceTypeEnum.Schooling} receiverId={fullSchooling?.schooling?.creatorId ?? ""}/>
             </div>
         </section>
     )
