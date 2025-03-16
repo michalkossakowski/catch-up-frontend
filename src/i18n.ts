@@ -11,7 +11,13 @@ i18n
   .use(LanguageDetector) // Wykrywa język użytkownika
   .use(initReactI18next)
   .init({
-    fallbackLng: "en", // Domyślny język
+    fallbackLng: {
+      "en-US": ["en"],
+      "en-GB": ["en"],
+      "fr-CA": ["fr"],
+      "fr-FR": ["fr"],
+      default: ["en"],
+    }, // Domyślny język
     detection: {
       order: ["localStorage", "navigator"], // Kolejność wykrywania języka
       caches: ["localStorage"], // Zapisuje wybór języka w localStorage

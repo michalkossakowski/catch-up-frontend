@@ -61,19 +61,28 @@ function App() {
 
     const { t, i18n } = useTranslation();
     const availableLanguages: { [key: string]: string  } = {
-        en: "English",
-        pl: "Polski",
-        fr: "Français",
-        de: "Deutsch",
-        es: "Español",
+        'en': "English",
+        'pl': "Polski",
+        'fr': "Français",
+        'de': "Deutsch",
+        'es': "Español",
       };
 
     const changeLanguage = (lng: string) => {
         i18n.changeLanguage(lng); // Zmieniamy język
+        if (!availableLanguages.hasOwnProperty(lng)) {
+            i18n.changeLanguage("en");
+            return "en";
+        }
         localStorage.setItem("i18nextLng", lng); // Zapisujemy język w localStorage
     };
-    const getCurrentLanguage = () => {
-        
+    const normalizeLanguage = (lng: string) => {
+        if (!lng) return "en"; // Domyślny język
+        if (!availableLanguages.hasOwnProperty(lng)) {
+            i18n.changeLanguage("en");
+            return "en";
+        }
+        return lng.split("-")[0]; // Pobiera tylko główny kod języka (np. en zamiast en-GB)
     };
     const fetchRole = async () => {
         if (user?.id) {
@@ -174,10 +183,10 @@ function App() {
                                     to="/schoolinglist"
                                     className="nav-link"
                                 >
-                                    <i className="bi bi-book" />  <span>Schoolings</span>
+                                    <i className="bi bi-book" />  <span>{t('schoolings')}</span>
                                 </NavLink>
                                 <NavLink to="/feedbacks" className="nav-link">
-                                    <i className="bi bi-arrow-clockwise" /> <span>Feedbacks</span>
+                                    <i className="bi bi-arrow-clockwise" /> <span>{t('feedbacks')}</span>
                                 </NavLink>
                                 <NavLink to="/badges" className="nav-link">
                                     <i className="bi bi-shield" /> <span>Badges</span>
@@ -302,7 +311,7 @@ function App() {
                                 <NavDropdown
                                     id="nav-language-dropdown"
                                     title={<img
-                                                src= {`/locales/${i18n.language}/1x1.svg`}
+                                                src={`/locales/${normalizeLanguage(i18n.language)}/1x1.svg`}
                                                 alt={i18n.language}
                                                 width="25"
                                                 height="25"
@@ -317,7 +326,7 @@ function App() {
                                         {Object.keys(availableLanguages).map((lng) => (
                                             <NavDropdown.Item key={lng} onClick={() => changeLanguage(lng)}>
                                                     <img
-                                                        src= {`/locales/${lng}/4x3.svg`}
+                                                        src={`/locales/${normalizeLanguage(lng)}/4x3.svg`}
                                                         alt={lng}
                                                         width="20"
                                                         height="15"
