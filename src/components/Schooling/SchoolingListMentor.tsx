@@ -11,10 +11,10 @@ import { clearSchooling, setSchooling } from '../../store/schoolingSlice';
 import ConfirmModal from '../Modal/ConfirmModal'
 import NotificationToast from '../Toast/NotificationToast'
 
+
 const SchoolingListMentor: React.FC = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
-
     
     // Obsługa error-ów
     const [showAlert, setShowAlert] = useState(false)
