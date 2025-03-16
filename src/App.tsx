@@ -1,5 +1,5 @@
 import './App.css';
-import { Alert, Button, Image } from 'react-bootstrap';
+import { Alert, Button, Image,  } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './components/Home/Home.tsx';
@@ -42,13 +42,15 @@ import { setNotifications, addNotification } from './store/notificationSlice';
 import { getNotifications } from './services/notificationService';
 import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
+import { useTranslation } from "react-i18next";
+import "./i18n.ts";
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
     const [isSidebarVisible, setSidebarVisible] = useState(true); // Sidebar visibility state
     const [theme, setTheme] = useState<'night' | 'day'>('night');
-  
+    
     const dispatch = useDispatch();
     const { hasUnread } = useSelector((state: RootState) => state.notifications);
 
@@ -57,6 +59,22 @@ function App() {
     const [toastSource, setToastSource] = useState('');
     const notificationSound = new Audio('/Notifications/notification.mp3');
 
+    const { t, i18n } = useTranslation();
+    const availableLanguages: { [key: string]: string  } = {
+        en: "English",
+        pl: "Polski",
+        fr: "Français",
+        de: "Deutsch",
+        es: "Español",
+      };
+
+    const changeLanguage = (lng: string) => {
+        i18n.changeLanguage(lng); // Zmieniamy język
+        localStorage.setItem("i18nextLng", lng); // Zapisujemy język w localStorage
+    };
+    const getCurrentLanguage = () => {
+        
+    };
     const fetchRole = async () => {
         if (user?.id) {
             const userRole = await getRole(user.id);
@@ -142,14 +160,14 @@ function App() {
                             </Navbar.Brand>
                             <Nav className="flex-column w-100">
                                 <NavLink to="/" className="nav-link">
-                                    <i className="bi bi-house-door" /> <span>Home</span>
+                                    <i className="bi bi-house-door" /> <span>{t('home')}</span>
                                 </NavLink>
                                 {role === "Newbie" && (
                                     <NavLink
                                         to="/tasks"
                                         className="nav-link left-sidebar"
                                     >
-                                        <i className="bi bi-list-task" /> <span>Tasks</span>
+                                        <i className="bi bi-list-task" /> <span>{t('tasks')}</span>
                                     </NavLink>
                                 )}
                                 <NavLink
@@ -183,17 +201,14 @@ function App() {
                                             className="nav-dropdown-item"
                                         >
                                             <i className="bi bi-list-task" />{" "}
-                                            Tasks
-                                        </NavDropdown.Item>
+                                            {t('tasks')} </NavDropdown.Item>
                                         <NavDropdown.Divider />
                                         <NavDropdown.Item
                                             as={NavLink}
                                             to="/taskcontentmanage"
                                             className="nav-dropdown-item"
                                         >
-                                            <i className="bi bi-kanban" /> Task
-                                            Contents
-                                        </NavDropdown.Item>
+                                            <i className="bi bi-kanban" /> {t('task-contents')} </NavDropdown.Item>
                                         <NavDropdown.Divider />
                                         <NavDropdown.Item
                                             as={NavLink}
@@ -283,7 +298,35 @@ function App() {
                                     title='Dark/Light theme'
                                 >
                                     {theme === 'night' ? <i className="bi bi-brightness-high"/> : <i className="bi bi-moon"/>}
-                                </Button>                         
+                                </Button>
+                                <NavDropdown
+                                    id="nav-language-dropdown"
+                                    title={<img
+                                                src= {`/locales/${i18n.language}/1x1.svg`}
+                                                alt={i18n.language}
+                                                width="25"
+                                                height="25"
+                                                style={{
+                                                    borderRadius: "50%", // Zaokrąglamy flagę
+                                                }}
+                                            />
+                                    }
+                                    align="end"
+                                    drop="down"
+                                    >
+                                        {Object.keys(availableLanguages).map((lng) => (
+                                            <NavDropdown.Item key={lng} onClick={() => changeLanguage(lng)}>
+                                                    <img
+                                                        src= {`/locales/${lng}/4x3.svg`}
+                                                        alt={lng}
+                                                        width="20"
+                                                        height="15"
+                                                        style={{ marginRight: "10px",}}
+                                                    />
+                                                    {availableLanguages[lng]}
+                                            </NavDropdown.Item>
+                                        ))}
+                                </NavDropdown>                         
                                 <NavLink className="nav-link  nav-user" to={`/profile/${user?.id}`}>
                                     <div className="d-flex align-items-center ">
                                         <span>{user.name} {user.surname}</span>
