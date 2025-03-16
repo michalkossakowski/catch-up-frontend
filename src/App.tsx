@@ -42,6 +42,7 @@ import { setNotifications, addNotification } from './store/notificationSlice';
 import { getNotifications } from './services/notificationService';
 import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
+import AddMaterial from './components/MaterialManager/AddMaterial.tsx';
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -351,6 +352,7 @@ function App() {
                                 <Route path="/profile/:userId" element={<UserProfile />} />
                                 <Route path="/settings" element={<><h1>Settings</h1></>} />
                                 <Route path="/notifications" element={<><NotificationPage/></>} />
+                                <Route path="/addMaterial" element={<><AddMaterial/></>} />
                             </Routes>
                         </Container>
                         <NotificationToast 

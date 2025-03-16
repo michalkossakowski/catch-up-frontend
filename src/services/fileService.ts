@@ -1,8 +1,34 @@
 import { FileDto } from '../dtos/FileDto';
 import axiosInstance from '../../axiosConfig';
+export const uploadFile = async (file: File, materialId?: number, ownerId?: string): Promise<{ message: string; fileDto: FileDto; materialId: number }> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const response = await axiosInstance.post<{ message: string; fileDto: FileDto; materialId: number }>
+        (
+            `File/Upload`,
+            formData,
+            {
+                params: {
+                    ...(materialId && { materialId }), 
+                    ...(ownerId && { ownerId }) 
+                },
+                headers: {'Content-Type': 'multipart/form-data'},
+            }
+        );
+        return response.data;
+    }
+    catch (error)
+    {
+        console.error('File upload error:', error);
+        throw error;
+    }
+}
+
 const fileService =
 {
-    uploadFile: async (file: File, materialId?: number): Promise<{ message: string; fileDto: FileDto; materialId: number }> => {
+    uploadFile: async (file: File, materialId?: number, ownerId?: string): Promise<{ message: string; fileDto: FileDto; materialId: number }> => {
         const formData = new FormData();
         formData.append('file', file);
 
@@ -12,7 +38,10 @@ const fileService =
                 `File/Upload`,
                 formData,
                 {
-                    params: materialId ? { materialId } : {},
+                    params: {
+                        ...(materialId && { materialId }), 
+                        ...(ownerId && { ownerId }) 
+                    },
                     headers: {'Content-Type': 'multipart/form-data'},
                 }
             );
@@ -20,7 +49,7 @@ const fileService =
         }
         catch (error)
         {
-            console.error('File upload error:', error);
+            handleError('uploadFile', error);
             throw error;
         }
     },
@@ -61,5 +90,11 @@ const fileService =
         }
     },
 }
-
+const handleError = (operation: string, error: any): void => {
+    console.error(`${operation} failed:`, error);
+    if (!error.response) {
+        throw new Error('API is not available');
+    }
+    throw new Error(error.response.data?.message || 'An unexpected error occurred');
+};
 export default fileService;

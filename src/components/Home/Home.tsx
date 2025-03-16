@@ -68,7 +68,7 @@ export default function Home(): React.ReactElement {
                                     <i className="bi bi-browser-firefox fs-4"></i>  Placeholder
                                 </h5>
                                 <p className="card-text">Placeholder.</p>
-                                <NavLink className="btn btn-primary" to="/x">See more</NavLink>
+                                <NavLink className="btn btn-primary" to="/addMaterial">See more</NavLink>
                             </div>
                         </div>
                     </div>
