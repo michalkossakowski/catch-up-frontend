@@ -4,6 +4,7 @@ import Material from '../Material/Material';
 import { addFaq, editFaq } from '../../services/faqService';
 import './FaqEdit.css';
 import { Button } from 'react-bootstrap';
+import { useAuth } from '../../Provider/authProvider';
 
 interface FaqEditProps {
     isEditMode: boolean; 
@@ -13,7 +14,7 @@ interface FaqEditProps {
 }
 
 export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqEditProps): React.ReactElement {
-
+    const { user } = useAuth();
     const [question, setQuestion] = useState<string>('');
     const [answer, setAnswer] = useState<string>('');
     const [materialId, setMaterialId] = useState<number | null>(null);
@@ -57,6 +58,7 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
             question: question ?? '',
             answer: answer ?? '',
             materialId: materialId,
+            creatorId:  user?.id || '',
         };
 
         try {

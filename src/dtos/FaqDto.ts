@@ -3,6 +3,7 @@ export interface FaqDto {
     question: string;
     answer: string;
     materialId?: number | null;
+    creatorId: string;
 }
 
 export interface FaqResponse {

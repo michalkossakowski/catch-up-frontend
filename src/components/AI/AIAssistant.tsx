@@ -3,6 +3,7 @@ import { GetAIChatResponse } from "../../services/aiService";
 import { Row, Col, Form, Button, Card, Spinner } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AIAssistant.css';
+import Loading from "../Loading/Loading";
 
 interface AIAssistantProps {
   show: boolean;
@@ -161,8 +162,8 @@ export default function AIAssistant({ show, onHide }: AIAssistantProps): React.R
           </div>
         )}
         {loading && (
-          <div className="d-flex justify-content-center m-2">
-            <Spinner animation="border" variant="primary" size="sm" />
+          <div className="ai-loading d-flex justify-content-center">
+            <Loading/>
           </div>
         )}
         {error && (

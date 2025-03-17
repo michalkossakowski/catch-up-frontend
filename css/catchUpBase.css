@@ -133,7 +133,7 @@ i {
     font-size: 24px;
 }
 
-.navbar-horizontal .nav-link:hover > i {
+.navbar-horizontal .nav-link:hover  i {
     color: #DB91D1;
 }
 
