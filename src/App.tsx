@@ -1,5 +1,5 @@
 import './App.css';
-import { Alert, Button, Image } from 'react-bootstrap';
+import { Alert, Button, Image,  } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './components/Home/Home.tsx';
@@ -42,14 +42,16 @@ import { setNotifications, addNotification } from './store/notificationSlice';
 import { getNotifications } from './services/notificationService';
 import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
-import HRHomePage from './components/HR/HRHomePage';
-import { useNavigate } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
+import "./i18n.ts";
+
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
     const [isSidebarVisible, setSidebarVisible] = useState(true); // Sidebar visibility state
     const [theme, setTheme] = useState<'night' | 'day'>('night');
 
+    
     const dispatch = useDispatch();
     const { hasUnread } = useSelector((state: RootState) => state.notifications);
 
@@ -57,19 +59,38 @@ function App() {
     const [toastMessage, setToastMessage] = useState('');
     const [toastSource, setToastSource] = useState('');
     const notificationSound = new Audio('/Notifications/notification.mp3');
-    const navigate = useNavigate();
-    
+
+    const { t, i18n } = useTranslation();
+    const availableLanguages: { [key: string]: string  } = {
+        'en': "English",
+        'pl': "Polski",
+        'fr': "Français",
+        'de': "Deutsch",
+        'es': "Español",
+      };
+
+    const changeLanguage = (lng: string) => {
+        i18n.changeLanguage(lng); // Zmieniamy język
+        if (!availableLanguages.hasOwnProperty(lng)) {
+            i18n.changeLanguage("en");
+            return "en";
+        }
+        localStorage.setItem("i18nextLng", lng); // Zapisujemy język w localStorage
+    };
+    const normalizeLanguage = (lng: string) => {
+        if (!lng) return "en"; // Domyślny język
+        if (!availableLanguages.hasOwnProperty(lng)) {
+            i18n.changeLanguage("en");
+            return "en";
+        }
+        return lng.split("-")[0]; // Pobiera tylko główny kod języka (np. en zamiast en-GB)
+    };
     const fetchRole = async () => {
         if (user?.id) {
             const userRole = await getRole(user.id);
             setRole(userRole);
             startConnection();
             handleNotifications();
-            if (userRole === 'HR') {
-                navigate('/hrhomepage');
-            } else {
-                navigate('/');
-            }
         }
     };
 
@@ -267,6 +288,135 @@ function App() {
                                 </footer>
                             </Navbar>
                         </div>
+                <div className="d-flex">
+                    {/* Left Sidebar */}
+                    <div
+                        className={`left-sidebar ${isSidebarVisible ? "visible" : "hidden"}`}
+                    >
+                        <Navbar
+                            expand="lg"
+                            className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-navbar"
+                        >
+                            <Navbar.Brand href="/" className="nav-brand">
+                                catchUp
+                            </Navbar.Brand>
+                            <Nav className="flex-column w-100">
+                                <NavLink to="/" className="nav-link">
+                                    <i className="bi bi-house-door" /> <span>{t('home')}</span>
+                                </NavLink>
+                                {role === "Newbie" && (
+                                    <NavLink
+                                        to="/tasks"
+                                        className="nav-link left-sidebar"
+                                    >
+                                        <i className="bi bi-list-task" /> <span>{t('tasks')}</span>
+                                    </NavLink>
+                                )}
+                                <NavLink
+                                    to="/schoolinglist"
+                                    className="nav-link"
+                                >
+                                    <i className="bi bi-book" />  <span>{t('schoolings')}</span>
+                                </NavLink>
+                                <NavLink to="/feedbacks" className="nav-link">
+                                    <i className="bi bi-arrow-clockwise" /> <span>{t('feedbacks')}</span>
+                                </NavLink>
+                                <NavLink to="/badges" className="nav-link">
+                                    <i className="bi bi-shield" /> <span>Badges</span>
+                                </NavLink>
+                                <NavLink to="/faq" className="nav-link">
+                                    <i className="bi bi-question-circle" /> <span>FAQ</span>
+                                </NavLink>
+                                {role !== "Newbie" && role != null && (
+                                    <NavDropdown
+                                        className={isManageToolsActive ? "navdropdown-active" : ""}
+                                        title={
+                                            <>
+                                                <i className="bi bi-pencil-square" />{" "}
+                                                <span>Manage Tools</span>
+                                            </>
+                                        }
+                                    >
+                                        <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/taskmanage"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-list-task" />{" "}
+                                            {t('tasks')} </NavDropdown.Item>
+                                        <NavDropdown.Divider />
+                                        <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/taskcontentmanage"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-kanban" /> {t('task-contents')} </NavDropdown.Item>
+                                        <NavDropdown.Divider />
+                                        <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/presetmanage"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-stack-overflow" />{" "}
+                                            Task Presets
+                                        </NavDropdown.Item>
+                                        <NavDropdown.Divider />
+                                        <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/roadmapmanage"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-compass" /> Road
+                                            Maps
+                                        </NavDropdown.Item>
+                                        <NavDropdown.Divider />
+                                        <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/editMatList"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-tools" />{" "}
+                                            Material Lists
+                                        </NavDropdown.Item>
+                                    </NavDropdown>
+                                )}
+                                {role === "Admin" && (
+                                    <NavDropdown
+                                        className={isAdminToolsActive ? "navdropdown-active" : ""}
+                                        title={
+                                            <>
+                                                <i className="bi bi-person-lock" />{" "}
+                                                <span>Admin Tools</span>
+                                            </>
+                                        }
+                                    >
+                                        <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/adminpanel"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-shield-lock" />{" "}
+                                            Panel
+                                        </NavDropdown.Item>
+                                        <NavDropdown.Divider />
+                                        <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/employesassignment"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-people" />{" "}
+                                            Assignment
+                                        </NavDropdown.Item>
+                                    </NavDropdown>
+                                )}
+                            </Nav>
+                            <footer className="mt-auto">
+                                <p className="text-center text-muted small">
+                                    © 2024 Made by UnhandledException
+                                </p>
+                            </footer>
+                        </Navbar>
+                    </div>
 
                         {/* Toggle Sidebar Button */}
                         <Button title="Show/hide sidebar"
@@ -320,6 +470,73 @@ function App() {
                                 </Nav>
                             </Navbar>
                             {role == null && (
+                        <Navbar expand="lg" className="bg-body-tertiary navbar-horizontal">
+                            <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap"> 
+                                {/* Theme Switcher Button */}
+                                <Button
+                                    onClick={toggleTheme}
+                                    className='theme-btn'
+                                    title='Dark/Light theme'
+                                >
+                                    {theme === 'night' ? <i className="bi bi-brightness-high"/> : <i className="bi bi-moon"/>}
+                                </Button>
+                                <NavDropdown
+                                    id="nav-language-dropdown"
+                                    title={<img
+                                                src={`/locales/${normalizeLanguage(i18n.language)}/1x1.svg`}
+                                                alt={i18n.language}
+                                                width="25"
+                                                height="25"
+                                                style={{
+                                                    borderRadius: "50%", // Zaokrąglamy flagę
+                                                }}
+                                            />
+                                    }
+                                    align="end"
+                                    drop="down"
+                                    >
+                                        {Object.keys(availableLanguages).map((lng) => (
+                                            <NavDropdown.Item key={lng} onClick={() => changeLanguage(lng)}>
+                                                    <img
+                                                        src={`/locales/${normalizeLanguage(lng)}/4x3.svg`}
+                                                        alt={lng}
+                                                        width="20"
+                                                        height="15"
+                                                        style={{ marginRight: "10px",}}
+                                                    />
+                                                    {availableLanguages[lng]}
+                                            </NavDropdown.Item>
+                                        ))}
+                                </NavDropdown>                         
+                                <NavLink className="nav-link  nav-user" to={`/profile/${user?.id}`}>
+                                    <div className="d-flex align-items-center ">
+                                        <span>{user.name} {user.surname}</span>
+                                        <Image
+                                            src={avatar || defaultUserIcon}
+                                            className="avatar rounded-circle"
+                                            width={30}
+                                            height={30}
+                                            alt="User avatar"
+                                        />
+                                    </div>
+                                </NavLink>
+                                <NavLink
+                                    title="Notifications"
+                                    to="/notifications"
+                                    className="nav-link"
+                                >
+                                    <span className="notification-wrapper">
+                                        <i className="bi bi-bell" />
+                                        {hasUnread && <span className="unread-dot" />}
+                                    </span>
+                                </NavLink>
+                                <NavLink title="Settings" to="/settings" className="nav-link"><i className="bi bi-gear" /></NavLink>
+                                <NavLink title="Logout" to="/logout" onClick={logout} className="nav-link">
+                                    <i className="bi bi-box-arrow-right" />
+                                </NavLink>
+                            </Nav>
+                        </Navbar>
+                            { role == null &&(
                                 <Alert className='alert api-alert' variant='danger'>
                                     <i className="bi bi-exclamation-triangle" /> Api is offline try refreshing the page <i className="bi bi-exclamation-triangle" />
                                 </Alert>
