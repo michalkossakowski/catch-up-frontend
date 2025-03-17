@@ -51,6 +51,9 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     const [selectedFilesNotInMaterials, setSelectedFilesNotInMaterials]  = useState<number[] >([]);
 
     const [fileDisplayMode, setFileDisplayMode] = useState(1); // 1 - Lista, 2 - Siatka    
+
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [confirmMessage, setConfirmMessage] = useState('');
     useEffect(() => {
         if (materialId !== prevMaterialId.current && materialId) {
             getMaterial(materialId)
@@ -168,7 +171,6 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 setMaterial(material);
                 updateMaterial(material)
                 if (material.id !== undefined) {
-                    console.log(material.id)
                     materialCreated(material.id)
                 }
             })
@@ -176,14 +178,17 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     }
 
     const updateMaterial = (material: MaterialDto) => {
-        filesToSend.forEach((file) => {
-           handleFileUpload(file.file, file.uploadedAt).then((fileDto) => { 
-                material.files?.push(fileDto);
-                setFiles([...files, {file: file.file, fileDto}]);
-            });
-        })
-        setFilesToSend([]);
-    }
+        const uploadPromises = filesToSend.map(async (file) => {
+            const fileDto = await handleFileUpload(file.file, file.uploadedAt);
+            material.files?.push(fileDto);
+            return { file: file.file, fileDto };
+        });
+    
+        Promise.all(uploadPromises).then((uploadedFiles) => {
+            setFiles((prevFiles) => [...prevFiles, ...uploadedFiles]);
+            setFilesToSend([]); 
+        });
+    };
     const handleFileUpload = async (file: File, dateOfUpload: Date): Promise<FileDto> => {
         const response = await fileService.uploadFile(file, materialId, undefined, dateOfUpload);
         return response.fileDto;
@@ -229,8 +234,6 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         setSelectedFilesNotInMaterials([]);
         setShowConfirmModal(false);
     }
-    const [showConfirmModal, setShowConfirmModal] = useState(false);
-    const [confirmMessage, setConfirmMessage] = useState('');
     return (
         <>
           {show && (
