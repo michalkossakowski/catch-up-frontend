@@ -42,13 +42,14 @@ import { setNotifications, addNotification } from './store/notificationSlice';
 import { getNotifications } from './services/notificationService';
 import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
-
+import HRHomePage from './components/HR/HRHomePage';
+import { useNavigate } from 'react-router-dom';
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
     const [isSidebarVisible, setSidebarVisible] = useState(true); // Sidebar visibility state
     const [theme, setTheme] = useState<'night' | 'day'>('night');
-  
+
     const dispatch = useDispatch();
     const { hasUnread } = useSelector((state: RootState) => state.notifications);
 
@@ -56,13 +57,19 @@ function App() {
     const [toastMessage, setToastMessage] = useState('');
     const [toastSource, setToastSource] = useState('');
     const notificationSound = new Audio('/Notifications/notification.mp3');
-
+    const navigate = useNavigate();
+    
     const fetchRole = async () => {
         if (user?.id) {
             const userRole = await getRole(user.id);
             setRole(userRole);
             startConnection();
             handleNotifications();
+            if (userRole === 'HR') {
+                navigate('/hrhomepage');
+            } else {
+                navigate('/');
+            }
         }
     };
 
@@ -71,7 +78,7 @@ function App() {
         fetchRole();
     }, [user?.id]);
 
-    const handleNotifications = async () => { 
+    const handleNotifications = async () => {
         const data = await getNotifications();
         dispatch(setNotifications(data));
 
@@ -116,7 +123,7 @@ function App() {
     const [showAIChat, setShowAIChat] = useState(false);
 
     const handleToggleAIChat = () => {
-      setShowAIChat(prev => !prev); // Przełączanie widoczności
+        setShowAIChat(prev => !prev); // Przełączanie widoczności
     };
 
     return (
@@ -128,197 +135,198 @@ function App() {
             />
             {user && (
                 <>
-                <div className="d-flex">
-                    {/* Left Sidebar */}
-                    <div
-                        className={`left-sidebar ${isSidebarVisible ? "visible" : "hidden"}`}
-                    >
-                        <Navbar
-                            expand="lg"
-                            className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-navbar"
+                    <div className="d-flex">
+                        {/* Left Sidebar */}
+                        <div
+                            className={`left-sidebar ${isSidebarVisible ? "visible" : "hidden"}`}
                         >
-                            <Navbar.Brand href="/" className="nav-brand">
-                                catchUp
-                            </Navbar.Brand>
-                            <Nav className="flex-column w-100">
-                                <NavLink to="/" className="nav-link">
-                                    <i className="bi bi-house-door" /> <span>Home</span>
-                                </NavLink>
-                                {role === "Newbie" && (
-                                    <NavLink
-                                        to="/tasks"
-                                        className="nav-link left-sidebar"
-                                    >
-                                        <i className="bi bi-list-task" /> <span>Tasks</span>
+                            <Navbar
+                                expand="lg"
+                                className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-navbar"
+                            >
+                                <Navbar.Brand href="/" className="nav-brand">
+                                    catchUp
+                                </Navbar.Brand>
+                                <Nav className="flex-column w-100">
+                                    <NavLink to={role === 'HR' ? '/hrhomepage' : '/'} className="nav-link">
+                                        <i className="bi bi-house-door" /> <span>Home</span>
                                     </NavLink>
-                                )}
-                                <NavLink
-                                    to="/schoolinglist"
-                                    className="nav-link"
-                                >
-                                    <i className="bi bi-book" />  <span>Schoolings</span>
-                                </NavLink>
-                                <NavLink to="/feedbacks" className="nav-link">
-                                    <i className="bi bi-arrow-clockwise" /> <span>Feedbacks</span>
-                                </NavLink>
-                                <NavLink to="/badges" className="nav-link">
-                                    <i className="bi bi-shield" /> <span>Badges</span>
-                                </NavLink>
-                                <NavLink to="/faq" className="nav-link">
-                                    <i className="bi bi-question-circle" /> <span>FAQ</span>
-                                </NavLink>
-                                {role !== "Newbie" && role != null && (
-                                    <NavDropdown
-                                        className={isManageToolsActive ? "navdropdown-active" : ""}
-                                        title={
-                                            <>
-                                                <i className="bi bi-pencil-square" />{" "}
-                                                <span>Manage Tools</span>
-                                            </>
-                                        }
+                                    {role === "Newbie" && (
+                                        <NavLink
+                                            to="/tasks"
+                                            className="nav-link left-sidebar"
+                                        >
+                                            <i className="bi bi-list-task" /> <span>Tasks</span>
+                                        </NavLink>
+                                    )}
+                                    <NavLink
+                                        to="/schoolinglist"
+                                        className="nav-link"
                                     >
-                                        <NavDropdown.Item
-                                            as={NavLink}
-                                            to="/taskmanage"
-                                            className="nav-dropdown-item"
+                                        <i className="bi bi-book" />  <span>Schoolings</span>
+                                    </NavLink>
+                                    <NavLink to="/feedbacks" className="nav-link">
+                                        <i className="bi bi-arrow-clockwise" /> <span>Feedbacks</span>
+                                    </NavLink>
+                                    <NavLink to="/badges" className="nav-link">
+                                        <i className="bi bi-shield" /> <span>Badges</span>
+                                    </NavLink>
+                                    <NavLink to="/faq" className="nav-link">
+                                        <i className="bi bi-question-circle" /> <span>FAQ</span>
+                                    </NavLink>
+                                    {role !== "Newbie" && role != null && (
+                                        <NavDropdown
+                                            className={isManageToolsActive ? "navdropdown-active" : ""}
+                                            title={
+                                                <>
+                                                    <i className="bi bi-pencil-square" />{" "}
+                                                    <span>Manage Tools</span>
+                                                </>
+                                            }
                                         >
-                                            <i className="bi bi-list-task" />{" "}
-                                            Tasks
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Divider />
-                                        <NavDropdown.Item
-                                            as={NavLink}
-                                            to="/taskcontentmanage"
-                                            className="nav-dropdown-item"
+                                            <NavDropdown.Item
+                                                as={NavLink}
+                                                to="/taskmanage"
+                                                className="nav-dropdown-item"
+                                            >
+                                                <i className="bi bi-list-task" />{" "}
+                                                Tasks
+                                            </NavDropdown.Item>
+                                            <NavDropdown.Divider />
+                                            <NavDropdown.Item
+                                                as={NavLink}
+                                                to="/taskcontentmanage"
+                                                className="nav-dropdown-item"
+                                            >
+                                                <i className="bi bi-kanban" /> Task
+                                                Contents
+                                            </NavDropdown.Item>
+                                            <NavDropdown.Divider />
+                                            <NavDropdown.Item
+                                                as={NavLink}
+                                                to="/presetmanage"
+                                                className="nav-dropdown-item"
+                                            >
+                                                <i className="bi bi-stack-overflow" />{" "}
+                                                Task Presets
+                                            </NavDropdown.Item>
+                                            <NavDropdown.Divider />
+                                            <NavDropdown.Item
+                                                as={NavLink}
+                                                to="/roadmapmanage"
+                                                className="nav-dropdown-item"
+                                            >
+                                                <i className="bi bi-compass" /> Road
+                                                Maps
+                                            </NavDropdown.Item>
+                                            <NavDropdown.Divider />
+                                            <NavDropdown.Item
+                                                as={NavLink}
+                                                to="/editMatList"
+                                                className="nav-dropdown-item"
+                                            >
+                                                <i className="bi bi-tools" />{" "}
+                                                Material Lists
+                                            </NavDropdown.Item>
+                                        </NavDropdown>
+                                    )}
+                                    {role === "Admin" && (
+                                        <NavDropdown
+                                            className={isAdminToolsActive ? "navdropdown-active" : ""}
+                                            title={
+                                                <>
+                                                    <i className="bi bi-person-lock" />{" "}
+                                                    <span>Admin Tools</span>
+                                                </>
+                                            }
                                         >
-                                            <i className="bi bi-kanban" /> Task
-                                            Contents
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Divider />
-                                        <NavDropdown.Item
-                                            as={NavLink}
-                                            to="/presetmanage"
-                                            className="nav-dropdown-item"
-                                        >
-                                            <i className="bi bi-stack-overflow" />{" "}
-                                            Task Presets
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Divider />
-                                        <NavDropdown.Item
-                                            as={NavLink}
-                                            to="/roadmapmanage"
-                                            className="nav-dropdown-item"
-                                        >
-                                            <i className="bi bi-compass" /> Road
-                                            Maps
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Divider />
-                                        <NavDropdown.Item
-                                            as={NavLink}
-                                            to="/editMatList"
-                                            className="nav-dropdown-item"
-                                        >
-                                            <i className="bi bi-tools" />{" "}
-                                            Material Lists
-                                        </NavDropdown.Item>
-                                    </NavDropdown>
-                                )}
-                                {role === "Admin" && (
-                                    <NavDropdown
-                                        className={isAdminToolsActive ? "navdropdown-active" : ""}
-                                        title={
-                                            <>
-                                                <i className="bi bi-person-lock" />{" "}
-                                                <span>Admin Tools</span>
-                                            </>
-                                        }
-                                    >
-                                        <NavDropdown.Item
-                                            as={NavLink}
-                                            to="/adminpanel"
-                                            className="nav-dropdown-item"
-                                        >
-                                            <i className="bi bi-shield-lock" />{" "}
-                                            Panel
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Divider />
-                                        <NavDropdown.Item
-                                            as={NavLink}
-                                            to="/employesassignment"
-                                            className="nav-dropdown-item"
-                                        >
-                                            <i className="bi bi-people" />{" "}
-                                            Assignment
-                                        </NavDropdown.Item>
-                                    </NavDropdown>
-                                )}
-                            </Nav>
-                            <footer className="mt-auto">
-                                <p className="text-center text-muted small">
-                                    © 2024 Made by UnhandledException
-                                </p>
-                            </footer>
-                        </Navbar>
-                    </div>
+                                            <NavDropdown.Item
+                                                as={NavLink}
+                                                to="/adminpanel"
+                                                className="nav-dropdown-item"
+                                            >
+                                                <i className="bi bi-shield-lock" />{" "}
+                                                Panel
+                                            </NavDropdown.Item>
+                                            <NavDropdown.Divider />
+                                            <NavDropdown.Item
+                                                as={NavLink}
+                                                to="/employesassignment"
+                                                className="nav-dropdown-item"
+                                            >
+                                                <i className="bi bi-people" />{" "}
+                                                Assignment
+                                            </NavDropdown.Item>
+                                        </NavDropdown>
+                                    )}
+                                </Nav>
+                                <footer className="mt-auto">
+                                    <p className="text-center text-muted small">
+                                        © 2024 Made by UnhandledException
+                                    </p>
+                                </footer>
+                            </Navbar>
+                        </div>
 
-                    {/* Toggle Sidebar Button */}
-                    <Button title="Show/hide sidebar"
-                        className="btn-secondary toggle-sidebar-btn"
-                        onClick={() => setSidebarVisible(!isSidebarVisible)}
-                    >
-                        {isSidebarVisible ? <i className="bi bi-arrow-left-square"/> : <i className="bi bi-arrow-right-square"/>}
-                    </Button>
+                        {/* Toggle Sidebar Button */}
+                        <Button title="Show/hide sidebar"
+                            className="btn-secondary toggle-sidebar-btn"
+                            onClick={() => setSidebarVisible(!isSidebarVisible)}
+                        >
+                            {isSidebarVisible ? <i className="bi bi-arrow-left-square" /> : <i className="bi bi-arrow-right-square" />}
+                        </Button>
 
                         {/* Główna treść strony */}
                         <Container
                             fluid
                             className={`main-content ${isSidebarVisible ? "sidebar-visible" : "sidebar-hidden"}`}
                         >
-                        <Navbar expand="lg" className="bg-body-tertiary navbar-horizontal">
-                            <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap"> 
-                                {/* Theme Switcher Button */}
-                                <Button
-                                    onClick={toggleTheme}
-                                    className='theme-btn'
-                                    title='Dark/Light theme'
-                                >
-                                    {theme === 'night' ? <i className="bi bi-brightness-high"/> : <i className="bi bi-moon"/>}
-                                </Button>                         
-                                <NavLink className="nav-link  nav-user" to={`/profile/${user?.id}`}>
-                                    <div className="d-flex align-items-center ">
-                                        <span>{user.name} {user.surname}</span>
-                                        <Image
-                                            src={avatar || defaultUserIcon}
-                                            className="avatar rounded-circle"
-                                            width={30}
-                                            height={30}
-                                            alt="User avatar"
-                                        />
-                                    </div>
-                                </NavLink>
-                                <NavLink
-                                    title="Notifications"
-                                    to="/notifications"
-                                    className="nav-link"
-                                >
-                                    <span className="notification-wrapper">
-                                        <i className="bi bi-bell" />
-                                        {hasUnread && <span className="unread-dot" />}
-                                    </span>
-                                </NavLink>
-                                <NavLink title="Settings" to="/settings" className="nav-link"><i className="bi bi-gear" /></NavLink>
-                                <NavLink title="Logout" to="/logout" onClick={logout} className="nav-link">
-                                    <i className="bi bi-box-arrow-right" />
-                                </NavLink>
-                            </Nav>
-                        </Navbar>
-                            { role == null &&(
+                            <Navbar expand="lg" className="bg-body-tertiary navbar-horizontal">
+                                <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap">
+                                    {/* Theme Switcher Button */}
+                                    <Button
+                                        onClick={toggleTheme}
+                                        className='theme-btn'
+                                        title='Dark/Light theme'
+                                    >
+                                        {theme === 'night' ? <i className="bi bi-brightness-high" /> : <i className="bi bi-moon" />}
+                                    </Button>
+                                    <NavLink className="nav-link  nav-user" to={`/profile/${user?.id}`}>
+                                        <div className="d-flex align-items-center ">
+                                            <span>{user.name} {user.surname}</span>
+                                            <Image
+                                                src={avatar || defaultUserIcon}
+                                                className="avatar rounded-circle"
+                                                width={30}
+                                                height={30}
+                                                alt="User avatar"
+                                            />
+                                        </div>
+                                    </NavLink>
+                                    <NavLink
+                                        title="Notifications"
+                                        to="/notifications"
+                                        className="nav-link"
+                                    >
+                                        <span className="notification-wrapper">
+                                            <i className="bi bi-bell" />
+                                            {hasUnread && <span className="unread-dot" />}
+                                        </span>
+                                    </NavLink>
+                                    <NavLink title="Settings" to="/settings" className="nav-link"><i className="bi bi-gear" /></NavLink>
+                                    <NavLink title="Logout" to="/logout" onClick={logout} className="nav-link">
+                                        <i className="bi bi-box-arrow-right" />
+                                    </NavLink>
+                                </Nav>
+                            </Navbar>
+                            {role == null && (
                                 <Alert className='alert api-alert' variant='danger'>
-                                    <i className="bi bi-exclamation-triangle"/> Api is offline try refreshing the page <i className="bi bi-exclamation-triangle"/>
+                                    <i className="bi bi-exclamation-triangle" /> Api is offline try refreshing the page <i className="bi bi-exclamation-triangle" />
                                 </Alert>
                             )}
                             <Routes>
                                 <Route path="/" element={<Home />} />
+                                <Route path="/hrhomepage" element={<HRHomePage />} />
                                 <Route path="/tasks" element={<TaskDashboard />} />
                                 <Route path="/adminpanel" element={<AdminPanel isAdmin={role === "Admin"} />} />
                                 <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
@@ -350,16 +358,16 @@ function App() {
                                 <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
                                 <Route path="/profile/:userId" element={<UserProfile />} />
                                 <Route path="/settings" element={<><h1>Settings</h1></>} />
-                                <Route path="/notifications" element={<><NotificationPage/></>} />
+                                <Route path="/notifications" element={<><NotificationPage /></>} />
                             </Routes>
                         </Container>
-                        <NotificationToast 
-                            show={showToast} 
-                            title={"New Notification"} 
-                            message={toastMessage} 
-                            color={"#DB91D1"} 
+                        <NotificationToast
+                            show={showToast}
+                            title={"New Notification"}
+                            message={toastMessage}
+                            color={"#DB91D1"}
                             time={4000}
-                            source={toastSource} 
+                            source={toastSource}
                             onClose={() => setShowToast(false)} />
                     </div>
                     <Button
