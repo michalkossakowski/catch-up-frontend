@@ -30,8 +30,8 @@ const LoginComponent = () => {
             const userResponse = await axiosInstance.get(`User/GetById/${userId}`);
             const userData = userResponse.data;
             setUser(userData);
-
             navigate('/');
+
         } catch (err: any) {
             if (err.response) {
                 if (err.response.status === 404) {
@@ -52,59 +52,59 @@ const LoginComponent = () => {
 
     return (
         <>
-        <h1 className='welcome'>Welcome in catchUp</h1>
-        <h2 className='subtitle'>The coldest onboarding app on the market</h2>
-        <div className="d-flex justify-content-center align-items-center">
-            <div className="card shadow-lg p-4   login-container">
-                <h2 className="text-center mb-4">Login</h2>
-                <form onSubmit={handleLogin}>
-                    <div className="mb-3">
-                        <label htmlFor="email" className="form-label">Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            className="form-control"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+            <h1 className='welcome'>Welcome in catchUp</h1>
+            <h2 className='subtitle'>The coldest onboarding app on the market</h2>
+            <div className="d-flex justify-content-center align-items-center">
+                <div className="card shadow-lg p-4   login-container">
+                    <h2 className="text-center mb-4">Login</h2>
+                    <form onSubmit={handleLogin}>
+                        <div className="mb-3">
+                            <label htmlFor="email" className="form-label">Email</label>
+                            <input
+                                type="email"
+                                id="email"
+                                className="form-control"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                disabled={isLoading}
+                                autoComplete="username"
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="password" className="form-label">Password</label>
+                            <input
+                                type="password"
+                                id="password"
+                                className="form-control"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                disabled={isLoading}
+                                autoComplete="password"
+                                required
+                            />
+                        </div>
+                        {error && <div className="alert alert-danger">{error}</div>}
+                        <button
+                            type="submit"
+                            className="btn btn-primary w-100"
                             disabled={isLoading}
-                            autoComplete="username"
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="password" className="form-label">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            className="form-control"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            disabled={isLoading}
-                            autoComplete="password"
-                            required
-                        />
-                    </div>
-                    {error && <div className="alert alert-danger">{error}</div>}
-                    <button
-                        type="submit"
-                        className="btn btn-primary w-100"
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <>
-                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                Loading...
-                            </>
-                        ) : 'Login'}
-                    </button>
-                </form>
+                        >
+                            {isLoading ? (
+                                <>
+                                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    Loading...
+                                </>
+                            ) : 'Login'}
+                        </button>
+                    </form>
+                </div>
             </div>
-        </div>
-        <footer className="mt-auto">
-            <p className="text-center text-muted small">
-                © 2024 Made by UnhandledException
-            </p>
-        </footer>
+            <footer className="mt-auto">
+                <p className="text-center text-muted small">
+                    © 2024 Made by UnhandledException
+                </p>
+            </footer>
         </>
     );
 };

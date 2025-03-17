@@ -44,13 +44,14 @@ import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
 import { useTranslation } from "react-i18next";
 import "./i18n.ts";
-
+import { useNavigate } from 'react-router-dom';
+import HRHomePage from './components/HR/HRHomePage.tsx';
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
     const [isSidebarVisible, setSidebarVisible] = useState(true); // Sidebar visibility state
     const [theme, setTheme] = useState<'night' | 'day'>('night');
-    
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { hasUnread } = useSelector((state: RootState) => state.notifications);
 
@@ -90,6 +91,11 @@ function App() {
             setRole(userRole);
             startConnection();
             handleNotifications();
+            if (userRole === 'HR') {
+                navigate('/hrhomepage'); 
+            } else {
+                navigate('/'); 
+            }
         }
     };
 
@@ -168,8 +174,8 @@ function App() {
                                 catchUp
                             </Navbar.Brand>
                             <Nav className="flex-column w-100">
-                                <NavLink to="/" className="nav-link">
-                                    <i className="bi bi-house-door" /> <span>{t('home')}</span>
+                            <NavLink to={role === 'HR' ? '/hrhomepage' : '/'} className="nav-link">
+                                    <i className="bi bi-house-door" /> <span>Home</span>
                                 </NavLink>
                                 {role === "Newbie" && (
                                     <NavLink
@@ -371,6 +377,7 @@ function App() {
                             )}
                             <Routes>
                                 <Route path="/" element={<Home />} />
+                                <Route path="/hrhomepage" element={<HRHomePage />} />
                                 <Route path="/tasks" element={<TaskDashboard />} />
                                 <Route path="/adminpanel" element={<AdminPanel isAdmin={role === "Admin"} />} />
                                 <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
