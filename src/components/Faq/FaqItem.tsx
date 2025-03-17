@@ -1,8 +1,8 @@
 import { Accordion, Button } from 'react-bootstrap';
 import { FaqDto } from '../../dtos/FaqDto';
-import Material from '../Material/Material';
 import { FeedbackButton } from '../Feedback/FeedbackButton';
 import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
+import MaterialItem from '../MaterialManager/MaterialItem';
 
 type FaqProps = {
     faq: FaqDto;
@@ -25,7 +25,15 @@ export default function FaqItem(props: FaqProps): React.ReactElement {
 
                     {props.faq.materialId && (
                         <div>
-                            <Material materialId={props.faq.materialId} showDownloadFile={true}/>
+                            <MaterialItem 
+                                materialId={props.faq.materialId} 
+                                enableDownloadFile={true} 
+                                enableAddingFile={false}
+                                enableRemoveFile={false}
+                                enableEdittingMaterialName ={false}
+                                showMaterialName= {true}
+                                nameTitle='See Materials'
+                            />
                         </div>  
                     )}
 

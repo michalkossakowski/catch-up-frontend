@@ -1,34 +1,8 @@
 import { FileDto } from '../dtos/FileDto';
 import axiosInstance from '../../axiosConfig';
-export const uploadFile = async (file: File, materialId?: number, ownerId?: string): Promise<{ message: string; fileDto: FileDto; materialId: number }> => {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-        const response = await axiosInstance.post<{ message: string; fileDto: FileDto; materialId: number }>
-        (
-            `File/Upload`,
-            formData,
-            {
-                params: {
-                    ...(materialId && { materialId }), 
-                    ...(ownerId && { ownerId }) 
-                },
-                headers: {'Content-Type': 'multipart/form-data'},
-            }
-        );
-        return response.data;
-    }
-    catch (error)
-    {
-        console.error('File upload error:', error);
-        throw error;
-    }
-}
-
 const fileService =
 {
-    uploadFile: async (file: File, materialId?: number, ownerId?: string): Promise<{ message: string; fileDto: FileDto; materialId: number }> => {
+    uploadFile: async (file: File, materialId?: number, ownerId?: string, dateOfUpload?: Date): Promise<{ message: string; fileDto: FileDto; materialId: number }> => {
         const formData = new FormData();
         formData.append('file', file);
 
@@ -40,7 +14,8 @@ const fileService =
                 {
                     params: {
                         ...(materialId && { materialId }), 
-                        ...(ownerId && { ownerId }) 
+                        ...(ownerId && { ownerId }), 
+                        ...(dateOfUpload && { dateOfUpload })
                     },
                     headers: {'Content-Type': 'multipart/form-data'},
                 }

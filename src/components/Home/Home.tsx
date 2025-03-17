@@ -65,10 +65,10 @@ export default function Home(): React.ReactElement {
                             <img src="HomeImages/faq-batman-image.jpg" className="card-img-top" alt="Placegolder Image"/>
                             <div className="card-body">
                                 <h5 className="card-title">
-                                    <i className="bi bi-browser-firefox fs-4"></i>  Placeholder
+                                    <i className="bi bi-browser-firefox fs-4"></i>  Test for materials
                                 </h5>
                                 <p className="card-text">Placeholder.</p>
-                                <NavLink className="btn btn-primary" to="/addMaterial">See more</NavLink>
+                                <NavLink className="btn btn-primary" to="/materialitem">See more</NavLink>
                             </div>
                         </div>
                     </div>

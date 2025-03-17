@@ -3,4 +3,6 @@ export interface FileDto {
     name?: string;
     type?: string;
     source?: string;
+    dateOfUpload?: Date;
+    sizeInBytes?: number;
 }

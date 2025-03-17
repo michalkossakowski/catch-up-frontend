@@ -63,6 +63,18 @@ const materialService =
             throw error
         }
     },
+    removeFiles: async(materialId: number, fileId: number[]) => {
+        try 
+        {
+            const response = await axiosInstance.post(`/Material/RemoveFiles/${materialId}`, fileId)
+            return response
+        } 
+        catch (error) 
+        {
+            console.error('Error removing file:', error)
+            throw error
+        }
+    },
     deleteMaterial: async(materialId: number) => {
         try 
         {
@@ -87,6 +99,15 @@ const materialService =
             throw error
         }
     },
+    addFiles: async (materialId: number, fileIds: number[]) => {
+        try {
+            const response = await axiosInstance.post(`/Material/AddFiles/${materialId}`, fileIds);
+            return response.data;
+        } catch (error) {
+            console.error('Error in adding files:', error);
+            throw error;
+        }
+    },    
 
     editMaterial: async(materialId: number, name: string) => {
         try 
