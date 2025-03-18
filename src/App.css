@@ -1,10 +1,9 @@
 #nav-language-dropdown::after{
   display: none !important;
   content: "" !important;
-  max-height: 100%;
 }
 /* Ensure the dropdown menu doesn't overflow the viewport */
-.navbar-nav #nav-language-dropdown > .dropdown-menu{
+#nav-language-dropdown > .dropdown-menu,  .dropdown-menu-end{
   position: absolute !important;
   
 }
