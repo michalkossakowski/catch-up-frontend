@@ -310,16 +310,16 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                             <Col className='d-flex justify-content-end'>
                                 <ToggleButtonGroup 
                                     type="radio" 
-                                    name="fileDisplayOptions" 
+                                    name={`fileDisplayOptions-${Math.random()}}`}
                                     defaultValue={1} 
                                     className='gap-0 mt-0' 
                                     style={{display: 'inline'}}
                                     onChange={handleFileDisplayChange}
                                 >
-                                    <ToggleButton variant="outline-secondary" id="tbg-radio-1" value={1}>
+                                    <ToggleButton variant="outline-secondary" id={`tbg-radio-1-${Math.random()}`} value={1}>
                                         <i className="bi bi-list-ul"></i>                                        
                                     </ToggleButton>
-                                    <ToggleButton variant="outline-secondary" id="tbg-radio-2" value={2}>
+                                    <ToggleButton variant="outline-secondary" id={`tbg-radio-2-${Math.random()}`} value={2}>
                                         <i className="bi bi-grid-3x3"></i>                                        
                                     </ToggleButton>
                                 </ToggleButtonGroup>
