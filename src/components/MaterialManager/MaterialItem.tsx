@@ -9,6 +9,7 @@ import { FileDto } from '../../dtos/FileDto';
 import JSZip from "jszip";
 import saveAs from 'file-saver';
 import ConfirmModal from '../Modal/ConfirmModal';
+import NotificationToast from '../Toast/NotificationToast';
 
 interface MaterialItemProps {
     materialId?: number;
@@ -47,13 +48,19 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     
     const [files, setFiles] = useState<{file: File; fileDto: FileDto}[]>([]);
     const [filesToSend, setFilesToSend] = useState<{ file: File; uploadedAt: Date }[]>([]);
+
     const [selectedFilesInMaterials, setSelectedFilesInMaterials]  = useState<number[] >([]);
     const [selectedFilesNotInMaterials, setSelectedFilesNotInMaterials]  = useState<number[] >([]);
+    const [anyFileSelected, setAnyFileSelected] = useState(false);
 
     const [fileDisplayMode, setFileDisplayMode] = useState(1); // 1 - Lista, 2 - Siatka    
 
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [confirmMessage, setConfirmMessage] = useState('');
+
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    
     useEffect(() => {
         if (materialId !== prevMaterialId.current && materialId) {
             getMaterial(materialId)
@@ -76,6 +83,16 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
             setShowDropPlace(true)
         }
     }, [filesToSend, files, isDragActive]); 
+
+    useEffect(() => {
+
+        if (selectedFilesInMaterials.length === 0 && selectedFilesNotInMaterials.length === 0) {
+            setAnyFileSelected(false);
+        }
+        else{
+            setAnyFileSelected(true);
+        }
+    }, [selectedFilesInMaterials, selectedFilesNotInMaterials]);
 
     const getMaterial = async (materialId: number) => {
         try {
@@ -131,11 +148,22 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         setMaterialName(material?.name ?? '')
     }
     const onClickDelete = () => {
-        setConfirmMessage("Are you sure you want to delete files in this Material?")
-        setShowConfirmModal(true);
+        if(anyFileSelected){
+            setConfirmMessage("Are you sure you want to delete files in this Material?")
+            setShowConfirmModal(true);
+        }
+        else{
+            setToastMessage("Please select files to delete")
+            setShowToast(true)
+        }
     }    
 
     const onClickDownloadAll = async () => {
+        if(files.length === 0 && filesToSend.length === 0){
+            setToastMessage("No files to download")
+            setShowToast(true)
+            return;
+        }
         const zip = new JSZip();      
         files.forEach((fileItem, index) => {
           const uniqueName = `${index}-${fileItem.fileDto.name ?? fileItem.file.name}`;
@@ -276,8 +304,8 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                         <Row className='mb-3'>
                             <Col className='d-flex justify-content-start gap-2 '>
                                 {enableAddingFile && (<Button variant="outline-secondary"><i className="bi bi-file-earmark-arrow-up"></i></Button>)}
-                                {enableDownloadFile && ( <Button variant="outline-secondary"><i className="bi bi-file-earmark-arrow-down" onClick={() => onClickDownloadAll()}></i></Button>)}
-                                {enableRemoveFile && (<Button variant="outline-secondary"><i className="bi bi-file-earmark-x" onClick={() => onClickDelete()}></i></Button>)}
+                                {enableDownloadFile && ( <Button variant="outline-secondary" onClick={() => onClickDownloadAll()}><i className="bi bi-file-earmark-arrow-down"></i></Button>)}
+                                {enableRemoveFile && (<Button variant="outline-secondary" onClick={() =>onClickDelete() }><i className="bi bi-file-earmark-x" ></i></Button>)}
                             </Col>
                             <Col className='d-flex justify-content-end'>
                                 <ToggleButtonGroup 
@@ -417,6 +445,13 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 onConfirm={handleDelete} 
                 onCancel={() => setShowConfirmModal(false)} 
             />
+
+            <NotificationToast 
+                show={showToast} 
+                title={"Material operation info"} 
+                message={toastMessage} 
+                color={"Red"} 
+                onClose={() => setShowToast(false)} />
         </>
       );
 }
