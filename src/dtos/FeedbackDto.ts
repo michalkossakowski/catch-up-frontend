@@ -11,5 +11,5 @@ export interface FeedbackDto {
     createdDate: Date;
     userName?: string;
     resourceName?: string;
-    isDone: boolean;
+    isResolved: boolean;
 }

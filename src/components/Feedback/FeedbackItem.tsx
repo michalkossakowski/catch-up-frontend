@@ -14,7 +14,7 @@ const FeedbackItem: React.FC<FeedbackItemProps> = ({ feedback, onDeleteClick }) 
     const truncateDescription = (description: string): string => {
         return description.length > 300 ? description.substring(0, 300) + '...' : description;
     };
-    const [isDone, setIsDone] = useState(feedback.isDone);
+    const [isResolved, setIsResolved] = useState(feedback.isResolved);
 
     return (
         <tr key={feedback.id}>
@@ -25,19 +25,19 @@ const FeedbackItem: React.FC<FeedbackItemProps> = ({ feedback, onDeleteClick }) 
             <td>{ResourceTypeEnum[feedback.resourceType]}</td>
             <td>{feedback.resourceName || 'No title'}</td>
             <td>
-                {isDone ? (
+                {isResolved ? (
                     <button
                         className="btn btn-success"
                         onClick={async () => {
                             if (feedback.id !== undefined) {
                                 await doneFeedback(feedback.id);
-                                setIsDone(false);
+                                setIsResolved(false);
                             } else {
                                 console.error("Feedback ID is undefined");
                             }
                         }}
                     >
-                        Done
+                        Resolved
                     </button>
                 ) : (
                     <button
@@ -45,13 +45,13 @@ const FeedbackItem: React.FC<FeedbackItemProps> = ({ feedback, onDeleteClick }) 
                         onClick={async () => {
                             if (feedback.id !== undefined) {
                                 await doneFeedback(feedback.id);
-                                setIsDone(true);
+                                setIsResolved(true);
                             } else {
                                 console.error("Feedback ID is undefined");
                             }
                         }}
                     >
-                        Not done
+                        Not resolved
                     </button>
                 )}
             </td>
