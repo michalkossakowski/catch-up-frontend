@@ -34,6 +34,16 @@ export const deleteFeedback = async (id: number): Promise<any> => {
     }
 };
 
+export const doneFeedback = async (id: number): Promise<any> => {
+    try {
+        const response = await axiosInstance.put(`/feedback/ChangeDoneStatus/${id}`);
+        return response.data;
+    } catch (error: any) {
+        handleError('changeDoneFeedback', error);
+        throw error;
+    }
+};
+
 const handleError = (operation: string, error: any): void => {
     console.error(`${operation} failed:`, error);
     if (!error.response) {
