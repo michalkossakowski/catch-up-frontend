@@ -319,11 +319,10 @@ function App() {
                                     title={<img
                                                 src={`/locales/${normalizeLanguage(i18n.language)}/1x1.svg`}
                                                 alt={i18n.language}
-                                                width="25"
-                                                height="25"
-                                                style={{
-                                                    borderRadius: "50%", // Zaokrąglamy flagę
-                                                }}
+                                                className='nav-language-img'
+                                                width="30"
+                                                height="30"
+                                                
                                             />
                                     }
                                     align="end"

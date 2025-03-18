@@ -161,6 +161,22 @@ i {
     z-index: 10;
     transition: width 0.3s ease;
 }
+#nav-language-dropdown::after{
+    display: none !important;
+    content: "" !important;
+  }
+  /* Ensure the dropdown menu doesn't overflow the viewport */
+  #nav-language-dropdown > .dropdown-menu,  .dropdown-menu-end{
+    position: absolute !important;
+    
+  }
+  
+#nav-language-dropdown{
+    font-size: 16px;
+}
+.nav-language-img{
+    border-radius: 50%;
+}
 /* Media query for user name */
 @media (max-width: 800px) {
     .nav-user  span {
