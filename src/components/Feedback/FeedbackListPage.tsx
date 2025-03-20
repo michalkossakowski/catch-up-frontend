@@ -173,7 +173,7 @@ const FeedbackListPage: React.FC = () => {
                                             feedback={feedback} 
                                             isAdmin={isAdmin} 
                                             onDeleteClick={setFeedbackToDelete}
-                                            onResolveChange={handleResolveChange}  // 🔥 Nowy prop
+                                            onResolveChange={handleResolveChange}
                                         />
                                     ))}
                                 </tbody>
