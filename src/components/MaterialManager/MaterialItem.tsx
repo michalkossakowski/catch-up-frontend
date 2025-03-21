@@ -10,6 +10,10 @@ import JSZip from "jszip";
 import saveAs from 'file-saver';
 import ConfirmModal from '../Modal/ConfirmModal';
 import NotificationToast from '../Toast/NotificationToast';
+import FileDetailsModal from './FileDetailsModal';
+import UploadFileModal from './UploadFileModal';
+import { useAuth } from '../../Provider/authProvider';
+import { FilePair } from '../../interfaces/FilePair';
 
 interface MaterialItemProps {
     materialId?: number;
@@ -38,6 +42,8 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 }) => {
     const prevMaterialId = useRef<number | null>(null);
 
+    const { user } = useAuth();
+    
     const [material, setMaterial] = useState<MaterialDto | null>(null);
     const [materialName, setMaterialName] = useState('');
 
@@ -46,7 +52,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     const [open, setOpen] = useState(true);
     const [isDragActive, setIsDragActive] = useState(false)
     
-    const [files, setFiles] = useState<{file: File; fileDto: FileDto}[]>([]);
+    const [files, setFiles] = useState<FilePair[]>([]);
     const [filesToSend, setFilesToSend] = useState<{ file: File; uploadedAt: Date }[]>([]);
 
     const [selectedFilesInMaterials, setSelectedFilesInMaterials]  = useState<number[] >([]);
@@ -61,6 +67,9 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     
+    const [showFileDetailsModal, setShowFileDetailsModal] = useState(false);
+    const [showUploadModal, setShowUploadModal] = useState(false);
+
     useEffect(() => {
         if (materialId !== prevMaterialId.current && materialId) {
             getMaterial(materialId)
@@ -119,9 +128,9 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 setFiles(prev => [...prev,  {file, fileDto}]);
             }
         } catch (error) {
-
         }
     }
+
     const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault()
         setIsDragActive(true)
@@ -147,6 +156,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         setFilesToSend([])
         setMaterialName(material?.name ?? '')
     }
+    
     const onClickDelete = () => {
         if(anyFileSelected){
             setConfirmMessage("Are you sure you want to delete files in this Material?")
@@ -166,7 +176,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         }
         const zip = new JSZip();      
         files.forEach((fileItem, index) => {
-          const uniqueName = `${index}-${fileItem.fileDto.name ?? fileItem.file.name}`;
+          const uniqueName = `${index}-${fileItem.fileDto.name ?? fileItem.file?.name ?? 'unknown'}`;
           zip.file(uniqueName, fileItem.file);
         });
       
@@ -179,7 +189,11 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
           saveAs(zipFile, "files.zip");
         });
     };
-
+    
+    const onClickUploadModal = () => {
+        setShowUploadModal(true);
+    }
+    
     const onClickSave = () => {
         if (material) {
             if (materialName !== material.name && materialId) {
@@ -218,7 +232,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         });
     };
     const handleFileUpload = async (file: File, dateOfUpload: Date): Promise<FileDto> => {
-        const response = await fileService.uploadFile(file, materialId, undefined, dateOfUpload);
+        const response = await fileService.uploadFile(file, materialId, user?.id ?? "", dateOfUpload);
         return response.fileDto;
     }
     const handleFileDisplayChange = (value: number) => {
@@ -262,6 +276,10 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         setSelectedFilesNotInMaterials([]);
         setShowConfirmModal(false);
     }
+
+    const onClickFileDetails = () => {
+        setShowConfirmModal(false);
+    }
     return (
         <>
           {show && (
@@ -290,7 +308,6 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                         ) : (
                             <>
                                 {showMaterialName && (
-
                                     <>
                                         <h4>{materialName}</h4>
                                         <hr className='mb-4'/>
@@ -303,7 +320,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 
                         <Row className='mb-3'>
                             <Col className='d-flex justify-content-start gap-2 '>
-                                {enableAddingFile && (<Button variant="outline-secondary"><i className="bi bi-file-earmark-arrow-up"></i></Button>)}
+                                {enableAddingFile && (<Button variant="outline-secondary" onClick={() => onClickUploadModal()}><i className="bi bi-file-earmark-arrow-up"></i></Button>)}
                                 {enableDownloadFile && ( <Button variant="outline-secondary" onClick={() => onClickDownloadAll()}><i className="bi bi-file-earmark-arrow-down"></i></Button>)}
                                 {enableRemoveFile && (<Button variant="outline-secondary" onClick={() =>onClickDelete() }><i className="bi bi-file-earmark-x" ></i></Button>)}
                             </Col>
@@ -452,8 +469,13 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 message={toastMessage} 
                 color={"Red"} 
                 onClose={() => setShowToast(false)} />
+
+            <FileDetailsModal showModal={showFileDetailsModal} onClose={() => setShowFileDetailsModal(false)}/>
+            {enableAddingFile &&
+                <UploadFileModal showModal={showUploadModal} onClose={() => setShowUploadModal(false)}/>
+            }
         </>
-      );
+      ); 
 }
 
 export default MaterialItem;

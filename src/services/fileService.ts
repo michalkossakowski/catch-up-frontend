@@ -60,7 +60,20 @@ const fileService =
         }
         catch(error)
         {
-            console.error('Material get error:', error)
+            console.error('File get error:', error)
+            throw error
+        }
+    },
+
+    getAllOwnedFiles: async(userId: string): Promise<FileDto[]> => {
+        try
+        {
+            const response = await axiosInstance.get<FileDto[]>(`/File/GetAllFiles/${userId}`)
+            return response.data
+        }
+        catch(error)
+        {
+            console.error('File get error:', error)
             throw error
         }
     },

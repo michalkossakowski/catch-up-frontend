@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
 import ErrorMessage from '../ErrorMessage';
-import Material from '../Material/Material';
 import { FeedbackButton } from '../Feedback/FeedbackButton';
 import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
+import MaterialItem from '../MaterialManager/MaterialItem';
 
 const SchoolingDetails: React.FC = () => {
     const fullSchooling = useSelector((state: RootState) => state.schooling.selectedSchooling);
@@ -38,7 +38,8 @@ const SchoolingDetails: React.FC = () => {
                                 {part.materials.map((material, index_material) => (
                                 <li className="list-group-item " key={`${material.id}-${index_material}-${material.name}`} >
                                     <span>{material.name}</span>
-                                    <Material materialId={material.id} showDownloadFile={true}/>
+                                    {/* <Material materialId={material.id} showDownloadFile={true}/> */}
+                                    <MaterialItem materialId={material.id}/>
                                 </li>
                                 ))}
                             </ol>

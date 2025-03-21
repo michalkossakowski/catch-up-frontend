@@ -44,7 +44,7 @@ const FileIcon: React.FC<FileIconProps> = ({fileName, fileType, fileDate, fileCo
                         draggable="false"
                         onContextMenu={(e) => e.preventDefault()}
                     />
-                    <div className='p-1'>{fileName}</div>
+                    <div className='p-1'>{shortedFileName(fileName)}</div>
                     <div className='p-1 small text-muted'>    
                         {fileDate
                         ? new Date(fileDate).toLocaleString("pl-PL", {
