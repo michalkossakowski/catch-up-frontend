@@ -405,6 +405,10 @@ i {
     border-color: #DB91D1;
     box-shadow: 0 0 0 0.25rem rgb(219, 145, 209, 0.25);
 }
+.form-control:focus{
+    border-color: #DB91D1;
+    box-shadow: 0 0 0 0.25rem rgb(219, 145, 209, 0.25);
+}
 
 select option:checked {
     background-color: #DB91D1;
