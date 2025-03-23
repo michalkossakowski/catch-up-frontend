@@ -179,7 +179,7 @@ function App() {
                                         </NavLink>
                                     )}
                                     <NavLink to="/schoolinglist" className="nav-link">
-                                        <i className="bi bi-book" /> <span>{t('schoolings')}</span>
+                                        <i className="bi bi-book" /> <span>{t('Schoolings')}</span>
                                     </NavLink>
                                     <NavLink to="/feedbacks" className="nav-link">
                                         <i className="bi bi-arrow-clockwise" /> <span>{t('feedbacks')}</span>
