@@ -44,18 +44,6 @@ const FileIcon: React.FC<FileIconProps> = ({fileName, fileType, fileDate, fileCo
                         draggable="false"
                         onContextMenu={(e) => e.preventDefault()}
                     />
-                    <div className='p-1'>{shortedFileName(fileName)}</div>
-                    <div className='p-1 small text-muted'>    
-                        {fileDate
-                        ? new Date(fileDate).toLocaleString("pl-PL", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            })
-                            : "Brak daty"}
-                    </div>
                 </>
             ) : fileType.startsWith("video/") && fileContent ? (
                 <>
@@ -67,37 +55,25 @@ const FileIcon: React.FC<FileIconProps> = ({fileName, fileType, fileDate, fileCo
                     Twoja przeglądarka nie obsługuje elementu wideo.
                         <source src={URL.createObjectURL(fileContent)} type={fileType} />
                     </video>
-                    <div className='p-1'>{shortedFileName(fileName)}</div>
-                    <div className='p-1 small text-muted'>    
-                        {fileDate
-                        ? new Date(fileDate).toLocaleString("pl-PL", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            })
-                            : "Brak daty"}
-                    </div>
                 </>
             ):
             (
                 <>
                     <div className='p-1'><i className={`${getFileIcon()} ${styles.fileIconSize} `}></i></div>
-                    <div className='p-1'>{shortedFileName(fileName)}</div>
-                    <div className='p-1 small text-muted'>    
-                        {fileDate
-                        ? new Date(fileDate).toLocaleString("pl-PL", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            })
-                            : "Brak daty"}
-                    </div>
                 </>
             )}
+            <div className='p-1'>{shortedFileName(fileName)}</div>
+            <div className='p-1 small text-muted'>    
+                {fileDate
+                ? new Date(fileDate).toLocaleString("pl-PL", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    })
+                    : "Brak daty"}
+            </div>
         </div>
     )
 }

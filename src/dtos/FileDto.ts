@@ -5,4 +5,5 @@ export interface FileDto {
     source?: string;
     dateOfUpload?: Date;
     sizeInBytes?: number;
+    owner?: string;
 }

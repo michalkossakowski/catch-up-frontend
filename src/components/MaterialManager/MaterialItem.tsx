@@ -68,6 +68,8 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     const [toastMessage, setToastMessage] = useState('');
     
     const [showFileDetailsModal, setShowFileDetailsModal] = useState(false);
+    const [selectedFilePair, setSelectedFilePair] = useState<FilePair | undefined>(undefined);
+
     const [showUploadModal, setShowUploadModal] = useState(false);
 
     useEffect(() => {
@@ -218,6 +220,12 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
             })
         }
     }
+    
+    const onLeftClickFile = (filePair: FilePair) => {
+        console.log("Clicked details");
+        setSelectedFilePair(filePair);
+        setShowFileDetailsModal(true);
+    }
 
     const updateMaterial = (material: MaterialDto) => {
         const uploadPromises = filesToSend.map(async (file) => {
@@ -231,6 +239,15 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
             setFilesToSend([]); 
         });
     };
+
+    const addFileToMaterial = async (file: FilePair) => {
+        if(!materialId)
+        {
+            throw new Error("Material id is not defined")
+        }
+        await materialService.addFile(materialId, file.fileDto.id);
+    }
+
     const handleFileUpload = async (file: File, dateOfUpload: Date): Promise<FileDto> => {
         const response = await fileService.uploadFile(file, materialId, user?.id ?? "", dateOfUpload);
         return response.fileDto;
@@ -277,9 +294,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         setShowConfirmModal(false);
     }
 
-    const onClickFileDetails = () => {
-        setShowConfirmModal(false);
-    }
+
     return (
         <>
           {show && (
@@ -364,18 +379,23 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                     {files.map((item, index) => (
                                         <li className="list-group-item" key={index}>
                                             <Row>
-                                                <Col className='text-start' xs={8}>
+                                                <Col className='text-start d-flex align-items-center' xs={8} >
                                                     {enableRemoveFile &&  (
                                                         <input 
                                                             type="checkbox" 
                                                             className="form-check-input me-2" 
-                                                            onChange={() => handleCheckboxChangeFileInMaterial(item.fileDto.id)}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            onChange={() => {
+                                                                handleCheckboxChangeFileInMaterial(item.fileDto.id);
+                                                            }}
                                                             checked={selectedFilesInMaterials.includes(item.fileDto.id)}>
                                                         </input>
                                                     )}
-                                                    {shortedFileName(item.fileDto.name ?? 'File not found')}
+                                                    <span onClick={() => onLeftClickFile(item)} style={{cursor: 'pointer'}} className='flex-grow-1'>
+                                                        {shortedFileName(item.fileDto.name ?? 'File not found')}
+                                                    </span>
                                                 </Col>
-                                                <Col className="text-end">
+                                                <Col className="text-end" onClick={() => onLeftClickFile(item)} style={{cursor: 'pointer'}}>
                                                 {item.fileDto.dateOfUpload
                                                 ? new Date(item.fileDto.dateOfUpload).toLocaleString("pl-PL", {
                                                     year: "numeric",
@@ -470,9 +490,22 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 color={"Red"} 
                 onClose={() => setShowToast(false)} />
 
-            <FileDetailsModal showModal={showFileDetailsModal} onClose={() => setShowFileDetailsModal(false)}/>
+            <FileDetailsModal 
+                showModal={showFileDetailsModal} 
+                onClose={() => setShowFileDetailsModal(false)}
+                materialId={materialId ?? undefined}
+                filePair={selectedFilePair}
+                enableAddToMaterial={enableAddingFile}
+                enableRemoveFromMaterial={enableRemoveFile}
+                enableEdit={true}
+            />
             {enableAddingFile &&
-                <UploadFileModal showModal={showUploadModal} onClose={() => setShowUploadModal(false)}/>
+                <UploadFileModal 
+                    usedFilesIds={files.map(item => item.fileDto.id)} 
+                    showModal={showUploadModal} 
+                    onClose={() => setShowUploadModal(false)}
+                    onFileAdd={(file: FilePair) => addFileToMaterial(file)}
+                />
             }
         </>
       ); 
