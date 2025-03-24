@@ -4,6 +4,7 @@ import axiosInstance from '../../../axiosConfig';
 import { useAuth } from '../../Provider/authProvider';
 import { jwtDecode } from 'jwt-decode';
 import './LoginComponent.css';
+import { useTranslation } from "react-i18next";
 
 const LoginComponent = () => {
     const [email, setEmail] = useState('');
@@ -12,6 +13,7 @@ const LoginComponent = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { setAccessToken, setRefreshToken, setUser } = useAuth();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -35,12 +37,12 @@ const LoginComponent = () => {
         } catch (err: any) {
             if (err.response) {
                 if (err.response.status === 404) {
-                    setError('Invalid email or password');
+                    setError(t('invalid-email-or-password'));
                 } else {
-                    setError('An unexpected error occurred. Please try again.');
+                    setError(t('an-unexpected-error-occurred-please-try-again'));
                 }
             } else {
-                setError('API is down, sorry');
+                setError(t('api-is-down-sorry'));
             }
             setAccessToken(null);
             setRefreshToken(null);
@@ -52,14 +54,14 @@ const LoginComponent = () => {
 
     return (
         <>
-            <h1 className='welcome'>Welcome in catchUp</h1>
-            <h2 className='subtitle'>The coldest onboarding app on the market</h2>
+            <h1 className='welcome'>{t('welcome-in-catchup')}</h1>
+            <h2 className='subtitle'>{t('the-coldest-onboarding-app-on-the-market')}</h2>
             <div className="d-flex justify-content-center align-items-center">
                 <div className="card shadow-lg p-4   login-container">
-                    <h2 className="text-center mb-4">Login</h2>
+                    <h2 className="text-center mb-4">{t('login')}</h2>
                     <form onSubmit={handleLogin}>
                         <div className="mb-3">
-                            <label htmlFor="email" className="form-label">Email</label>
+                            <label htmlFor="email" className="form-label">{t('email')}</label>
                             <input
                                 type="email"
                                 id="email"
@@ -72,7 +74,7 @@ const LoginComponent = () => {
                             />
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="password" className="form-label">Password</label>
+                            <label htmlFor="password" className="form-label">{t('password')}</label>
                             <input
                                 type="password"
                                 id="password"
@@ -93,9 +95,9 @@ const LoginComponent = () => {
                             {isLoading ? (
                                 <>
                                     <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                    Loading...
+                                    {t('loading')}
                                 </>
-                            ) : 'Login'}
+                            ) : t('login')}
                         </button>
                     </form>
                 </div>
