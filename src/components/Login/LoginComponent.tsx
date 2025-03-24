@@ -5,6 +5,7 @@ import { useAuth } from '../../Provider/authProvider';
 import { jwtDecode } from 'jwt-decode';
 import './LoginComponent.css';
 import { useTranslation } from "react-i18next";
+import { NavDropdown } from 'react-bootstrap';
 
 const LoginComponent = () => {
     const [email, setEmail] = useState('');
@@ -13,7 +14,32 @@ const LoginComponent = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { setAccessToken, setRefreshToken, setUser } = useAuth();
     const navigate = useNavigate();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const availableLanguages: { [key: string]: string } = {
+        'en': "English",
+        'pl': "Polski",
+        'fr': "Français",
+        'de': "Deutsch",
+        'es': "Español",
+    };
+
+    const changeLanguage = (lng: string) => {
+        i18n.changeLanguage(lng);
+        if (!availableLanguages.hasOwnProperty(lng)) {
+            i18n.changeLanguage("en");
+            return "en";
+        }
+        localStorage.setItem("i18nextLng", lng);
+    };
+
+    const normalizeLanguage = (lng: string) => {
+        if (!lng) return "en";
+        if (!availableLanguages.hasOwnProperty(lng)) {
+            i18n.changeLanguage("en");
+            return "en";
+        }
+        return lng.split("-")[0];
+    };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -54,6 +80,20 @@ const LoginComponent = () => {
 
     return (
         <>
+            <NavDropdown
+                id="nav-language-dropdown"
+                className='nav-language-dropdown-login'
+                title={<img src={`/locales/${normalizeLanguage(i18n.language)}/1x1.svg`} alt={i18n.language} className='nav-language-img' width="30" height="30" />}
+                align="end"
+                drop="down"
+            >
+                {Object.keys(availableLanguages).map((lng) => (
+                    <NavDropdown.Item key={lng} onClick={() => changeLanguage(lng)}>
+                        <img src={`/locales/${normalizeLanguage(lng)}/4x3.svg`} alt={lng} width="20" height="15" style={{ marginRight: "10px" }} />
+                        {availableLanguages[lng]}
+                    </NavDropdown.Item>
+                ))}
+            </NavDropdown>
             <h1 className='welcome'>{t('welcome-in-catchup')}</h1>
             <h2 className='subtitle'>{t('the-coldest-onboarding-app-on-the-market')}</h2>
             <div className="d-flex justify-content-center align-items-center">
