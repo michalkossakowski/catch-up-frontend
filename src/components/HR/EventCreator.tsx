@@ -8,7 +8,7 @@ const EventCreator: React.FC = () => {
 
   const [eventType, setEventType] = useState<string | null>(null);
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState(''); // Dodane pole Description
+  const [description, setDescription] = useState('');
   const [position, setPosition] = useState('');
   const [type, setType] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -20,7 +20,6 @@ const EventCreator: React.FC = () => {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    // Walidacja dat
     if (start < now) {
       setMessage('Start date cannot be in the past.');
       return;
@@ -31,7 +30,6 @@ const EventCreator: React.FC = () => {
       return;
     }
 
-    // Walidacja pól
     if (!title || !description || !startDate || !endDate || (eventType === 'position' && !position) || (eventType === 'type' && !type)) {
       setMessage('Please fill in all required fields.');
       return;
