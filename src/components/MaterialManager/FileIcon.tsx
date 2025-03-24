@@ -6,15 +6,17 @@ interface FileIconProps {
     fileType: string;
     fileDate?: Date;
     fileContent?: File;
-    downloadableFrag?: boolean;
+    onClick?: () => void;
 }
 
-const FileIcon: React.FC<FileIconProps> = ({fileName, fileType, fileDate, fileContent, downloadableFrag = false}) => 
+const FileIcon: React.FC<FileIconProps> = ({
+    fileName, 
+    fileType, 
+    fileDate, 
+    fileContent, 
+    onClick
+    }) => 
 {
-    useEffect(() => {
-        if (downloadableFrag) {
-        }
-    }, [downloadableFrag]); 
 
     const getFileIcon = () => {    
         if (fileType.startsWith("image/") || fileType.startsWith("video/")) // Nie pokazujemy ikon dla obrazów
@@ -25,7 +27,7 @@ const FileIcon: React.FC<FileIconProps> = ({fileName, fileType, fileDate, fileCo
         return "bi-file-earmark"; // Domyślna ikona
     };
 
-    const shortedFileName =  (name: string, limit: number = 32) => {
+    const shortedFileName =  (name: string, limit: number = 24) => {
         if (name.length > limit) {
             return name.slice(0, limit) + "...";
         }
@@ -33,7 +35,7 @@ const FileIcon: React.FC<FileIconProps> = ({fileName, fileType, fileDate, fileCo
     }
 
     return(
-        <div className='d-flex flex-column mb-3 align-items-center text-center mb-3'>
+        <div className='d-flex flex-column mb-3 align-items-center text-center mb-3' onClick={onClick} style={{cursor: 'pointer'}}>
             {fileType.startsWith("image/") && fileContent ? (
                 <>
                     <img 

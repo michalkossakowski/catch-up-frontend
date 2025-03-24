@@ -6,9 +6,11 @@ import fileService from "../../services/fileService";
 import { FilePair } from "../../interfaces/FilePair";
 import FileIcon from "./FileIcon";
 import { OnActionEnum } from "../../Enums/OnActionEnum";
+import FileDetailsModal from "./FileDetailsModal";
 
 interface UploadFileModalProps {
     usedFilesIds?: number[];
+    materialId?: number;
     showModal: boolean;
     onClose: () => void;
     onAction(action: OnActionEnum, data?: any): void;
@@ -18,6 +20,7 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
     showModal,
     onClose,
     onAction,
+    materialId
     
 }) => {
     const [fileDisplayMode, setFileDisplayMode] = useState(1); // 1 - Lista, 2 - Siatka    
@@ -28,6 +31,9 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
 
     const userId = useAuth().user?.id;
     
+    const [showFileDetailsModal, setShowFileDetailsModal] = useState(false);
+    const [selectedFilePair, setSelectedFilePair] = useState<FilePair | undefined>(undefined);
+
     const isMediaFile = (type: string) => {
         return type.startsWith("image/") || type.startsWith("video/");
     };
@@ -100,7 +106,12 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
             return null;
         }
     };
-    
+
+    const onLeftClickFile = (filePair: FilePair) => {
+        setSelectedFilePair(filePair);
+        setShowFileDetailsModal(true);
+    }
+
     const filtrVisibleFiles = (files: FilePair[]) => {
         setFilteredFiles(files.filter((item) => !usedFilesIds?.includes(item.fileDto.id)));
     }
@@ -150,7 +161,7 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                                 <ul className="list-group mb-2">
                                     {filteredFiles.map((item, index) => (
                                         <li className="list-group-item" key={index}>
-                                            <Row>
+                                            <Row onClick={() => {onLeftClickFile(item)}} style={{cursor: 'pointer'}}>
                                                 <Col className='text-start' xs={8}>
                                                     {shortedFileName(item.fileDto.name ?? 'File not found')}
                                                 </Col>
@@ -174,6 +185,7 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                             <div className='d-flex flex-wrap gap-2'>
                                 {filteredFiles.map((item, index) => (
                                     <FileIcon 
+                                        onClick={() => {onLeftClickFile(item)}}
                                         key={index} 
                                         fileName={shortedFileName(item.fileDto.name ?? 'File not found', 16)}  
                                         fileType={item.fileDto.type ?? 'errorType'}
@@ -199,6 +211,16 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
             </Button>
           </Modal.Footer>
         </Modal>
+        <FileDetailsModal 
+            showModal={showFileDetailsModal} 
+            onClose={() => setShowFileDetailsModal(false)}
+            materialId={materialId ?? undefined}
+            filePair={selectedFilePair}
+            enableAddToMaterial={true}
+            enableRemoveFromMaterial={false}
+            enableEdit={true}
+            onAction={onAction}
+        />
       </>
     )
 }

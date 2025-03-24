@@ -123,10 +123,12 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
         ? allFaqs.map((faq) => (faq.id == response.faq.id ? response.faq : faq))
         : [...allFaqs, response.faq]
 
-        const materialElement = document.querySelector(`[data-material-id="${response.faq.materialId}"]`);
-        if (materialElement) {
-            const event = new CustomEvent('refreshMaterial');
-            materialElement.dispatchEvent(event);
+        if (response.faq.materialId) {
+            document.dispatchEvent(
+                new CustomEvent('refreshMaterial', {
+                detail: { materialId: response.faq.materialId },
+                })
+            );
         }
         setAllFaqs(updatedFaqs);
         setFaqs(updatedFaqs);

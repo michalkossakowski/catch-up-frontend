@@ -238,5 +238,3 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
   )
 }
 export default FileDetailsModal;
-
-

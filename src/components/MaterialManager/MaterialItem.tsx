@@ -1,7 +1,7 @@
 import { Button, Col, Form, InputGroup, Row, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
 import fileService from '../../services/fileService';
 import materialService from '../../services/materialService';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './material.module.css';
 import FileIcon from './FileIcon';
 import { MaterialDto } from '../../dtos/MaterialDto';
@@ -73,12 +73,6 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 
     const [showUploadModal, setShowUploadModal] = useState(false);
 
-    useEffect(() => {
-        if (materialId !== prevMaterialId.current && materialId) {
-            getMaterial(materialId)
-            prevMaterialId.current = materialId;
-        }
-    }, [materialId])
 
     useEffect(() => {
         setShow(showComponent);
@@ -106,23 +100,54 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         }
     }, [selectedFilesInMaterials, selectedFilesNotInMaterials]);
 
-    const getMaterial = async (materialId: number) => {
+    const getMaterial = useCallback(async (id: number) => {
         try {
-            const materialData = await materialService.getMaterialWithFiles(materialId)
-            .then((material) => {
-                material.files?.forEach((file) => {
-                    getFileData(file);
-                })
-                setMaterialName(material.name);
-                return material;
-            });
+            const materialData = await materialService.getMaterialWithFiles(id);
+
+            const filePairs = await Promise.all(
+                materialData.files?.map(async (fileDto) => {
+                    try {
+                        const fileData = await fileService.downloadFile(fileDto.id);
+                        const file = new File([fileData], fileDto.name ?? 'unknown', { type: fileData.type });
+                        return { file, fileDto };
+                    } catch (error) {
+                        console.error(`Error fetching file ${fileDto.id}:`, error);
+                        return null;
+                    }
+                }) ?? [] 
+            );
+
+            const validFilePairs = filePairs.filter((fp) => fp !== null);
+
+            setFiles(validFilePairs);
+
+            setMaterialName(materialData.name);
             setMaterial(materialData);
         } catch (error) {
-            // setErrorMessage('Material fetching error: ' + error)
-            // setErrorShow(true)
+            console.error('Error fetching material:', error);
         }
-    }
-    
+    }, []);
+
+    useEffect(() => {
+        const handleRefresh = (event: Event) => {
+          const customEvent = event as CustomEvent<{ materialId: number }>;
+          if (customEvent.detail.materialId === materialId) {
+            getMaterial(materialId);
+          }
+        };
+   
+        document.addEventListener('refreshMaterial', handleRefresh);
+   
+        if (materialId !== prevMaterialId.current && materialId) {
+            getMaterial(materialId);
+            prevMaterialId.current = materialId;
+        }
+   
+        return () => {
+          document.removeEventListener('refreshMaterial', handleRefresh);
+        };
+    }, [materialId, getMaterial]);
+   
     const getFileData = async (fileDto: FileDto) => {
         try {
             const fileData = await fileService.downloadFile(fileDto.id);
@@ -223,7 +248,6 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     }
     
     const onLeftClickFile = (filePair: FilePair) => {
-        console.log("Clicked details");
         setSelectedFilePair(filePair);
         setShowFileDetailsModal(true);
     }
@@ -305,9 +329,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 break;
             case OnActionEnum.FileEdited:
                 const filePairEdit = object.filePair as FilePair;
-                console.log(filePairEdit);
                 setFiles((prevFiles) => prevFiles.map((file) => file.fileDto.id === filePairEdit.fileDto.id ? filePairEdit : file));
-                console.log(files);
 
                 setToastMessage(`File has been edited.`);
                 break;
@@ -465,6 +487,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                             <div className='d-flex flex-wrap gap-2' onDragOver={(e) => onDragOver(e)}>
                                 {files.map((item, index) => (
                                     <FileIcon 
+                                        onClick={() => {onLeftClickFile(item)}}
                                         key={index} 
                                         fileName={item.fileDto.name ?? 'File not found'}  
                                         fileType={item.fileDto.type ?? 'errorType'}
@@ -517,7 +540,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 onClose={() => setShowFileDetailsModal(false)}
                 materialId={materialId ?? undefined}
                 filePair={selectedFilePair}
-                enableAddToMaterial={enableAddingFile}
+                enableAddToMaterial={false}
                 enableRemoveFromMaterial={enableRemoveFile}
                 enableEdit={true}
                 onAction={onAction}
@@ -528,6 +551,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                     showModal={showUploadModal} 
                     onClose={() => setShowUploadModal(false)}
                     onAction={onAction}
+                    materialId={materialId}
                 />
             }
         </>
