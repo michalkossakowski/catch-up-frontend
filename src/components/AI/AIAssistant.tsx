@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { GetAIChatResponse } from "../../services/aiService";
-import { Row, Col, Form, Button, Card, Spinner } from 'react-bootstrap';
+import { Row, Col, Form, Button, Card } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AIAssistant.css';
 import Loading from "../Loading/Loading";

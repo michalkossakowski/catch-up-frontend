@@ -104,4 +104,10 @@
 .chat-body {
     background: #0f0f0f;
 }
-  
+ 
+/* Pagination */
+.pagination {
+    --bs-pagination-color: #FFFFFF;
+    --bs-pagination-disabled-bg: rgba(34, 34, 34, 0.5);
+    --bs-pagination-bg: rgba(0, 0, 0, 0.5);
+}
