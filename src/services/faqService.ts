@@ -1,9 +1,9 @@
 import axiosInstance from '../../axiosConfig';
 import { FaqDto, FaqResponse } from '../dtos/FaqDto';
 
-export const getFaqs = async (): Promise<FaqDto[]> => {
+export const getFaqs = async (page: number, pageSize: number): Promise<{ faqs: FaqDto[], totalCount: number }> => {
     try {
-        const response = await axiosInstance.get<FaqDto[]>('/Faq/GetAll');
+        const response = await axiosInstance.get<{ faqs: FaqDto[], totalCount: number }>(`/Faq/GetAll/${page}/${pageSize}`);
         return response.data;
     } catch (error: any) {
         handleError('getFaqs', error);
