@@ -4,9 +4,6 @@ import { useAuth } from "../../Provider/authProvider";
 import { FileDto } from "../../dtos/FileDto";
 import fileService from "../../services/fileService";
 import { FilePair } from "../../interfaces/FilePair";
-import { RootState } from "../../store/store";
-import { useDispatch, useSelector } from "react-redux";
-import { addFile } from "../../store/userFilesSlice";
 import FileIcon from "./FileIcon";
 
 interface UploadFileModalProps {
@@ -22,10 +19,6 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
     onFileAdd,
     
 }) => {
-    const dispatch = useDispatch()
-
-    const filesSaved = useSelector((state: RootState) => state.files.filePairs); // Ensure 'files' matches store key
-
     const [fileDisplayMode, setFileDisplayMode] = useState(1); // 1 - Lista, 2 - Siatka    
     const [activeTab, setActiveTab] = useState("yourFiles");
 
@@ -59,28 +52,17 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
     };
 
     const shouldFetchFileData = async () => {
-        console.log("userId", userId);
-        console.log("files", files.length);
-        console.log("filesSaved", filesSaved.length);
-
         if (files.length > 0) {
             const updatedFiles = await Promise.all(
                 files.map(async (item) => {
-                    const savedFile = filesSaved.find(saved => saved.fileDto.id === item.fileDto.id);
-
-                    if (savedFile?.file) {
-                        return { ...item, file: savedFile.file };
-                    } 
-                    else if (!item.file && isMediaFile(item.fileDto.type ?? "")) {
-                        const downloadedFile = await getFileData(item.fileDto);
-                        
-                        if (downloadedFile) {
-                            const newFilePair = { file: downloadedFile, fileDto: item.fileDto };
-                            console.log("newFilePair", newFilePair);
-                            dispatch(addFile(newFilePair));  
-                            return newFilePair;
-                        }
+                if (!item.file && isMediaFile(item.fileDto.type ?? "")) {
+                    const downloadedFile = await getFileData(item.fileDto);
+                    
+                    if (downloadedFile) {
+                        const newFilePair = { file: downloadedFile, fileDto: item.fileDto };
+                        return newFilePair;
                     }
+                }
                     return item;
                 })
             );

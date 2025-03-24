@@ -14,6 +14,7 @@ import FileDetailsModal from './FileDetailsModal';
 import UploadFileModal from './UploadFileModal';
 import { useAuth } from '../../Provider/authProvider';
 import { FilePair } from '../../interfaces/FilePair';
+import { OnActionEnum } from '../../Enums/OnActionEnum';
 
 interface MaterialItemProps {
     materialId?: number;
@@ -241,12 +242,11 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     };
 
     const addFileToMaterial = async (file: FilePair) => {
-        if(!materialId)
-        {
-            throw new Error("Material id is not defined")
+        if (!materialId) {
+            throw new Error("Material id is not defined");
         }
         await materialService.addFile(materialId, file.fileDto.id);
-    }
+    };
 
     const handleFileUpload = async (file: File, dateOfUpload: Date): Promise<FileDto> => {
         const response = await fileService.uploadFile(file, materialId, user?.id ?? "", dateOfUpload);
@@ -294,6 +294,27 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         setShowConfirmModal(false);
     }
 
+    const onAction = (action: OnActionEnum, object: any) => {
+        console.log(`Action: ${action}`);
+        console.log(object);
+        switch (action) {
+            case OnActionEnum.FileRemovedFromMaterial:
+                console.log(`File with ID ${object.fileId} has been removed.`);
+                object as { fileId: number };
+                const fileId = object.fileId;
+                setFiles((prevFiles) => prevFiles.filter((file) => file.fileDto.id !== fileId));
+
+                if (material) {
+                    material.files = material.files?.filter((file) => file.id !== fileId);
+                }
+                setToastMessage(`File has been removed.`);
+                setShowToast(true);
+                break;
+            default:
+                console.warn(`Unhandled action: ${action}`);
+                break;
+        }
+    }
 
     return (
         <>
@@ -498,6 +519,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 enableAddToMaterial={enableAddingFile}
                 enableRemoveFromMaterial={enableRemoveFile}
                 enableEdit={true}
+                onAction={onAction}
             />
             {enableAddingFile &&
                 <UploadFileModal 
@@ -512,4 +534,3 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 }
 
 export default MaterialItem;
-

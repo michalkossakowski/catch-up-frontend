@@ -11,7 +11,7 @@ import { OnActionEnum } from "../../Enums/OnActionEnum";
 interface FileDetailsModalProps {
     showModal: boolean;
     onClose(): void;
-    onAction?(action: OnActionEnum, data?: any): void;
+    onAction(action: OnActionEnum, data?: any): void;
     filePair?: FilePair;
     materialId?: number;
     enableDownload?: boolean;
@@ -65,9 +65,11 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
     setShow(false)
     onClose();
   };
-  const handleSave = () => {
-    onAction?.(OnActionEnum.Saved, {filePair});
+
+  const handleSave = async () => {
+
   };
+
   const onDownload = async () => { 
     var url;
     if(!filePair?.file)
@@ -96,12 +98,11 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
 
   const handleRemoveFromMaterial = () => {
     if (!materialId || !filePair?.fileDto.id) 
-    {
-      return;
-    }
+    { return; }
     
     materialService.removeFile(materialId, filePair?.fileDto.id ?? 0).then(() => {
-      console.log("File removed from material");
+      onAction(OnActionEnum.FileRemovedFromMaterial, {fileId: filePair?.fileDto.id});
+      handleClose();
     }).catch((error) => {
       console.error("Failed to remove file from material:", error);
     });
@@ -220,3 +221,5 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
   )
 }
 export default FileDetailsModal;
+
+
