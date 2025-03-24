@@ -94,13 +94,13 @@ function App() {
             setRole(userRole);
             startConnection();
             handleNotifications();
-            if(location.pathname === '/') {
-            if (userRole === 'HR') {
-                navigate('/hrhomepage'); 
-            } else {
-                navigate('/'); 
+            if (location.pathname === '/') {
+                if (userRole === 'HR') {
+                    navigate('/hrhomepage');
+                } else {
+                    navigate('/');
+                }
             }
-        }
         }
     };
 
@@ -230,34 +230,34 @@ function App() {
                                         </NavDropdown>
                                     )}
                                     {role === "HR" && (
-                                    <NavDropdown
-                                        className={isAdminToolsActive ? "navdropdown-active" : ""}
-                                        title={
-                                            <>
-                                                <i className="bi bi-person-lock" />{" "}
-                                                <span>HR Tools</span>
-                                            </>
-                                        }
-                                    >
-                                         <NavDropdown.Item
-                                            as={NavLink}
-                                            to="/employesassignment"
-                                            className="nav-dropdown-item"
+                                        <NavDropdown
+                                            className={isAdminToolsActive ? "navdropdown-active" : ""}
+                                            title={
+                                                <>
+                                                    <i className="bi bi-person-lock" />{" "}
+                                                    <span>HR Tools</span>
+                                                </>
+                                            }
                                         >
-                                            <i className="bi bi-people" />{" "}
-                                            Assignment
-                                        </NavDropdown.Item>
-                                        <NavDropdown.Divider />
-                                        <NavDropdown.Item
-                                            as={NavLink}
-                                            to="/eventCreator"
-                                            className="nav-dropdown-item"
-                                        >
-                                            <i className="bi bi-calendar-plus" />{" "}
-                                            Event Creator
-                                        </NavDropdown.Item>
-                                    </NavDropdown>
-                                )}
+                                            <NavDropdown.Item
+                                                as={NavLink}
+                                                to="/employesassignment"
+                                                className="nav-dropdown-item"
+                                            >
+                                                <i className="bi bi-people" />{" "}
+                                                Assignment
+                                            </NavDropdown.Item>
+                                            <NavDropdown.Divider />
+                                            <NavDropdown.Item
+                                                as={NavLink}
+                                                to="/eventCreator"
+                                                className="nav-dropdown-item"
+                                            >
+                                                <i className="bi bi-calendar-plus" />{" "}
+                                                Event Creator
+                                            </NavDropdown.Item>
+                                        </NavDropdown>
+                                    )}
                                 </Nav>
                                 <footer className="mt-auto">
                                     <p className="text-center text-muted small">© 2024 Made by UnhandledException</p>
@@ -345,8 +345,8 @@ function App() {
                                 <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
                                 <Route path="/profile/:userId" element={<UserProfile />} />
                                 <Route path="/settings" element={<><h1>Settings</h1></>} />
-                                <Route path="/notifications" element={<><NotificationPage/></>} />
-                                <Route path="/eventCreator" element={<EventCreator/>} />
+                                <Route path="/notifications" element={<><NotificationPage /></>} />
+                                <Route path="/eventCreator" element={<EventCreator />} />
                             </Routes>
                         </Container>
                         <NotificationToast
