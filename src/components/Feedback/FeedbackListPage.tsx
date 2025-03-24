@@ -7,7 +7,7 @@ import Loading from '../Loading/Loading';
 import { getRole } from '../../services/userService';
 import FeedbackItem from './FeedbackItem';
 import ConfirmModal from '../Modal/ConfirmModal';
-import { Form, Row, Col } from 'react-bootstrap';
+import { Form, Row } from 'react-bootstrap';
 import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 
 
@@ -21,9 +21,10 @@ const FeedbackListPage: React.FC = () => {
     const [toastMessage, setToastMessage] = useState('');
     const [toastColor, setToastColor] = useState('');
     const [apiError, setApiError] = useState(false);
-    const [showResolved, setShowResolved] = useState(false);
+    const [selectedResolved, setSelectedResolved] = useState<string[]>(["unresolved"]);
     const [originalFeedbacks, setOriginalFeedbacks] = useState<FeedbackDto[]>([]);
     const [selectedResourceTypes, setSelectedResourceTypes] = useState<ResourceTypeEnum[]>([]);
+    const [sortColumn, setSortColumn] = useState<keyof FeedbackDto | null>(null);
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
     useEffect(() => {
@@ -47,23 +48,44 @@ const FeedbackListPage: React.FC = () => {
 
     useEffect(() => {
         let filtered = originalFeedbacks;
-    
-        if (!showResolved) {
-            filtered = filtered.filter(feedback => !feedback.isResolved);
+
+        if (selectedResolved.length === 1) {
+            if (selectedResolved.includes("resolved")) {
+                filtered = filtered.filter(feedback => feedback.isResolved);
+            } else {
+                filtered = filtered.filter(feedback => !feedback.isResolved);
+            }
         }
-    
+
         if (selectedResourceTypes.length > 0) { 
             filtered = filtered.filter(feedback => selectedResourceTypes.includes(feedback.resourceType));
         }
 
         filtered = filtered.sort((a, b) => {
-            const dateA = new Date(a.createdDate).getTime();
-            const dateB = new Date(b.createdDate).getTime();
-            return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+            if (sortColumn) {
+                const valueA = a[sortColumn];
+                const valueB = b[sortColumn];
+        
+                if (typeof valueA === "string" && typeof valueB === "string") {
+                    return sortOrder === "asc" ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+                }
+        
+                if (typeof valueA === "number" && typeof valueB === "number") {
+                    return sortOrder === "asc" ? valueA - valueB : valueB - valueA;
+                }
+        
+                if (sortColumn === "createdDate") {
+                    const dateA = new Date(a.createdDate).getTime();
+                    const dateB = new Date(b.createdDate).getTime();
+                    return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+                }
+            }
+        
+            return 0;
         });
     
         setFeedbacks(filtered);
-    }, [showResolved, selectedResourceTypes, originalFeedbacks, sortOrder]);
+    }, [selectedResolved, selectedResourceTypes, originalFeedbacks, sortColumn, sortOrder]);
 
     const toggleResourceType = (type: ResourceTypeEnum) => {
         setSelectedResourceTypes(prev =>
@@ -71,10 +93,21 @@ const FeedbackListPage: React.FC = () => {
         );
     };
     
+    const toggleResolved = (type: "resolved" | "unresolved") => {
+        setSelectedResolved(prev =>
+            prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+        );
+    };
+
     const handleResolveChange = (id: number, isResolved: boolean) => {
         setOriginalFeedbacks(prev =>
             prev.map(feedback => (feedback.id === id ? { ...feedback, isResolved } : feedback))
         );
+    };
+
+    const handleSort = (column: keyof FeedbackDto) => {
+        setSortOrder(prevOrder => (sortColumn === column ? (prevOrder === "asc" ? "desc" : "asc") : "asc"));
+        setSortColumn(column);
     };
 
     const handleDelete = async () => {
@@ -117,10 +150,21 @@ const FeedbackListPage: React.FC = () => {
                         <hr></hr>
                         <Form.Group as={Row} className="text-start">
                             <Form.Label><h6>Filter by Resolved:</h6></Form.Label>
-                            <Form.Switch
-                                label="Show Resolved Feedbacks"
-                                checked={showResolved}
-                                onChange={() => setShowResolved(prev => !prev)}
+                        
+                            <Form.Check
+                                type="checkbox"
+                                label="Resolved"
+                                value="resolved"
+                                checked={selectedResolved.includes("resolved")}
+                                onChange={() => toggleResolved("resolved")}
+                            />
+                            
+                            <Form.Check
+                                type="checkbox"
+                                label="Unresolved"
+                                value="unresolved"
+                                checked={selectedResolved.includes("unresolved")}
+                                onChange={() => toggleResolved("unresolved")}
                             />
                         </Form.Group>
                         <hr></hr>
@@ -141,14 +185,6 @@ const FeedbackListPage: React.FC = () => {
                                 ))}
                         </Form.Group>
                         <hr></hr>
-                        <Form.Group as={Row} className="text-start">
-                            <Form.Label><h6>Sort by Date:</h6></Form.Label>
-                            <Form.Select value={sortOrder} onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}>
-                                <option value="asc">Ascending</option>
-                                <option value="desc">Descending</option>
-                            </Form.Select>
-                        </Form.Group>
-                        <hr></hr>
                     </div>
                     <div className="col">
                         {!feedbacks.length ? (
@@ -157,11 +193,20 @@ const FeedbackListPage: React.FC = () => {
                             <table className="table table-striped mt-3">
                                 <thead>
                                     <tr>
-                                        <th>Title</th>
+                                        <th onClick={() => handleSort("title")} style={{ cursor: "pointer" }}>
+                                            Title 
+                                            <i className="bi bi-arrow-down-up ms-2"></i>
+                                        </th>
                                         <th>Description</th>
-                                        <th>{isAdmin ? 'Sender' : 'Receiver'}</th>
-                                        <th>Date</th>
-                                        <th>Resource Type</th>
+                                        <th onClick={() => handleSort("userName")} style={{ cursor: "pointer" }}>
+                                        {isAdmin ? 'Sender' : 'Receiver'} <i className="bi bi-arrow-down-up ms-2"></i>
+                                        </th>
+                                        <th onClick={() => handleSort("createdDate")} style={{ cursor: "pointer" }}>
+                                            Date <i className="bi bi-arrow-down-up ms-2"></i>
+                                        </th>
+                                        <th onClick={() => handleSort("resourceType")} style={{ cursor: "pointer" }}>
+                                            Resource Type <i className="bi bi-arrow-down-up ms-2"></i>
+                                        </th>
                                         <th>Resource Title</th>
                                         <th colSpan={2}>Actions</th>
                                     </tr>
