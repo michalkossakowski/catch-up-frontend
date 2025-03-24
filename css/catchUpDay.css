@@ -168,4 +168,10 @@
 .chat-body {
     background: #ffffff;
 }
-  
+
+/* Pagination */
+.pagination {
+    --bs-pagination-color: #000000;
+    --bs-pagination-disabled-bg: rgba(228, 228, 228, 0.5);
+    --bs-pagination-bg: rgba(255, 255, 255, 0.5);
+}
