@@ -44,13 +44,18 @@ const EventCreator: React.FC = () => {
       let endpoint = '';
       let params: any = { ownerId, title, description, startDate: formattedStartDate, endDate: formattedEndDate };
 
-      if (eventType === 'position') {
+      if (eventType === 'position') 
+      {
         endpoint = '/Event/AddEventByPosition';
         params.position = position;
-      } else if (eventType === 'type') {
+      } 
+      else if (eventType === 'type') 
+        {
         endpoint = '/Event/AddEventByType';
         params.type = type;
-      } else if (eventType === 'allGroups') {
+      } 
+      else if (eventType === 'allGroups') 
+        {
         endpoint = '/Event/AddEventForAllGroups';
       }
 
