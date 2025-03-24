@@ -77,6 +77,16 @@ const fileService =
             throw error
         }
     },
+
+    changeFile: async(fileDto: FileDto): Promise<FileDto> => {
+        try {
+            const response = await axiosInstance.put<FileDto>(`/File/ChangeFile/`, fileDto);
+            return response.data;
+        } catch (error) {
+            console.error('File change error:', error);
+            throw error;
+        }
+    }
 }
 const handleError = (operation: string, error: any): void => {
     console.error(`${operation} failed:`, error);

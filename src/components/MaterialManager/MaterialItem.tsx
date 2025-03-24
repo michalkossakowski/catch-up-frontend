@@ -241,13 +241,6 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         });
     };
 
-    const addFileToMaterial = async (file: FilePair) => {
-        if (!materialId) {
-            throw new Error("Material id is not defined");
-        }
-        await materialService.addFile(materialId, file.fileDto.id);
-    };
-
     const handleFileUpload = async (file: File, dateOfUpload: Date): Promise<FileDto> => {
         const response = await fileService.uploadFile(file, materialId, user?.id ?? "", dateOfUpload);
         return response.fileDto;
@@ -295,20 +288,28 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     }
 
     const onAction = (action: OnActionEnum, object: any) => {
-        console.log(`Action: ${action}`);
-        console.log(object);
         switch (action) {
             case OnActionEnum.FileRemovedFromMaterial:
-                console.log(`File with ID ${object.fileId} has been removed.`);
-                object as { fileId: number };
-                const fileId = object.fileId;
+                const fileId = object.fileId as number;
                 setFiles((prevFiles) => prevFiles.filter((file) => file.fileDto.id !== fileId));
-
                 if (material) {
                     material.files = material.files?.filter((file) => file.id !== fileId);
                 }
                 setToastMessage(`File has been removed.`);
                 setShowToast(true);
+                break;
+            case OnActionEnum.FileAddedToMaterial:
+                const filePairAdd = object.filePair as FilePair;
+                setFiles((prevFiles) => [...prevFiles, filePairAdd]);
+                setToastMessage(`File has been added.`);
+                break;
+            case OnActionEnum.FileEdited:
+                const filePairEdit = object.filePair as FilePair;
+                console.log(filePairEdit);
+                setFiles((prevFiles) => prevFiles.map((file) => file.fileDto.id === filePairEdit.fileDto.id ? filePairEdit : file));
+                console.log(files);
+
+                setToastMessage(`File has been edited.`);
                 break;
             default:
                 console.warn(`Unhandled action: ${action}`);
@@ -526,7 +527,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                     usedFilesIds={files.map(item => item.fileDto.id)} 
                     showModal={showUploadModal} 
                     onClose={() => setShowUploadModal(false)}
-                    onFileAdd={(file: FilePair) => addFileToMaterial(file)}
+                    onAction={onAction}
                 />
             }
         </>

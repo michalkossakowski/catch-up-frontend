@@ -5,18 +5,19 @@ import { FileDto } from "../../dtos/FileDto";
 import fileService from "../../services/fileService";
 import { FilePair } from "../../interfaces/FilePair";
 import FileIcon from "./FileIcon";
+import { OnActionEnum } from "../../Enums/OnActionEnum";
 
 interface UploadFileModalProps {
     usedFilesIds?: number[];
     showModal: boolean;
     onClose: () => void;
-    onFileAdd: (file: FilePair) => Promise<void>;
+    onAction(action: OnActionEnum, data?: any): void;
 }
 const UploadFileModal: React.FC<UploadFileModalProps> = ({
     usedFilesIds,
     showModal,
     onClose,
-    onFileAdd,
+    onAction,
     
 }) => {
     const [fileDisplayMode, setFileDisplayMode] = useState(1); // 1 - Lista, 2 - Siatka    
@@ -115,17 +116,17 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                 <Col xs="3">
                     <div className="mt-2 mb-2">
                     <ListGroup className="border-0 text-start" >
-                        <ListGroup.Item action active={activeTab === "uploadFile"} className="border-0" onClick={() => setActiveTab("uploadFile")}>
+                        <ListGroup.Item action active={activeTab === "yourFiles"} className="border-0" onClick={() => setActiveTab("yourFiles")}>
                             Your files
                         </ListGroup.Item>
-                        <ListGroup.Item action active={activeTab === "yourFiles"} className="border-0" onClick={() => setActiveTab("yourFiles")}>
+                        <ListGroup.Item action active={activeTab === "uploadFile"} className="border-0" onClick={() => setActiveTab("uploadFile")}>
                             Upload file
                         </ListGroup.Item>
                     </ListGroup>
                     </div>
                 </Col>
                 <Col xs="9">
-                {activeTab === "uploadFile" ? (
+                {activeTab === "yourFiles" ? (
                     <>
                         <div className="mt-2 mb-2 d-flex justify-content-end fileUploadBackground w-100">
                             <ToggleButtonGroup 

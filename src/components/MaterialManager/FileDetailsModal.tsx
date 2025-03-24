@@ -62,12 +62,19 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
   }, [materialId]);
 
   const handleClose = () => {
+    setFileName(filePair?.fileDto.name ?? "");
     setShow(false)
     onClose();
   };
 
   const handleSave = async () => {
-
+    var changedFileDto = filePair?.fileDto;
+    if(changedFileDto === undefined) return;
+    if(changedFileDto.name === fileName) return;
+    changedFileDto.name = fileName;
+    fileService.changeFile(changedFileDto).then(() => {
+      onAction(OnActionEnum.FileEdited, {filePair: {...filePair, fileDto: changedFileDto}});
+    }).catch((error) => {});
   };
 
   const onDownload = async () => { 
@@ -117,7 +124,17 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
     if (fileType.includes("zip")) return "bi-file-earmark-zip";
     return "bi-file-earmark"; // Domyślna ikona
   };
-
+  const onAddToMaterial = () => {
+    if (!materialId || !filePair?.fileDto.id)
+    { return; }
+    materialService.addFile(materialId, filePair?.fileDto.id ?? 0).then(() => {
+      onAction(OnActionEnum.FileAddedToMaterial, {data: filePair});
+      handleClose();
+    }
+    ).catch((error) => {
+      console.error("Failed to add file to material:", error);
+    })
+  }
   const getFileSize = (size?: number) => {
     var tempSize = size;
     if (!tempSize) return "0 KB";
@@ -141,7 +158,7 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
           <Stack direction="horizontal" gap={2} className="mb-3">
             {enableDownload && <Button variant="secondary" onClick={() => onDownload()}>Download</Button>}
             {enableRemoveFromMaterial && <Button variant="secondary" onClick = {() => handleRemoveFromMaterial() }>Remove from material</Button>}
-            {enableAddToMaterial && <Button variant="secondary">Add to material</Button>}
+            {enableAddToMaterial && <Button variant="secondary" onClick={() => onAddToMaterial()}>Add to material</Button>}
             {enableDelete && <Button variant="danger">Delete</Button>}
           </Stack>
           <Row className="text-start mb-2">
