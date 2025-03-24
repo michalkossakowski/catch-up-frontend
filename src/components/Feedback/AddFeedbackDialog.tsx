@@ -30,7 +30,7 @@ export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId
         resourceType,
         resourceId,
         resourceName: '',
-        isDone: false,
+        isResolved: false,
         createdDate: new Date(),
     });
     useEffect(() => {
