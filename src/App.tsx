@@ -46,6 +46,7 @@ import { useTranslation } from "react-i18next";
 import "./i18n.ts";
 import { useNavigate } from 'react-router-dom';
 import HRHomePage from './components/HR/HRHomePage.tsx';
+import EventCreator from './components/HR/EventCreator.tsx';
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
@@ -91,11 +92,13 @@ function App() {
             setRole(userRole);
             startConnection();
             handleNotifications();
+            if(location.pathname === '/') {
             if (userRole === 'HR') {
                 navigate('/hrhomepage'); 
             } else {
                 navigate('/'); 
             }
+        }
         }
     };
 
@@ -282,6 +285,35 @@ function App() {
                                         </NavDropdown.Item>
                                     </NavDropdown>
                                 )}
+                                {role === "HR" && (
+                                    <NavDropdown
+                                        className={isAdminToolsActive ? "navdropdown-active" : ""}
+                                        title={
+                                            <>
+                                                <i className="bi bi-person-lock" />{" "}
+                                                <span>HR Tools</span>
+                                            </>
+                                        }
+                                    >
+                                         <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/employesassignment"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-people" />{" "}
+                                            Assignment
+                                        </NavDropdown.Item>
+                                        <NavDropdown.Divider />
+                                        <NavDropdown.Item
+                                            as={NavLink}
+                                            to="/eventCreator"
+                                            className="nav-dropdown-item"
+                                        >
+                                            <i className="bi bi-calendar-plus" />{" "}
+                                            Event Creator
+                                        </NavDropdown.Item>
+                                    </NavDropdown>
+                                )}
                             </Nav>
                             <footer className="mt-auto">
                                 <p className="text-center text-muted small">
@@ -410,6 +442,7 @@ function App() {
                                 <Route path="/profile/:userId" element={<UserProfile />} />
                                 <Route path="/settings" element={<><h1>Settings</h1></>} />
                                 <Route path="/notifications" element={<><NotificationPage/></>} />
+                                <Route path="/eventCreator" element={<EventCreator/>} />
                             </Routes>
                         </Container>
                         <NotificationToast 
