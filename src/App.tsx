@@ -170,7 +170,7 @@ function App() {
                                 <Navbar.Brand href="/" className="nav-brand">catchUp</Navbar.Brand>
                                 <Nav className="flex-column w-100">
                                     <NavLink to={role === 'HR' ? '/hrhomepage' : '/'} className="nav-link">
-                                        <i className="bi bi-house-door" /> <span>Home</span>
+                                        <i className="bi bi-house-door" /> <span>{t('home')}</span>
                                     </NavLink>
                                     {role === "Newbie" && (
                                         <NavLink to="/tasks" className="nav-link left-sidebar">
@@ -178,21 +178,21 @@ function App() {
                                         </NavLink>
                                     )}
                                     <NavLink to="/schoolinglist" className="nav-link">
-                                        <i className="bi bi-book" /> <span>{t('Schoolings')}</span>
+                                        <i className="bi bi-book" /> <span>{t('schoolings')}</span>
                                     </NavLink>
                                     <NavLink to="/feedbacks" className="nav-link">
                                         <i className="bi bi-arrow-clockwise" /> <span>{t('feedbacks')}</span>
                                     </NavLink>
                                     <NavLink to="/badges" className="nav-link">
-                                        <i className="bi bi-shield" /> <span>Badges</span>
+                                        <i className="bi bi-shield" /> <span>{t('badges')}</span>
                                     </NavLink>
                                     <NavLink to="/faq" className="nav-link">
-                                        <i className="bi bi-question-circle" /> <span>FAQ</span>
+                                        <i className="bi bi-question-circle" /> <span>{t('faq')}</span>
                                     </NavLink>
                                     {role !== "Newbie" && role != null && (
                                         <NavDropdown
                                             className={isManageToolsActive ? "navdropdown-active" : ""}
-                                            title={<><i className="bi bi-pencil-square" /> <span>Manage Tools</span></>}
+                                            title={<><i className="bi bi-pencil-square" /> <span>{t('manage-tools')}</span></>}
                                         >
                                             <NavDropdown.Item as={NavLink} to="/taskmanage" className="nav-dropdown-item">
                                                 <i className="bi bi-list-task" /> {t('tasks')}
@@ -203,29 +203,29 @@ function App() {
                                             </NavDropdown.Item>
                                             <NavDropdown.Divider />
                                             <NavDropdown.Item as={NavLink} to="/presetmanage" className="nav-dropdown-item">
-                                                <i className="bi bi-stack-overflow" /> Task Presets
+                                                <i className="bi bi-stack-overflow" /> {t('task-presets')}
                                             </NavDropdown.Item>
                                             <NavDropdown.Divider />
                                             <NavDropdown.Item as={NavLink} to="/roadmapmanage" className="nav-dropdown-item">
-                                                <i className="bi bi-compass" /> Road Maps
+                                                <i className="bi bi-compass" /> {t('road-maps')}
                                             </NavDropdown.Item>
                                             <NavDropdown.Divider />
                                             <NavDropdown.Item as={NavLink} to="/editMatList" className="nav-dropdown-item">
-                                                <i className="bi bi-tools" /> Material Lists
+                                                <i className="bi bi-tools" /> {t('material-lists')}
                                             </NavDropdown.Item>
                                         </NavDropdown>
                                     )}
                                     {role === "Admin" && (
                                         <NavDropdown
                                             className={isAdminToolsActive ? "navdropdown-active" : ""}
-                                            title={<><i className="bi bi-person-lock" /> <span>Admin Tools</span></>}
+                                            title={<><i className="bi bi-person-lock" /> <span>{t('admin-tools')}</span></>}
                                         >
                                             <NavDropdown.Item as={NavLink} to="/adminpanel" className="nav-dropdown-item">
-                                                <i className="bi bi-shield-lock" /> Panel
+                                                <i className="bi bi-shield-lock" /> {t('panel')}
                                             </NavDropdown.Item>
                                             <NavDropdown.Divider />
                                             <NavDropdown.Item as={NavLink} to="/employesassignment" className="nav-dropdown-item">
-                                                <i className="bi bi-people" /> Assignment
+                                                <i className="bi bi-people" /> {t('assignment')}
                                             </NavDropdown.Item>
                                         </NavDropdown>
                                     )}
@@ -312,7 +312,7 @@ function App() {
                             </Navbar>
                             {role == null && (
                                 <Alert className='alert api-alert' variant='danger'>
-                                    <i className="bi bi-exclamation-triangle" /> Api is offline try refreshing the page <i className="bi bi-exclamation-triangle" />
+                                    <i className="bi bi-exclamation-triangle" /> {t('api-is-offline-try-refreshing-the-page')} <i className="bi bi-exclamation-triangle" />
                                 </Alert>
                             )}
                             <Routes>
