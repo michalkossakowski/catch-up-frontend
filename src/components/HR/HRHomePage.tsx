@@ -1,7 +1,6 @@
 import React from 'react';
 import UnassignedNewbiesList from './UnassignedNewbiesList';
 import CalendarHR from './CalendarHR';
-import EventCreator from './EventCreator';
 
 const HRHomePage: React.FC = () => {
   return (
