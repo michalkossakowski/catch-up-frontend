@@ -39,13 +39,19 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
     };
 
     useEffect(() => {
-        if (userId)
-            getAllOwnedFiles(userId)
-            shouldFetchFileData();
-    }, []);
+        if (userId) {
+            getAllOwnedFiles(userId);
+        }
+    }, [userId]);
 
     useEffect(() => {
-            filtrVisibleFiles(files);
+        if (files.length > 0) {
+            shouldFetchFileData();
+        }
+    }, [files]);
+
+    useEffect(() => {
+        filtrVisibleFiles(files);
     }, [files, usedFilesIds]);
 
     useEffect(() => {{
@@ -59,21 +65,23 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
     };
 
     const shouldFetchFileData = async () => {
-        if (files.length > 0) {
-            const updatedFiles = await Promise.all(
-                files.map(async (item) => {
-                if (!item.file && isMediaFile(item.fileDto.type ?? "")) {
+        const filesToFetch = files.filter(
+            (item) => !item.file && isMediaFile(item.fileDto.type ?? "")
+        );
+    
+        if (filesToFetch.length > 0) {
+            const fetchedFiles = await Promise.all(
+                filesToFetch.map(async (item) => {
                     const downloadedFile = await getFileData(item.fileDto);
-                    
-                    if (downloadedFile) {
-                        const newFilePair = { file: downloadedFile, fileDto: item.fileDto };
-                        return newFilePair;
-                    }
-                }
-                    return item;
+                    return downloadedFile ? { ...item, file: downloadedFile } : item;
                 })
             );
-            setFiles(updatedFiles);
+    
+            setFiles((prevFiles) =>
+                prevFiles.map((file) =>
+                    fetchedFiles.find((f) => f.fileDto.id === file.fileDto.id) || file
+                )
+            );
         }
     };
 
@@ -102,11 +110,10 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
             const data = await fileService.downloadFile(fileDto.id);
             return data as File;
         } catch (error) {
-            console.error("File download error:", error);
+            console.error(`Error fetching file ${fileDto.id}:`, error);
             return null;
         }
     };
-
     const onLeftClickFile = (filePair: FilePair) => {
         setSelectedFilePair(filePair);
         setShowFileDetailsModal(true);

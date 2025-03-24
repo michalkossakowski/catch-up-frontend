@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import styles from './material.module.css';
 
 interface FileIconProps {

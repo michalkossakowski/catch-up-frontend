@@ -148,17 +148,6 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         };
     }, [materialId, getMaterial]);
    
-    const getFileData = async (fileDto: FileDto) => {
-        try {
-            const fileData = await fileService.downloadFile(fileDto.id);
-            if(fileDto.name){
-                const file = new File([fileData], fileDto.name, { type: fileData.type });
-                setFiles(prev => [...prev,  {file, fileDto}]);
-            }
-        } catch (error) {
-        }
-    }
-
     const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault()
         setIsDragActive(true)
@@ -323,14 +312,13 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 setShowToast(true);
                 break;
             case OnActionEnum.FileAddedToMaterial:
-                const filePairAdd = object.filePair as FilePair;
+                const filePairAdd = object.data as FilePair;
                 setFiles((prevFiles) => [...prevFiles, filePairAdd]);
                 setToastMessage(`File has been added.`);
                 break;
             case OnActionEnum.FileEdited:
                 const filePairEdit = object.filePair as FilePair;
                 setFiles((prevFiles) => prevFiles.map((file) => file.fileDto.id === filePairEdit.fileDto.id ? filePairEdit : file));
-
                 setToastMessage(`File has been edited.`);
                 break;
             default:
