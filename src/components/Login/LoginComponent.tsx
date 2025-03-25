@@ -5,9 +5,14 @@ import { useAuth } from '../../Provider/authProvider';
 import { jwtDecode } from 'jwt-decode';
 import './LoginComponent.css';
 import { useTranslation } from "react-i18next";
-import { NavDropdown } from 'react-bootstrap';
+import { Button, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 
-const LoginComponent = () => {
+interface LoginComponentProps {
+    toggleTheme: () => void;
+    theme: string;
+}
+
+const LoginComponent: React.FC<LoginComponentProps> = ({ toggleTheme, theme }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -80,20 +85,28 @@ const LoginComponent = () => {
 
     return (
         <>
-            <NavDropdown
-                id="nav-language-dropdown"
-                className='nav-language-dropdown-login'
-                title={<img src={`/locales/${normalizeLanguage(i18n.language)}/1x1.svg`} alt={i18n.language} className='nav-language-img' width="30" height="30" />}
-                align="end"
-                drop="down"
-            >
-                {Object.keys(availableLanguages).map((lng) => (
-                    <NavDropdown.Item key={lng} onClick={() => changeLanguage(lng)}>
-                        <img src={`/locales/${normalizeLanguage(lng)}/4x3.svg`} alt={lng} width="20" height="15" style={{ marginRight: "10px" }} />
-                        {availableLanguages[lng]}
-                    </NavDropdown.Item>
-                ))}
-            </NavDropdown>
+            <Navbar expand="lg">
+                <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap mx-1">
+                    <Button onClick={toggleTheme} className='theme-btn' title='Dark/Light theme'>
+                        {theme === 'night' ? <i className="bi bi-brightness-high" /> : <i className="bi bi-moon" />}
+                    </Button>
+
+                    <NavDropdown
+                        id="nav-language-dropdown"
+                        title={<img src={`/locales/${normalizeLanguage(i18n.language)}/1x1.svg`} alt={i18n.language} className='nav-language-img' width="30" height="30" />}
+                        align="end"
+                        drop="down"
+                    >
+                        {Object.keys(availableLanguages).map((lng) => (
+                            <NavDropdown.Item key={lng} onClick={() => changeLanguage(lng)}>
+                                <img src={`/locales/${normalizeLanguage(lng)}/4x3.svg`} alt={lng} width="20" height="15" style={{ marginRight: "10px" }} />
+                                {availableLanguages[lng]}
+                            </NavDropdown.Item>
+                        ))}
+                    </NavDropdown>
+                </Nav>
+            </Navbar>
+
             <h1 className='welcome'>{t('welcome-in-catchup')}</h1>
             <h2 className='subtitle'>{t('the-coldest-onboarding-app-on-the-market')}</h2>
             <div className="d-flex justify-content-center align-items-center">
