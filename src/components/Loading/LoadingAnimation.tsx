@@ -30,7 +30,7 @@ const LoadingAnimation: React.FC = () => {
       ctx.font = "24px Arial";
       ctx.fillStyle = theme === 'day' ? "black" : "white";
       ctx.textAlign = "left";
-      ctx.fillText(textToDraw, 6, 30);
+      ctx.fillText(textToDraw, 5, 30);
 
       if (!removing) {
         if (currentCharIndex < text.length) {
