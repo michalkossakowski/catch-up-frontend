@@ -4,6 +4,8 @@ import axiosInstance from '../../../axiosConfig';
 import { useAuth } from '../../Provider/authProvider';
 import { jwtDecode } from 'jwt-decode';
 import './LoginComponent.css';
+import { useTranslation } from "react-i18next";
+import { NavDropdown } from 'react-bootstrap';
 
 const LoginComponent = () => {
     const [email, setEmail] = useState('');
@@ -12,6 +14,32 @@ const LoginComponent = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { setAccessToken, setRefreshToken, setUser } = useAuth();
     const navigate = useNavigate();
+    const { t, i18n } = useTranslation();
+    const availableLanguages: { [key: string]: string } = {
+        'en': "English",
+        'pl': "Polski",
+        'fr': "Français",
+        'de': "Deutsch",
+        'es': "Español",
+    };
+
+    const changeLanguage = (lng: string) => {
+        i18n.changeLanguage(lng);
+        if (!availableLanguages.hasOwnProperty(lng)) {
+            i18n.changeLanguage("en");
+            return "en";
+        }
+        localStorage.setItem("i18nextLng", lng);
+    };
+
+    const normalizeLanguage = (lng: string) => {
+        if (!lng) return "en";
+        if (!availableLanguages.hasOwnProperty(lng)) {
+            i18n.changeLanguage("en");
+            return "en";
+        }
+        return lng.split("-")[0];
+    };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -30,17 +58,17 @@ const LoginComponent = () => {
             const userResponse = await axiosInstance.get(`User/GetById/${userId}`);
             const userData = userResponse.data;
             setUser(userData);
-
             navigate('/');
+
         } catch (err: any) {
             if (err.response) {
                 if (err.response.status === 404) {
-                    setError('Invalid email or password');
+                    setError(t('invalid-email-or-password'));
                 } else {
-                    setError('An unexpected error occurred. Please try again.');
+                    setError(t('an-unexpected-error-occurred-please-try-again'));
                 }
             } else {
-                setError('API is down, sorry');
+                setError(t('api-is-down-sorry'));
             }
             setAccessToken(null);
             setRefreshToken(null);
@@ -52,59 +80,73 @@ const LoginComponent = () => {
 
     return (
         <>
-        <h1 className='welcome'>Welcome in catchUp</h1>
-        <h2 className='subtitle'>The coldest onboarding app on the market</h2>
-        <div className="d-flex justify-content-center align-items-center">
-            <div className="card shadow-lg p-4   login-container">
-                <h2 className="text-center mb-4">Login</h2>
-                <form onSubmit={handleLogin}>
-                    <div className="mb-3">
-                        <label htmlFor="email" className="form-label">Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            className="form-control"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+            <NavDropdown
+                id="nav-language-dropdown"
+                className='nav-language-dropdown-login'
+                title={<img src={`/locales/${normalizeLanguage(i18n.language)}/1x1.svg`} alt={i18n.language} className='nav-language-img' width="30" height="30" />}
+                align="end"
+                drop="down"
+            >
+                {Object.keys(availableLanguages).map((lng) => (
+                    <NavDropdown.Item key={lng} onClick={() => changeLanguage(lng)}>
+                        <img src={`/locales/${normalizeLanguage(lng)}/4x3.svg`} alt={lng} width="20" height="15" style={{ marginRight: "10px" }} />
+                        {availableLanguages[lng]}
+                    </NavDropdown.Item>
+                ))}
+            </NavDropdown>
+            <h1 className='welcome'>{t('welcome-in-catchup')}</h1>
+            <h2 className='subtitle'>{t('the-coldest-onboarding-app-on-the-market')}</h2>
+            <div className="d-flex justify-content-center align-items-center">
+                <div className="card shadow-lg p-4   login-container">
+                    <h2 className="text-center mb-4">{t('login')}</h2>
+                    <form onSubmit={handleLogin}>
+                        <div className="mb-3">
+                            <label htmlFor="email" className="form-label">{t('email')}</label>
+                            <input
+                                type="email"
+                                id="email"
+                                className="form-control"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                disabled={isLoading}
+                                autoComplete="username"
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="password" className="form-label">{t('password')}</label>
+                            <input
+                                type="password"
+                                id="password"
+                                className="form-control"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                disabled={isLoading}
+                                autoComplete="password"
+                                required
+                            />
+                        </div>
+                        {error && <div className="alert alert-danger">{error}</div>}
+                        <button
+                            type="submit"
+                            className="btn btn-primary w-100"
                             disabled={isLoading}
-                            autoComplete="username"
-                            required
-                        />
-                    </div>
-                    <div className="mb-3">
-                        <label htmlFor="password" className="form-label">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            className="form-control"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            disabled={isLoading}
-                            autoComplete="password"
-                            required
-                        />
-                    </div>
-                    {error && <div className="alert alert-danger">{error}</div>}
-                    <button
-                        type="submit"
-                        className="btn btn-primary w-100"
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <>
-                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                Loading...
-                            </>
-                        ) : 'Login'}
-                    </button>
-                </form>
+                        >
+                            {isLoading ? (
+                                <>
+                                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                    {t('loading')}
+                                </>
+                            ) : t('login')}
+                        </button>
+                    </form>
+                </div>
             </div>
-        </div>
-        <footer className="mt-auto">
-            <p className="text-center text-muted small">
-                © 2024 Made by UnhandledException
-            </p>
-        </footer>
+            <footer className="mt-auto">
+                <p className="text-center text-muted small">
+                    © 2024 Made by UnhandledException
+                </p>
+            </footer>
         </>
     );
 };

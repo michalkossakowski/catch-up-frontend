@@ -10,3 +10,8 @@
 .subtitle{
     font-size: 24px;
 }
+.nav-language-dropdown-login{
+    position: absolute;
+    right: 0;
+    padding: 1rem;
+}
