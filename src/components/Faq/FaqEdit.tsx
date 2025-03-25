@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { FaqDto, FaqResponse } from '../../dtos/FaqDto';
-import Material from '../Material/Material';
 import { addFaq, editFaq } from '../../services/faqService';
 import './FaqEdit.css';
 import { Button } from 'react-bootstrap';
 import { useAuth } from '../../Provider/authProvider';
+import MaterialItem from '../MaterialManager/MaterialItem';
 
 interface FaqEditProps {
     isEditMode: boolean; 
@@ -44,6 +44,7 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
 
     const materialCreated = (materialId: number) => {
         setMaterialId(materialId);
+        console.log('materialId', materialId);
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -113,15 +114,19 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
                     )}
                 </div>
                 <br />
-                <div className="form-group">
-                    <label>Additonal Materials:</label>
-                    <Material
+                <div >
+                    {/* <Material
                         materialId={materialId ?? 0}
                         showRemoveFile={true}
                         showDownloadFile={true}
                         showAddingFile={true}
                         materialCreated={materialCreated}
-                    />
+                    /> */}
+                    <MaterialItem
+                        materialId={materialId ?? 0} 
+                        materialCreated={materialCreated} 
+                        >
+                    </MaterialItem>
                 </div>
                 <div className='buttonBox'>
                     <Button type="submit" variant="primary" disabled={!isQuestionValid || !isAnswerValid}>

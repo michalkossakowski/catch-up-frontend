@@ -41,6 +41,8 @@ import { setNotifications, addNotification } from './store/notificationSlice';
 import { getNotifications } from './services/notificationService';
 import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
+import MaterialItem from './components/MaterialManager/MaterialItem.tsx';
+
 import { useTranslation } from "react-i18next";
 import "./i18n.ts";
 import { useNavigate } from 'react-router-dom';

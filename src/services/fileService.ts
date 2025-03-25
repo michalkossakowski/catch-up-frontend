@@ -2,7 +2,7 @@ import { FileDto } from '../dtos/FileDto';
 import axiosInstance from '../../axiosConfig';
 const fileService =
 {
-    uploadFile: async (file: File, materialId?: number): Promise<{ message: string; fileDto: FileDto; materialId: number }> => {
+    uploadFile: async (file: File, materialId?: number, ownerId?: string, dateOfUpload?: Date): Promise<{ message: string; fileDto: FileDto; materialId: number }> => {
         const formData = new FormData();
         formData.append('file', file);
 
@@ -12,7 +12,11 @@ const fileService =
                 `File/Upload`,
                 formData,
                 {
-                    params: materialId ? { materialId } : {},
+                    params: {
+                        ...(materialId && { materialId }), 
+                        ...(ownerId && { ownerId }), 
+                        ...(dateOfUpload && { dateOfUpload })
+                    },
                     headers: {'Content-Type': 'multipart/form-data'},
                 }
             );
@@ -20,7 +24,7 @@ const fileService =
         }
         catch (error)
         {
-            console.error('File upload error:', error);
+            handleError('uploadFile', error);
             throw error;
         }
     },
@@ -56,10 +60,39 @@ const fileService =
         }
         catch(error)
         {
-            console.error('Material get error:', error)
+            console.error('File get error:', error)
             throw error
         }
     },
-}
 
+    getAllOwnedFiles: async(userId: string): Promise<FileDto[]> => {
+        try
+        {
+            const response = await axiosInstance.get<FileDto[]>(`/File/GetAllFiles/${userId}`)
+            return response.data
+        }
+        catch(error)
+        {
+            console.error('File get error:', error)
+            throw error
+        }
+    },
+
+    changeFile: async(fileDto: FileDto): Promise<FileDto> => {
+        try {
+            const response = await axiosInstance.put<FileDto>(`/File/ChangeFile/`, fileDto);
+            return response.data;
+        } catch (error) {
+            console.error('File change error:', error);
+            throw error;
+        }
+    }
+}
+const handleError = (operation: string, error: any): void => {
+    console.error(`${operation} failed:`, error);
+    if (!error.response) {
+        throw new Error('API is not available');
+    }
+    throw new Error(error.response.data?.message || 'An unexpected error occurred');
+};
 export default fileService;
