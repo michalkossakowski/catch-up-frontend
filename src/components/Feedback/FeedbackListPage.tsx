@@ -6,7 +6,9 @@ import NotificationToast from '../Toast/NotificationToast';
 import Loading from '../Loading/Loading';
 import { getRole } from '../../services/userService';
 import FeedbackItem from './FeedbackItem';
-import ConfirmModal from '../Modal/ConfirmModal'; 
+import ConfirmModal from '../Modal/ConfirmModal';
+import { Form, Row } from 'react-bootstrap';
+import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 
 
 const FeedbackListPage: React.FC = () => {
@@ -19,6 +21,11 @@ const FeedbackListPage: React.FC = () => {
     const [toastMessage, setToastMessage] = useState('');
     const [toastColor, setToastColor] = useState('');
     const [apiError, setApiError] = useState(false);
+    const [selectedResolved, setSelectedResolved] = useState<string[]>(["unresolved"]);
+    const [originalFeedbacks, setOriginalFeedbacks] = useState<FeedbackDto[]>([]);
+    const [selectedResourceTypes, setSelectedResourceTypes] = useState<ResourceTypeEnum[]>([]);
+    const [sortColumn, setSortColumn] = useState<keyof FeedbackDto | null>(null);
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
     useEffect(() => {
         const loadFeedbacks = async () => {
@@ -28,6 +35,7 @@ const FeedbackListPage: React.FC = () => {
                 setIsAdmin(userRoleResponse !== 'Newbie');
                 const feedbackList = await getFeedbacks(user.id ?? 'defaultId', userRoleResponse !== 'Newbie');
                 setFeedbacks(feedbackList);
+                setOriginalFeedbacks(feedbackList);
             } catch (error) {
                 setApiError(true);
             } finally {
@@ -37,6 +45,70 @@ const FeedbackListPage: React.FC = () => {
     
         loadFeedbacks();
     }, [user]);
+
+    useEffect(() => {
+        let filtered = originalFeedbacks;
+
+        if (selectedResolved.length === 1) {
+            if (selectedResolved.includes("resolved")) {
+                filtered = filtered.filter(feedback => feedback.isResolved);
+            } else {
+                filtered = filtered.filter(feedback => !feedback.isResolved);
+            }
+        }
+
+        if (selectedResourceTypes.length > 0) { 
+            filtered = filtered.filter(feedback => selectedResourceTypes.includes(feedback.resourceType));
+        }
+
+        filtered = filtered.sort((a, b) => {
+            if (sortColumn) {
+                const valueA = a[sortColumn];
+                const valueB = b[sortColumn];
+        
+                if (typeof valueA === "string" && typeof valueB === "string") {
+                    return sortOrder === "asc" ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+                }
+        
+                if (typeof valueA === "number" && typeof valueB === "number") {
+                    return sortOrder === "asc" ? valueA - valueB : valueB - valueA;
+                }
+        
+                if (sortColumn === "createdDate") {
+                    const dateA = new Date(a.createdDate).getTime();
+                    const dateB = new Date(b.createdDate).getTime();
+                    return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+                }
+            }
+        
+            return 0;
+        });
+    
+        setFeedbacks(filtered);
+    }, [selectedResolved, selectedResourceTypes, originalFeedbacks, sortColumn, sortOrder]);
+
+    const toggleResourceType = (type: ResourceTypeEnum) => {
+        setSelectedResourceTypes(prev =>
+            prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+        );
+    };
+    
+    const toggleResolved = (type: "resolved" | "unresolved") => {
+        setSelectedResolved(prev =>
+            prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+        );
+    };
+
+    const handleResolveChange = (id: number, isResolved: boolean) => {
+        setOriginalFeedbacks(prev =>
+            prev.map(feedback => (feedback.id === id ? { ...feedback, isResolved } : feedback))
+        );
+    };
+
+    const handleSort = (column: keyof FeedbackDto) => {
+        setSortOrder(prevOrder => (sortColumn === column ? (prevOrder === "asc" ? "desc" : "asc") : "asc"));
+        setSortColumn(column);
+    };
 
     const handleDelete = async () => {
         if (!feedbackToDelete || feedbackToDelete.id === undefined) return;
@@ -72,33 +144,88 @@ const FeedbackListPage: React.FC = () => {
         <>
             <div className="container">
                 <h3 className="text-center mt-3">Feedbacks</h3>
-                {!feedbacks.length ? (
-                    <div className="alert alert-secondary text-center">No feedbacks found</div>
-                ) : (
-                    <table className="table table-striped mt-3">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Description</th>
-                                <th>{isAdmin ? 'Sender' : 'Receiver'}</th>
-                                <th>Date</th>
-                                <th>Resource Type</th>
-                                <th>Resource Title</th>
-                                <th colSpan={2}>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {feedbacks.map((feedback) => (
-                                <FeedbackItem 
-                                    key={feedback.id} 
-                                    feedback={feedback} 
-                                    isAdmin={isAdmin} 
-                                    onDeleteClick={setFeedbackToDelete} 
-                                />
-                            ))}
-                        </tbody>
-                    </table>
-                )}
+                <Row className="mb-3">
+                    <div className="col">
+                        <h4 className="text-start mt-3">Filters</h4>
+                        <hr></hr>
+                        <Form.Group as={Row} className="text-start">
+                            <Form.Label><h6>Filter by Resolved:</h6></Form.Label>
+                        
+                            <Form.Check
+                                type="checkbox"
+                                label="Resolved"
+                                value="resolved"
+                                checked={selectedResolved.includes("resolved")}
+                                onChange={() => toggleResolved("resolved")}
+                            />
+                            
+                            <Form.Check
+                                type="checkbox"
+                                label="Unresolved"
+                                value="unresolved"
+                                checked={selectedResolved.includes("unresolved")}
+                                onChange={() => toggleResolved("unresolved")}
+                            />
+                        </Form.Group>
+                        <hr></hr>
+                        <Form.Group as={Row} className="text-start">
+                            <Form.Label><h6>Filter by Resource Type:</h6></Form.Label>
+                            {Object.values(ResourceTypeEnum)
+                                .filter(value => typeof value === "number")
+                                .map(value => (
+                                    <Form.Check
+                                        key={value}
+                                        type="checkbox"
+                                        label={ResourceTypeEnum[value as unknown as keyof typeof ResourceTypeEnum]}
+                                        value={value}
+                                        checked={selectedResourceTypes.includes(value as ResourceTypeEnum)}
+                                        onChange={() => toggleResourceType(value as ResourceTypeEnum)}
+                                        className="me-3 text-start"
+                                    />
+                                ))}
+                        </Form.Group>
+                        <hr></hr>
+                    </div>
+                    <div className="col">
+                        {!feedbacks.length ? (
+                            <div className="alert alert-secondary text-center">No feedbacks found</div>
+                        ) : (
+                            <table className="table table-striped mt-3">
+                                <thead>
+                                    <tr>
+                                        <th onClick={() => handleSort("title")} style={{ cursor: "pointer" }}>
+                                            Title 
+                                            <i className="bi bi-arrow-down-up ms-2"></i>
+                                        </th>
+                                        <th>Description</th>
+                                        <th onClick={() => handleSort("userName")} style={{ cursor: "pointer" }}>
+                                        {isAdmin ? 'Sender' : 'Receiver'} <i className="bi bi-arrow-down-up ms-2"></i>
+                                        </th>
+                                        <th onClick={() => handleSort("createdDate")} style={{ cursor: "pointer" }}>
+                                            Date <i className="bi bi-arrow-down-up ms-2"></i>
+                                        </th>
+                                        <th onClick={() => handleSort("resourceType")} style={{ cursor: "pointer" }}>
+                                            Resource Type <i className="bi bi-arrow-down-up ms-2"></i>
+                                        </th>
+                                        <th>Resource Title</th>
+                                        <th colSpan={2}>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {feedbacks.map((feedback) => (
+                                        <FeedbackItem 
+                                            key={feedback.id} 
+                                            feedback={feedback} 
+                                            isAdmin={isAdmin} 
+                                            onDeleteClick={setFeedbackToDelete}
+                                            onResolveChange={handleResolveChange}
+                                        />
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
+                </Row>
 
                 <ConfirmModal
                     show={!!feedbackToDelete}
