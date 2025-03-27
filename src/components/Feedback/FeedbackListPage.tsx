@@ -115,7 +115,10 @@ const FeedbackListPage: React.FC = () => {
     
         try {
             await deleteFeedback(feedbackToDelete.id);
-            setFeedbacks(feedbacks.filter((feedback) => feedback.id !== feedbackToDelete.id));
+            
+            setFeedbacks(prev => prev.filter(feedback => feedback.id !== feedbackToDelete.id));
+            setOriginalFeedbacks(prev => prev.filter(feedback => feedback.id !== feedbackToDelete.id));
+    
             setToastMessage('Feedback successfully deleted');
             setToastColor('green');
             setShowToast(true);
