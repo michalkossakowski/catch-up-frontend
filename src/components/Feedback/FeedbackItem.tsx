@@ -36,7 +36,7 @@ const FeedbackItem: React.FC<FeedbackItemProps> = ({
                 <td>{new Date(feedback.createdDate).toLocaleDateString()}</td>
                 <td>{ResourceTypeEnum[feedback.resourceType]}</td>
                 <td>
-                    {isResolved ? <i className="bi bi-check-circle-fill"></i> : ''}
+                    {isResolved ? <i className="bi bi-check-circle-fill"></i> : <i className="bi bi-x-circle-fill text-danger"></i>}
                 </td>
                 <td>
                     <div className="d-flex">
