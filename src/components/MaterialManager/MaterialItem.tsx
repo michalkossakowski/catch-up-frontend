@@ -23,6 +23,7 @@ interface MaterialItemProps {
     enableAddingFile?: boolean;
     enableEdittingMaterialName?: boolean;
     showMaterialName?: boolean;
+    enableEdittingFile?: boolean;
     materialCreated?: (materialId: number) => void;
     nameTitle?: string;
     // enableValidation?: boolean; // It will be default material name material_date
@@ -31,11 +32,12 @@ interface MaterialItemProps {
 
 const MaterialItem: React.FC<MaterialItemProps> = ({
     materialId,
-    enableRemoveFile = true,
-    enableDownloadFile = true,
+    enableRemoveFile = false,
+    enableDownloadFile = false,
     showMaterialName = true,
-    enableEdittingMaterialName = true,
-    enableAddingFile = true,
+    enableEdittingMaterialName = false,
+    enableAddingFile = false,
+    enableEdittingFile = false,
     materialCreated = () => { },
     nameTitle = 'Add Content',
     // enableValidation = true,
@@ -242,8 +244,11 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     }
 
     const updateMaterial = (material: MaterialDto) => {
+        console.log('updateMaterial', material);
+        console.log('filesToSend', filesToSend);
         const uploadPromises = filesToSend.map(async (file) => {
-            const fileDto = await handleFileUpload(file.file, file.uploadedAt);
+            const fileDto = await handleFileUpload(file.file, file.uploadedAt, material);
+            console.log('fileDto', fileDto);
             material.files?.push(fileDto);
             return { file: file.file, fileDto };
         });
@@ -254,8 +259,16 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         });
     };
 
-    const handleFileUpload = async (file: File, dateOfUpload: Date): Promise<FileDto> => {
-        const response = await fileService.uploadFile(file, materialId, user?.id ?? "", dateOfUpload);
+    const handleFileUpload = async (file: File, dateOfUpload: Date, material?: MaterialDto): Promise<FileDto> => {
+        var response;
+        console.log('handleFileUpload1', file, dateOfUpload, material);
+        if (material ) {
+            response = await fileService.uploadFile(file, material.id , user?.id ?? "", dateOfUpload);
+        }
+        else{
+            console.log('handleFileUpload2', file, dateOfUpload, materialId);
+            response = await fileService.uploadFile(file, materialId, user?.id ?? "", dateOfUpload);
+        }
         return response.fileDto;
     }
     const handleFileDisplayChange = (value: number) => {
@@ -530,7 +543,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 filePair={selectedFilePair}
                 enableAddToMaterial={false}
                 enableRemoveFromMaterial={enableRemoveFile}
-                enableEdit={true}
+                enableEdit={enableEdittingFile}
                 onAction={onAction}
             />
             {enableAddingFile &&
