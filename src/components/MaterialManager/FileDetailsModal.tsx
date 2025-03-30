@@ -11,7 +11,7 @@ import { OnActionEnum } from "../../Enums/OnActionEnum";
 interface FileDetailsModalProps {
     showModal: boolean;
     onClose(): void;
-    onAction(action: OnActionEnum, data?: any): void;
+    onAction(action: OnActionEnum, data?: any, fileInMaterial?: boolean): void;
     filePair?: FilePair;
     materialId?: number;
     enableDownload?: boolean;
@@ -19,6 +19,7 @@ interface FileDetailsModalProps {
     enableEdit?: boolean;
     enableAddToMaterial?: boolean;
     enableRemoveFromMaterial?: boolean;
+    isFileInMaterial?: boolean;
 }
 const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
     showModal,
@@ -31,6 +32,7 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
     enableEdit = false,
     enableAddToMaterial = false,
     enableRemoveFromMaterial = false,
+    isFileInMaterial = false,
 }) => {
   const [show, setShow] = useState(false);
   const [owner, setOwner] = useState<UserDto>();
@@ -72,9 +74,14 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
     if(changedFileDto === undefined) return;
     if(changedFileDto.name === fileName) return;
     changedFileDto.name = fileName;
+    if(!isFileInMaterial)
+    {
+      onAction(OnActionEnum.FileEdited, {fileNameAndIndex: {fileName: changedFileDto.name , index: changedFileDto.id}}, false);
+      return;
+    }
     fileService.changeFile(changedFileDto).then(() => {
-      onAction(OnActionEnum.FileEdited, {filePair: {...filePair, fileDto: changedFileDto}});
-    }).catch((error) => {});
+      onAction(OnActionEnum.FileEdited, {filePair: {...filePair, fileDto: changedFileDto}}, true);
+    })
   };
 
   const onDownload = async () => { 
@@ -104,11 +111,17 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
   }
 
   const handleRemoveFromMaterial = () => {
+    if (!isFileInMaterial) {
+      console.log(filePair?.fileDto.id);
+      onAction(OnActionEnum.FileRemovedFromMaterial, {index: filePair?.fileDto.id}, false);
+      handleClose();
+      return;
+    }
     if (!materialId || !filePair?.fileDto.id) 
     { return; }
     
     materialService.removeFile(materialId, filePair?.fileDto.id ?? 0).then(() => {
-      onAction(OnActionEnum.FileRemovedFromMaterial, {fileId: filePair?.fileDto.id});
+      onAction(OnActionEnum.FileRemovedFromMaterial, {fileId: filePair?.fileDto.id}, true);
       handleClose();
     }).catch((error) => {
       console.error("Failed to remove file from material:", error);
