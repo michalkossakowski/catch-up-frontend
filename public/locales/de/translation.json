@@ -66,5 +66,7 @@
   "size": "Größe :",
   "file-type": "Dateityp:",
   "save-changes": "Änderungen speichern",
-  "undefine-date": "Undfines Datum"
+  "undefine-date": "Undfines Datum",
+  "search": "Suchen",
+  "search-file-by-names": "Suchdatei mit Namen"
 }

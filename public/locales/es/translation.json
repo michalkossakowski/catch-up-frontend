@@ -66,5 +66,7 @@
   "size": "Tamaño :",
   "file-type": "Tipo de archivo:",
   "save-changes": "Guardar cambios",
-  "undefine-date": "Fecha involuntaria"
+  "undefine-date": "Fecha involuntaria",
+  "search": "Buscar",
+  "search-file-by-names": "Buscar archivo por nombres"
 }

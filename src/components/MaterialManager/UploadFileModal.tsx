@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Alert, Button, Col, ListGroup, Modal, Pagination, Row, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
+import { Alert, Button, Col, Form, InputGroup, ListGroup, Modal, Pagination, Row, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
 import { useAuth } from "../../Provider/authProvider";
 import { FileDto } from "../../dtos/FileDto";
 import fileService from "../../services/fileService";
@@ -49,6 +49,8 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
 
+    // const [searchText, setSearchText] = useState('');
+    
     const isMediaFile = (type: string) => {
         return type.startsWith("image/") || type.startsWith("video/");
     };
@@ -94,6 +96,17 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
         onClose()
     };
 
+    // const search = () => {
+    //     if (searchText.length > 0) {
+    //         fileService.findByQuestion(userId ?? "", searchText, currentPage, itemsPerPage).then((data) => {
+    //             setFiles(data.files.map(fileDto => ({file: undefined, fileDto})));
+    //             setTotalItems(data.totalCount);
+    //             setCurrentPage(1);
+    //         })
+    //     } else {
+    //         setFilteredFiles(files);
+    //     }
+    // }
     const shouldFetchFileData = async () => {
         const filesToFetch = files.filter(
             (item) => !item.file && isMediaFile(item.fileDto.type ?? "")
@@ -239,23 +252,34 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                 ): (<>
                 {activeTab === "yourFiles" ? (
                     <>
-                        <div className="mt-2 mb-2 d-flex justify-content-end fileUploadBackground w-100">
-                            <ToggleButtonGroup 
-                                type="radio" 
-                                name={`fileDisplayOptions-${Math.random()}}`}
-                                defaultValue={fileDisplayMode} 
-                                className='gap-0 mt-0' 
-                                style={{display: 'inline'}}
-                                onChange={handleFileDisplayChange}
-                            >
-                                <ToggleButton variant="outline-secondary" id={`tbg-radio-1-${Math.random()}`} value={1}>
-                                    <i className="bi bi-list-ul"></i>                                        
-                                </ToggleButton>
-                                <ToggleButton variant="outline-secondary" id={`tbg-radio-2-${Math.random()}`} value={2}>
-                                    <i className="bi bi-grid-3x3"></i>                                        
-                                </ToggleButton>
-                            </ToggleButtonGroup>
-                        </div>
+                        <Row className="mt-2 mb-2">
+                            <Col xs={8}>
+                                {/* <InputGroup className="mb-3" >
+                                    <InputGroup.Text><i className="bi bi-search"></i></InputGroup.Text>
+                                    <Form.Control placeholder={t('search-file-by-names')} value={searchText} onChange={(e) => setSearchText(e.target.value)}/>
+                                    <Button variant="success" style={{ textTransform: "capitalize" }} onClick={() => search()}>
+                                        {t('search')} 
+                                    </Button>
+                                </InputGroup> */}
+                            </Col>
+                            <Col className="d-flex justify-content-end">
+                                <ToggleButtonGroup 
+                                    type="radio" 
+                                    name={`fileDisplayOptions-${Math.random()}}`}
+                                    defaultValue={fileDisplayMode} 
+                                    className='gap-0 mt-0' 
+                                    style={{display: 'inline'}}
+                                    onChange={handleFileDisplayChange}
+                                >
+                                    <ToggleButton variant="outline-secondary" id={`tbg-radio-1-${Math.random()}`} value={1}>
+                                        <i className="bi bi-list-ul"></i>                                        
+                                    </ToggleButton>
+                                    <ToggleButton variant="outline-secondary" id={`tbg-radio-2-${Math.random()}`} value={2}>
+                                        <i className="bi bi-grid-3x3"></i>                                        
+                                    </ToggleButton>
+                                </ToggleButtonGroup>
+                            </Col>
+                        </Row>
                         {fileDisplayMode === 1 ? (
                             <div>
                                 <ul className="list-group mb-2">

@@ -126,6 +126,16 @@ const fileService =
             console.error('File change error:', error);
             throw error;
         }
+    },
+
+    findByQuestion: async (userId: string, question: string, page: number, pageSize: number): Promise<{files: FileDto[], totalCount: number}> => {
+        try {
+            const response = await axiosInstance.get<{files: FileDto[], totalCount: number}>(`/File/GetByQuestion/${userId}/${question}/${page}/${pageSize}`);
+            return response.data;
+        } catch (error) {
+            console.error('File get error:', error);
+            throw error;
+        }
     }
 }
 const handleError = (operation: string, error: any): void => {

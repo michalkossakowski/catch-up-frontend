@@ -518,7 +518,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                         {enableEdittingMaterialName ? (
                             <>
                                 <InputGroup className="mb-3">
-                                    <InputGroup.Text >$t('content-name')</InputGroup.Text>
+                                    <InputGroup.Text >{t('content-name')}</InputGroup.Text>
                                     <Form.Control
                                         value={materialName}
                                         onChange={(e) => setMaterialName(e.target.value)}
@@ -659,7 +659,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                         {(enableAddingFile && enableRemoveFile && enableEdittingMaterialName) && (
                             <div className="d-flex gap-2 mb-2">
                                 <Button variant="success" type="button" className='mt-3'  onClick={() => onClickSave()}>{material?.id === undefined ? t('create') : t('save-material')}</Button>
-                                <Button variant="secondary" type="reset" onClick={() => onClickCancel()} className='mt-3'>$t('cancel')</Button>
+                                <Button variant="secondary" type="reset" onClick={() => onClickCancel()} className='mt-3'>{t('cancel')}</Button>
                             </div>
                         )}
                         <hr />

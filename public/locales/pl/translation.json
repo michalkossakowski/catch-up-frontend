@@ -65,5 +65,7 @@
   "size": "Rozmiar:",
   "file-type": "Typ pliku:",
   "save-changes": "Zapisz zmiany",
-  "undefine-date": "Nie zdefiniuj daty"
+  "undefine-date": "Nie zdefiniuj daty",
+  "search": "Szukaj",
+  "search-file-by-names": "Wyszukaj plik według nazwisk"
 }
