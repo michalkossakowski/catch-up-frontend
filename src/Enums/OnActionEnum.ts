@@ -4,5 +4,6 @@ export enum OnActionEnum {
     FileDeleted = 2,
     FileRemovedFromMaterial = 3,
     FileAddedToMaterial = 4,
-    FileEdited = 5
+    FileEdited = 5,
+    UploadFiles = 6,
 }

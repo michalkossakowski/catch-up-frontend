@@ -373,6 +373,12 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                     setToastMessage(`File has been edited.`);
                 }
                 break;
+            case OnActionEnum.UploadFiles:
+                const uploadedFiles = object as File[];
+                console.log(uploadedFiles)
+                const uploadedFilesPairs = uploadedFiles.map((file) => ({ file, uploadedAt: new Date() }));
+                setFilesToSend((prevFiles) => [...prevFiles, ...uploadedFilesPairs]);
+                break;
             default:
                 console.warn(`Unhandled action: ${action}`);
                 break;

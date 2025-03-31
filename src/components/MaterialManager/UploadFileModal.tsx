@@ -34,10 +34,11 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
     const [showFileDetailsModal, setShowFileDetailsModal] = useState(false);
     const [selectedFilePair, setSelectedFilePair] = useState<FilePair | undefined>(undefined);
 
+    const [filesToUpload, setFilesToUpload] = useState<File[]>([]);
     const isMediaFile = (type: string) => {
         return type.startsWith("image/") || type.startsWith("video/");
     };
-
+    
     useEffect(() => {
         if (userId) {
             getAllOwnedFiles(userId);
@@ -61,6 +62,7 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
 
     const handleClose = () => {
         setShow(false) 
+        setFilesToUpload([]);
         onClose()
     };
 
@@ -100,8 +102,6 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
         await fileService.getAllOwnedFiles(userId).then((data) => 
         {
             setFiles(data.map(fileDto => ({file: undefined, fileDto})));
-        }).catch((error) => {    
-
         })
     }
 
@@ -121,6 +121,12 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
 
     const filtrVisibleFiles = (files: FilePair[]) => {
         setFilteredFiles(files.filter((item) => !usedFilesIds?.includes(item.fileDto.id)));
+    }
+
+
+    const uploadFiles = async () => {
+        onAction(OnActionEnum.UploadFiles, filesToUpload);
+        handleClose();        
     }
 
     return (
@@ -205,8 +211,30 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                         )}
                     </>
                     ) : (
-                        <div className="mt-2 mb-2">
-                            <input type="file" multiple></input>
+                        <div className="input-group mb-3 mt-4 d-flex justify-content-center">
+                            <input 
+                                type="file" 
+                                className="form-control" 
+                                id="inputFileUpload" 
+                                aria-describedby="inputFileUpload" 
+                                aria-label="Upload"
+                                multiple={true}
+                                onChange={(e) => { setFilesToUpload(Array.from(e.target.files ?? [])) }}
+                            />
+                            <button 
+                                className="btn btn-success" 
+                                type="button" 
+                                id="inputFileUpload" 
+                                disabled={filesToUpload.length <= 0}  
+                                onClick={() => {uploadFiles()}}>Upload
+                            </button>
+                            <button 
+                                className="btn btn-danger" 
+                                type="button" 
+                                id="inputFileUpload" 
+                                disabled={filesToUpload.length <= 0}  
+                                onClick={() => {setFilesToUpload([])}}>Cancel
+                            </button>
                         </div>
                     )}
                 </Col>
