@@ -21,6 +21,10 @@ const connection = new signalR.HubConnectionBuilder()
     .withAutomaticReconnect()
     .build();
 
+const resetSubscriptions = () => {
+    connection.off("ReceiveNotification");
+};
+
 const startConnection = async () => {
     if (connection.state === signalR.HubConnectionState.Disconnected) {
         try {
@@ -37,7 +41,20 @@ const startConnection = async () => {
 
 connection.onclose(() => {
     console.warn("🔴 SignalR disconnected, reconnecting...");
+    resetSubscriptions();
     setTimeout(startConnection, 5000);
 });
 
-export { connection, startConnection };
+const stopConnection = async () => {
+    if (connection.state !== signalR.HubConnectionState.Disconnected) {
+        try {
+            resetSubscriptions();
+            await connection.stop();
+            console.log("✅ SignalR stopped and subscriptions cleared");
+        } catch (err) {
+            console.error("❌ Error stopping SignalR:", err);
+        }
+    }
+};
+
+export { connection, startConnection, stopConnection };

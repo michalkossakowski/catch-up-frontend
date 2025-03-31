@@ -6,6 +6,7 @@ import { UserDto as User } from "../dtos/UserDto.ts"
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../store/store.ts";
 import { clearTasks } from "../store/taskSlice";
+import { stopConnection } from "../services/signalRService";
 
 interface AuthContextType {
     accessToken: string | null;
@@ -119,7 +120,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         }
     };
 
-    const logout = () => {
+    const logout = async () => {
+        await stopConnection();
         setAccessToken(null);
         setRefreshToken(null);
         setUser(null);
