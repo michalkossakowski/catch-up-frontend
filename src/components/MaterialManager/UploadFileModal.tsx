@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Col, ListGroup, Modal, Pagination, Row, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
+import { Alert, Button, Col, ListGroup, Modal, Pagination, Row, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
 import { useAuth } from "../../Provider/authProvider";
 import { FileDto } from "../../dtos/FileDto";
 import fileService from "../../services/fileService";
@@ -223,13 +223,13 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                 </Col>
                 <Col xs="9">
 
-    {/* {showAlert && (
-        <div className='alertBox'>
-            <Alert className='alert' variant='danger'>
-                {alertMessage}
-            </Alert>
-        </div>
-    )} */}
+                {showAlert && (
+                    <div className='alertBox'>
+                        <Alert className='alert' variant='danger'>
+                            {alertMessage}
+                        </Alert>
+                    </div>
+                )}
                 {loading ? (
                     <div className='loaderBox'>
                         <Loading/>

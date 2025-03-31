@@ -2,7 +2,13 @@ import { FileDto } from '../dtos/FileDto';
 import axiosInstance from '../../axiosConfig';
 const fileService =
 {
-    uploadFile: async (file: File, materialId?: number, ownerId?: string, dateOfUpload?: Date): Promise<{ message: string; fileDto: FileDto; materialId: number }> => {
+    uploadFile: async (
+        file: File, 
+        materialId?: number, 
+        ownerId?: string, 
+        dateOfUpload?: Date,
+         onProgress?: (percent: number) => void
+    ): Promise<{ message: string; fileDto: FileDto; materialId: number }> => {
         const formData = new FormData();
         formData.append('file', file);
 
@@ -18,6 +24,14 @@ const fileService =
                         ...(dateOfUpload && { dateOfUpload })
                     },
                     headers: {'Content-Type': 'multipart/form-data'},
+                    onUploadProgress: (progressEvent) => {
+                        if (progressEvent.total) {
+                            const percentCompleted = Math.round(
+                                (progressEvent.loaded * 100) / progressEvent.total
+                            );
+                            onProgress?.(percentCompleted);
+                        }
+                    }
                 }
             );
             return response.data;
@@ -103,6 +117,7 @@ const fileService =
             throw error
         }
     },
+
     changeFile: async(fileDto: FileDto): Promise<FileDto> => {
         try {
             const response = await axiosInstance.put<FileDto>(`/File/ChangeFile/`, fileDto);

@@ -15,6 +15,8 @@ import UploadFileModal from './UploadFileModal';
 import { useAuth } from '../../Provider/authProvider';
 import { FilePair } from '../../interfaces/FilePair';
 import { OnActionEnum } from '../../Enums/OnActionEnum';
+import { set } from 'date-fns';
+import Loading from '../Loading/Loading';
 
 interface MaterialItemProps {
     materialId?: number;
@@ -54,7 +56,12 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     const [isDragActive, setIsDragActive] = useState(false)
     
     const [files, setFiles] = useState<FilePair[]>([]);
-    const [filesToSend, setFilesToSend] = useState<{ file: File; uploadedAt: Date }[]>([]);
+    const [filesToSend, setFilesToSend] = useState<{
+        file: File;
+        uploadedAt: Date;
+        progress: number;
+        isUploading: boolean;
+    }[]>([]);
 
     const [selectedFilesInMaterials, setSelectedFilesInMaterials]  = useState<number[] >([]);
     const [selectedFilesNotInMaterials, setSelectedFilesNotInMaterials]  = useState<number[] >([]);
@@ -73,7 +80,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 
     const [showUploadModal, setShowUploadModal] = useState(false);
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
 
@@ -106,6 +113,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     }, [selectedFilesInMaterials, selectedFilesNotInMaterials]);
 
     const getMaterial = useCallback(async (id: number) => {
+        setLoading(true);
         try {
             const materialData = await materialService.getMaterialWithFiles(id);
 
@@ -132,6 +140,8 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         } catch (error) {
             setAlertMessage(`Error fetching material`);
             setShowAlert(true);
+        } finally {
+            setLoading(false);
         }
     }, []);
 
@@ -172,7 +182,9 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         const droppedFiles = Array.from(e.dataTransfer.files).map((file) => ({
             file,
             uploadedAt: new Date(),
-        }));        
+            progress: 0,
+            isUploading: false
+        }));      
         setFilesToSend((prevFiles) => [...prevFiles, ...droppedFiles])
     }
 
@@ -268,29 +280,53 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         setShowFileDetailsModal(true);
     }
 
-    const updateMaterial = (material: MaterialDto) => {
-        const uploadPromises = filesToSend.map(async (file) => {
-            const fileDto = await handleFileUpload(file.file, file.uploadedAt, material);
+    const updateMaterial = async (material: MaterialDto) => {
+        const uploadPromises = filesToSend.map(async (fileItem) => {
+            // Set initial state for this file
+            setFilesToSend(prev => prev.map(f => 
+                f.file === fileItem.file ? { ...f, isUploading: true } : f
+            ));
+
+            const fileDto = await handleFileUpload(
+                fileItem.file,
+                fileItem.uploadedAt,
+                material,
+                (percent) => {
+                    // Update progress for this specific file
+                    setFilesToSend(prev => prev.map(f => 
+                        f.file === fileItem.file ? { ...f, progress: percent } : f
+                    ));
+                }
+            );
+            
             material.files?.push(fileDto);
-            return { file: file.file, fileDto };
+            return { file: fileItem.file, fileDto };
         });
-    
-        Promise.all(uploadPromises).then((uploadedFiles) => {
+
+        try {
+            const uploadedFiles = await Promise.all(uploadPromises);
             setFiles((prevFiles) => [...prevFiles, ...uploadedFiles]);
-            setFilesToSend([]); 
-        });
+            setFilesToSend([]); // Clear after all uploads complete
+        } catch (error) {
+            console.error('Upload failed:', error);
+        }
     };
 
-    const handleFileUpload = async (file: File, dateOfUpload: Date, material?: MaterialDto): Promise<FileDto> => {
-        var response;
-        if (material ) {
-            response = await fileService.uploadFile(file, material.id , user?.id ?? "", dateOfUpload);
-        }
-        else{
-            response = await fileService.uploadFile(file, materialId, user?.id ?? "", dateOfUpload);
-        }
+    const handleFileUpload = async (
+        file: File,
+        dateOfUpload: Date,
+        material?: MaterialDto,
+        onProgress?: (percent: number) => void
+    ): Promise<FileDto> => {
+        const response = await fileService.uploadFile(
+            file,
+            material?.id || materialId,
+            user?.id ?? "",
+            dateOfUpload,
+            onProgress
+        );
         return response.fileDto;
-    }
+    };
 
     const handleFileDisplayChange = (value: number) => {
         setFileDisplayMode(value);
@@ -376,7 +412,12 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
             case OnActionEnum.UploadFiles:
                 const uploadedFiles = object as File[];
                 console.log(uploadedFiles)
-                const uploadedFilesPairs = uploadedFiles.map((file) => ({ file, uploadedAt: new Date() }));
+                const uploadedFilesPairs = uploadedFiles.map((file) => ({
+                    file,
+                    uploadedAt: new Date(),
+                    progress: 0,
+                    isUploading: false,
+                }));
                 setFilesToSend((prevFiles) => [...prevFiles, ...uploadedFilesPairs]);
                 break;
             default:
@@ -384,6 +425,68 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 break;
         }
     }
+
+    const renderFileItem = (item: typeof filesToSend[0], index: number) => (
+        <li className="list-group-item striped" key={index + files.length}>
+            <Row>
+                <Col className='text-start d-flex align-items-center' xs={8}>
+                    {enableRemoveFile && (
+                        <input 
+                            type="checkbox" 
+                            className="form-check-input me-2"
+                            onChange={() => handleCheckboxChangeFileNotInMaterial(index)}
+                            checked={selectedFilesNotInMaterials.includes(index)}
+                            disabled={item.isUploading}
+                        />
+                    )}
+                    <span 
+                        onClick={() => !item.isUploading && onLeftClickFile(item.file, item.uploadedAt, index)} 
+                        style={{cursor: item.isUploading ? 'default' : 'pointer'}} 
+                        className='flex-grow-1 d-flex align-items-center'
+                    >
+                        {item.isUploading ? (
+                            <>
+                                <progress value={item.progress} max="100" style={{width: '50%'}} />
+                                <span className="ms-2">{item.progress}%</span>
+                            </>
+                        ) : (
+                            shortedFileName(item.file.name ?? 'File not found')
+                        )}
+                    </span>
+                </Col>
+                <Col className="text-end">
+                    {item.uploadedAt.toLocaleString("pl-PL", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    })}
+                </Col>
+            </Row>
+        </li>
+    );
+
+    const renderFileIcon = (item: typeof filesToSend[0], index: number) => (
+        <span className="striped" key={index + files.length}>
+            <div className="d-flex flex-column align-items-center">
+                <FileIcon 
+                    onClick={() => !item.isUploading && onLeftClickFile(item.file, item.uploadedAt, index)}
+                    fileName={item.isUploading ? `${item.progress}%` : item.file.name}
+                    fileType={item.file.type}
+                    fileDate={item.uploadedAt}
+                    fileContent={item.file}
+                />
+                {item.isUploading && (
+                    <progress 
+                        value={item.progress} 
+                        max="100" 
+                        style={{width: '80px', marginTop: '5px'}}
+                    />
+                )}
+            </div>
+        </span>
+    );
 
     return (
         <>
@@ -394,6 +497,11 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 </Alert>
             </div>
         )}
+        {loading ? (
+            <div className='loaderBox'>
+                <Loading/>
+            </div>
+        ): (<>
           {show && (
             <div> 
                 <div className='d-flex align-items-center'>
@@ -506,36 +614,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                             </Row>
                                         </li>
                                     ))}
-                                    {filesToSend.map((item, index) => (
-                                        <li className="list-group-item striped" key={index+files.length}>
-                                            <Row>
-                                                <Col className='text-start d-flex align-items-center' xs={8}>
-                                                {enableRemoveFile &&  (
-                                                    <input 
-                                                        type="checkbox" 
-                                                        className="form-check-input me-2" 
-                                                        onChange={() => handleCheckboxChangeFileNotInMaterial(index)}
-                                                        checked={selectedFilesNotInMaterials.includes(index)}>
-                                                    </input>
-                                                    )}
-                                                    <span onClick={() => {onLeftClickFile(item.file, item.uploadedAt, index)}} style={{cursor: 'pointer'}} className='flex-grow-1'>
-                                                        {shortedFileName(item.file.name ?? 'File not found')}
-                                                    </span>
-                                                </Col>
-                                                <Col className="text-end">
-                                                {item.uploadedAt
-                                                ? new Date(item.uploadedAt).toLocaleString("pl-PL", {
-                                                    year: "numeric",
-                                                    month: "long",
-                                                    day: "numeric",
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    })
-                                                    : "Brak daty"}
-                                                </Col>                                            
-                                            </Row>
-                                        </li>
-                                    ))}
+                                   {filesToSend.map((item, index) => renderFileItem(item, index))}
                                 </ul>
                             </div>
                         ) : (
@@ -551,18 +630,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                         >
                                     </FileIcon>
                                 ))}
-                                {filesToSend.map((item, index) => (
-                                    <span className="striped" key={index + files.length}>
-                                    <FileIcon 
-                                        onClick={() => {onLeftClickFile(item.file, item.uploadedAt, index)}}
-                                        key={index + files.length} 
-                                        fileName={item.file.name} 
-                                        fileType={item.file.type} 
-                                        fileDate={item.uploadedAt}
-                                        fileContent={item.file}>
-                                    </FileIcon>
-                                    </span>
-                                ))}
+                                {filesToSend.map((item, index) => renderFileIcon(item, index))}
                             </div>
                         )}
                         </>
@@ -577,7 +645,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                     </div>
                 )}
             </div>)}
-
+        </>)}
             <ConfirmModal 
                 show={showConfirmModal} 
                 title="Material operation confirmation"
