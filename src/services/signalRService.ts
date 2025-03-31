@@ -5,23 +5,17 @@ import Cookies from "js-cookie";
 const API_URL = axiosInstance.defaults.baseURL?.toString().replace('/api/', '');
 const HUB_URL = API_URL + "/notificationHub";
 
-const getAccessToken = () => {
-    return Cookies.get("refreshToken");
-};
-
 const connection = new signalR.HubConnectionBuilder()
     .withUrl(HUB_URL, {
         accessTokenFactory: () => {
-            const token = getAccessToken();
+            const token = Cookies.get("accessToken");
             if (!token) {
                 throw new Error('JWT token is missing');
             }
             return token;
         },
+        skipNegotiation: true,
         withCredentials: true,
-        headers: {
-            "Authorization": `Bearer ${getAccessToken()}` 
-        },
         transport: signalR.HttpTransportType.WebSockets,
     })
     .withAutomaticReconnect()

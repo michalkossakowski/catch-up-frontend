@@ -1,24 +1,9 @@
 import axiosInstance from '../../axiosConfig';
 import { NotificationDto } from '../dtos/NotificationDto';
-import Cookies from "js-cookie";
-
-const getAccessToken = () => {
-    return Cookies.get("refreshToken");
-};
 
 export const getNotifications = async (): Promise<NotificationDto[]> => {
     try {
-        const token = getAccessToken();
-        const response = await axiosInstance.get<NotificationDto[]>('/Notification/GetByUserToken',
-            {
-                params: {
-                    access_token: token, 
-                },
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
+        const response = await axiosInstance.get<NotificationDto[]>('/Notification/GetByUserToken',{});
         return response.data;
     } catch (error: any) {
         if (error.response?.status === 404) {
@@ -31,17 +16,7 @@ export const getNotifications = async (): Promise<NotificationDto[]> => {
 
 export const readNotifications = async (): Promise<any> => {
     try {
-        const token = getAccessToken();
-        const response = await axiosInstance.get('/Notification/ReadNotifications',
-            {
-                params: {
-                    access_token: token, 
-                },
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
+        const response = await axiosInstance.get('/Notification/ReadNotifications',{});
         return response.data;
     } catch (error: any) {
         handleError('readNotifications', error);
@@ -51,17 +26,7 @@ export const readNotifications = async (): Promise<any> => {
 
 export const hasUnreadNotifications = async (): Promise<boolean> => {
     try {
-        const token = getAccessToken();
-        const response = await axiosInstance.get<boolean>('/Notification/HasUnreadNotifications',
-            {
-                params: {
-                    access_token: token, 
-                },
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
+        const response = await axiosInstance.get<boolean>('/Notification/HasUnreadNotifications',{});
         return response.data;
     } catch (error: any) {
         handleError('hasUnreadNotifications', error);
