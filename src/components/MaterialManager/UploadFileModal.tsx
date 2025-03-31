@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Col, ListGroup, Modal, Row, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
+import { Button, Col, ListGroup, Modal, Pagination, Row, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
 import { useAuth } from "../../Provider/authProvider";
 import { FileDto } from "../../dtos/FileDto";
 import fileService from "../../services/fileService";
@@ -7,6 +7,7 @@ import { FilePair } from "../../interfaces/FilePair";
 import FileIcon from "./FileIcon";
 import { OnActionEnum } from "../../Enums/OnActionEnum";
 import FileDetailsModal from "./FileDetailsModal";
+import Loading from "../Loading/Loading";
 
 interface UploadFileModalProps {
     usedFilesIds?: number[];
@@ -35,6 +36,16 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
     const [selectedFilePair, setSelectedFilePair] = useState<FilePair | undefined>(undefined);
 
     const [filesToUpload, setFilesToUpload] = useState<File[]>([]);
+
+    const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [totalItems, setTotalItems] = useState(0);
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+
     const isMediaFile = (type: string) => {
         return type.startsWith("image/") || type.startsWith("video/");
     };
@@ -43,7 +54,21 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
         if (userId) {
             getAllOwnedFiles(userId);
         }
-    }, [userId]);
+    }, [userId, currentPage, itemsPerPage]);
+
+    const getAllOwnedFiles = async (userId: string) => {
+        setLoading(true);
+        await fileService.getAllOwnedFilesPagination(userId, currentPage, itemsPerPage).then((data) => 
+        {
+            setFiles(data.files.map(fileDto => ({file: undefined, fileDto})));
+            setTotalItems(data.totalCount);
+        })
+        .catch((error) => {
+            setShowAlert(true);
+            setAlertMessage('Error: ' + error.message);
+        })
+        .finally(() => setLoading(false));
+    }
 
     useEffect(() => {
         if (files.length > 0) {
@@ -98,13 +123,6 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
         setFileDisplayMode(value);
     };
 
-    const getAllOwnedFiles = async (userId: string) => {
-        await fileService.getAllOwnedFiles(userId).then((data) => 
-        {
-            setFiles(data.map(fileDto => ({file: undefined, fileDto})));
-        })
-    }
-
     const getFileData = async (fileDto: FileDto): Promise<File | null> => {
         try {
             const data = await fileService.downloadFile(fileDto.id);
@@ -124,10 +142,64 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
     }
 
 
-    const uploadFiles = async () => {
+    const uploadFiles =  () => {
         onAction(OnActionEnum.UploadFiles, filesToUpload);
         handleClose();        
     }
+
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    const renderPaginationItems =  () => {
+        const items = [];
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+        if (endPage - startPage + 1 < maxVisiblePages) {
+               startPage = Math.max(1, endPage - maxVisiblePages + 1);
+           }
+   
+           if (startPage > 1) {
+               items.push(
+                   <Pagination.Item key={1} onClick={() => handlePageChange(1)}>
+                       1
+                   </Pagination.Item>
+               );
+               if (startPage > 2) {
+                   items.push(<Pagination.Ellipsis key="start-ellipsis" disabled />);
+               }
+           }
+   
+           for (let i = startPage; i <= endPage; i++) {
+               items.push(
+                   <Pagination.Item
+                       key={i}
+                       active={i === currentPage}
+                       onClick={() => handlePageChange(i)}
+                   >
+                       {i}
+                   </Pagination.Item>
+               );
+           }
+   
+           if (endPage < totalPages) {
+               if (endPage < totalPages - 1) {
+                   items.push(<Pagination.Ellipsis key="end-ellipsis" disabled />);
+               }
+               items.push(
+                   <Pagination.Item key={totalPages} onClick={() => handlePageChange(totalPages)}>
+                       {totalPages}
+                   </Pagination.Item>
+               );
+           }
+   
+           return items;
+       };
 
     return (
         <>
@@ -150,13 +222,26 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                     </div>
                 </Col>
                 <Col xs="9">
+
+    {/* {showAlert && (
+        <div className='alertBox'>
+            <Alert className='alert' variant='danger'>
+                {alertMessage}
+            </Alert>
+        </div>
+    )} */}
+                {loading ? (
+                    <div className='loaderBox'>
+                        <Loading/>
+                    </div>
+                ): (<>
                 {activeTab === "yourFiles" ? (
                     <>
                         <div className="mt-2 mb-2 d-flex justify-content-end fileUploadBackground w-100">
                             <ToggleButtonGroup 
                                 type="radio" 
                                 name={`fileDisplayOptions-${Math.random()}}`}
-                                defaultValue={1} 
+                                defaultValue={fileDisplayMode} 
                                 className='gap-0 mt-0' 
                                 style={{display: 'inline'}}
                                 onChange={handleFileDisplayChange}
@@ -237,10 +322,27 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                             </button>
                         </div>
                     )}
+                    </>
+                )}
                 </Col>
             </Row>
           </Modal.Body>
           <Modal.Footer>
+          {totalPages > 1 &&  activeTab === "yourFiles" && (
+                            <div className="d-flex justify-content-center align-items-center mt-3">
+                                <Pagination className="mb-0">
+                                    <Pagination.Prev
+                                        onClick={() => handlePageChange(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                    />
+                                    {renderPaginationItems()}
+                                    <Pagination.Next
+                                        onClick={() => handlePageChange(currentPage + 1)}
+                                        disabled={currentPage === totalPages}
+                                    />
+                                </Pagination>
+                            </div>
+                        )}
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>
