@@ -15,8 +15,8 @@ import UploadFileModal from './UploadFileModal';
 import { useAuth } from '../../Provider/authProvider';
 import { FilePair } from '../../interfaces/FilePair';
 import { OnActionEnum } from '../../Enums/OnActionEnum';
-import { set } from 'date-fns';
 import Loading from '../Loading/Loading';
+import TooltipButton from '../Tooltip/TooltipButton';
 
 interface MaterialItemProps {
     materialId?: number;
@@ -44,7 +44,6 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     showComponent = true,
 }) => {
     const prevMaterialId = useRef<number | null>(null);
-
     const { user } = useAuth();
 
     const [material, setMaterial] = useState<MaterialDto | null>(null);
@@ -363,7 +362,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
             });
         }
         if(selectedFilesNotInMaterials.length > 0){
-            setFilesToSend((prevFiles) => prevFiles.filter((file, index) => !selectedFilesNotInMaterials.includes(index)));
+            setFilesToSend((prevFiles) => prevFiles.filter((_, index) => !selectedFilesNotInMaterials.includes(index)));
         }
         setSelectedFilesInMaterials([]);
         setSelectedFilesNotInMaterials([]);
@@ -540,9 +539,27 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 
                         <Row className='mb-3'>
                             <Col className='d-flex justify-content-start gap-2 '>
-                                {enableAddingFile && (<Button variant="outline-secondary" onClick={() => onClickUploadModal()}><i className="bi bi-file-earmark-arrow-up"></i></Button>)}
-                                {enableDownloadFile && ( <Button variant="outline-secondary" onClick={() => onClickDownloadAll()}><i className="bi bi-file-earmark-arrow-down"></i></Button>)}
-                                {enableRemoveFile && (<Button variant="outline-secondary" onClick={() =>onClickDelete() }><i className="bi bi-file-earmark-x" ></i></Button>)}
+                                {enableAddingFile && (
+                                    <TooltipButton 
+                                        tooltipText={'Upload file(s)'} 
+                                        onClick={() => onClickUploadModal()}>
+                                        <i className="bi bi-file-earmark-arrow-up"></i>
+                                    </TooltipButton>
+                                )}
+                                {enableDownloadFile && ( 
+                                    <TooltipButton 
+                                        tooltipText={'Download file(s)'} 
+                                        onClick={() => onClickDownloadAll()}>
+                                        <i className="bi bi-file-earmark-arrow-down"></i>
+                                    </TooltipButton>
+                                )}
+                                {enableRemoveFile && (
+                                    <TooltipButton 
+                                        tooltipText={'Remove file(s)'} 
+                                        onClick={() => onClickDelete()}>
+                                        <i className="bi bi-file-earmark-x" ></i>
+                                    </TooltipButton>
+                                )}
                             </Col>
                             <Col className='d-flex justify-content-end'>
                                 <ToggleButtonGroup 
@@ -553,6 +570,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                     style={{display: 'inline'}}
                                     onChange={handleFileDisplayChange}
                                 >
+                                    
                                     <ToggleButton variant="outline-secondary" id={`tbg-radio-1-${Math.random()}`} value={1}>
                                         <i className="bi bi-list-ul"></i>                                        
                                     </ToggleButton>

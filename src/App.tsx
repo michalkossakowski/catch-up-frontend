@@ -30,7 +30,7 @@ import SchoolingPartEdit from './components/Schooling/SchoolingPartEdit.tsx';
 import SchoolingAssignment from './components/Schooling/SchoolingAssignment.tsx';
 import PresetAssign from './components/Preset/PresetAssign';
 import FeedbackList from './components/Feedback/FeedbackListPage.tsx';
-import MaterialTest from './components/MaterialManager/materialTest.tsx';
+import MaterialTest from './components/MaterialManager/MaterialTest.tsx';
 import '../css/catchUpBase.css';
 import NotificationPage from './components/Notification/NotificationPage.tsx';
 import { startConnection, connection } from "./services/signalRService";
