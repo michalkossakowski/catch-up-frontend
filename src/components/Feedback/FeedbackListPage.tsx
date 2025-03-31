@@ -115,7 +115,10 @@ const FeedbackListPage: React.FC = () => {
     
         try {
             await deleteFeedback(feedbackToDelete.id);
-            setFeedbacks(feedbacks.filter((feedback) => feedback.id !== feedbackToDelete.id));
+            
+            setFeedbacks(prev => prev.filter(feedback => feedback.id !== feedbackToDelete.id));
+            setOriginalFeedbacks(prev => prev.filter(feedback => feedback.id !== feedbackToDelete.id));
+    
             setToastMessage('Feedback successfully deleted');
             setToastColor('green');
             setShowToast(true);
@@ -145,7 +148,7 @@ const FeedbackListPage: React.FC = () => {
             <div className="container">
                 <h3 className="text-center mt-3">Feedbacks</h3>
                 <Row className="mb-3">
-                    <div className="col">
+                    <div className="col-3">
                         <h4 className="text-start mt-3">Filters</h4>
                         <hr></hr>
                         <Form.Group as={Row} className="text-start">
@@ -186,7 +189,7 @@ const FeedbackListPage: React.FC = () => {
                         </Form.Group>
                         <hr></hr>
                     </div>
-                    <div className="col">
+                    <div className="col-9">
                         {!feedbacks.length ? (
                             <div className="alert alert-secondary text-center">No feedbacks found</div>
                         ) : (
@@ -197,7 +200,6 @@ const FeedbackListPage: React.FC = () => {
                                             Title 
                                             <i className="bi bi-arrow-down-up ms-2"></i>
                                         </th>
-                                        <th>Description</th>
                                         <th onClick={() => handleSort("userName")} style={{ cursor: "pointer" }}>
                                         {isAdmin ? 'Sender' : 'Receiver'} <i className="bi bi-arrow-down-up ms-2"></i>
                                         </th>
@@ -207,8 +209,8 @@ const FeedbackListPage: React.FC = () => {
                                         <th onClick={() => handleSort("resourceType")} style={{ cursor: "pointer" }}>
                                             Resource Type <i className="bi bi-arrow-down-up ms-2"></i>
                                         </th>
-                                        <th>Resource Title</th>
-                                        <th colSpan={2}>Actions</th>
+                                        <th>Resolved</th>
+                                        <th>Detail</th>
                                     </tr>
                                 </thead>
                                 <tbody>
