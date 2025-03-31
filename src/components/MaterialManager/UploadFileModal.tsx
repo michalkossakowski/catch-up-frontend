@@ -8,6 +8,7 @@ import FileIcon from "./FileIcon";
 import { OnActionEnum } from "../../Enums/OnActionEnum";
 import FileDetailsModal from "./FileDetailsModal";
 import Loading from "../Loading/Loading";
+import { useTranslation } from "react-i18next";
 
 interface UploadFileModalProps {
     usedFilesIds?: number[];
@@ -24,6 +25,8 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
     materialId
     
 }) => {
+    const { t } = useTranslation();
+
     const [fileDisplayMode, setFileDisplayMode] = useState(1); // 1 - Lista, 2 - Siatka    
     const [activeTab, setActiveTab] = useState("yourFiles");
 
@@ -205,7 +208,7 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
         <>
         <Modal show={show} onHide={handleClose} animation={true} size="xl" centered>
           <Modal.Header closeButton closeVariant="white">
-            <Modal.Title>Upload Files</Modal.Title>
+            <Modal.Title>{t('upload-files')}</Modal.Title>
           </Modal.Header>
           <Modal.Body className="p-0">
             <Row className="m-0 p-0">
@@ -213,10 +216,9 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                     <div className="mt-2 mb-2">
                     <ListGroup className="border-0 text-start" >
                         <ListGroup.Item action active={activeTab === "yourFiles"} className="border-0" onClick={() => setActiveTab("yourFiles")}>
-                            Your files
-                        </ListGroup.Item>
+                            {t('your-files')} </ListGroup.Item>
                         <ListGroup.Item action active={activeTab === "uploadFile"} className="border-0" onClick={() => setActiveTab("uploadFile")}>
-                            Upload file
+                            {t('upload-files')} 
                         </ListGroup.Item>
                     </ListGroup>
                     </div>
@@ -261,7 +263,7 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                                         <li className="list-group-item" key={index}>
                                             <Row onClick={() => {onLeftClickFile(item)}} style={{cursor: 'pointer'}}>
                                                 <Col className='text-start' xs={8}>
-                                                    {shortedFileName(item.fileDto.name ?? 'File not found')}
+                                                    {shortedFileName(item.fileDto.name ?? t('file-not-found'))}
                                                 </Col>
                                                 <Col className="text-end">
                                                 {item.fileDto.dateOfUpload
@@ -272,7 +274,7 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                                                     hour: "2-digit",
                                                     minute: "2-digit",
                                                     })
-                                                    : "Brak daty"}
+                                                    : t('brak-daty')}
                                                 </Col>
                                             </Row>
                                         </li>
@@ -285,7 +287,7 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                                     <FileIcon 
                                         onClick={() => {onLeftClickFile(item)}}
                                         key={index} 
-                                        fileName={shortedFileName(item.fileDto.name ?? 'File not found', 16)}  
+                                        fileName={shortedFileName(item.fileDto.name ?? t('file-not-found'), 16)}  
                                         fileType={item.fileDto.type ?? 'errorType'}
                                         fileDate={item.fileDto.dateOfUpload}
                                         fileContent={item.file}
@@ -302,7 +304,7 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                                 className="form-control" 
                                 id="inputFileUpload" 
                                 aria-describedby="inputFileUpload" 
-                                aria-label="Upload"
+                                aria-label={t('upload-files')}
                                 multiple={true}
                                 onChange={(e) => { setFilesToUpload(Array.from(e.target.files ?? [])) }}
                             />
@@ -311,15 +313,17 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                                 type="button" 
                                 id="inputFileUpload" 
                                 disabled={filesToUpload.length <= 0}  
-                                onClick={() => {uploadFiles()}}>Upload
+                                onClick={() => {uploadFiles()}}>
+                                    {t('upload')} 
                             </button>
                             <button 
                                 className="btn btn-danger" 
                                 type="button" 
                                 id="inputFileUpload" 
                                 disabled={filesToUpload.length <= 0}  
-                                onClick={() => {setFilesToUpload([])}}>Cancel
-                            </button>
+                                onClick={() => {setFilesToUpload([])}}>
+                                    {t('cancel')} 
+                                </button>
                         </div>
                     )}
                     </>
@@ -344,7 +348,7 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                             </div>
                         )}
             <Button variant="secondary" onClick={handleClose}>
-              Close
+              {t('close')} 
             </Button>
           </Modal.Footer>
         </Modal>

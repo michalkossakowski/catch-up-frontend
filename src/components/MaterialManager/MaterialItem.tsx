@@ -17,6 +17,7 @@ import { FilePair } from '../../interfaces/FilePair';
 import { OnActionEnum } from '../../Enums/OnActionEnum';
 import Loading from '../Loading/Loading';
 import TooltipButton from '../Tooltip/TooltipButton';
+import { useTranslation } from 'react-i18next';
 
 interface MaterialItemProps {
     materialId?: number;
@@ -43,6 +44,8 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     nameTitle = 'Add Content',
     showComponent = true,
 }) => {
+    const { t, i18n } = useTranslation();
+    
     const prevMaterialId = useRef<number | null>(null);
     const { user } = useAuth();
 
@@ -194,18 +197,18 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     
     const onClickDelete = () => {
         if(anyFileSelected){
-            setConfirmMessage("Are you sure you want to delete files in this Material?")
+            setConfirmMessage(t('are-you-sure-you-want-to-delete-files-in-this-material'))
             setShowConfirmModal(true);
         }
         else{
-            setToastMessage("Please select files to delete")
+            setToastMessage(t('please-select-files-to-delete'))
             setShowToast(true)
         }
     }    
 
     const onClickDownloadAll = async () => {
         if(files.length === 0 && filesToSend.length === 0){
-            setToastMessage("No files to download")
+            setToastMessage(t('no-files-to-download'))
             setShowToast(true)
             return;
         }
@@ -235,7 +238,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 material.name = materialName;
                 materialService.editMaterial(materialId, material.name)
                 .catch((error) => {
-                    setAlertMessage(`Error updating material: ${error}`);
+                    setAlertMessage(t('error-updating-material-error') +" " +error);
                     setShowAlert(true);
                 });
             }
@@ -244,7 +247,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         else{
             var tempName = materialName;
             if(materialName.length === 0){
-                tempName = 'New material-' + new Date().toLocaleDateString();
+                tempName = t('new-material') + new Date().toLocaleDateString();
                 setMaterialName(tempName)
             }
             materialService.createMaterial({ name: tempName })
@@ -256,7 +259,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 }
             })
             .catch((error) => {
-                setAlertMessage(`Error creating material: ${error}`);
+                setAlertMessage(t('error-creating-material-error') +" " + error);
                 setShowAlert(true);
             });
         }
@@ -307,7 +310,8 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
             setFiles((prevFiles) => [...prevFiles, ...uploadedFiles]);
             setFilesToSend([]); // Clear after all uploads complete
         } catch (error) {
-            console.error('Upload failed:', error);
+            setAlertMessage(t('upload-failed') +" " + error);
+            setShowAlert(true);
         }
     };
 
@@ -449,7 +453,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                 <span className="ms-2">{item.progress}%</span>
                             </>
                         ) : (
-                            shortedFileName(item.file.name ?? 'File not found')
+                            shortedFileName(item.file.name ?? t('file-not-found'))
                         )}
                     </span>
                 </Col>
@@ -514,12 +518,11 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                         {enableEdittingMaterialName ? (
                             <>
                                 <InputGroup className="mb-3">
-                                    <InputGroup.Text >Content name</InputGroup.Text>
+                                    <InputGroup.Text >$t('content-name')</InputGroup.Text>
                                     <Form.Control
                                         value={materialName}
                                         onChange={(e) => setMaterialName(e.target.value)}
-                                        placeholder="ex. My lovely content"
-                                        aria-label="Content name"
+                                        aria-label={t('content-name')}
                                     />
                                 </InputGroup>
 
@@ -541,21 +544,21 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                             <Col className='d-flex justify-content-start gap-2 '>
                                 {enableAddingFile && (
                                     <TooltipButton 
-                                        tooltipText={'Upload file(s)'} 
+                                        tooltipText={t('upload-file-s')} 
                                         onClick={() => onClickUploadModal()}>
                                         <i className="bi bi-file-earmark-arrow-up"></i>
                                     </TooltipButton>
                                 )}
                                 {enableDownloadFile && ( 
                                     <TooltipButton 
-                                        tooltipText={'Download file(s)'} 
+                                        tooltipText={t('download-file-s')} 
                                         onClick={() => onClickDownloadAll()}>
                                         <i className="bi bi-file-earmark-arrow-down"></i>
                                     </TooltipButton>
                                 )}
                                 {enableRemoveFile && (
                                     <TooltipButton 
-                                        tooltipText={'Remove file(s)'} 
+                                        tooltipText={t('remove-file-s')} 
                                         onClick={() => onClickDelete()}>
                                         <i className="bi bi-file-earmark-x" ></i>
                                     </TooltipButton>
@@ -589,7 +592,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 
                                     <div className='d-flex flex-column align-items-center'>
                                         <i className={`bi bi-box-arrow-in-down ${styles.uploadIcon} ${isDragActive ? `text-warning ${styles.uploadIconOnDrop}` : ''}`}></i>
-                                        <p className="mt-2 text-body-tertiary fs-6 opacity-50 p-0 m-0">Drag and drop file here</p>
+                                        <p className="mt-2 text-body-tertiary fs-6 opacity-50 p-0 m-0">$t('drag-and-drop-file-here')</p>
                                     </div>
                                 </div>
                             </div>
@@ -615,7 +618,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                                         </input>
                                                     )}
                                                     <span onClick={() => onLeftClickFilePair(item)} style={{cursor: 'pointer'}} className='flex-grow-1'>
-                                                        {shortedFileName(item.fileDto.name ?? 'File not found')}
+                                                        {shortedFileName(item.fileDto.name ?? t('file-not-found'))}
                                                     </span>
                                                 </Col>
                                                 <Col className="text-end" onClick={() => onLeftClickFilePair(item)} style={{cursor: 'pointer'}}>
@@ -627,7 +630,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                                     hour: "2-digit",
                                                     minute: "2-digit",
                                                     })
-                                                    : "Brak daty"}
+                                                    : t('brak-daty')}
                                                 </Col>
                                             </Row>
                                         </li>
@@ -641,8 +644,8 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                     <FileIcon 
                                         onClick={() => {onLeftClickFilePair(item)}}
                                         key={index} 
-                                        fileName={item.fileDto.name ?? 'File not found'}  
-                                        fileType={item.fileDto.type ?? 'errorType'}
+                                        fileName={item.fileDto.name ?? t('file-not-found')}  
+                                        fileType={item.fileDto.type ?? t('undefined')}
                                         fileDate={item.fileDto.dateOfUpload}
                                         fileContent={item.file}
                                         >
@@ -655,8 +658,8 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                         }
                         {(enableAddingFile && enableRemoveFile && enableEdittingMaterialName) && (
                             <div className="d-flex gap-2 mb-2">
-                                <Button variant="success" type="button" className='mt-3'  onClick={() => onClickSave()}>{material?.id === undefined ? "Create" : "Save Material"}</Button>
-                                <Button variant="secondary" type="reset" onClick={() => onClickCancel()} className='mt-3'>Cancel</Button>
+                                <Button variant="success" type="button" className='mt-3'  onClick={() => onClickSave()}>{material?.id === undefined ? t('create') : t('save-material')}</Button>
+                                <Button variant="secondary" type="reset" onClick={() => onClickCancel()} className='mt-3'>$t('cancel')</Button>
                             </div>
                         )}
                         <hr />
@@ -666,7 +669,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         </>)}
             <ConfirmModal 
                 show={showConfirmModal} 
-                title="Material operation confirmation"
+                title={t('material-operation-confirmation')}
                 message={confirmMessage}
                 onConfirm={handleDelete} 
                 onCancel={() => setShowConfirmModal(false)} 
@@ -674,7 +677,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 
             <NotificationToast 
                 show={showToast} 
-                title={"Material operation info"} 
+                title={t('material-operation-info')} 
                 message={toastMessage} 
                 color={"Red"} 
                 onClose={() => setShowToast(false)} />
