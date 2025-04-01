@@ -356,8 +356,8 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
             </Row>
           </Modal.Body>
           <Modal.Footer>
-          {totalPages > 1 &&  activeTab === "yourFiles" && (
-                            <div className="d-flex justify-content-center align-items-center mt-3">
+            {totalPages > 1 &&  activeTab === "yourFiles" && (
+                            <div className="d-flex justify-content-center align-items-center me-4">
                                 <Pagination className="mb-0">
                                     <Pagination.Prev
                                         onClick={() => handlePageChange(currentPage - 1)}
