@@ -46,6 +46,7 @@ import { useTranslation } from "react-i18next";
 import "./i18n.ts";
 import { useNavigate } from 'react-router-dom';
 import HRHomePage from './components/HR/HRHomePage.tsx';
+import NewbieHomePage from './components/Newbie/NewbieHomePage.tsx';
 import EventCreator from './components/HR/EventCreator.tsx';
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -98,7 +99,11 @@ function App() {
             if (location.pathname === '/') {
                 if (userRole === 'HR') {
                     navigate('/hrhomepage');
-                } else {
+                }
+                else if (userRole === 'Newbie') {
+                    navigate('/newbiehomepage');
+                } 
+                else {
                     navigate('/');
                 }
             }
@@ -319,6 +324,7 @@ function App() {
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/hrhomepage" element={<HRHomePage />} />
+                                <Route path="/newbiehomepage" element={<NewbieHomePage />} />
                                 <Route path="/tasks" element={<TaskDashboard />} />
                                 <Route path="/adminpanel" element={<AdminPanel isAdmin={role === "Admin"} />} />
                                 <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
