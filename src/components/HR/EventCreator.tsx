@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../axiosConfig';
 import { useAuth } from '../../Provider/authProvider';
+import NotificationToast from '../Toast/NotificationToast';
 
 const EventCreator: React.FC = () => {
-  const { user } = useAuth();
+  const { user, getRole} = useAuth();
+  const [role, setRole] = useState<string | null>(null);
   const ownerId = user?.id;
   const navigate = useNavigate();
-
   const [eventType, setEventType] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -23,6 +24,10 @@ const EventCreator: React.FC = () => {
   const [isTypeValid, setTypeValid] = useState<boolean>(false);
   const [isStartDateValid, setStartDateValid] = useState<boolean>(false);
   const [isEndDateValid, setEndDateValid] = useState<boolean>(false);
+
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastColor, setToastColor] = useState('');
 
   const validateTitle = (value: string) => {
     setTitleValid(value.length >= 3);
@@ -93,9 +98,13 @@ const EventCreator: React.FC = () => {
 
       await axiosInstance.post(endpoint, null, { params });
 
-      setMessage('Event created successfully!');
+      setToastMessage('Event successfully added');
+      setToastColor('green');
+      setShowToast(true);
+      const userRole = await getRole(user?.id ?? '');
+      setRole(userRole);
       setTimeout(() => {
-        if (user?.type === 'HR') { 
+        if (userRole === 'HR') { 
           navigate('/hrhomepage'); 
         } 
         else {
@@ -103,7 +112,9 @@ const EventCreator: React.FC = () => {
         }
       }, 2000);
     } catch (error: any) {
-      setMessage(error.response?.data?.message || 'Failed to create event.');
+      setToastMessage(error.response?.data?.message || 'Failed to create event');
+      setToastColor('red');
+      setShowToast(true);
     }
   };
 
@@ -237,6 +248,13 @@ const EventCreator: React.FC = () => {
           Create Event
         </button>
       </form>
+      <NotificationToast
+        show={showToast}
+        title="Event Operation"
+        message={toastMessage}
+        color={toastColor}
+        onClose={() => setShowToast(false)}
+      />
     </div>
   );
 };
