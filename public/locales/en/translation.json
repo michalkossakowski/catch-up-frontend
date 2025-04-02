@@ -71,5 +71,6 @@
   "undefine-date": "Undefine date",
   "save-changes": "Save Changes",
   "search": "Search",
-  "search-file-by-names": "Search file by names"
+  "search-file-by-names": "Search file by names",
+  "cancel-search": "Cancel Search"
 }

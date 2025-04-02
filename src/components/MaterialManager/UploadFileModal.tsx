@@ -49,15 +49,22 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
 
-    // const [searchText, setSearchText] = useState('');
-    
+    const [searchText, setSearchText] = useState('');
+    const [activeSearchText, setActiveSearchText] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
     const isMediaFile = (type: string) => {
         return type.startsWith("image/") || type.startsWith("video/");
     };
     
     useEffect(() => {
         if (userId) {
-            getAllOwnedFiles(userId);
+            if (isSearching){
+                getAllOwnedFilesByQuestion(userId);
+            }
+            else
+            {
+                getAllOwnedFiles(userId);
+            }
         }
     }, [userId, currentPage, itemsPerPage]);
 
@@ -65,6 +72,18 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
         setLoading(true);
         await fileService.getAllOwnedFilesPagination(userId, currentPage, itemsPerPage).then((data) => 
         {
+            setFiles(data.files.map(fileDto => ({file: undefined, fileDto})));
+            setTotalItems(data.totalCount);
+        })
+        .catch((error) => {
+            setShowAlert(true);
+            setAlertMessage('Error: ' + error.message);
+        })
+        .finally(() => setLoading(false));
+    }
+    const getAllOwnedFilesByQuestion = async (userId: string) => {
+        setLoading(true);
+        await fileService.findByQuestion(userId ?? "", activeSearchText, currentPage, itemsPerPage).then((data) => {
             setFiles(data.files.map(fileDto => ({file: undefined, fileDto})));
             setTotalItems(data.totalCount);
         })
@@ -96,17 +115,22 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
         onClose()
     };
 
-    // const search = () => {
-    //     if (searchText.length > 0) {
-    //         fileService.findByQuestion(userId ?? "", searchText, currentPage, itemsPerPage).then((data) => {
-    //             setFiles(data.files.map(fileDto => ({file: undefined, fileDto})));
-    //             setTotalItems(data.totalCount);
-    //             setCurrentPage(1);
-    //         })
-    //     } else {
-    //         setFilteredFiles(files);
-    //     }
-    // }
+    const search = () => {
+        if (searchText.length > 0) {
+            setIsSearching(true);
+            setActiveSearchText(searchText);
+            fileService.findByQuestion(userId ?? "", searchText, currentPage, itemsPerPage).then((data) => {
+                setFiles(data.files.map(fileDto => ({file: undefined, fileDto})));
+                setTotalItems(data.totalCount);
+                setCurrentPage(1);
+            })
+        } else {
+            setIsSearching(false);
+            getAllOwnedFiles(userId ?? "");
+            setFilteredFiles(files);
+        }
+    }
+
     const shouldFetchFileData = async () => {
         const filesToFetch = files.filter(
             (item) => !item.file && isMediaFile(item.fileDto.type ?? "")
@@ -253,14 +277,24 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                 {activeTab === "yourFiles" ? (
                     <>
                         <Row className="mt-2 mb-2">
-                            <Col xs={8}>
-                                {/* <InputGroup className="mb-3" >
+                            <Col xs={9} className="d-flex align-items-center mb-3">
+                                <InputGroup onKeyDown={(e) => {if (e.key === 'Enter') search()}}>
                                     <InputGroup.Text><i className="bi bi-search"></i></InputGroup.Text>
                                     <Form.Control placeholder={t('search-file-by-names')} value={searchText} onChange={(e) => setSearchText(e.target.value)}/>
-                                    <Button variant="success" style={{ textTransform: "capitalize" }} onClick={() => search()}>
+                                    <Button variant="success" onClick={() => search()}>
                                         {t('search')} 
                                     </Button>
-                                </InputGroup> */}
+                                </InputGroup>
+                                {isSearching && (                                
+                                    <Button className="ms-3" style={{ whiteSpace: "nowrap" }}
+                                        onClick={() => {
+                                            setSearchText('');
+                                            setIsSearching(false);
+                                            setActiveSearchText('');
+                                            getAllOwnedFiles(userId ?? "");
+                                        }}
+                                    >{t('cancel-search')}</Button>
+                                )}
                             </Col>
                             <Col className="d-flex justify-content-end">
                                 <ToggleButtonGroup 

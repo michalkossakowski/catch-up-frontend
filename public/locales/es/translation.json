@@ -68,5 +68,6 @@
   "save-changes": "Guardar cambios",
   "undefine-date": "Fecha involuntaria",
   "search": "Buscar",
-  "search-file-by-names": "Buscar archivo por nombres"
+  "search-file-by-names": "Buscar archivo por nombres",
+  "cancel-search": "Cancelar búsqueda"
 }
