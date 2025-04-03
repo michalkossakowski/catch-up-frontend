@@ -48,27 +48,37 @@ const TaskContentEditPage: React.FC = () => {
     };
 
     return (
-        <Container>
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2>Edit Task Content</h2>
-                <Button variant="outline-secondary" onClick={handleCancel}>
-                    Back to List
-                </Button>
-            </div>
-
+        <Container fluid className="px-4">
             {loading ? (
-                <Loading />
+                <div>
+                    <h2>Edit Task Content</h2>
+                    <Loading />
+                </div>
             ) : error ? (
-                <Alert variant="danger">{error}</Alert>
+                <div>
+                    <h2>Edit Task Content</h2>
+                    <Alert variant="danger">{error}</Alert>
+                </div>
             ) : taskContent ? (
                 <TaskContentEdit 
                     taskContent={taskContent} 
                     isEditMode={true} 
                     onTaskContentEdited={handleTaskContentUpdated} 
-                    categories={categories} 
+                    categories={categories}
+                    formHeader={
+                        <div className="d-flex justify-content-between align-items-center mb-4">
+                            <h2>Edit Task Content</h2>
+                            <Button variant="outline-secondary" onClick={handleCancel}>
+                                Back to List
+                            </Button>
+                        </div>
+                    }
                 />
             ) : (
-                <Alert variant="warning">Task content not found</Alert>
+                <div>
+                    <h2>Edit Task Content</h2>
+                    <Alert variant="warning">Task content not found</Alert>
+                </div>
             )}
         </Container>
     );

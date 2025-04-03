@@ -4,10 +4,13 @@ import { getTaskContents } from '../../services/taskContentService';
 import { getCategories } from '../../services/categoryService';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
 import { CategoryDto } from '../../dtos/CategoryDto';
-import { Container, Row, Col, Card, Button, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Alert, Accordion } from 'react-bootstrap';
 import Material from '../Material/Material';
 import Loading from '../Loading/Loading';
 import './TaskContentDetails.css';
+import materialService from '../../services/materialService';
+import { MaterialDto } from '../../dtos/MaterialDto';
+import MaterialItem from '../Material/DndMaterial/MaterialItem';
 
 const TaskContentDetails: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -15,6 +18,7 @@ const TaskContentDetails: React.FC = () => {
     const [categories, setCategories] = useState<CategoryDto[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [material, setMaterial] = useState<MaterialDto | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,6 +33,10 @@ const TaskContentDetails: React.FC = () => {
                 if (foundTaskContent) {
                     setTaskContent(foundTaskContent);
                     setCategories(categoriesData);
+                    
+                    if (foundTaskContent.materialsId) {
+                        loadMaterial(foundTaskContent.materialsId);
+                    }
                 } else {
                     setError('Task content not found');
                 }
@@ -41,6 +49,15 @@ const TaskContentDetails: React.FC = () => {
             });
         }
     }, [id]);
+    
+    const loadMaterial = async (materialId: number) => {
+        try {
+            const loadedMaterial = await materialService.getMaterialWithFiles(materialId);
+            setMaterial(loadedMaterial);
+        } catch (error) {
+            console.error('Error loading material:', error);
+        }
+    };
 
     const getCategoryName = (categoryId: number) => {
         const category = categories.find(cat => cat.id === categoryId);
@@ -50,10 +67,9 @@ const TaskContentDetails: React.FC = () => {
     const handleBack = () => {
         navigate('/taskcontent');
     };
-
-    const materialCreated = (materialId: number) => {
-        return materialId;
-    };
+    
+    const handleMaterialSelect = () => {};
+    const handleDeleteItem = () => {};
 
     if (loading) {
         return (
@@ -119,15 +135,20 @@ const TaskContentDetails: React.FC = () => {
                         </Col>
                     </Row>
 
-                    {taskContent.materialsId && (
+                    {taskContent.materialsId && material && (
                         <Row className="mb-3">
                             <Col>
                                 <h4 className="mb-3">Additional Materials:</h4>
-                                <Material 
-                                    materialId={taskContent.materialsId} 
-                                    showDownloadFile={true} 
-                                    materialCreated={materialCreated} 
-                                />
+                                <div className="material-content">
+                                    <Accordion defaultActiveKey={`item${material.id}`} className="read-only-material">
+                                        <MaterialItem
+                                            materialDto={material}
+                                            onDeleteItem={handleDeleteItem}
+                                            onMaterialSelect={handleMaterialSelect}
+                                            readOnly={true}
+                                        />
+                                    </Accordion>
+                                </div>
                             </Col>
                         </Row>
                     )}
