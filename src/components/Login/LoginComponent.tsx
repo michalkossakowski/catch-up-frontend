@@ -63,7 +63,13 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ toggleTheme, theme }) =
             const userResponse = await axiosInstance.get(`User/GetById/${userId}`);
             const userData = userResponse.data;
             setUser(userData);
-            navigate('/');
+            if (userData?.position === 'HR') { 
+                navigate('/hrhomepage'); 
+              } 
+            else
+            {
+                navigate('/');
+            }
 
         } catch (err: any) {
             if (err.response) {

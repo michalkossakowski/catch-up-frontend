@@ -4,7 +4,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale/en-US';
 import axiosInstance from '../../../axiosConfig';
-import { useAuth } from '../../Provider/authProvider'; 
+import { useAuth } from '../../Provider/authProvider';
 import { useNavigate } from 'react-router-dom';
 
 const locales = {
@@ -27,8 +27,8 @@ interface Event {
 }
 
 const CalendarHR: React.FC = () => {
-  const { user } = useAuth(); 
-  const userId = user?.id; 
+  const { user } = useAuth();
+  const userId = user?.id;
 
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -49,7 +49,7 @@ const CalendarHR: React.FC = () => {
 
         const mappedEvents = data.map((event: any) => ({
           title: event.title,
-          description: event.description, 
+          description: event.description,
           start: new Date(event.startDate),
           end: new Date(event.endDate),
         }));
@@ -85,15 +85,15 @@ const CalendarHR: React.FC = () => {
       </button>
       <button
         className="btn btn-secondary mb-3"
-        onClick={() => setIsCalendarVisible(!isCalendarVisible)} 
+        onClick={() => setIsCalendarVisible(!isCalendarVisible)}
       >
         {isCalendarVisible ? (
-          <i className="bi bi-chevron-up"></i> 
+          <i className="bi bi-chevron-up"></i>
         ) : (
-          <i className="bi bi-chevron-down"></i> 
+          <i className="bi bi-chevron-down"></i>
         )}
       </button>
-      {isCalendarVisible && ( 
+      {isCalendarVisible && (
         <>
           <Calendar
             localizer={localizer}
@@ -101,31 +101,33 @@ const CalendarHR: React.FC = () => {
             startAccessor="start"
             endAccessor="end"
             style={{ height: 500, margin: '20px' }}
-            tooltipAccessor={(event: Event) => event.description} 
-            onSelectEvent={(event: Event) => setSelectedEvent(event)} 
+            tooltipAccessor={(event: Event) => event.description}
+            onSelectEvent={(event: Event) => setSelectedEvent(event)}
           />
           {selectedEvent && (
             <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
               <div className="modal-dialog">
                 <div className="modal-content">
                   <div className="modal-header">
-                  <h5 className="modal-title w-100 text-center fw-bold">{selectedEvent.title}</h5>
+                    <h5 className="modal-title w-100 text-center fw-bold">{selectedEvent.title}</h5>
                     <button
                       type="button"
                       className="btn-close"
-                      onClick={() => setSelectedEvent(null)} 
+                      onClick={() => setSelectedEvent(null)}
                     ></button>
                   </div>
-                  <div className="modal-body">
-                    <p className="fw-bold">{selectedEvent.start.toDateString()} {selectedEvent.start.toLocaleTimeString()} - {selectedEvent.end.toDateString()} {selectedEvent.end.toLocaleTimeString()}</p>
-                    <br/>
+                  <div className="modal-body" style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
+                    <p className="fw-bold">
+                      {selectedEvent.start.toDateString()} {selectedEvent.start.toLocaleTimeString()} - {selectedEvent.end.toDateString()} {selectedEvent.end.toLocaleTimeString()}
+                    </p>
+                    <br />
                     <p>{selectedEvent.description}</p>
                   </div>
                   <div className="modal-footer">
                     <button
                       type="button"
                       className="btn btn-secondary"
-                      onClick={() => setSelectedEvent(null)} 
+                      onClick={() => setSelectedEvent(null)}
                     >
                       Close
                     </button>
