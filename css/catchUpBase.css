@@ -414,3 +414,19 @@ select option:checked {
     background-color: #DB91D1;
     color: #FFFFFF;
 }
+
+/* Calendar */
+.rbc-today {
+    background-color: #db91d123 !important;
+}
+.rbc-toolbar button.rbc-active {
+
+    background-color: #DB91D1 !important;
+}
+
+/* Calendar */
+
+.rbc-current-time-indicator {
+    background-color: #5CD3B4 !important;
+    height: 4px !important;
+}

@@ -111,3 +111,12 @@
     --bs-pagination-disabled-bg: rgba(34, 34, 34, 0.5);
     --bs-pagination-bg: rgba(0, 0, 0, 0.5);
 }
+
+/* Calendar */
+.rbc-off-range-bg {
+    background-color: #000000 !important;
+}
+
+.rbc-toolbar button {
+   color: #FFFFFF !important;
+}
