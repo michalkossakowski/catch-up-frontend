@@ -120,3 +120,7 @@
 .rbc-toolbar button {
    color: #FFFFFF !important;
 }
+
+.rbc-toolbar button {
+    background-color: #1a1a1a !important;
+}
