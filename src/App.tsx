@@ -175,7 +175,7 @@ function App() {
                             <Navbar expand="lg" className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-navbar">
                                 <Navbar.Brand href="/" className="nav-brand">catchUp</Navbar.Brand>
                                 <Nav className="flex-column w-100">
-                                    <NavLink to={role === 'HR' ? '/hrhomepage' : '/'} className="nav-link">
+                                    <NavLink to={role === 'HR' ? '/hrhomepage' : role=== 'Newbie'? 'newbiehomepage' :'/'} className="nav-link">
                                         <i className="bi bi-house-door" /> <span>{t('home')}</span>
                                     </NavLink>
                                     {role === "Newbie" && (
