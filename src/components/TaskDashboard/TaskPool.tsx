@@ -3,6 +3,7 @@ import { useDrag } from 'react-dnd';
 import { TaskContentDto } from "../../dtos/TaskContentDto.ts";
 import { CategoryDto } from "../../dtos/CategoryDto.ts";
 import { StatusEnum } from "../../Enums/StatusEnum";
+import { Dropdown } from 'react-bootstrap';
 
 interface TaskPoolProps {
     taskContents?: TaskContentDto[];
@@ -35,6 +36,12 @@ const PoolTaskCard: React.FC<PoolTaskCardProps> = ({ task, categoryName }) => {
         [drag]
     );
 
+    // Truncate text if it's too long
+    const truncateText = (text: string, maxLength: number) => {
+        if (!text || text.length <= maxLength) return text;
+        return text.substring(0, maxLength) + '...';
+    };
+
     return (
         <div
             ref={dragRef}
@@ -44,7 +51,13 @@ const PoolTaskCard: React.FC<PoolTaskCardProps> = ({ task, categoryName }) => {
             <div className="card-body p-2">
                 <h6 className="card-title mb-1">{task.title}</h6>
                 <div className="d-flex justify-content-between align-items-center">
-                    <small className="badge bg-info text-white">{categoryName}</small>
+                    <small
+                        className="badge bg-info text-white text-truncate"
+                        style={{ maxWidth: '100%' }}
+                        title={categoryName}  // Full name shown on hover
+                    >
+                        {truncateText(categoryName, 15)}
+                    </small>
                 </div>
             </div>
         </div>
@@ -88,6 +101,18 @@ const TaskPool: React.FC<TaskPoolProps> = ({
         return category ? category.name : 'Uncategorized';
     };
 
+    // Get active category name for dropdown display
+    const getActiveCategoryName = () => {
+        if (activeCategoryId === 0) return 'All Categories';
+        return getCategoryName(activeCategoryId);
+    };
+
+    // Truncate text for dropdown if needed
+    const truncateText = (text: string, maxLength: number) => {
+        if (!text || text.length <= maxLength) return text;
+        return text.substring(0, maxLength) + '...';
+    };
+
     return (
         <div className="task-pool card p-3 rounded shadow-sm" style={{height: '700px'}}>
             <h5 className="mb-3">Task Pool</h5>
@@ -103,23 +128,37 @@ const TaskPool: React.FC<TaskPoolProps> = ({
             </div>
 
             <div className="category-filters mb-3">
-                <div className="d-flex flex-wrap gap-2">
-                    <button
-                        className={`btn btn-sm ${activeCategoryId === 0 ? 'btn-primary' : 'btn-outline-secondary'}`}
-                        onClick={() => setActiveCategoryId(0)}
+                <Dropdown>
+                    <Dropdown.Toggle
+                        variant="outline-secondary"
+                        size="sm"
+                        id="category-dropdown"
+                        className="w-100 text-truncate"
+                        title={getActiveCategoryName()} // Show full category name on hover
                     >
-                        All
-                    </button>
-                    {categories.map(category => (
-                        <button
-                            key={category.id}
-                            className={`btn btn-sm ${activeCategoryId === category.id ? 'btn-primary' : 'btn-outline-secondary'}`}
-                            onClick={() => setActiveCategoryId(category.id)}
+                        {truncateText(getActiveCategoryName()!, 25)}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu className="w-100">
+                        <Dropdown.Item
+                            active={activeCategoryId === 0}
+                            onClick={() => setActiveCategoryId(0)}
                         >
-                            {category.name}
-                        </button>
-                    ))}
-                </div>
+                            All Categories
+                        </Dropdown.Item>
+                        <Dropdown.Divider />
+                        {categories.map(category => (
+                            <Dropdown.Item
+                                key={category.id}
+                                active={activeCategoryId === category.id}
+                                onClick={() => setActiveCategoryId(category.id)}
+                                className="text-truncate"
+                                title={category.name} // Show full category name on hover
+                            >
+                                {category.name}
+                            </Dropdown.Item>
+                        ))}
+                    </Dropdown.Menu>
+                </Dropdown>
             </div>
 
             <div className="pool-tasks-container">
