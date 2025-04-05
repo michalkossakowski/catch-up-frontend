@@ -88,6 +88,14 @@
     color: #FFFFFF;
 }
 
+.alert-info {
+    --bs-alert-color: #FFFFFF;
+}
+
+.no-notificaitons-alert i {
+    color: #FFFFFF;
+}
+
 /*ai assistant*/
 .user-message {
     background: #DB91D1;

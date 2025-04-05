@@ -37,7 +37,7 @@ import { NotificationDto } from './dtos/NotificationDto.ts';
 import NotificationToast from './components/Toast/NotificationToast.tsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './store/store';
-import { setNotifications, addNotification } from './store/notificationSlice';
+import { setNotifications, addNotification, setNotificationsCount } from './store/notificationSlice';
 import { getNotifications } from './services/notificationService';
 import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
@@ -116,8 +116,9 @@ function App() {
     }, [user?.id]);
 
     const handleNotifications = async () => {
-        const data = await getNotifications();
-        dispatch(setNotifications(data));
+        const data = await getNotifications(1,50);
+        dispatch(setNotifications(data.notifications));
+        dispatch(setNotificationsCount(data.totalCount));
 
         connection.on("ReceiveNotification", (notification: NotificationDto) => {
             notificationSound.play().catch(() => {

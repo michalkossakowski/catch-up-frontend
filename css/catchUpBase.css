@@ -29,6 +29,12 @@ yellow
     max-width: 350px;
     margin: 20px auto 20px  auto;
 }
+.alert-info {
+    --bs-alert-bg: #5cd3b33b;
+    --bs-alert-border-color: #5CD3B4;
+    --bs-alert-link-color: #5CD3B4;
+}
+
 
 /* Button Styles */
 .btn-primary {
@@ -65,6 +71,13 @@ yellow
     --bs-btn-hover-color: #fff;
 }
 
+#searchButton i {
+    color: #FFFFFF;
+}
+
+#cancel-search i {
+    color: #FFFFFF;
+}
 /* Dropdown Styles */
 .dropdown-divider {
     height: 0;
@@ -433,3 +446,4 @@ select option:checked {
 .rbc-toolbar button:hover {
     border-color: #DB91D1 !important;
 }
+
