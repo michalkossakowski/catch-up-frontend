@@ -1,13 +1,22 @@
 import axiosInstance from '../../axiosConfig';
-import { NotificationDto } from '../dtos/NotificationDto';
+import { NotificationDto, NotificationResponse } from '../dtos/NotificationDto';
 
-export const getNotifications = async (): Promise<NotificationDto[]> => {
+export const getNotifications = async (pageNumber: number = 1, pageSize: number = 50): Promise<{ notifications: NotificationDto[], totalCount: number }> => {
     try {
-        const response = await axiosInstance.get<NotificationDto[]>('/Notification/GetByUserToken',{});
-        return response.data;
+        const response = await axiosInstance.get<NotificationResponse>('/Notification/GetByUserToken', {
+            params: { pageNumber, pageSize }
+        });
+        
+        return {
+            notifications: response.data.notifications,
+            totalCount: response.data.totalCount
+        };
     } catch (error: any) {
         if (error.response?.status === 404) {
-            return [];
+            return {
+                notifications: [],
+                totalCount: 0
+            };
         }
         handleError('getNotifications', error);
         throw error;

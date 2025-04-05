@@ -25,7 +25,7 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
     const [searchQuestion, setSearchQuestion] = useState('');
     const [isSearching, setIsSearching] = useState(false);
 
-    const [showEditModal, setShowEditModal] = useState(false); // Zmieniono na showEditModal
+    const [showEditModal, setShowEditModal] = useState(false);
     const [editedFaq, setEditedFaq] = useState<FaqDto | null>(null);
 
     const [showToast, setShowToast] = useState(false);
@@ -229,14 +229,14 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
                                 onKeyDown={(e) => e.key === 'Enter' && searchFaq()}
                             />
                             <Button variant="primary" id="searchButton" onClick={searchFaq}> 
-                                Search
+                                <i className="bi bi-search">&nbsp;</i>Search 
                             </Button>
                         </InputGroup>
                     </div>
                 )}
                 {isSearching && (
-                    <Button variant="secondary" onClick={resetSearch} className="mb-3">
-                        Cancel search
+                    <Button variant="secondary" id="cancel-search" onClick={resetSearch} className="mb-3">
+                        <i className="bi bi-x-circle">&nbsp;</i>Cancel search
                     </Button>
                 )}
                 {!isSearching && !loading && !showAlert && (

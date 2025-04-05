@@ -8,3 +8,8 @@ export interface NotificationDto {
     source: string;
     isRead: boolean;
 }
+
+export interface NotificationResponse {
+    notifications: NotificationDto[];
+    totalCount: number;         
+}
