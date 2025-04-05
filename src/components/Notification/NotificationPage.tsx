@@ -53,7 +53,7 @@ const NotificationPage: React.FC = () => {
         if(notifications.length >= notificationsCount){
             setLoadMoreVisibility(false);
         }else{
-            let page = Math.ceil(notifications.length / 50) + 1;
+            let page = Math.floor(notifications.length / 50) + 1;
             getNotifications(page, 50).then((res) => {
                 const merged = [...notifications, ...res.notifications];
                 const unique = Array.from(
