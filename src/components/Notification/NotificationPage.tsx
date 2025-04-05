@@ -12,7 +12,6 @@ const NotificationPage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(5);
     const [loadMoreVisibility, setLoadMoreVisibility] = useState(false);
-    const [loadMorePageCount, setLoadMorePageCount] = useState(2);
 
     const { notifications } = useSelector((state: RootState) => state.notifications);
 
@@ -54,9 +53,13 @@ const NotificationPage: React.FC = () => {
         if(notifications.length >= notificationsCount){
             setLoadMoreVisibility(false);
         }else{
-            getNotifications(loadMorePageCount, 50).then((res) => {
-                setLoadMorePageCount(loadMorePageCount + 1)
-                dispatch(setNotifications(notifications.concat(res.notifications)));
+            let page = Math.ceil(notifications.length / 50) + 1;
+            getNotifications(page, 50).then((res) => {
+                const merged = [...notifications, ...res.notifications];
+                const unique = Array.from(
+                    new Map(merged.map(n => [n.notificationId, n])).values()
+                );
+                dispatch(setNotifications(unique));
                 dispatch(setNotificationsCount(res.totalCount));
             })
         }
