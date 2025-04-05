@@ -54,17 +54,11 @@ const NotificationPage: React.FC = () => {
         if(notifications.length >= notificationsCount){
             setLoadMoreVisibility(false);
         }else{
-            
             getNotifications(loadMorePageCount, 50).then((res) => {
-                console.log("res",res);
                 setLoadMorePageCount(loadMorePageCount + 1)
                 dispatch(setNotifications(notifications.concat(res.notifications)));
                 dispatch(setNotificationsCount(res.totalCount));
-            }).finally(() => {                   
-                if(notifications.length >= notificationsCount){
-                    setLoadMoreVisibility(false);
-                }    
-            });
+            })
         }
     };
 
