@@ -5,7 +5,6 @@ import FeedbackDetailsDialog from './FeedbackDetailsDialog';
 
 type FeedbackItemProps = {
     feedback: FeedbackDto;
-    isAdmin: boolean;
     onDeleteClick: (feedback: FeedbackDto) => void;
     onResolveChange: (id: number, isResolved: boolean) => void;
 };
@@ -32,7 +31,8 @@ const FeedbackItem: React.FC<FeedbackItemProps> = ({
         <>
             <tr key={feedback.id}>
                 <td>{feedback.title}</td>
-                <td>{feedback.userName}</td>
+                <td>{feedback.userSend}</td>
+                <td>{feedback.userReceive}</td>
                 <td>{new Date(feedback.createdDate).toLocaleDateString()}</td>
                 <td>{ResourceTypeEnum[feedback.resourceType]}</td>
                 <td>

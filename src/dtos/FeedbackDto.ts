@@ -9,7 +9,8 @@ export interface FeedbackDto {
     resourceType: ResourceTypeEnum;
     resourceId: number;
     createdDate: Date;
-    userName?: string;
+    userSend?: string;
+    userReceive?: string;
     resourceName?: string;
     isResolved: boolean;
 }
