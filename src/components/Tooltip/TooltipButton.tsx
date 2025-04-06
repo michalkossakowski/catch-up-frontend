@@ -9,7 +9,15 @@ interface TooltipButtonProps {
 }
 
 const TooltipButton: React.FC<TooltipButtonProps> = ({ tooltipText, onClick, variant, children, placement }) => (
-  <OverlayTrigger placement="top" overlay={<Tooltip>{tooltipText}</Tooltip>}  key={placement}>
+  <OverlayTrigger 
+    placement="top" 
+    overlay={
+    <Tooltip>
+      {tooltipText}
+    </Tooltip>}  
+    key={placement}
+    trigger="hover"
+    >
     <Button variant={variant || "outline-secondary"} onClick={onClick}>
       {children}
     </Button>
