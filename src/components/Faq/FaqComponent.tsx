@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './FaqComponent.css'; 
 import { Accordion, Alert, Button, Form, InputGroup, Pagination, Modal } from 'react-bootstrap'; // Dodano Modal
 import { FaqDto, FaqResponse } from '../../dtos/FaqDto';
-import { getFaqs, deleteFaq } from '../../services/faqService';
+import { getFaqs, deleteFaq, getBySearch } from '../../services/faqService';
 import FaqEdit from './FaqEdit';
 import Loading from '../Loading/Loading';
 import FaqItem from './FaqItem';
@@ -22,7 +22,7 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
     
     const [showSearchMessage, setShowSearchMessage] = useState(false);
     const [searchMessage, setSearchMessage] = useState('alert');
-    const [searchQuestion, setSearchQuestion] = useState('');
+    const [searchPhrase, setsearchPhrase] = useState('');
     const [isSearching, setIsSearching] = useState(false);
 
     const [showEditModal, setShowEditModal] = useState(false);
@@ -50,7 +50,7 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
                 setTotalItems(data.totalCount);
                 setShowAlert(false); 
                 setIsSearching(false);
-                setSearchQuestion(''); 
+                setsearchPhrase(''); 
                 setShowSearchMessage(false); 
             })
             .catch((error) => {
@@ -61,7 +61,7 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
     };
 
     const searchFaq = () => {
-        if (searchQuestion.length === 0) {
+        if (searchPhrase.length === 0) {
             setFaqs(allFaqs);
             setShowSearchMessage(false);
             setIsSearching(false);
@@ -69,21 +69,22 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
         }
         setLoading(true);
 
-        const filteredFaqs = allFaqs.filter(faq => 
-            faq.question.toLowerCase().includes(searchQuestion.toLowerCase()) 
-            || faq.answer.toLowerCase().includes(searchQuestion.toLowerCase())
-        );
-
-        if (filteredFaqs.length === 0) {
-            setShowSearchMessage(true);
-            setSearchMessage(`No Questions with: '${searchQuestion}' inside found.`);
-        } else {
-            setShowSearchMessage(false);
-        }
-
-        setFaqs(filteredFaqs);
-        setIsSearching(true);
-        setLoading(false);
+        getBySearch(searchPhrase)
+            .then((data) => {
+                if (data.length === 0) {
+                    setShowSearchMessage(true);
+                    setSearchMessage(`No Questions with: '${searchPhrase}' inside found.`);
+                } else {
+                    setShowSearchMessage(false);
+                    setFaqs(data);
+                    setIsSearching(true);
+                }
+            })
+            .catch((error) => {
+                setShowAlert(true);
+                setAlertMessage('Error: ' + error.message);
+            })
+            .finally(() => setLoading(false));
     };
 
     const resetSearch = () => {
@@ -224,8 +225,8 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
                         <InputGroup className="inputGroup">
                             <Form.Control
                                 placeholder="Enter searching question..."
-                                value={searchQuestion} 
-                                onChange={(e) => setSearchQuestion(e.target.value)} 
+                                value={searchPhrase} 
+                                onChange={(e) => setsearchPhrase(e.target.value)} 
                                 onKeyDown={(e) => e.key === 'Enter' && searchFaq()}
                             />
                             <Button variant="primary" id="searchButton" onClick={searchFaq}> 

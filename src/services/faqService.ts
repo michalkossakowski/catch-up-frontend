@@ -21,6 +21,16 @@ export const getById = async (id: string): Promise<FaqDto[]> => {
     }
 };
 
+export const getBySearch = async (searchPhrase: string): Promise<FaqDto[]> => {
+    try {
+        const response = await axiosInstance.get<FaqDto[]>('/Faq/Search/'+searchPhrase);
+        return response.data;
+    } catch (error: any) {
+        handleError('searchFaq', error);
+        throw error;
+    }
+};
+
 export const addFaq = async (faq: FaqDto): Promise<FaqResponse> => {
     try {
         const response = await axiosInstance.post('/Faq/Add', faq);
