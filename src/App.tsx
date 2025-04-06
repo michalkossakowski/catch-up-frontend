@@ -30,6 +30,7 @@ import SchoolingPartEdit from './components/Schooling/SchoolingPartEdit.tsx';
 import SchoolingAssignment from './components/Schooling/SchoolingAssignment.tsx';
 import PresetAssign from './components/Preset/PresetAssign';
 import FeedbackList from './components/Feedback/FeedbackListPage.tsx';
+import MaterialTest from './components/MaterialManager/MaterialTest.tsx';
 import '../css/catchUpBase.css';
 import NotificationPage from './components/Notification/NotificationPage.tsx';
 import { startConnection, connection } from "./services/signalRService";
@@ -355,6 +356,7 @@ function App() {
                                 <Route path="/settings" element={<><h1>Settings</h1></>} />
                                 <Route path="/notifications" element={<><NotificationPage /></>} />
                                 <Route path="/eventCreator" element={<EventCreator />} />
+                                <Route path="/material" element={<MaterialTest/>} />
                             </Routes>
                         </Container>
                         <NotificationToast

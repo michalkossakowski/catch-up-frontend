@@ -132,3 +132,15 @@
 .rbc-toolbar button {
     background-color: #1a1a1a !important;
 }
+.striped {
+    background: linear-gradient(
+        45deg, 
+        rgba(0, 0, 0, 0) 40.63%, 
+        rgba(219, 145, 209, 0.5) 40.63%, 
+        rgba(219, 145, 209, 0.5) 50%, 
+        rgba(0, 0, 0, 0) 50%, 
+        rgba(0, 0, 0, 0) 90.63%, 
+        rgba(219, 145, 209, 0.5) 90.63%, 
+        rgba(219, 145, 209, 0.5) 100%);
+    background-size: 45.25px 45.25px;
+}

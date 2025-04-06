@@ -115,16 +115,14 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
                 </div>
                 <br />
                 <div >
-                    {/* <Material
-                        materialId={materialId ?? 0}
-                        showRemoveFile={true}
-                        showDownloadFile={true}
-                        showAddingFile={true}
-                        materialCreated={materialCreated}
-                    /> */}
                     <MaterialItem
                         materialId={materialId ?? 0} 
                         materialCreated={materialCreated} 
+                        enableAddingFile={true}
+                        enableDownloadFile={true}
+                        enableRemoveFile={true}
+                        enableEdittingMaterialName={true}
+                        enableEdittingFile={true}
                         >
                     </MaterialItem>
                 </div>

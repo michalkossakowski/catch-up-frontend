@@ -1,4 +1,4 @@
-import { Button, Col, Form, InputGroup, Row, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
+import { Alert, Button, Col, Form, InputGroup, Row, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
 import fileService from '../../services/fileService';
 import materialService from '../../services/materialService';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -15,6 +15,9 @@ import UploadFileModal from './UploadFileModal';
 import { useAuth } from '../../Provider/authProvider';
 import { FilePair } from '../../interfaces/FilePair';
 import { OnActionEnum } from '../../Enums/OnActionEnum';
+import Loading from '../Loading/Loading';
+import TooltipButton from '../Tooltip/TooltipButton';
+import { useTranslation } from 'react-i18next';
 
 interface MaterialItemProps {
     materialId?: number;
@@ -23,28 +26,29 @@ interface MaterialItemProps {
     enableAddingFile?: boolean;
     enableEdittingMaterialName?: boolean;
     showMaterialName?: boolean;
+    enableEdittingFile?: boolean;
     materialCreated?: (materialId: number) => void;
     nameTitle?: string;
-    // enableValidation?: boolean; // It will be default material name material_date
     showComponent?: boolean;
 }
 
 const MaterialItem: React.FC<MaterialItemProps> = ({
     materialId,
-    enableRemoveFile = true,
-    enableDownloadFile = true,
+    enableRemoveFile = false,
+    enableDownloadFile = false,
     showMaterialName = true,
-    enableEdittingMaterialName = true,
-    enableAddingFile = true,
+    enableEdittingMaterialName = false,
+    enableAddingFile = false,
+    enableEdittingFile = false,
     materialCreated = () => { },
     nameTitle = 'Add Content',
-    // enableValidation = true,
     showComponent = true,
 }) => {
-    const prevMaterialId = useRef<number | null>(null);
-
-    const { user } = useAuth();
+    const { t, i18n } = useTranslation();
     
+    const prevMaterialId = useRef<number | null>(null);
+    const { user } = useAuth();
+
     const [material, setMaterial] = useState<MaterialDto | null>(null);
     const [materialName, setMaterialName] = useState('');
 
@@ -54,7 +58,12 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     const [isDragActive, setIsDragActive] = useState(false)
     
     const [files, setFiles] = useState<FilePair[]>([]);
-    const [filesToSend, setFilesToSend] = useState<{ file: File; uploadedAt: Date }[]>([]);
+    const [filesToSend, setFilesToSend] = useState<{
+        file: File;
+        uploadedAt: Date;
+        progress: number;
+        isUploading: boolean;
+    }[]>([]);
 
     const [selectedFilesInMaterials, setSelectedFilesInMaterials]  = useState<number[] >([]);
     const [selectedFilesNotInMaterials, setSelectedFilesNotInMaterials]  = useState<number[] >([]);
@@ -73,6 +82,11 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 
     const [showUploadModal, setShowUploadModal] = useState(false);
 
+    const [loading, setLoading] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+
+    const [isFileInMaterial, setIsFileInMaterial] = useState(false); // true - inside material, false - outside material
 
     useEffect(() => {
         setShow(showComponent);
@@ -101,6 +115,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     }, [selectedFilesInMaterials, selectedFilesNotInMaterials]);
 
     const getMaterial = useCallback(async (id: number) => {
+        setLoading(true);
         try {
             const materialData = await materialService.getMaterialWithFiles(id);
 
@@ -111,7 +126,8 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                         const file = new File([fileData], fileDto.name ?? 'unknown', { type: fileData.type });
                         return { file, fileDto };
                     } catch (error) {
-                        console.error(`Error fetching file ${fileDto.id}:`, error);
+                        setAlertMessage(`Error fetching file`);
+                        setShowAlert(true);
                         return null;
                     }
                 }) ?? [] 
@@ -124,7 +140,10 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
             setMaterialName(materialData.name);
             setMaterial(materialData);
         } catch (error) {
-            console.error('Error fetching material:', error);
+            setAlertMessage(`Error fetching material`);
+            setShowAlert(true);
+        } finally {
+            setLoading(false);
         }
     }, []);
 
@@ -165,7 +184,9 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         const droppedFiles = Array.from(e.dataTransfer.files).map((file) => ({
             file,
             uploadedAt: new Date(),
-        }));        
+            progress: 0,
+            isUploading: false
+        }));      
         setFilesToSend((prevFiles) => [...prevFiles, ...droppedFiles])
     }
 
@@ -176,18 +197,18 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     
     const onClickDelete = () => {
         if(anyFileSelected){
-            setConfirmMessage("Are you sure you want to delete files in this Material?")
+            setConfirmMessage(t('are-you-sure-you-want-to-delete-files-in-this-material'))
             setShowConfirmModal(true);
         }
         else{
-            setToastMessage("Please select files to delete")
+            setToastMessage(t('please-select-files-to-delete'))
             setShowToast(true)
         }
     }    
 
     const onClickDownloadAll = async () => {
         if(files.length === 0 && filesToSend.length === 0){
-            setToastMessage("No files to download")
+            setToastMessage(t('no-files-to-download'))
             setShowToast(true)
             return;
         }
@@ -216,13 +237,17 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
             if (materialName !== material.name && materialId) {
                 material.name = materialName;
                 materialService.editMaterial(materialId, material.name)
+                .catch((error) => {
+                    setAlertMessage(t('error-updating-material-error') +" " +error);
+                    setShowAlert(true);
+                });
             }
             updateMaterial(material)
         }
         else{
             var tempName = materialName;
             if(materialName.length === 0){
-                tempName = 'New material-' + new Date().toLocaleDateString();
+                tempName = t('new-material') + new Date().toLocaleDateString();
                 setMaterialName(tempName)
             }
             materialService.createMaterial({ name: tempName })
@@ -233,31 +258,79 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                     materialCreated(material.id)
                 }
             })
+            .catch((error) => {
+                setAlertMessage(t('error-creating-material-error') +" " + error);
+                setShowAlert(true);
+            });
         }
     }
     
-    const onLeftClickFile = (filePair: FilePair) => {
+    const onLeftClickFilePair = (filePair: FilePair) => {
+        setIsFileInMaterial(true);
+        setSelectedFilePair(filePair);
+        setShowFileDetailsModal(true);
+    }
+    
+    const onLeftClickFile = (file: File, date:Date, index: number) => {
+        setIsFileInMaterial(false);
+        const filePair: FilePair = {
+            fileDto: { id: index, name: file.name, type: file.type, dateOfUpload: date, sizeInBytes: file.size, owner: user?.id  },
+            file: file,
+        };
+        
         setSelectedFilePair(filePair);
         setShowFileDetailsModal(true);
     }
 
-    const updateMaterial = (material: MaterialDto) => {
-        const uploadPromises = filesToSend.map(async (file) => {
-            const fileDto = await handleFileUpload(file.file, file.uploadedAt);
+    const updateMaterial = async (material: MaterialDto) => {
+        const uploadPromises = filesToSend.map(async (fileItem) => {
+            // Set initial state for this file
+            setFilesToSend(prev => prev.map(f => 
+                f.file === fileItem.file ? { ...f, isUploading: true } : f
+            ));
+
+            const fileDto = await handleFileUpload(
+                fileItem.file,
+                fileItem.uploadedAt,
+                material,
+                (percent) => {
+                    // Update progress for this specific file
+                    setFilesToSend(prev => prev.map(f => 
+                        f.file === fileItem.file ? { ...f, progress: percent } : f
+                    ));
+                }
+            );
+            
             material.files?.push(fileDto);
-            return { file: file.file, fileDto };
+            return { file: fileItem.file, fileDto };
         });
-    
-        Promise.all(uploadPromises).then((uploadedFiles) => {
+
+        try {
+            const uploadedFiles = await Promise.all(uploadPromises);
             setFiles((prevFiles) => [...prevFiles, ...uploadedFiles]);
-            setFilesToSend([]); 
-        });
+            setFilesToSend([]); // Clear after all uploads complete
+        } catch (error) {
+            setAlertMessage(t('upload-failed') +" " + error);
+            setShowAlert(true);
+        }
     };
 
-    const handleFileUpload = async (file: File, dateOfUpload: Date): Promise<FileDto> => {
-        const response = await fileService.uploadFile(file, materialId, user?.id ?? "", dateOfUpload);
+    const handleFileUpload = async (
+        file: File,
+        dateOfUpload: Date,
+        material?: MaterialDto,
+        onProgress?: (percent: number) => void
+    ): Promise<FileDto> => {
+        const response = await fileService.uploadFile(
+            file,
+            material?.id || materialId,
+            user?.id ?? "",
+            dateOfUpload,
+            onProgress
+        );
         return response.fileDto;
-    }
+    };
+
     const handleFileDisplayChange = (value: number) => {
         setFileDisplayMode(value);
     };
@@ -293,20 +366,26 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
             });
         }
         if(selectedFilesNotInMaterials.length > 0){
-            setFilesToSend((prevFiles) => prevFiles.filter((file, index) => !selectedFilesNotInMaterials.includes(index)));
+            setFilesToSend((prevFiles) => prevFiles.filter((_, index) => !selectedFilesNotInMaterials.includes(index)));
         }
         setSelectedFilesInMaterials([]);
         setSelectedFilesNotInMaterials([]);
         setShowConfirmModal(false);
     }
 
-    const onAction = (action: OnActionEnum, object: any) => {
+    const onAction = (action: OnActionEnum, object: any, fileInMaterial?: boolean) => {
         switch (action) {
             case OnActionEnum.FileRemovedFromMaterial:
-                const fileId = object.fileId as number;
-                setFiles((prevFiles) => prevFiles.filter((file) => file.fileDto.id !== fileId));
-                if (material) {
-                    material.files = material.files?.filter((file) => file.id !== fileId);
+                if (!fileInMaterial) {
+                    const index = object.index as number;
+                    setFilesToSend((prevFiles) => prevFiles.filter((_, i) => i !== index));
+                }
+                else{
+                    const fileId = object.fileId as number;
+                    setFiles((prevFiles) => prevFiles.filter((file) => file.fileDto.id !== fileId));
+                    if (material) {
+                        material.files = material.files?.filter((file) => file.id !== fileId);
+                    }
                 }
                 setToastMessage(`File has been removed.`);
                 setShowToast(true);
@@ -317,9 +396,32 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 setToastMessage(`File has been added.`);
                 break;
             case OnActionEnum.FileEdited:
-                const filePairEdit = object.filePair as FilePair;
-                setFiles((prevFiles) => prevFiles.map((file) => file.fileDto.id === filePairEdit.fileDto.id ? filePairEdit : file));
-                setToastMessage(`File has been edited.`);
+                if (!fileInMaterial) {
+                    const fileInfo = object.fileNameAndIndex as  {fileName: string , index: number};
+                    console.log(fileInfo)
+                    if(fileInfo.fileName && fileInfo.index)
+                    {
+                        var fileToSend = filesToSend[fileInfo.index];
+                        const updatedFile = new File([fileToSend.file], fileInfo.fileName, { type: fileToSend.file.type });
+                        setFilesToSend((prevFiles) => prevFiles.map((_, i) => i === fileInfo.index ? { ...prevFiles[i], file: updatedFile } : prevFiles[i]));
+                    }
+                }
+                else{
+                    const filePairEdit = object.filePair as FilePair;
+                    setFiles((prevFiles) => prevFiles.map((file) => file.fileDto.id === filePairEdit.fileDto.id ? filePairEdit : file));
+                    setToastMessage(`File has been edited.`);
+                }
+                break;
+            case OnActionEnum.UploadFiles:
+                const uploadedFiles = object as File[];
+                console.log(uploadedFiles)
+                const uploadedFilesPairs = uploadedFiles.map((file) => ({
+                    file,
+                    uploadedAt: new Date(),
+                    progress: 0,
+                    isUploading: false,
+                }));
+                setFilesToSend((prevFiles) => [...prevFiles, ...uploadedFilesPairs]);
                 break;
             default:
                 console.warn(`Unhandled action: ${action}`);
@@ -327,8 +429,82 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         }
     }
 
+    const renderFileItem = (item: typeof filesToSend[0], index: number) => (
+        <li className="list-group-item striped" key={index + files.length}>
+            <Row>
+                <Col className='text-start d-flex align-items-center' xs={8}>
+                    {enableRemoveFile && (
+                        <input 
+                            type="checkbox" 
+                            className="form-check-input me-2"
+                            onChange={() => handleCheckboxChangeFileNotInMaterial(index)}
+                            checked={selectedFilesNotInMaterials.includes(index)}
+                            disabled={item.isUploading}
+                        />
+                    )}
+                    <span 
+                        onClick={() => !item.isUploading && onLeftClickFile(item.file, item.uploadedAt, index)} 
+                        style={{cursor: item.isUploading ? 'default' : 'pointer'}} 
+                        className='flex-grow-1 d-flex align-items-center'
+                    >
+                        {item.isUploading ? (
+                            <>
+                                <progress value={item.progress} max="100" style={{width: '50%'}} />
+                                <span className="ms-2">{item.progress}%</span>
+                            </>
+                        ) : (
+                            shortedFileName(item.file.name ?? t('file-not-found'))
+                        )}
+                    </span>
+                </Col>
+                <Col className="text-end">
+                    {item.uploadedAt.toLocaleString("pl-PL", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    })}
+                </Col>
+            </Row>
+        </li>
+    );
+
+    const renderFileIcon = (item: typeof filesToSend[0], index: number) => (
+        <span className="striped" key={index + files.length}>
+            <div className="d-flex flex-column align-items-center">
+                <FileIcon 
+                    onClick={() => !item.isUploading && onLeftClickFile(item.file, item.uploadedAt, index)}
+                    fileName={item.isUploading ? `${item.progress}%` : item.file.name}
+                    fileType={item.file.type}
+                    fileDate={item.uploadedAt}
+                    fileContent={item.file}
+                />
+                {item.isUploading && (
+                    <progress 
+                        value={item.progress} 
+                        max="100" 
+                        style={{width: '80px', marginTop: '5px'}}
+                    />
+                )}
+            </div>
+        </span>
+    );
+
     return (
         <>
+        {showAlert && (
+            <div className='alertBox'>
+                <Alert className='alert' variant='danger'>
+                    {alertMessage}
+                </Alert>
+            </div>
+        )}
+        {loading ? (
+            <div className='loaderBox'>
+                <Loading/>
+            </div>
+        ): (<>
           {show && (
             <div> 
                 <div className='d-flex align-items-center'>
@@ -342,12 +518,11 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                         {enableEdittingMaterialName ? (
                             <>
                                 <InputGroup className="mb-3">
-                                    <InputGroup.Text >Content name</InputGroup.Text>
+                                    <InputGroup.Text >{t('content-name')}</InputGroup.Text>
                                     <Form.Control
                                         value={materialName}
                                         onChange={(e) => setMaterialName(e.target.value)}
-                                        placeholder="ex. My lovely content"
-                                        aria-label="Content name"
+                                        aria-label={t('content-name')}
                                     />
                                 </InputGroup>
 
@@ -367,9 +542,27 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 
                         <Row className='mb-3'>
                             <Col className='d-flex justify-content-start gap-2 '>
-                                {enableAddingFile && (<Button variant="outline-secondary" onClick={() => onClickUploadModal()}><i className="bi bi-file-earmark-arrow-up"></i></Button>)}
-                                {enableDownloadFile && ( <Button variant="outline-secondary" onClick={() => onClickDownloadAll()}><i className="bi bi-file-earmark-arrow-down"></i></Button>)}
-                                {enableRemoveFile && (<Button variant="outline-secondary" onClick={() =>onClickDelete() }><i className="bi bi-file-earmark-x" ></i></Button>)}
+                                {enableAddingFile && (materialId ?? 0) > 0 && (
+                                    <TooltipButton 
+                                        tooltipText={t('upload-file-s')} 
+                                        onClick={() => onClickUploadModal()}>
+                                        <i className="bi bi-file-earmark-arrow-up"></i>
+                                    </TooltipButton>
+                                )}
+                                {enableDownloadFile && ( 
+                                    <TooltipButton 
+                                        tooltipText={t('download-file-s')} 
+                                        onClick={() => onClickDownloadAll()}>
+                                        <i className="bi bi-file-earmark-arrow-down"></i>
+                                    </TooltipButton>
+                                )}
+                                {enableRemoveFile && (
+                                    <TooltipButton 
+                                        tooltipText={t('remove-file-s')} 
+                                        onClick={() => onClickDelete()}>
+                                        <i className="bi bi-file-earmark-x" ></i>
+                                    </TooltipButton>
+                                )}
                             </Col>
                             <Col className='d-flex justify-content-end'>
                                 <ToggleButtonGroup 
@@ -380,6 +573,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                     style={{display: 'inline'}}
                                     onChange={handleFileDisplayChange}
                                 >
+                                    
                                     <ToggleButton variant="outline-secondary" id={`tbg-radio-1-${Math.random()}`} value={1}>
                                         <i className="bi bi-list-ul"></i>                                        
                                     </ToggleButton>
@@ -398,7 +592,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 
                                     <div className='d-flex flex-column align-items-center'>
                                         <i className={`bi bi-box-arrow-in-down ${styles.uploadIcon} ${isDragActive ? `text-warning ${styles.uploadIconOnDrop}` : ''}`}></i>
-                                        <p className="mt-2 text-body-tertiary fs-6 opacity-50 p-0 m-0">Drag and drop file here</p>
+                                        <p className="mt-2 text-body-tertiary fs-6 opacity-50 p-0 m-0">{t('drag-and-drop-file-here')}</p>
                                     </div>
                                 </div>
                             </div>
@@ -423,11 +617,11 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                                             checked={selectedFilesInMaterials.includes(item.fileDto.id)}>
                                                         </input>
                                                     )}
-                                                    <span onClick={() => onLeftClickFile(item)} style={{cursor: 'pointer'}} className='flex-grow-1'>
-                                                        {shortedFileName(item.fileDto.name ?? 'File not found')}
+                                                    <span onClick={() => onLeftClickFilePair(item)} style={{cursor: 'pointer'}} className='flex-grow-1'>
+                                                        {shortedFileName(item.fileDto.name ?? t('file-not-found'))}
                                                     </span>
                                                 </Col>
-                                                <Col className="text-end" onClick={() => onLeftClickFile(item)} style={{cursor: 'pointer'}}>
+                                                <Col className="text-end" onClick={() => onLeftClickFilePair(item)} style={{cursor: 'pointer'}}>
                                                 {item.fileDto.dateOfUpload
                                                 ? new Date(item.fileDto.dateOfUpload).toLocaleString("pl-PL", {
                                                     year: "numeric",
@@ -436,81 +630,46 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                                     hour: "2-digit",
                                                     minute: "2-digit",
                                                     })
-                                                    : "Brak daty"}
+                                                    : t('brak-daty')}
                                                 </Col>
                                             </Row>
                                         </li>
                                     ))}
-                                    {filesToSend.map((item, index) => (
-                                        <li className="list-group-item" key={index+files.length}>
-                                            <Row>
-                                                <Col className='text-start'>
-                                                {enableRemoveFile &&  (
-                                                    <input 
-                                                        type="checkbox" 
-                                                        className="form-check-input me-2" 
-                                                        onChange={() => handleCheckboxChangeFileNotInMaterial(index)}
-                                                        checked={selectedFilesNotInMaterials.includes(index)}>
-                                                    </input>
-                                                    )}
-                                                    {shortedFileName(item.file.name ?? 'File not found')}
-                                                </Col>
-                                                <Col className="text-end">
-                                                {item.uploadedAt
-                                                ? new Date(item.uploadedAt).toLocaleString("pl-PL", {
-                                                    year: "numeric",
-                                                    month: "long",
-                                                    day: "numeric",
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    })
-                                                    : "Brak daty"}
-                                                </Col>                                            
-                                            </Row>
-                                        </li>
-                                    ))}
+                                   {filesToSend.map((item, index) => renderFileItem(item, index))}
                                 </ul>
                             </div>
                         ) : (
                             <div className='d-flex flex-wrap gap-2' onDragOver={(e) => onDragOver(e)}>
                                 {files.map((item, index) => (
                                     <FileIcon 
-                                        onClick={() => {onLeftClickFile(item)}}
+                                        onClick={() => {onLeftClickFilePair(item)}}
                                         key={index} 
-                                        fileName={item.fileDto.name ?? 'File not found'}  
-                                        fileType={item.fileDto.type ?? 'errorType'}
+                                        fileName={item.fileDto.name ?? t('file-not-found')}  
+                                        fileType={item.fileDto.type ?? t('undefined')}
                                         fileDate={item.fileDto.dateOfUpload}
                                         fileContent={item.file}
                                         >
                                     </FileIcon>
                                 ))}
-                                {filesToSend.map((item, index) => (
-                                    <FileIcon 
-                                        key={index + files.length} 
-                                        fileName={item.file.name} 
-                                        fileType={item.file.type} 
-                                        fileDate={item.uploadedAt}
-                                        fileContent={item.file}>
-                                    </FileIcon>
-                                ))}
+                                {filesToSend.map((item, index) => renderFileIcon(item, index))}
                             </div>
                         )}
                         </>
                         }
                         {(enableAddingFile && enableRemoveFile && enableEdittingMaterialName) && (
                             <div className="d-flex gap-2 mb-2">
-                                <Button variant="success" type="button" className='mt-3'  onClick={() => onClickSave()}>{material?.id === undefined ? "Create" : "Save Material"}</Button>
-                                <Button variant="secondary" type="reset" onClick={() => onClickCancel()} className='mt-3'>Cancel</Button>
+                                <Button variant="success" type="button" className='mt-3'  onClick={() => onClickSave()}>{material?.id === undefined ? t('create') : t('save-material')}</Button>
+                                <Button variant="secondary" type="reset" onClick={() => onClickCancel()} className='mt-3'>{t('cancel')}</Button>
                             </div>
                         )}
                         <hr />
                     </div>
                 )}
             </div>)}
-
+        </>)}
             <ConfirmModal 
                 show={showConfirmModal} 
-                title="Material operation confirmation"
+                title={t('material-operation-confirmation')}
                 message={confirmMessage}
                 onConfirm={handleDelete} 
                 onCancel={() => setShowConfirmModal(false)} 
@@ -518,7 +677,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 
             <NotificationToast 
                 show={showToast} 
-                title={"Material operation info"} 
+                title={t('material-operation-info')} 
                 message={toastMessage} 
                 color={"Red"} 
                 onClose={() => setShowToast(false)} />
@@ -530,8 +689,9 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 filePair={selectedFilePair}
                 enableAddToMaterial={false}
                 enableRemoveFromMaterial={enableRemoveFile}
-                enableEdit={true}
+                enableEdit={enableEdittingFile}
                 onAction={onAction}
+                isFileInMaterial={isFileInMaterial}
             />
             {enableAddingFile &&
                 <UploadFileModal 

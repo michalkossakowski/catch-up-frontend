@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Col, ListGroup, Modal, Row, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
+import { Alert, Button, Col, Form, InputGroup, ListGroup, Modal, Pagination, Row, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
 import { useAuth } from "../../Provider/authProvider";
 import { FileDto } from "../../dtos/FileDto";
 import fileService from "../../services/fileService";
@@ -7,6 +7,8 @@ import { FilePair } from "../../interfaces/FilePair";
 import FileIcon from "./FileIcon";
 import { OnActionEnum } from "../../Enums/OnActionEnum";
 import FileDetailsModal from "./FileDetailsModal";
+import Loading from "../Loading/Loading";
+import { useTranslation } from "react-i18next";
 
 interface UploadFileModalProps {
     usedFilesIds?: number[];
@@ -23,6 +25,8 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
     materialId
     
 }) => {
+    const { t } = useTranslation();
+
     const [fileDisplayMode, setFileDisplayMode] = useState(1); // 1 - Lista, 2 - Siatka    
     const [activeTab, setActiveTab] = useState("yourFiles");
 
@@ -34,15 +38,61 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
     const [showFileDetailsModal, setShowFileDetailsModal] = useState(false);
     const [selectedFilePair, setSelectedFilePair] = useState<FilePair | undefined>(undefined);
 
+    const [filesToUpload, setFilesToUpload] = useState<File[]>([]);
+
+    const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [totalItems, setTotalItems] = useState(0);
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+
+    const [searchText, setSearchText] = useState('');
+    const [activeSearchText, setActiveSearchText] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
     const isMediaFile = (type: string) => {
         return type.startsWith("image/") || type.startsWith("video/");
     };
-
+    
     useEffect(() => {
         if (userId) {
-            getAllOwnedFiles(userId);
+            if (isSearching){
+                getAllOwnedFilesByQuestion(userId);
+            }
+            else
+            {
+                getAllOwnedFiles(userId);
+            }
         }
-    }, [userId]);
+    }, [userId, currentPage, itemsPerPage]);
+
+    const getAllOwnedFiles = async (userId: string) => {
+        setLoading(true);
+        await fileService.getAllOwnedFilesPagination(userId, currentPage, itemsPerPage).then((data) => 
+        {
+            setFiles(data.files.map(fileDto => ({file: undefined, fileDto})));
+            setTotalItems(data.totalCount);
+        })
+        .catch((error) => {
+            setShowAlert(true);
+            setAlertMessage('Error: ' + error.message);
+        })
+        .finally(() => setLoading(false));
+    }
+    const getAllOwnedFilesByQuestion = async (userId: string) => {
+        setLoading(true);
+        await fileService.findByQuestion(userId ?? "", activeSearchText, currentPage, itemsPerPage).then((data) => {
+            setFiles(data.files.map(fileDto => ({file: undefined, fileDto})));
+            setTotalItems(data.totalCount);
+        })
+        .catch((error) => {
+            setShowAlert(true);
+            setAlertMessage('Error: ' + error.message);
+        })
+        .finally(() => setLoading(false));
+    }
 
     useEffect(() => {
         if (files.length > 0) {
@@ -61,8 +111,25 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
 
     const handleClose = () => {
         setShow(false) 
+        setFilesToUpload([]);
         onClose()
     };
+
+    const search = () => {
+        if (searchText.length > 0) {
+            setIsSearching(true);
+            setActiveSearchText(searchText);
+            fileService.findByQuestion(userId ?? "", searchText, currentPage, itemsPerPage).then((data) => {
+                setFiles(data.files.map(fileDto => ({file: undefined, fileDto})));
+                setTotalItems(data.totalCount);
+                setCurrentPage(1);
+            })
+        } else {
+            setIsSearching(false);
+            getAllOwnedFiles(userId ?? "");
+            setFilteredFiles(files);
+        }
+    }
 
     const shouldFetchFileData = async () => {
         const filesToFetch = files.filter(
@@ -96,15 +163,6 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
         setFileDisplayMode(value);
     };
 
-    const getAllOwnedFiles = async (userId: string) => {
-        await fileService.getAllOwnedFiles(userId).then((data) => 
-        {
-            setFiles(data.map(fileDto => ({file: undefined, fileDto})));
-        }).catch((error) => {    
-
-        })
-    }
-
     const getFileData = async (fileDto: FileDto): Promise<File | null> => {
         try {
             const data = await fileService.downloadFile(fileDto.id);
@@ -123,11 +181,71 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
         setFilteredFiles(files.filter((item) => !usedFilesIds?.includes(item.fileDto.id)));
     }
 
+
+    const uploadFiles =  () => {
+        onAction(OnActionEnum.UploadFiles, filesToUpload);
+        handleClose();        
+    }
+
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
+
+    const renderPaginationItems =  () => {
+        const items = [];
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+        if (endPage - startPage + 1 < maxVisiblePages) {
+               startPage = Math.max(1, endPage - maxVisiblePages + 1);
+           }
+   
+           if (startPage > 1) {
+               items.push(
+                   <Pagination.Item key={1} onClick={() => handlePageChange(1)}>
+                       1
+                   </Pagination.Item>
+               );
+               if (startPage > 2) {
+                   items.push(<Pagination.Ellipsis key="start-ellipsis" disabled />);
+               }
+           }
+   
+           for (let i = startPage; i <= endPage; i++) {
+               items.push(
+                   <Pagination.Item
+                       key={i}
+                       active={i === currentPage}
+                       onClick={() => handlePageChange(i)}
+                   >
+                       {i}
+                   </Pagination.Item>
+               );
+           }
+   
+           if (endPage < totalPages) {
+               if (endPage < totalPages - 1) {
+                   items.push(<Pagination.Ellipsis key="end-ellipsis" disabled />);
+               }
+               items.push(
+                   <Pagination.Item key={totalPages} onClick={() => handlePageChange(totalPages)}>
+                       {totalPages}
+                   </Pagination.Item>
+               );
+           }
+   
+           return items;
+       };
+
     return (
         <>
         <Modal show={show} onHide={handleClose} animation={true} size="xl" centered>
           <Modal.Header closeButton closeVariant="white">
-            <Modal.Title>Upload Files</Modal.Title>
+            <Modal.Title>{t('upload-files')}</Modal.Title>
           </Modal.Header>
           <Modal.Body className="p-0">
             <Row className="m-0 p-0">
@@ -135,34 +253,67 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                     <div className="mt-2 mb-2">
                     <ListGroup className="border-0 text-start" >
                         <ListGroup.Item action active={activeTab === "yourFiles"} className="border-0" onClick={() => setActiveTab("yourFiles")}>
-                            Your files
-                        </ListGroup.Item>
+                            {t('your-files')} </ListGroup.Item>
                         <ListGroup.Item action active={activeTab === "uploadFile"} className="border-0" onClick={() => setActiveTab("uploadFile")}>
-                            Upload file
+                            {t('upload-files')} 
                         </ListGroup.Item>
                     </ListGroup>
                     </div>
                 </Col>
                 <Col xs="9">
+
+                {showAlert && (
+                    <div className='alertBox'>
+                        <Alert className='alert' variant='danger'>
+                            {alertMessage}
+                        </Alert>
+                    </div>
+                )}
+                {loading ? (
+                    <div className='loaderBox'>
+                        <Loading/>
+                    </div>
+                ): (<>
                 {activeTab === "yourFiles" ? (
                     <>
-                        <div className="mt-2 mb-2 d-flex justify-content-end fileUploadBackground w-100">
-                            <ToggleButtonGroup 
-                                type="radio" 
-                                name={`fileDisplayOptions-${Math.random()}}`}
-                                defaultValue={1} 
-                                className='gap-0 mt-0' 
-                                style={{display: 'inline'}}
-                                onChange={handleFileDisplayChange}
-                            >
-                                <ToggleButton variant="outline-secondary" id={`tbg-radio-1-${Math.random()}`} value={1}>
-                                    <i className="bi bi-list-ul"></i>                                        
-                                </ToggleButton>
-                                <ToggleButton variant="outline-secondary" id={`tbg-radio-2-${Math.random()}`} value={2}>
-                                    <i className="bi bi-grid-3x3"></i>                                        
-                                </ToggleButton>
-                            </ToggleButtonGroup>
-                        </div>
+                        <Row className="mt-2 mb-2">
+                            <Col xs={9} className="d-flex align-items-center mb-3">
+                                <InputGroup onKeyDown={(e) => {if (e.key === 'Enter') search()}}>
+                                    <InputGroup.Text><i className="bi bi-search"></i></InputGroup.Text>
+                                    <Form.Control placeholder={t('search-file-by-names')} value={searchText} onChange={(e) => setSearchText(e.target.value)}/>
+                                    <Button variant="success" onClick={() => search()}>
+                                        {t('search')} 
+                                    </Button>
+                                </InputGroup>
+                                {isSearching && (                                
+                                    <Button className="ms-3" style={{ whiteSpace: "nowrap" }}
+                                        onClick={() => {
+                                            setSearchText('');
+                                            setIsSearching(false);
+                                            setActiveSearchText('');
+                                            getAllOwnedFiles(userId ?? "");
+                                        }}
+                                    >{t('cancel-search')}</Button>
+                                )}
+                            </Col>
+                            <Col className="d-flex justify-content-end">
+                                <ToggleButtonGroup 
+                                    type="radio" 
+                                    name={`fileDisplayOptions-${Math.random()}}`}
+                                    defaultValue={fileDisplayMode} 
+                                    className='gap-0 mt-0' 
+                                    style={{display: 'inline'}}
+                                    onChange={handleFileDisplayChange}
+                                >
+                                    <ToggleButton variant="outline-secondary" id={`tbg-radio-1-${Math.random()}`} value={1}>
+                                        <i className="bi bi-list-ul"></i>                                        
+                                    </ToggleButton>
+                                    <ToggleButton variant="outline-secondary" id={`tbg-radio-2-${Math.random()}`} value={2}>
+                                        <i className="bi bi-grid-3x3"></i>                                        
+                                    </ToggleButton>
+                                </ToggleButtonGroup>
+                            </Col>
+                        </Row>
                         {fileDisplayMode === 1 ? (
                             <div>
                                 <ul className="list-group mb-2">
@@ -170,7 +321,7 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                                         <li className="list-group-item" key={index}>
                                             <Row onClick={() => {onLeftClickFile(item)}} style={{cursor: 'pointer'}}>
                                                 <Col className='text-start' xs={8}>
-                                                    {shortedFileName(item.fileDto.name ?? 'File not found')}
+                                                    {shortedFileName(item.fileDto.name ?? t('file-not-found'))}
                                                 </Col>
                                                 <Col className="text-end">
                                                 {item.fileDto.dateOfUpload
@@ -181,7 +332,7 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                                                     hour: "2-digit",
                                                     minute: "2-digit",
                                                     })
-                                                    : "Brak daty"}
+                                                    : t('brak-daty')}
                                                 </Col>
                                             </Row>
                                         </li>
@@ -194,7 +345,7 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                                     <FileIcon 
                                         onClick={() => {onLeftClickFile(item)}}
                                         key={index} 
-                                        fileName={shortedFileName(item.fileDto.name ?? 'File not found', 16)}  
+                                        fileName={shortedFileName(item.fileDto.name ?? t('file-not-found'), 16)}  
                                         fileType={item.fileDto.type ?? 'errorType'}
                                         fileDate={item.fileDto.dateOfUpload}
                                         fileContent={item.file}
@@ -205,16 +356,57 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                         )}
                     </>
                     ) : (
-                        <div className="mt-2 mb-2">
-                            <input type="file" multiple></input>
+                        <div className="input-group mb-3 mt-4 d-flex justify-content-center">
+                            <input 
+                                type="file" 
+                                className="form-control" 
+                                id="inputFileUpload" 
+                                aria-describedby="inputFileUpload" 
+                                aria-label={t('upload-files')}
+                                multiple={true}
+                                onChange={(e) => { setFilesToUpload(Array.from(e.target.files ?? [])) }}
+                            />
+                            <button 
+                                className="btn btn-success" 
+                                type="button" 
+                                id="inputFileUpload" 
+                                disabled={filesToUpload.length <= 0}  
+                                onClick={() => {uploadFiles()}}>
+                                    {t('upload')} 
+                            </button>
+                            <button 
+                                className="btn btn-danger" 
+                                type="button" 
+                                id="inputFileUpload" 
+                                disabled={filesToUpload.length <= 0}  
+                                onClick={() => {setFilesToUpload([])}}>
+                                    {t('cancel')} 
+                                </button>
                         </div>
                     )}
+                    </>
+                )}
                 </Col>
             </Row>
           </Modal.Body>
           <Modal.Footer>
+            {totalPages > 1 &&  activeTab === "yourFiles" && (
+                            <div className="d-flex justify-content-center align-items-center me-4">
+                                <Pagination className="mb-0">
+                                    <Pagination.Prev
+                                        onClick={() => handlePageChange(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                    />
+                                    {renderPaginationItems()}
+                                    <Pagination.Next
+                                        onClick={() => handlePageChange(currentPage + 1)}
+                                        disabled={currentPage === totalPages}
+                                    />
+                                </Pagination>
+                            </div>
+                        )}
             <Button variant="secondary" onClick={handleClose}>
-              Close
+              {t('close')} 
             </Button>
           </Modal.Footer>
         </Modal>
