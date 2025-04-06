@@ -18,7 +18,7 @@ const FeedbackItem: React.FC<FeedbackItemProps> = ({
     const [isResolved, setIsResolved] = useState(feedback.isResolved);
     const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
 
-    const handleDelete = (id: number) => {
+    const handleDelete = () => {
         onDeleteClick(feedback);
     };
 
