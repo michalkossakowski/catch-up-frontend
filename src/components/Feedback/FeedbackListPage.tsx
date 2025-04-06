@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../Provider/authProvider';
-import { getFeedbacks, deleteFeedback } from '../../services/feedbackService';
+import { getFeedbacks, deleteFeedback, getTitleFeedbacks } from '../../services/feedbackService';
 import { FeedbackDto } from '../../dtos/FeedbackDto';
 import NotificationToast from '../Toast/NotificationToast';
 import Loading from '../Loading/Loading';
 import { getRole } from '../../services/userService';
 import FeedbackItem from './FeedbackItem';
 import ConfirmModal from '../Modal/ConfirmModal';
-import { Form, Row } from 'react-bootstrap';
+import { Button, Form, InputGroup, Row } from 'react-bootstrap';
 import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 
 
@@ -26,7 +26,8 @@ const FeedbackListPage: React.FC = () => {
     const [selectedResourceTypes, setSelectedResourceTypes] = useState<ResourceTypeEnum[]>([]);
     const [sortColumn, setSortColumn] = useState<keyof FeedbackDto | null>(null);
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-
+    const [searchTitle, setSearchTitle] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
     useEffect(() => {
         const loadFeedbacks = async () => {
             if (!user) return;
@@ -87,6 +88,30 @@ const FeedbackListPage: React.FC = () => {
         setFeedbacks(filtered);
     }, [selectedResolved, selectedResourceTypes, originalFeedbacks, sortColumn, sortOrder]);
 
+    const searchFeedback = async () => {
+        if (!user) return;
+    
+        setIsSearching(true);
+    
+        const userRoleResponse = await getRole(user.id ?? 'defaultId');
+        setIsAdmin(userRoleResponse !== 'Newbie');
+
+        if (searchTitle.length === 0) {
+            setOriginalFeedbacks(await getFeedbacks(user.id ?? 'defaultId', userRoleResponse !== 'Newbie'));
+            setIsSearching(false);
+            return;
+        }
+    
+        const filteredFeedbacks = await getTitleFeedbacks(
+            searchTitle,
+            user.id ?? 'defaultId',
+            userRoleResponse !== 'Newbie'
+        );
+    
+        setOriginalFeedbacks(filteredFeedbacks);
+        setIsSearching(false);
+    };
+
     const toggleResourceType = (type: ResourceTypeEnum) => {
         setSelectedResourceTypes(prev =>
             prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
@@ -115,7 +140,10 @@ const FeedbackListPage: React.FC = () => {
     
         try {
             await deleteFeedback(feedbackToDelete.id);
-            setFeedbacks(feedbacks.filter((feedback) => feedback.id !== feedbackToDelete.id));
+            
+            setFeedbacks(prev => prev.filter(feedback => feedback.id !== feedbackToDelete.id));
+            setOriginalFeedbacks(prev => prev.filter(feedback => feedback.id !== feedbackToDelete.id));
+    
             setToastMessage('Feedback successfully deleted');
             setToastColor('green');
             setShowToast(true);
@@ -144,8 +172,21 @@ const FeedbackListPage: React.FC = () => {
         <>
             <div className="container">
                 <h3 className="text-center mt-3">Feedbacks</h3>
+                <div className='searchBox'>
+                    <InputGroup className="inputGroup mw-100">
+                        <Form.Control
+                            placeholder="Enter searching title..."
+                            value={searchTitle} 
+                            onChange={(e) => setSearchTitle(e.target.value)} 
+                            onKeyDown={(e) => e.key === 'Enter' && searchFeedback()}
+                        />
+                        <Button variant="primary" id="searchButton" onClick={searchFeedback}> 
+                            <i className="bi bi-search">&nbsp;</i>Search 
+                        </Button>
+                    </InputGroup>
+                </div>
                 <Row className="mb-3">
-                    <div className="col">
+                    <div className="col-3">
                         <h4 className="text-start mt-3">Filters</h4>
                         <hr></hr>
                         <Form.Group as={Row} className="text-start">
@@ -186,8 +227,10 @@ const FeedbackListPage: React.FC = () => {
                         </Form.Group>
                         <hr></hr>
                     </div>
-                    <div className="col">
-                        {!feedbacks.length ? (
+                    <div className="col-9">
+                        {isSearching ? (
+                            <Loading />
+                        ) : !feedbacks.length ? (
                             <div className="alert alert-secondary text-center">No feedbacks found</div>
                         ) : (
                             <table className="table table-striped mt-3">
@@ -197,18 +240,20 @@ const FeedbackListPage: React.FC = () => {
                                             Title 
                                             <i className="bi bi-arrow-down-up ms-2"></i>
                                         </th>
-                                        <th>Description</th>
                                         <th onClick={() => handleSort("userName")} style={{ cursor: "pointer" }}>
-                                        {isAdmin ? 'Sender' : 'Receiver'} <i className="bi bi-arrow-down-up ms-2"></i>
+                                            {isAdmin ? 'Sender' : 'Receiver'} 
+                                            <i className="bi bi-arrow-down-up ms-2"></i>
                                         </th>
                                         <th onClick={() => handleSort("createdDate")} style={{ cursor: "pointer" }}>
-                                            Date <i className="bi bi-arrow-down-up ms-2"></i>
+                                            Date 
+                                            <i className="bi bi-arrow-down-up ms-2"></i>
                                         </th>
                                         <th onClick={() => handleSort("resourceType")} style={{ cursor: "pointer" }}>
-                                            Resource Type <i className="bi bi-arrow-down-up ms-2"></i>
+                                            Resource Type 
+                                            <i className="bi bi-arrow-down-up ms-2"></i>
                                         </th>
-                                        <th>Resource Title</th>
-                                        <th colSpan={2}>Actions</th>
+                                        <th>Resolved</th>
+                                        <th>Detail</th>
                                     </tr>
                                 </thead>
                                 <tbody>

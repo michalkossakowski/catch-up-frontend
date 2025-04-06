@@ -24,6 +24,19 @@ export const getFeedbacks = async (userId: string, isAdmin: boolean): Promise<Fe
     }
 };
 
+export const getTitleFeedbacks = async (searchingTitle: string, userId: string, isAdmin: boolean): Promise<FeedbackDto[]> => {
+    try {
+        const endpoint = isAdmin ? 
+            `/feedback/GetByReceiverTitle/${searchingTitle}/${userId}` : 
+            `/feedback/GetBySenderTitle/${searchingTitle}/${userId}`;
+        const response = await axiosInstance.get<FeedbackDto[]>(endpoint);
+        return response.data;
+    } catch (error: any) {
+        handleError('getTitleFeedbacks', error);
+        throw error;
+    }
+};
+
 export const deleteFeedback = async (id: number): Promise<any> => {
     try {
         const response = await axiosInstance.delete(`/feedback/delete/${id}`);
