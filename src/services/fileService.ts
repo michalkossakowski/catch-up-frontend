@@ -95,7 +95,7 @@ const fileService =
     getAllOwnedFiles: async(userId: string): Promise<FileDto[]> => {
         try
         {
-            const response = await axiosInstance.get<FileDto[]>(`/File/GetAllFiles/${userId}`)
+            const response = await axiosInstance.get<FileDto[]>(`/File/GetAllUserFiles/${userId}`)
             return response.data
         }
         catch(error)
@@ -108,7 +108,7 @@ const fileService =
     getAllOwnedFilesPagination: async(userId: string, page: number, pageSize: number): Promise<{files: FileDto[], totalCount: number}> => {
         try
         {
-            const response = await axiosInstance.get<{files: FileDto[], totalCount: number}>(`/File/GetAllFiles/${userId}/${page}/${pageSize}`)
+            const response = await axiosInstance.get<{files: FileDto[], totalCount: number}>(`/File/GetAllUserFiles/${userId}/${page}/${pageSize}`)
             return response.data
         }
         catch(error)
@@ -130,7 +130,7 @@ const fileService =
 
     findByQuestion: async (userId: string, question: string, page: number, pageSize: number): Promise<{files: FileDto[], totalCount: number}> => {
         try {
-            const response = await axiosInstance.get<{files: FileDto[], totalCount: number}>(`/File/GetByQuestion/${userId}/${question}/${page}/${pageSize}`);
+            const response = await axiosInstance.get<{files: FileDto[], totalCount: number}>(`/File/GetBySearchTag/${userId}/${question}/${page}/${pageSize}`);
             return response.data;
         } catch (error) {
             console.error('File get error:', error);

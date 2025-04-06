@@ -166,17 +166,17 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
       <>
       <Modal show={show} onHide={handleClose} animation={false}>
         <Modal.Header closeButton closeVariant="white">
-          <Modal.Title className="me-3">$t('file-details') {filePair?.fileDto.name}</Modal.Title>
+          <Modal.Title className="me-3">{t('file-details')} {filePair?.fileDto.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Stack direction="horizontal" gap={2} className="mb-3">
-            {enableDownload && <Button variant="secondary" onClick={() => onDownload()}>$t('download')</Button>}
-            {enableRemoveFromMaterial && <Button variant="secondary" onClick = {() => handleRemoveFromMaterial() }>$t('remove-from-material')</Button>}
-            {enableAddToMaterial && <Button variant="secondary" onClick={() => onAddToMaterial()}>$t('add-to-material')</Button>}
-            {enableDelete && <Button variant="danger">$t('delete')</Button>}
+            {enableDownload && <Button variant="secondary" onClick={() => onDownload()}>{t('download')}</Button>}
+            {enableRemoveFromMaterial && <Button variant="secondary" onClick = {() => handleRemoveFromMaterial() }>{t('remove-from-material')}</Button>}
+            {enableAddToMaterial && <Button variant="secondary" onClick={() => onAddToMaterial()}>{t('add-to-material')}</Button>}
+            {enableDelete && <Button variant="danger">{t('delete')}</Button>}
           </Stack>
           <Row className="text-start mb-2">
-            <Col xs="3"><label>$t('name')</label></Col>
+            <Col xs="3"><label>{t('name')}</label></Col>
             <Col>
               {enableEdit ?(
                 <input 
@@ -191,7 +191,7 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
             </Col>
           </Row>
           <Row className="text-start mb-2">
-            <Col xs="3">$t('owner')</Col>
+            <Col xs="3">{t('owner')}</Col>
             <Col>{owner?.name + " " +owner?.surname}</Col>
           </Row>
           <hr />
@@ -215,7 +215,7 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
                   className={`${styles.videoThumbnail} rounded shadow-sm`}
                   style={{ width: "150px", height: "150px", objectFit: "cover" }}
                   > 
-                    $t('your-browser-does-not-support-the-video-element')  
+                    {t('your-browser-does-not-support-the-video-element')}  
                     <source src={URL.createObjectURL(filePair?.file)} type={filePair.fileDto.type} />
                 </video>
               ) : 
@@ -223,8 +223,8 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
               }
               </Col>
               <Col className="text-start">
-                <p>$t('size') {getFileSize(filePair?.fileDto.sizeInBytes)}</p>
-                <p>$t('file-type') {filePair?.fileDto.type}</p>
+                <p>{t('size')} {getFileSize(filePair?.fileDto.sizeInBytes)}</p>
+                <p>{t('file-type')} {filePair?.fileDto.type}</p>
                 <p>{filePair?.fileDto.dateOfUpload
                   ? new Date(filePair?.fileDto.dateOfUpload).toLocaleString("pl-PL", {
                       year: "numeric",
@@ -242,9 +242,9 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
         <Modal.Footer>
           <Stack direction="horizontal" gap={2} className="mb-3">
             {enableEdit && 
-              <Button variant="secondary" onClick={handleSave}>t('save-changes')</Button>
+              <Button variant="secondary" onClick={handleSave}>{t('save-changes')}</Button>
             }
-            <Button variant="primary" onClick={handleClose}> t('close') </Button>
+            <Button variant="primary" onClick={handleClose}>{t('close')}</Button>
           </Stack>
         </Modal.Footer>
       </Modal>

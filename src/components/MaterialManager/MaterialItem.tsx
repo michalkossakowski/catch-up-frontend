@@ -542,7 +542,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 
                         <Row className='mb-3'>
                             <Col className='d-flex justify-content-start gap-2 '>
-                                {enableAddingFile && (
+                                {enableAddingFile && (materialId ?? 0) > 0 && (
                                     <TooltipButton 
                                         tooltipText={t('upload-file-s')} 
                                         onClick={() => onClickUploadModal()}>
@@ -592,7 +592,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 
                                     <div className='d-flex flex-column align-items-center'>
                                         <i className={`bi bi-box-arrow-in-down ${styles.uploadIcon} ${isDragActive ? `text-warning ${styles.uploadIconOnDrop}` : ''}`}></i>
-                                        <p className="mt-2 text-body-tertiary fs-6 opacity-50 p-0 m-0">$t('drag-and-drop-file-here')</p>
+                                        <p className="mt-2 text-body-tertiary fs-6 opacity-50 p-0 m-0">{t('drag-and-drop-file-here')}</p>
                                     </div>
                                 </div>
                             </div>
