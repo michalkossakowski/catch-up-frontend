@@ -21,7 +21,7 @@ const localizer = dateFnsLocalizer({
 
 interface Event {
   title: string;
-  description: string; // Dodano pole opisu
+  description: string; 
   start: Date;
   end: Date;
 }

@@ -47,12 +47,6 @@ const UnassignedNewbiesList: React.FC = () => {
       <h2>Unassigned Newbies</h2>
       <h3>Count: {newbies.length}</h3>
       <button
-        className="btn btn-primary mb-3"
-        onClick={() => navigate("/employesassignment")}
-      >
-        Go to Assignments
-      </button>
-      <button
         className="btn btn-secondary mb-3"
         onClick={() => setIsTableVisible(!isTableVisible)}
       >
