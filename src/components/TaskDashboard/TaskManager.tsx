@@ -6,21 +6,20 @@ import { Button } from "react-bootstrap";
 import { useAuth } from "../../Provider/authProvider";
 import { AppDispatch, RootState } from "../../store/store.ts";
 import { CategoryDto } from "../../dtos/CategoryDto.ts";
-import { MaterialDto } from "../../dtos/MaterialDto.ts";
 import { FullTaskDto } from "../../dtos/FullTaskDto";
 import { UserAssignCountDto } from "../../dtos/UserAssignCountDto";
 import { TaskContentDto } from "../../dtos/TaskContentDto.ts";
 import { fetchTasks, updateTaskLocally, deleteTaskLocally } from "../../store/taskSlice.ts";
 import NewbieMentorService from '../../services/newbieMentorService';
 import { getCategories } from "../../services/categoryService.ts";
-import materialService from "../../services/materialService.ts";
 import { getTaskContents } from "../../services/taskContentService.ts";
-import { setTaskStatus } from "../../services/taskService";
+import {setTaskStatus, deleteTask, editTask, assignTask} from "../../services/taskService";
 import { StatusEnum } from "../../Enums/StatusEnum";
 import TaskColumns from "./TaskColumns";
 import TaskPool from "./TaskPool";
 import AssignTask from "../TaskAssigment/AssignTask.tsx";
 import "./TaskManager.css";
+import {TaskDto} from "../../dtos/TaskDto.ts";
 
 function TaskManager() {
     const { user, getRole } = useAuth();
@@ -38,7 +37,6 @@ function TaskManager() {
     const [showAssignModal, setShowAssignModal] = useState(false);
 
     const [categories, setCategories] = useState<CategoryDto[]>([]);
-    const [materials, setMaterials] = useState<MaterialDto[]>([]);
     const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
     const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
     const [userRole, setUserRole] = useState<string | null>(null);
@@ -59,7 +57,7 @@ function TaskManager() {
         }
     }, [selectedNewbie, dispatch]);
 
-    // fetches only once on mount
+    // fetches only on mount
     useEffect(() => {
         setLocalError(null);
         const fetchData = async () => {
@@ -67,9 +65,8 @@ function TaskManager() {
                 const role = await getRole(user?.id!);
                 setUserRole(role);
 
-                const [categoriesData, materialsData, taskContentsData] = await Promise.all([
+                const [categoriesData, taskContentsData] = await Promise.all([
                     getCategories(),
-                    materialService.getAllMaterials(),
                     getTaskContents()
                 ]);
 
@@ -83,7 +80,6 @@ function TaskManager() {
                 }
 
                 setCategories(categoriesData);
-                setMaterials(materialsData);
                 setNewbies(newbieList);
                 setTaskContents(taskContentsData);
             } catch (err) {
@@ -98,7 +94,7 @@ function TaskManager() {
         fetchData();
     }, [user?.id, mentorId, getRole]);
 
-    // filter when something changes and organize by status
+    // filter when something changes
     useEffect(() => {
         let updatedTasks = tasksByUser[selectedNewbie] || [];
 
@@ -114,7 +110,6 @@ function TaskManager() {
 
         setFilteredTasks(updatedTasks);
 
-        // Organize tasks by status
         const newTasksByStatus = {
             [StatusEnum.ToDo]: [] as FullTaskDto[],
             [StatusEnum.InProgress]: [] as FullTaskDto[],
@@ -141,19 +136,19 @@ function TaskManager() {
     // on task edit
     const handleTaskUpdate = (updatedTask: FullTaskDto) => {
         dispatch(updateTaskLocally(updatedTask));
+        editTask(updatedTask, updatedTask.id!, mentorId!)
     };
 
     // on task delete
     const handleTaskDelete = (taskId: number) => {
         if (selectedNewbie) {
             dispatch(deleteTaskLocally({ taskId, newbieId: selectedNewbie }));
+            deleteTask(taskId);
         }
     };
 
-    // Handle the drop of a task to a column
     const handleTaskDrop = async (taskId: number, newStatus: StatusEnum) => {
         try {
-            // Check if this is a pool task by looking up taskContents
             const isPoolTask = taskContents.some(tc => tc.id === taskId);
             if (isPoolTask) {
                 handlePoolTaskDrop(taskId, newStatus);
@@ -176,9 +171,17 @@ function TaskManager() {
         }
     };
 
-    // Handle drag from pool to column
-    const handlePoolTaskDrop = (taskContentId: number, newStatus: StatusEnum) => {
-        console.log(`Handling pool task drop: ${taskContentId} to ${newStatus}`);
+    const handlePoolTaskDrop = async (taskContentId: number, newStatus: StatusEnum) => {
+        const taskData : TaskDto = {
+            newbieId: selectedNewbie,
+            assigningId: mentorId!,
+            taskContentId: taskContentId,
+            deadline: null,
+            status: newStatus
+        };
+
+        const addedTask : FullTaskDto = await assignTask(taskData);
+        handleTaskAssigned(addedTask);
     };
 
     return (
@@ -249,7 +252,6 @@ function TaskManager() {
                         onTaskUpdate={handleTaskAssigned}
                         selectedNewbieId={selectedNewbie}
                         categories={categories}
-                        materials={materials}
                         taskContents={taskContents}
                     />
                 )}
@@ -268,7 +270,6 @@ function TaskManager() {
                                 onTaskDelete={handleTaskDelete}
                                 onTaskDrop={handleTaskDrop}
                                 categories={categories}
-                                materials={materials}
                                 taskContents={taskContents}
                                 role={userRole || ""}
                                 loading={loading}

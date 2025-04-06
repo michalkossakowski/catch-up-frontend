@@ -7,10 +7,10 @@ interface DeleteTaskResponse {
     message: string;
 }
 
-export const assignTask = async (task: TaskDto): Promise<TaskDto> => {
+export const assignTask = async (task: TaskDto): Promise<FullTaskDto> => {
     try {
         const response = await axiosInstance.post<TaskResponse>('/Task/AddTaskToUser', task);
-        return response.data.task;
+        return response.data.fullTask;
     } catch (error: any) {
         handleError('assignTask', error);
         throw error;
