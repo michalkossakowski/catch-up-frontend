@@ -26,17 +26,17 @@ const FeedbackListPage: React.FC = () => {
     const [selectedResourceTypes, setSelectedResourceTypes] = useState<ResourceTypeEnum[]>([]);
     const [sortColumn, setSortColumn] = useState<keyof FeedbackDto | null>(null);
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-    const [showSearchMessage, setShowSearchMessage] = useState(false);
-    const [searchMessage, setSearchMessage] = useState('alert');
     const [searchTitle, setSearchTitle] = useState('');
     const [isSearching, setIsSearching] = useState(false);
+    const [noSearch, setNoSearch] = useState(false);
     useEffect(() => {
         const loadFeedbacks = async () => {
             if (!user) return;
             try {
                 const userRoleResponse = await getRole(user.id ?? 'defaultId');
                 setIsAdmin(userRoleResponse !== 'Newbie');
-                const feedbackList = await getFeedbacks(user.id ?? 'defaultId', isAdmin);
+                const feedbackList = await getFeedbacks(user.id ?? 'defaultId', userRoleResponse !== 'Newbie');
+                console.log(feedbackList);
                 setFeedbacks(feedbackList);
                 setOriginalFeedbacks(feedbackList);
             } catch (error) {
@@ -93,25 +93,16 @@ const FeedbackListPage: React.FC = () => {
     const searchFeedback = async () => {
         if (searchTitle.length === 0) {
             setFeedbacks(originalFeedbacks);
-            setShowSearchMessage(false);
             setIsSearching(false);
             return;
         }
-        setIsLoading(true);
-
-        if (!user) return;
-        const filteredFeedbacks = await getTitleFeedbacks(searchTitle, user.id ?? 'defaultId', isAdmin);
-
-        if (filteredFeedbacks.length === 0) {
-            setShowSearchMessage(true);
-            setSearchMessage(`No Feedbacks with: '${searchTitle}' inside found.`);
-        } else {
-            setShowSearchMessage(false);
-        }
-
-        setFeedbacks(filteredFeedbacks);
         setIsSearching(true);
-        setIsLoading(false);
+        if (!user) return;
+        const userRoleResponse = await getRole(user.id ?? 'defaultId');
+        setIsAdmin(userRoleResponse !== 'Newbie');
+        const filteredFeedbacks = await getTitleFeedbacks(searchTitle, user.id ?? 'defaultId', userRoleResponse !== 'Newbie');
+        setFeedbacks(filteredFeedbacks);
+        setIsSearching(false);
     };
 
     const toggleResourceType = (type: ResourceTypeEnum) => {
@@ -230,7 +221,9 @@ const FeedbackListPage: React.FC = () => {
                         <hr></hr>
                     </div>
                     <div className="col-9">
-                        {!feedbacks.length ? (
+                        {isSearching ? (
+                            <Loading />
+                        ) : !feedbacks.length ? (
                             <div className="alert alert-secondary text-center">No feedbacks found</div>
                         ) : (
                             <table className="table table-striped mt-3">
@@ -241,13 +234,16 @@ const FeedbackListPage: React.FC = () => {
                                             <i className="bi bi-arrow-down-up ms-2"></i>
                                         </th>
                                         <th onClick={() => handleSort("userName")} style={{ cursor: "pointer" }}>
-                                        {isAdmin ? 'Sender' : 'Receiver'} <i className="bi bi-arrow-down-up ms-2"></i>
+                                            {isAdmin ? 'Sender' : 'Receiver'} 
+                                            <i className="bi bi-arrow-down-up ms-2"></i>
                                         </th>
                                         <th onClick={() => handleSort("createdDate")} style={{ cursor: "pointer" }}>
-                                            Date <i className="bi bi-arrow-down-up ms-2"></i>
+                                            Date 
+                                            <i className="bi bi-arrow-down-up ms-2"></i>
                                         </th>
                                         <th onClick={() => handleSort("resourceType")} style={{ cursor: "pointer" }}>
-                                            Resource Type <i className="bi bi-arrow-down-up ms-2"></i>
+                                            Resource Type 
+                                            <i className="bi bi-arrow-down-up ms-2"></i>
                                         </th>
                                         <th>Resolved</th>
                                         <th>Detail</th>
