@@ -28,7 +28,6 @@ const FeedbackListPage: React.FC = () => {
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const [searchTitle, setSearchTitle] = useState('');
     const [isSearching, setIsSearching] = useState(false);
-    const [noSearch, setNoSearch] = useState(false);
     useEffect(() => {
         const loadFeedbacks = async () => {
             if (!user) return;
@@ -36,7 +35,6 @@ const FeedbackListPage: React.FC = () => {
                 const userRoleResponse = await getRole(user.id ?? 'defaultId');
                 setIsAdmin(userRoleResponse !== 'Newbie');
                 const feedbackList = await getFeedbacks(user.id ?? 'defaultId', userRoleResponse !== 'Newbie');
-                console.log(feedbackList);
                 setFeedbacks(feedbackList);
                 setOriginalFeedbacks(feedbackList);
             } catch (error) {
@@ -91,17 +89,26 @@ const FeedbackListPage: React.FC = () => {
     }, [selectedResolved, selectedResourceTypes, originalFeedbacks, sortColumn, sortOrder]);
 
     const searchFeedback = async () => {
+        if (!user) return;
+    
+        setIsSearching(true);
+    
+        const userRoleResponse = await getRole(user.id ?? 'defaultId');
+        setIsAdmin(userRoleResponse !== 'Newbie');
+
         if (searchTitle.length === 0) {
-            setFeedbacks(originalFeedbacks);
+            setOriginalFeedbacks(await getFeedbacks(user.id ?? 'defaultId', userRoleResponse !== 'Newbie'));
             setIsSearching(false);
             return;
         }
-        setIsSearching(true);
-        if (!user) return;
-        const userRoleResponse = await getRole(user.id ?? 'defaultId');
-        setIsAdmin(userRoleResponse !== 'Newbie');
-        const filteredFeedbacks = await getTitleFeedbacks(searchTitle, user.id ?? 'defaultId', userRoleResponse !== 'Newbie');
-        setFeedbacks(filteredFeedbacks);
+    
+        const filteredFeedbacks = await getTitleFeedbacks(
+            searchTitle,
+            user.id ?? 'defaultId',
+            userRoleResponse !== 'Newbie'
+        );
+    
+        setOriginalFeedbacks(filteredFeedbacks);
         setIsSearching(false);
     };
 
