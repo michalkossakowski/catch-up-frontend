@@ -88,6 +88,14 @@
     color: #FFFFFF;
 }
 
+.alert-info {
+    --bs-alert-color: #FFFFFF;
+}
+
+.no-notificaitons-alert i {
+    color: #FFFFFF;
+}
+
 /*ai assistant*/
 .user-message {
     background: #DB91D1;
@@ -112,6 +120,18 @@
     --bs-pagination-bg: rgba(0, 0, 0, 0.5);
 }
 
+/* Calendar */
+.rbc-off-range-bg {
+    background-color: #000000 !important;
+}
+
+.rbc-toolbar button {
+   color: #FFFFFF !important;
+}
+
+.rbc-toolbar button {
+    background-color: #1a1a1a !important;
+}
 .striped {
     background: linear-gradient(
         45deg, 

@@ -151,6 +151,12 @@
 .api-alert > i {
     color: #ff0000;
 }
+.alert-info {
+    --bs-alert-color: #000000;
+}
+.no-notificaitons-alert i {
+    color: #000000;
+}
 
 /*ai assistant*/
 .user-message {

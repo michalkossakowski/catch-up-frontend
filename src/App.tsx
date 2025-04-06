@@ -38,7 +38,7 @@ import { NotificationDto } from './dtos/NotificationDto.ts';
 import NotificationToast from './components/Toast/NotificationToast.tsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './store/store';
-import { setNotifications, addNotification } from './store/notificationSlice';
+import { setNotifications, addNotification, setNotificationsCount } from './store/notificationSlice';
 import { getNotifications } from './services/notificationService';
 import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
@@ -47,6 +47,7 @@ import { useTranslation } from "react-i18next";
 import "./i18n.ts";
 import { useNavigate } from 'react-router-dom';
 import HRHomePage from './components/HR/HRHomePage.tsx';
+import NewbieHomePage from './components/Newbie/NewbieHomePage.tsx';
 import EventCreator from './components/HR/EventCreator.tsx';
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -99,7 +100,11 @@ function App() {
             if (location.pathname === '/') {
                 if (userRole === 'HR') {
                     navigate('/hrhomepage');
-                } else {
+                }
+                else if (userRole === 'Newbie') {
+                    navigate('/newbiehomepage');
+                } 
+                else {
                     navigate('/');
                 }
             }
@@ -112,8 +117,9 @@ function App() {
     }, [user?.id]);
 
     const handleNotifications = async () => {
-        const data = await getNotifications();
-        dispatch(setNotifications(data));
+        const data = await getNotifications(1,50);
+        dispatch(setNotifications(data.notifications));
+        dispatch(setNotificationsCount(data.totalCount));
 
         connection.on("ReceiveNotification", (notification: NotificationDto) => {
             notificationSound.play().catch(() => {
@@ -171,7 +177,7 @@ function App() {
                             <Navbar expand="lg" className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-navbar">
                                 <Navbar.Brand href="/" className="nav-brand">catchUp</Navbar.Brand>
                                 <Nav className="flex-column w-100">
-                                    <NavLink to={role === 'HR' ? '/hrhomepage' : '/'} className="nav-link">
+                                    <NavLink to={role === 'HR' ? '/hrhomepage' : role=== 'Newbie'? 'newbiehomepage' :'/'} className="nav-link">
                                         <i className="bi bi-house-door" /> <span>{t('home')}</span>
                                     </NavLink>
                                     {role === "Newbie" && (
@@ -320,6 +326,7 @@ function App() {
                             <Routes>
                                 <Route path="/" element={<Home />} />
                                 <Route path="/hrhomepage" element={<HRHomePage />} />
+                                <Route path="/newbiehomepage" element={<NewbieHomePage />} />
                                 <Route path="/tasks" element={<TaskDashboard />} />
                                 <Route path="/adminpanel" element={<AdminPanel isAdmin={role === "Admin"} />} />
                                 <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
