@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../Provider/authProvider';
-import { getFeedbacks, deleteFeedback } from '../../services/feedbackService';
+import { getFeedbacks, deleteFeedback, getTitleFeedbacks } from '../../services/feedbackService';
 import { FeedbackDto } from '../../dtos/FeedbackDto';
 import NotificationToast from '../Toast/NotificationToast';
 import Loading from '../Loading/Loading';
 import { getRole } from '../../services/userService';
 import FeedbackItem from './FeedbackItem';
 import ConfirmModal from '../Modal/ConfirmModal';
-import { Form, Row } from 'react-bootstrap';
+import { Button, Form, InputGroup, Row } from 'react-bootstrap';
 import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 
 
@@ -26,14 +26,17 @@ const FeedbackListPage: React.FC = () => {
     const [selectedResourceTypes, setSelectedResourceTypes] = useState<ResourceTypeEnum[]>([]);
     const [sortColumn, setSortColumn] = useState<keyof FeedbackDto | null>(null);
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-
+    const [showSearchMessage, setShowSearchMessage] = useState(false);
+    const [searchMessage, setSearchMessage] = useState('alert');
+    const [searchTitle, setSearchTitle] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
     useEffect(() => {
         const loadFeedbacks = async () => {
             if (!user) return;
             try {
                 const userRoleResponse = await getRole(user.id ?? 'defaultId');
                 setIsAdmin(userRoleResponse !== 'Newbie');
-                const feedbackList = await getFeedbacks(user.id ?? 'defaultId', userRoleResponse !== 'Newbie');
+                const feedbackList = await getFeedbacks(user.id ?? 'defaultId', isAdmin);
                 setFeedbacks(feedbackList);
                 setOriginalFeedbacks(feedbackList);
             } catch (error) {
@@ -86,6 +89,30 @@ const FeedbackListPage: React.FC = () => {
     
         setFeedbacks(filtered);
     }, [selectedResolved, selectedResourceTypes, originalFeedbacks, sortColumn, sortOrder]);
+
+    const searchFeedback = async () => {
+        if (searchTitle.length === 0) {
+            setFeedbacks(originalFeedbacks);
+            setShowSearchMessage(false);
+            setIsSearching(false);
+            return;
+        }
+        setIsLoading(true);
+
+        if (!user) return;
+        const filteredFeedbacks = await getTitleFeedbacks(searchTitle, user.id ?? 'defaultId', isAdmin);
+
+        if (filteredFeedbacks.length === 0) {
+            setShowSearchMessage(true);
+            setSearchMessage(`No Feedbacks with: '${searchTitle}' inside found.`);
+        } else {
+            setShowSearchMessage(false);
+        }
+
+        setFeedbacks(filteredFeedbacks);
+        setIsSearching(true);
+        setIsLoading(false);
+    };
 
     const toggleResourceType = (type: ResourceTypeEnum) => {
         setSelectedResourceTypes(prev =>
@@ -147,6 +174,19 @@ const FeedbackListPage: React.FC = () => {
         <>
             <div className="container">
                 <h3 className="text-center mt-3">Feedbacks</h3>
+                <div className='searchBox'>
+                    <InputGroup className="inputGroup mw-100">
+                        <Form.Control
+                            placeholder="Enter searching title..."
+                            value={searchTitle} 
+                            onChange={(e) => setSearchTitle(e.target.value)} 
+                            onKeyDown={(e) => e.key === 'Enter' && searchFeedback()}
+                        />
+                        <Button variant="primary" id="searchButton" onClick={searchFeedback}> 
+                            <i className="bi bi-search">&nbsp;</i>Search 
+                        </Button>
+                    </InputGroup>
+                </div>
                 <Row className="mb-3">
                     <div className="col-3">
                         <h4 className="text-start mt-3">Filters</h4>
