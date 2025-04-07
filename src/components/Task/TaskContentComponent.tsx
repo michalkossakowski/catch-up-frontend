@@ -123,15 +123,17 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     };
 
     const handleDelete = async (taskContentId: number) => {
-        try {
-            await removeTaskFromAllPresets(taskContentId);
-            await deleteTaskContent(taskContentId);
-            getAllTaskContents();
-            
-        } catch (error: any) {
-            console.error('Error in deletion process:', error);
-            setShowError(true);
-            setAlertMessage('Error deleting TaskContent: ' + error.message);
+        if (window.confirm("Are you sure you want to delete this TaskContent?")) {
+            try {
+                await removeTaskFromAllPresets(taskContentId);
+                await deleteTaskContent(taskContentId);
+                getAllTaskContents();
+
+            } catch (error: any) {
+                console.error('Error in deletion process:', error);
+                setShowError(true);
+                setAlertMessage('Error deleting TaskContent: ' + error.message);
+            }
         }
     };
 
