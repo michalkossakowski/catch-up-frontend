@@ -21,6 +21,7 @@ interface TaskColumnProps {
     taskContents?: TaskContentDto[];
     role: string;
     isDraggingPoolTask?: boolean;
+    loadingTaskIds: Set<number>;
 }
 
 const TaskColumn: React.FC<TaskColumnProps> = ({
@@ -35,7 +36,8 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
                                                    materials,
                                                    taskContents,
                                                    role,
-                                                   isDraggingPoolTask = false
+                                                   isDraggingPoolTask = false,
+                                                   loadingTaskIds
                                                }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState<FullTaskDto | null>(null);
@@ -105,6 +107,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
                                 onEditClick={handleEditClick}
                                 onDeleteClick={() => onTaskDelete(task.id!)}
                                 role={role}
+                                isLoading={loadingTaskIds.has(task.id!)}
                             />
                         ))}
                     </div>

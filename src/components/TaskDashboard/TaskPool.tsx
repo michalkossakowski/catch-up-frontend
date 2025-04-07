@@ -1,73 +1,23 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import { useDrag } from 'react-dnd';
+import React, { useState, useEffect } from 'react';
 import { TaskContentDto } from "../../dtos/TaskContentDto.ts";
 import { CategoryDto } from "../../dtos/CategoryDto.ts";
 import { StatusEnum } from "../../Enums/StatusEnum";
 import { Dropdown } from 'react-bootstrap';
+import PoolTaskCard from './PoolTaskCard';
 
 interface TaskPoolProps {
     taskContents?: TaskContentDto[];
     categories?: CategoryDto[];
     selectedCategoryId: number;
     onTaskDrop: (taskContentId: number, newStatus: StatusEnum) => void;
+    isDisabled?: boolean;
 }
-
-interface PoolTaskCardProps {
-    task: TaskContentDto;
-    categoryName: string;
-}
-
-// Individual draggable task card in the pool
-const PoolTaskCard: React.FC<PoolTaskCardProps> = ({ task, categoryName }) => {
-    const [{ isDragging }, drag] = useDrag({
-        type: 'TASK',
-        item: { id: task.id, type: 'poolTask' },
-        collect: (monitor) => ({
-            isDragging: monitor.isDragging(),
-        }),
-    });
-
-    const dragRef = useCallback(
-        (node: HTMLDivElement | null) => {
-            if (node) {
-                drag(node);
-            }
-        },
-        [drag]
-    );
-
-    // Truncate text if it's too long
-    const truncateText = (text: string, maxLength: number) => {
-        if (!text || text.length <= maxLength) return text;
-        return text.substring(0, maxLength) + '...';
-    };
-
-    return (
-        <div
-            ref={dragRef}
-            className={`pool-task-card card mb-2 shadow-sm ${isDragging ? 'opacity-50' : ''}`}
-            style={{ cursor: 'grab' }}
-        >
-            <div className="card-body p-2">
-                <h6 className="card-title mb-1">{task.title}</h6>
-                <div className="d-flex justify-content-between align-items-center">
-                    <small
-                        className="badge bg-info text-white text-truncate"
-                        style={{ maxWidth: '100%' }}
-                        title={categoryName}  // Full name shown on hover
-                    >
-                        {truncateText(categoryName, 15)}
-                    </small>
-                </div>
-            </div>
-        </div>
-    );
-};
 
 const TaskPool: React.FC<TaskPoolProps> = ({
                                                taskContents = [],
                                                categories = [],
                                                selectedCategoryId,
+                                               isDisabled = false,
                                            }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredTasks, setFilteredTasks] = useState<TaskContentDto[]>([]);
@@ -114,7 +64,28 @@ const TaskPool: React.FC<TaskPoolProps> = ({
     };
 
     return (
-        <div className="task-pool card p-3 rounded shadow-sm" style={{height: '700px'}}>
+        <div
+            className={`task-pool card p-3 rounded shadow-sm ${isDisabled ? 'disabled-container' : ''}`}
+            style={{
+                opacity: isDisabled ? 0.6 : 1,
+                position: 'relative'
+            }}
+        >
+            {isDisabled && (
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(240, 240, 240, 0.3)',
+                        zIndex: 10,
+                        cursor: 'not-allowed'
+                    }}
+                />
+            )}
+
             <h5 className="mb-3">Task Pool</h5>
 
             <div className="mb-3">
@@ -124,6 +95,7 @@ const TaskPool: React.FC<TaskPoolProps> = ({
                     placeholder="Search pool..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    disabled={isDisabled}
                 />
             </div>
 
@@ -134,7 +106,8 @@ const TaskPool: React.FC<TaskPoolProps> = ({
                         size="sm"
                         id="category-dropdown"
                         className="w-100 text-truncate"
-                        title={getActiveCategoryName()} // Show full category name on hover
+                        title={getActiveCategoryName()}
+                        disabled={isDisabled}
                     >
                         {truncateText(getActiveCategoryName()!, 25)}
                     </Dropdown.Toggle>
@@ -152,7 +125,7 @@ const TaskPool: React.FC<TaskPoolProps> = ({
                                 active={activeCategoryId === category.id}
                                 onClick={() => setActiveCategoryId(category.id)}
                                 className="text-truncate"
-                                title={category.name} // Show full category name on hover
+                                title={category.name}
                             >
                                 {category.name}
                             </Dropdown.Item>
@@ -173,6 +146,7 @@ const TaskPool: React.FC<TaskPoolProps> = ({
                                 <PoolTaskCard
                                     task={task}
                                     categoryName={getCategoryName(task.categoryId!)!}
+                                    isDisabled={isDisabled}
                                 />
                             </div>
                         ))}

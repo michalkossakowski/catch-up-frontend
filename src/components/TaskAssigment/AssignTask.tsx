@@ -74,6 +74,7 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selecte
                     materialsId: materialsId ?? undefined,
                     categoryId: categoryId,
                     deadline: deadline ? deadline : undefined,
+                    status: task.status
                 };
                 const updatedFullTask = await editTask(taskData, task.id!, user.id!);
                 if (onTaskUpdate) {

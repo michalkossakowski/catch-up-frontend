@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Button } from "react-bootstrap";
 import { useAuth } from "../../Provider/authProvider";
 import { AppDispatch, RootState } from "../../store/store.ts";
 import { CategoryDto } from "../../dtos/CategoryDto.ts";
@@ -26,6 +25,7 @@ function TaskManager() {
     const mentorId = user?.id;
 
     const [localError, setLocalError] = useState<string | null>(null);
+    const [loadingTaskIds, setLoadingTaskIds] = useState<Set<number>>(new Set());
 
     const dispatch: AppDispatch = useDispatch();
     const { tasksByUser, loading, error } = useSelector((state: RootState) => state.tasks);
@@ -148,30 +148,53 @@ function TaskManager() {
     };
 
     const handleTaskDrop = async (taskId: number, newStatus: StatusEnum) => {
+        const taskToUpdate = filteredTasks.find(task => task.id === taskId);
         try {
+            if (!selectedNewbie) return;
+
             const isPoolTask = taskContents.some(tc => tc.id === taskId);
             if (isPoolTask) {
                 handlePoolTaskDrop(taskId, newStatus);
                 return;
             }
 
-            // Existing task logic
-            await setTaskStatus(taskId, newStatus);
-            const taskToUpdate = filteredTasks.find(task => task.id === taskId);
             if (taskToUpdate) {
-                const updatedTask: FullTaskDto = {
+                const optimisticTask: FullTaskDto = {
                     ...taskToUpdate,
-                    status: newStatus
+                    status: newStatus,
                 };
-                dispatch(updateTaskLocally(updatedTask));
+
+                setLoadingTaskIds(prev => new Set(prev).add(taskId));
+
+                dispatch(updateTaskLocally(optimisticTask));
             }
+
+            await setTaskStatus(taskId, newStatus);
+
+            setLoadingTaskIds(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(taskId);
+                return newSet;
+            });
         } catch (error) {
             console.error('Failed to update task status:', error);
-            setLocalError('Failed to update task status. Please try again.');
+            setLocalError('Failed to update task status. Reverting change.');
+
+            // Revert the change on error
+            if (taskToUpdate) {
+                dispatch(updateTaskLocally(taskToUpdate));
+                setLoadingTaskIds(prev => {
+                    const newSet = new Set(prev);
+                    newSet.delete(taskId);
+                    return newSet;
+                });
+            }
         }
     };
 
     const handlePoolTaskDrop = async (taskContentId: number, newStatus: StatusEnum) => {
+        if (!selectedNewbie) return;
+
         const taskData : TaskDto = {
             newbieId: selectedNewbie,
             assigningId: mentorId!,
@@ -188,58 +211,81 @@ function TaskManager() {
         <DndProvider backend={HTML5Backend}>
             <div className="container-fluid task-manager-container">
                 <h2>Task Manager</h2>
-                <div className="row g-2 mb-3 align-items-center">
-                    <div className="col-6">
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Search tasks..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            disabled={!selectedNewbie}
+
+
+                {(error || localError) && (
+                    <div className="alert alert-danger mt-3">{error || localError}</div>
+                )}
+
+                <div className="task-management-wrapper">
+                    <div className="task-columns-container">
+                        <div className="row mb-3 align-items-center">
+                            <div className="col-6">
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Search tasks..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    disabled={!selectedNewbie}
+                                />
+                            </div>
+
+                            <div className="col-3">
+                                <select
+                                    className="form-select"
+                                    value={selectedNewbie}
+                                    onChange={(e) => setSelectedNewbie(e.target.value)}
+                                >
+                                    <option value="">None</option>
+                                    {newbies.map((newbie) => (
+                                        <option key={newbie.id} value={newbie.id}>
+                                            {`${newbie.name} ${newbie.surname}`}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="col-3">
+                                <select
+                                    className="form-select"
+                                    value={selectedCategoryId}
+                                    onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
+                                    disabled={!selectedNewbie}
+                                >
+                                    <option value={0}>All</option>
+                                    {categories.map((category) => (
+                                        <option key={category.id} value={category.id}>
+                                            {category.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Task Columns */}
+                        <TaskColumns
+                            tasksByStatus={tasksByStatus}
+                            onTaskUpdate={handleTaskUpdate}
+                            onTaskDelete={handleTaskDelete}
+                            onTaskDrop={handleTaskDrop}
+                            categories={categories}
+                            taskContents={taskContents}
+                            role={userRole || ""}
+                            loading={loading}
+                            loadingTaskIds={loadingTaskIds}
                         />
                     </div>
 
-                    <div className="col-3">
-                        <select
-                            className="form-select"
-                            value={selectedNewbie}
-                            onChange={(e) => setSelectedNewbie(e.target.value)}
-                        >
-                            <option value="">None</option>
-                            {newbies.map((newbie) => (
-                                <option key={newbie.id} value={newbie.id}>
-                                    {`${newbie.name} ${newbie.surname}`}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="col-2">
-                        <select
-                            className="form-select"
-                            value={selectedCategoryId}
-                            onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
-                            disabled={!selectedNewbie}
-                        >
-                            <option value={0}>All</option>
-                            {categories.map((category) => (
-                                <option key={category.id} value={category.id}>
-                                    {category.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="col-1">
-                        <Button
-                            className="w-100"
-                            disabled={!selectedNewbie}
-                            variant={selectedNewbie ? "primary" : "secondary"}
-                            onClick={() => setShowAssignModal(true)}
-                        >
-                            Assign
-                        </Button>
+                    {/* Task Pool Section */}
+                    <div className={`task-pool-container ${!selectedNewbie ? "disabled-pool" : ""}`}>
+                        <TaskPool
+                            taskContents={taskContents}
+                            categories={categories}
+                            selectedCategoryId={selectedCategoryId}
+                            onTaskDrop={handlePoolTaskDrop}
+                            isDisabled={!selectedNewbie}
+                        />
                     </div>
                 </div>
 
@@ -254,42 +300,6 @@ function TaskManager() {
                         categories={categories}
                         taskContents={taskContents}
                     />
-                )}
-
-                {!selectedNewbie ? (
-                    <div className="text-muted p-3 mt-3">
-                        Please select a newbie to view tasks.
-                    </div>
-                ) : (
-                    <div className="task-management-wrapper">
-                        {/* Task Status Columns */}
-                        <div className="task-columns-container">
-                            <TaskColumns
-                                tasksByStatus={tasksByStatus}
-                                onTaskUpdate={handleTaskUpdate}
-                                onTaskDelete={handleTaskDelete}
-                                onTaskDrop={handleTaskDrop}
-                                categories={categories}
-                                taskContents={taskContents}
-                                role={userRole || ""}
-                                loading={loading}
-                            />
-                        </div>
-
-                        {/* Task Pool Section */}
-                        <div className="task-pool-container">
-                            <TaskPool
-                                taskContents={taskContents}
-                                categories={categories}
-                                selectedCategoryId={selectedCategoryId}
-                                onTaskDrop={handlePoolTaskDrop}
-                            />
-                        </div>
-                    </div>
-                )}
-
-                {(error || localError) && (
-                    <div className="alert alert-danger mt-3">{error || localError}</div>
                 )}
             </div>
         </DndProvider>

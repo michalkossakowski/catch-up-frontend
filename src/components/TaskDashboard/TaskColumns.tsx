@@ -19,6 +19,7 @@ interface TaskColumnsProps {
     taskContents?: TaskContentDto[];
     role: string;
     loading: boolean;
+    loadingTaskIds: Set<number>;
 }
 
 const statusConfig = [
@@ -38,7 +39,8 @@ const TaskColumns: React.FC<TaskColumnsProps> = ({
                                                      materials,
                                                      taskContents,
                                                      role,
-                                                     loading
+                                                     loading,
+                                                     loadingTaskIds
                                                  }) => {
     const [isDraggingPoolTask, setIsDraggingPoolTask] = useState(false);
 
@@ -103,6 +105,7 @@ const TaskColumns: React.FC<TaskColumnsProps> = ({
                                 taskContents={taskContents}
                                 role={role}
                                 isDraggingPoolTask={isDraggingPoolTask}
+                                loadingTaskIds={loadingTaskIds}
                             />
                         </div>
                     ))}
