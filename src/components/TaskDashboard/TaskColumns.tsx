@@ -49,7 +49,7 @@ const TaskColumns: React.FC<TaskColumnsProps> = ({
         accept: 'TASK',
         drop: (item: { id: number, type: string }) => {
             if (item.type === 'poolTask') {
-                onTaskDrop(item.id, StatusEnum.ToDo);
+                onTaskDrop(item.id, StatusEnum.ToDo, item.type);
                 return { status: StatusEnum.ToDo };
             }
         },

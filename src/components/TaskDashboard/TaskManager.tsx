@@ -62,7 +62,7 @@ function TaskManager() {
         setLocalError(null);
         const fetchData = async () => {
             try {
-                const role = await getRole(user?.id!);
+                const role = await getRole(user?.id);
                 setUserRole(role);
 
                 const [categoriesData, taskContentsData] = await Promise.all([
@@ -147,13 +147,12 @@ function TaskManager() {
         }
     };
 
-    const handleTaskDrop = async (taskId: number, newStatus: StatusEnum) => {
+    const handleTaskDrop = async (taskId: number, newStatus: StatusEnum, itemType?: string) => {
         const taskToUpdate = filteredTasks.find(task => task.id === taskId);
         try {
             if (!selectedNewbie) return;
 
-            const isPoolTask = taskContents.some(tc => tc.id === taskId);
-            if (isPoolTask) {
+            if (itemType === 'poolTask') {
                 handlePoolTaskDrop(taskId, newStatus);
                 return;
             }
@@ -165,8 +164,10 @@ function TaskManager() {
                 };
 
                 setLoadingTaskIds(prev => new Set(prev).add(taskId));
-
                 dispatch(updateTaskLocally(optimisticTask));
+            } else {
+                console.warn(`Task with ID ${taskId} not found in filteredTasks`);
+                return;
             }
 
             await setTaskStatus(taskId, newStatus);
@@ -180,7 +181,6 @@ function TaskManager() {
             console.error('Failed to update task status:', error);
             setLocalError('Failed to update task status. Reverting change.');
 
-            // Revert the change on error
             if (taskToUpdate) {
                 dispatch(updateTaskLocally(taskToUpdate));
                 setLoadingTaskIds(prev => {

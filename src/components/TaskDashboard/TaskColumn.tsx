@@ -47,7 +47,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
         drop: (item: { id: number, type: string }) => {
             // Only handle existing tasks at this level
             if (item.type === 'existingTask') {
-                onTaskDrop(item.id, status);
+                onTaskDrop(item.id, status, item.type);
             }
             return { status };
         },
