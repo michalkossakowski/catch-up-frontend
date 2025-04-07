@@ -10,6 +10,10 @@ import { getCategories } from '../../services/categoryService';
 import { removeTaskFromAllPresets } from '../../services/taskPresetService';
 import Loading from '../Loading/Loading';
 import { useNavigate } from 'react-router-dom';
+import { MaterialDto } from '../../dtos/MaterialDto';
+import materialService from '../../services/materialService';
+import MaterialItem from '../Material/DndMaterial/MaterialItem';
+import styles from '../Material/Material.module.css';
 
 interface TaskContentComponentProps {
     isAdmin: boolean;
@@ -29,6 +33,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
     const [sortOption, setSortOption] = useState<string>('title');
     const [sortDirection, setSortDirection] = useState<string>('asc');
+    const [expandedMaterials, setExpandedMaterials] = useState<{[key: number]: MaterialDto}>({});
     
     const navigate = useNavigate();
 
@@ -50,12 +55,30 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                 setTaskContents(data);
                 setFilteredTaskContents(data);
                 setShowSearchMessage(false);
+                
+                data.forEach(content => {
+                    if (content.materialsId) {
+                        loadMaterial(content.materialsId);
+                    }
+                });
             })
             .catch((error) => {
                 setShowError(true);
                 setAlertMessage(error.message);
             })
             .finally(() => setLoading(false));
+    }
+    
+    const loadMaterial = async (materialId: number) => {
+        try {
+            const material = await materialService.getMaterialWithFiles(materialId);
+            setExpandedMaterials(prev => ({
+                ...prev,
+                [materialId]: material
+            }));
+        } catch (error) {
+            console.error('Error loading material:', error);
+        }
     }
 
     const filterTaskContents = () => {
@@ -132,10 +155,6 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
         navigate('/taskcontent/create');
     };
 
-    const materialCreated = (materialId: number) => {
-        return materialId;
-    }
-
     const getCategoryName = (categoryId: number) => {
         const category = categories.find(cat => cat.id === categoryId);
         return category?.name || categoryId;
@@ -148,6 +167,9 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     const toggleSortDirection = () => {
         setSortDirection(prevDirection => prevDirection === 'asc' ? 'desc' : 'asc');
     };
+    
+    const handleMaterialSelect = () => {};
+    const handleDeleteItem = () => {};
 
     return (
         <section className='container'>
@@ -259,10 +281,19 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
 
                                         <p className="task-description">{taskContent.description}</p>
 
-                                        {taskContent.materialsId && (
-                                            <div>
-                                                Additional materials:
-                                                <Material materialId={taskContent.materialsId} showDownloadFile={true} materialCreated={materialCreated} />
+                                        {taskContent.materialsId && expandedMaterials[taskContent.materialsId] && (
+                                            <div className="material-container mt-4 mb-4">
+                                                <h5>Additional Materials:</h5>
+                                                <div className="material-content">
+                                                    <Accordion defaultActiveKey={`item${taskContent.materialsId}`} className="read-only-material">
+                                                        <MaterialItem
+                                                            materialDto={expandedMaterials[taskContent.materialsId]}
+                                                            onDeleteItem={handleDeleteItem}
+                                                            onMaterialSelect={handleMaterialSelect}
+                                                            readOnly={true}
+                                                        />
+                                                    </Accordion>
+                                                </div>
                                             </div>
                                         )}
 

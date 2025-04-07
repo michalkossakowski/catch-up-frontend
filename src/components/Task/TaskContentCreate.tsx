@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCategories } from '../../services/categoryService';
 import { CategoryDto } from '../../dtos/CategoryDto';
-import { Alert, Button, Container } from 'react-bootstrap';
+import { Alert, Button, Container, Row, Col } from 'react-bootstrap';
 import TaskContentEdit from './TaskContentEdit';
 import Loading from '../Loading/Loading';
 
@@ -13,17 +13,17 @@ const TaskContentCreate: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        loadCategories();
+        loadData();
     }, []);
 
-    const loadCategories = async () => {
+    const loadData = async () => {
         try {
-            const result = await getCategories();
-            setCategories(result);
+            const categoriesResult = await getCategories();
+            setCategories(categoriesResult);
             setLoading(false);
         } catch (error) {
-            console.error("Error loading categories:", error);
-            setError('Error loading categories. Please try again later.');
+            console.error("Error loading data:", error);
+            setError('Error loading data. Please try again later.');
             setLoading(false);
         }
     };
@@ -60,18 +60,19 @@ const TaskContentCreate: React.FC = () => {
     }
 
     return (
-        <Container>
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2>Create New Task Content</h2>
-                <Button variant="outline-secondary" onClick={handleCancel}>
-                    Back to List
-                </Button>
-            </div>
-
+        <Container fluid className="px-4">
             <TaskContentEdit 
                 isEditMode={false} 
                 onTaskContentEdited={handleTaskContentCreated} 
-                categories={categories} 
+                categories={categories}
+                formHeader={
+                    <div className="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Create New Task Content</h2>
+                        <Button variant="outline-secondary" onClick={handleCancel}>
+                            Back to List
+                        </Button>
+                    </div>
+                }
             />
         </Container>
     );

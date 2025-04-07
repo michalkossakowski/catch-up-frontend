@@ -31,6 +31,7 @@ export default function FaqItem(props: FaqProps): React.ReactElement {
                                 enableAddingFile={false}
                                 enableRemoveFile={false}
                                 enableEdittingMaterialName ={false}
+                                enableEdittingFile={false}
                                 showMaterialName= {true}
                                 nameTitle='See Materials'
                             />

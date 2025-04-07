@@ -11,15 +11,22 @@ export const addFeedback = async (feedback: FeedbackDto): Promise<any> => {
     }
 };
 
-export const getFeedbacks = async (userId: string, isAdmin: boolean): Promise<FeedbackDto[]> => {
+export const getFeedbacks = async (): Promise<FeedbackDto[]> => {
     try {
-        const endpoint = isAdmin ? 
-            `/feedback/GetByReceiverId/${userId}` : 
-            `/feedback/GetBySenderId/${userId}`;
-        const response = await axiosInstance.get<FeedbackDto[]>(endpoint);
+        const response = await axiosInstance.get<FeedbackDto[]>(`/feedback/GetAll`);
         return response.data;
     } catch (error: any) {
         handleError('getFeedbacks', error);
+        throw error;
+    }
+};
+
+export const getTitleFeedbacks = async (searchingTitle: string): Promise<FeedbackDto[]> => {
+    try {
+        const response = await axiosInstance.get<FeedbackDto[]>(`/feedback/GetByTitle/${searchingTitle}`);
+        return response.data;
+    } catch (error: any) {
+        handleError('getTitleFeedbacks', error);
         throw error;
     }
 };

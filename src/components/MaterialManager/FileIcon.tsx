@@ -1,3 +1,4 @@
+import { t } from 'i18next';
 import styles from './material.module.css';
 
 interface FileIconProps {
@@ -53,8 +54,8 @@ const FileIcon: React.FC<FileIconProps> = ({
                         className={`${styles.videoThumbnail} rounded shadow-sm`}
                         style={{ width: "150px", height: "150px", objectFit: "cover" }}
                     > 
-                    Twoja przeglądarka nie obsługuje elementu wideo.
-                        <source src={URL.createObjectURL(fileContent)} type={fileType} />
+                    $t('your-browser-does-not-support-the-video-element')  
+                    <source src={URL.createObjectURL(fileContent)} type={fileType} />
                     </video>
                 </>
             ):
@@ -73,7 +74,7 @@ const FileIcon: React.FC<FileIconProps> = ({
                     hour: "2-digit",
                     minute: "2-digit",
                     })
-                    : "Brak daty"}
+                    : t('brak-daty')}
             </div>
         </div>
     )

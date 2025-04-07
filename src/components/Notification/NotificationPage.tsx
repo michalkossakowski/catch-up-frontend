@@ -3,14 +3,15 @@ import { Alert, Card, Pagination, Form } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-import { markAsRead } from '../../store/notificationSlice';
-import { readNotifications } from '../../services/notificationService';
+import { markAsRead, setNotifications, setNotificationsCount } from '../../store/notificationSlice';
+import { getNotifications, readNotifications } from '../../services/notificationService';
 
 const NotificationPage: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(5);
+    const [loadMoreVisibility, setLoadMoreVisibility] = useState(false);
 
     const { notifications } = useSelector((state: RootState) => state.notifications);
 
@@ -19,6 +20,8 @@ const NotificationPage: React.FC = () => {
     const currentNotifications = notifications.slice(indexOfFirstNotification, indexOfLastNotification);
 
     const totalPages = Math.ceil(notifications.length / itemsPerPage);
+
+    const { notificationsCount } = useSelector((state: RootState) => state.notifications);
 
     const handleCardClick = (source: string) => {
         navigate(source);
@@ -44,6 +47,22 @@ const NotificationPage: React.FC = () => {
     const handlePageSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newPage = Number(e.target.value);
         handlePageChange(newPage);
+    };
+
+    const handleLoadMore = () => {
+        if(notifications.length >= notificationsCount){
+            setLoadMoreVisibility(false);
+        }else{
+            let page = Math.floor(notifications.length / 50) + 1;
+            getNotifications(page, 50).then((res) => {
+                const merged = [...notifications, ...res.notifications];
+                const unique = Array.from(
+                    new Map(merged.map(n => [n.notificationId, n])).values()
+                );
+                dispatch(setNotifications(unique));
+                dispatch(setNotificationsCount(res.totalCount));
+            })
+        }
     };
 
     const renderPaginationItems = () => {
@@ -95,9 +114,13 @@ const NotificationPage: React.FC = () => {
     };
 
     useEffect(() => {
+        if(notificationsCount > 50) {
+            setLoadMoreVisibility(true);
+        }
         return () => {
             readNotifications();
             dispatch(markAsRead());
+            
         };
     }, [dispatch]);
 
@@ -106,9 +129,13 @@ const NotificationPage: React.FC = () => {
             <h1 className="m-3"><i className="bi bi-bell"/> Notifications</h1>
             <div className="notification-container">
                 {notifications.length === 0 ? (
-                    <div className='alertBox'>
-                        <Alert className='info' variant='danger'>
+                    <div className='alertBox m-3'>
+                        <Alert className='no-notificaitons-alert' variant='info'>
+                            <i className="bi bi-bell"></i>
+                            &nbsp;
                             You don’t have any notifications
+                            &nbsp;
+                            <i className="bi bi-bell"></i>
                         </Alert>
                     </div>
                 ) : (
@@ -168,6 +195,22 @@ const NotificationPage: React.FC = () => {
                                         </div>
                                     </Card.Body>
                                 </Card>
+                            </div>
+                        ))}
+                        
+                        { currentPage == totalPages && (loadMoreVisibility ? (
+                            <button  className="btn btn-primary m-3" onClick={() => handleLoadMore()}>
+                                    Load more ... 
+                            </button>
+                        ) : (
+                            <div className="alertBox">
+                                <Alert className='info m-3' variant='secondary'>
+                                    <i className="bi-bell"></i> 
+                                    &nbsp;
+                                    You don't have any more old notifications
+                                    &nbsp;
+                                    <i className="bi-bell"></i>
+                                </Alert>
                             </div>
                         ))}
                         {totalPages > 1 && (

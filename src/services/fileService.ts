@@ -2,7 +2,13 @@ import { FileDto } from '../dtos/FileDto';
 import axiosInstance from '../../axiosConfig';
 const fileService =
 {
-    uploadFile: async (file: File, materialId?: number, ownerId?: string, dateOfUpload?: Date): Promise<{ message: string; fileDto: FileDto; materialId: number }> => {
+    uploadFile: async (
+        file: File, 
+        materialId?: number, 
+        ownerId?: string, 
+        dateOfUpload?: Date,
+         onProgress?: (percent: number) => void
+    ): Promise<{ message: string; fileDto: FileDto; materialId: number }> => {
         const formData = new FormData();
         formData.append('file', file);
 
@@ -18,6 +24,14 @@ const fileService =
                         ...(dateOfUpload && { dateOfUpload })
                     },
                     headers: {'Content-Type': 'multipart/form-data'},
+                    onUploadProgress: (progressEvent) => {
+                        if (progressEvent.total) {
+                            const percentCompleted = Math.round(
+                                (progressEvent.loaded * 100) / progressEvent.total
+                            );
+                            onProgress?.(percentCompleted);
+                        }
+                    }
                 }
             );
             return response.data;
@@ -65,10 +79,36 @@ const fileService =
         }
     },
 
+    getAllFilesPagination: async(page: number, pageSize: number): Promise<{files: FileDto[], totalCount: number}> => {
+        try
+        {
+            const response = await axiosInstance.get<{files: FileDto[], totalCount: number}>(`/File/GetAllFiles/${page}/${pageSize}`)
+            return response.data
+        }
+        catch(error)
+        {
+            console.error('File get error:', error)
+            throw error
+        }
+    },
+
     getAllOwnedFiles: async(userId: string): Promise<FileDto[]> => {
         try
         {
-            const response = await axiosInstance.get<FileDto[]>(`/File/GetAllFiles/${userId}`)
+            const response = await axiosInstance.get<FileDto[]>(`/File/GetAllUserFiles/${userId}`)
+            return response.data
+        }
+        catch(error)
+        {
+            console.error('File get error:', error)
+            throw error
+        }
+    },
+
+    getAllOwnedFilesPagination: async(userId: string, page: number, pageSize: number): Promise<{files: FileDto[], totalCount: number}> => {
+        try
+        {
+            const response = await axiosInstance.get<{files: FileDto[], totalCount: number}>(`/File/GetAllUserFiles/${userId}/${page}/${pageSize}`)
             return response.data
         }
         catch(error)
@@ -84,6 +124,16 @@ const fileService =
             return response.data;
         } catch (error) {
             console.error('File change error:', error);
+            throw error;
+        }
+    },
+
+    findByQuestion: async (userId: string, question: string, page: number, pageSize: number): Promise<{files: FileDto[], totalCount: number}> => {
+        try {
+            const response = await axiosInstance.get<{files: FileDto[], totalCount: number}>(`/File/GetBySearchTag/${userId}/${question}/${page}/${pageSize}`);
+            return response.data;
+        } catch (error) {
+            console.error('File get error:', error);
             throw error;
         }
     }

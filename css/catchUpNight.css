@@ -88,6 +88,14 @@
     color: #FFFFFF;
 }
 
+.alert-info {
+    --bs-alert-color: #FFFFFF;
+}
+
+.no-notificaitons-alert i {
+    color: #FFFFFF;
+}
+
 /*ai assistant*/
 .user-message {
     background: #DB91D1;
@@ -110,4 +118,29 @@
     --bs-pagination-color: #FFFFFF;
     --bs-pagination-disabled-bg: rgba(34, 34, 34, 0.5);
     --bs-pagination-bg: rgba(0, 0, 0, 0.5);
+}
+
+/* Calendar */
+.rbc-off-range-bg {
+    background-color: #000000 !important;
+}
+
+.rbc-toolbar button {
+   color: #FFFFFF !important;
+}
+
+.rbc-toolbar button {
+    background-color: #1a1a1a !important;
+}
+.striped {
+    background: linear-gradient(
+        45deg, 
+        rgba(0, 0, 0, 0) 40.63%, 
+        rgba(219, 145, 209, 0.5) 40.63%, 
+        rgba(219, 145, 209, 0.5) 50%, 
+        rgba(0, 0, 0, 0) 50%, 
+        rgba(0, 0, 0, 0) 90.63%, 
+        rgba(219, 145, 209, 0.5) 90.63%, 
+        rgba(219, 145, 209, 0.5) 100%);
+    background-size: 45.25px 45.25px;
 }

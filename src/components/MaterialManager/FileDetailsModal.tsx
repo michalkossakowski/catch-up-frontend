@@ -7,11 +7,12 @@ import styles from './material.module.css';
 import fileService from "../../services/fileService";
 import materialService from "../../services/materialService";
 import { OnActionEnum } from "../../Enums/OnActionEnum";
+import { t } from "i18next";
 
 interface FileDetailsModalProps {
     showModal: boolean;
     onClose(): void;
-    onAction(action: OnActionEnum, data?: any): void;
+    onAction(action: OnActionEnum, data?: any, fileInMaterial?: boolean): void;
     filePair?: FilePair;
     materialId?: number;
     enableDownload?: boolean;
@@ -19,6 +20,7 @@ interface FileDetailsModalProps {
     enableEdit?: boolean;
     enableAddToMaterial?: boolean;
     enableRemoveFromMaterial?: boolean;
+    isFileInMaterial?: boolean;
 }
 const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
     showModal,
@@ -31,6 +33,7 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
     enableEdit = false,
     enableAddToMaterial = false,
     enableRemoveFromMaterial = false,
+    isFileInMaterial = false,
 }) => {
   const [show, setShow] = useState(false);
   const [owner, setOwner] = useState<UserDto>();
@@ -72,9 +75,14 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
     if(changedFileDto === undefined) return;
     if(changedFileDto.name === fileName) return;
     changedFileDto.name = fileName;
+    if(!isFileInMaterial)
+    {
+      onAction(OnActionEnum.FileEdited, {fileNameAndIndex: {fileName: changedFileDto.name , index: changedFileDto.id}}, false);
+      return;
+    }
     fileService.changeFile(changedFileDto).then(() => {
-      onAction(OnActionEnum.FileEdited, {filePair: {...filePair, fileDto: changedFileDto}});
-    }).catch((error) => {});
+      onAction(OnActionEnum.FileEdited, {filePair: {...filePair, fileDto: changedFileDto}}, true);
+    })
   };
 
   const onDownload = async () => { 
@@ -104,11 +112,17 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
   }
 
   const handleRemoveFromMaterial = () => {
+    if (!isFileInMaterial) {
+      console.log(filePair?.fileDto.id);
+      onAction(OnActionEnum.FileRemovedFromMaterial, {index: filePair?.fileDto.id}, false);
+      handleClose();
+      return;
+    }
     if (!materialId || !filePair?.fileDto.id) 
     { return; }
     
     materialService.removeFile(materialId, filePair?.fileDto.id ?? 0).then(() => {
-      onAction(OnActionEnum.FileRemovedFromMaterial, {fileId: filePair?.fileDto.id});
+      onAction(OnActionEnum.FileRemovedFromMaterial, {fileId: filePair?.fileDto.id}, true);
       handleClose();
     }).catch((error) => {
       console.error("Failed to remove file from material:", error);
@@ -152,17 +166,17 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
       <>
       <Modal show={show} onHide={handleClose} animation={false}>
         <Modal.Header closeButton closeVariant="white">
-          <Modal.Title className="me-3">File details - {filePair?.fileDto.name}</Modal.Title>
+          <Modal.Title className="me-3">{t('file-details')} {filePair?.fileDto.name}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Stack direction="horizontal" gap={2} className="mb-3">
-            {enableDownload && <Button variant="secondary" onClick={() => onDownload()}>Download</Button>}
-            {enableRemoveFromMaterial && <Button variant="secondary" onClick = {() => handleRemoveFromMaterial() }>Remove from material</Button>}
-            {enableAddToMaterial && <Button variant="secondary" onClick={() => onAddToMaterial()}>Add to material</Button>}
-            {enableDelete && <Button variant="danger">Delete</Button>}
+            {enableDownload && <Button variant="secondary" onClick={() => onDownload()}>{t('download')}</Button>}
+            {enableRemoveFromMaterial && <Button variant="secondary" onClick = {() => handleRemoveFromMaterial() }>{t('remove-from-material')}</Button>}
+            {enableAddToMaterial && <Button variant="secondary" onClick={() => onAddToMaterial()}>{t('add-to-material')}</Button>}
+            {enableDelete && <Button variant="danger">{t('delete')}</Button>}
           </Stack>
           <Row className="text-start mb-2">
-            <Col xs="3"><label>Name</label></Col>
+            <Col xs="3"><label>{t('name')}</label></Col>
             <Col>
               {enableEdit ?(
                 <input 
@@ -177,7 +191,7 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
             </Col>
           </Row>
           <Row className="text-start mb-2">
-            <Col xs="3">Owner</Col>
+            <Col xs="3">{t('owner')}</Col>
             <Col>{owner?.name + " " +owner?.surname}</Col>
           </Row>
           <hr />
@@ -201,16 +215,16 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
                   className={`${styles.videoThumbnail} rounded shadow-sm`}
                   style={{ width: "150px", height: "150px", objectFit: "cover" }}
                   > 
-                    Twoja przeglądarka nie obsługuje elementu wideo.
-                  <source src={URL.createObjectURL(filePair?.file)} type={filePair.fileDto.type} />
+                    {t('your-browser-does-not-support-the-video-element')}  
+                    <source src={URL.createObjectURL(filePair?.file)} type={filePair.fileDto.type} />
                 </video>
               ) : 
                 <i className={`${getFileIcon(filePair?.fileDto?.type)} ${styles.fileIconSize}` }></i>
               }
               </Col>
               <Col className="text-start">
-                <p>Size: {getFileSize(filePair?.fileDto.sizeInBytes)}</p>
-                <p>File type: {filePair?.fileDto.type}</p>
+                <p>{t('size')} {getFileSize(filePair?.fileDto.sizeInBytes)}</p>
+                <p>{t('file-type')} {filePair?.fileDto.type}</p>
                 <p>{filePair?.fileDto.dateOfUpload
                   ? new Date(filePair?.fileDto.dateOfUpload).toLocaleString("pl-PL", {
                       year: "numeric",
@@ -219,7 +233,7 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
                       hour: "2-digit",
                       minute: "2-digit",
                       })
-                      : "Brak daty"}
+                      : t('undefine-date')}
                 </p>
               </Col>
             </Row>
@@ -228,9 +242,9 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
         <Modal.Footer>
           <Stack direction="horizontal" gap={2} className="mb-3">
             {enableEdit && 
-              <Button variant="secondary" onClick={handleSave}>Save Changes</Button>
+              <Button variant="secondary" onClick={handleSave}>{t('save-changes')}</Button>
             }
-            <Button variant="primary" onClick={handleClose}> Close </Button>
+            <Button variant="primary" onClick={handleClose}>{t('close')}</Button>
           </Stack>
         </Modal.Footer>
       </Modal>
