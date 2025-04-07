@@ -80,7 +80,6 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selecte
                 if (onTaskUpdate) {
                     onTaskUpdate(updatedFullTask);
                 }
-                alert("Task edited successfully!");
             } else {
                 const taskData = {
                     newbieId: selectedNewbieId!,
@@ -109,7 +108,6 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selecte
                 if (onTaskUpdate) {
                     onTaskUpdate(addedFullTask);
                 }
-                alert("Task assigned successfully!");
             }
 
             handleClose();
