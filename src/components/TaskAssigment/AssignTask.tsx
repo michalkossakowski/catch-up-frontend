@@ -3,9 +3,9 @@ import { Modal, Button } from "react-bootstrap";
 import { TaskContentDto } from "../../dtos/TaskContentDto";
 import { assignTask, editTask } from "../../services/taskService.ts";
 import { useAuth } from "../../Provider/authProvider.tsx";
-import {FullTaskDto} from "../../dtos/FullTaskDto.ts";
-import {CategoryDto} from "../../dtos/CategoryDto.ts";
-import {MaterialDto} from "../../dtos/MaterialDto.ts";
+import { FullTaskDto } from "../../dtos/FullTaskDto.ts";
+import { CategoryDto } from "../../dtos/CategoryDto.ts";
+import { MaterialDto } from "../../dtos/MaterialDto.ts";
 
 interface AssignTaskProps {
     isEditMode: boolean;
@@ -25,7 +25,7 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selecte
     const [title, setTitle] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [deadline, setDeadline] = useState<string>("");
-    const [materialsId, setMaterialsId] = useState<number>(1);
+    const [materialsId, setMaterialsId] = useState<number | null>(null); // Changed to allow null
     const [categoryId, setCategoryId] = useState<number>(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -41,7 +41,7 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selecte
                     setDeadline(task.deadline ?? "");
                     setTitle(task.title ?? "");
                     setDescription(task.description ?? "");
-                    setMaterialsId(task.materialsId ?? 1);
+                    setMaterialsId(task.materialsId ?? null);
                     setCategoryId(task.categoryId ?? 1);
                 }
             } catch (err) {
@@ -71,15 +71,15 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selecte
                     assigningId: currentUserId,
                     title: title,
                     description: description,
-                    materialsId: materialsId,
+                    materialsId: materialsId ?? undefined,
                     categoryId: categoryId,
                     deadline: deadline ? deadline : undefined,
+                    status: task.status
                 };
                 const updatedFullTask = await editTask(taskData, task.id!, user.id!);
                 if (onTaskUpdate) {
                     onTaskUpdate(updatedFullTask);
                 }
-                alert("Task edited successfully!");
             } else {
                 const taskData = {
                     newbieId: selectedNewbieId!,
@@ -99,7 +99,7 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selecte
                     assigningId: addedTask.assigningId,
                     title: selectedTask.title!,
                     description: selectedTask.description!,
-                    materialsId: selectedTask.materialsId!,
+                    materialsId: selectedTask.materialsId ?? undefined,
                     categoryId: selectedTask.categoryId!,
                     deadline: deadline ? deadline : undefined,
                     status: addedTask.status
@@ -108,7 +108,6 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selecte
                 if (onTaskUpdate) {
                     onTaskUpdate(addedFullTask);
                 }
-                alert("Task assigned successfully!");
             }
 
             handleClose();
@@ -177,13 +176,13 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selecte
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Material</label>
+                                <label className="form-label">Material (optional)</label>
                                 <select
                                     className="form-select"
-                                    value={materialsId}
-                                    onChange={(e) => setMaterialsId(Number(e.target.value))}
-                                    required
+                                    value={materialsId ?? ""}
+                                    onChange={(e) => setMaterialsId(e.target.value === "" ? null : Number(e.target.value))}
                                 >
+                                    <option value="">No Material</option>
                                     {materials?.map((material) => (
                                         <option key={material.id} value={material.id}>
                                             {material.name}
@@ -232,13 +231,12 @@ function AssignTask({ isEditMode, task, show, handleClose, onTaskUpdate, selecte
                     {error && <div className="alert alert-danger">{error}</div>}
 
                     <Button type="submit" variant="primary" disabled={loading}>
-                    {loading ? "Saving..." : isEditMode ? "Save Changes" : "Assign Task"}
+                        {loading ? "Saving..." : isEditMode ? "Save Changes" : "Assign Task"}
                     </Button>
                 </form>
             </Modal.Body>
         </Modal>
     );
 }
-
 
 export default AssignTask;

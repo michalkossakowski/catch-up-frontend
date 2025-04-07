@@ -1,3 +1,5 @@
+import {FullTaskDto} from "./FullTaskDto.ts";
+
 export interface TaskDto {
     id?: number;
     newbieId: string;
@@ -16,4 +18,5 @@ export interface TaskDto {
 export interface TaskResponse {
     message: string;
     task: TaskDto;
+    fullTask: FullTaskDto;
 }

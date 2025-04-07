@@ -1,27 +1,31 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { useAuth } from "../../Provider/authProvider";
+import { AppDispatch, RootState } from "../../store/store.ts";
+import { CategoryDto } from "../../dtos/CategoryDto.ts";
+import { FullTaskDto } from "../../dtos/FullTaskDto";
+import { UserAssignCountDto } from "../../dtos/UserAssignCountDto";
+import { TaskContentDto } from "../../dtos/TaskContentDto.ts";
+import { fetchTasks, updateTaskLocally, deleteTaskLocally } from "../../store/taskSlice.ts";
 import NewbieMentorService from '../../services/newbieMentorService';
-import {useAuth} from "../../Provider/authProvider";
-import {FullTaskDto} from "../../dtos/FullTaskDto";
-import {UserAssignCountDto} from "../../dtos/UserAssignCountDto";
-import TaskList from "./TaskList";
-import {Button} from "react-bootstrap";
+import { getCategories } from "../../services/categoryService.ts";
+import { getTaskContents } from "../../services/taskContentService.ts";
+import {setTaskStatus, deleteTask, editTask, assignTask} from "../../services/taskService";
+import { StatusEnum } from "../../Enums/StatusEnum";
+import TaskColumns from "./TaskColumns";
+import TaskPool from "./TaskPool";
 import AssignTask from "../TaskAssigment/AssignTask.tsx";
-import {getCategories} from "../../services/categoryService.ts";
-import materialService from "../../services/materialService.ts";
-import {CategoryDto} from "../../dtos/CategoryDto.ts";
-import {MaterialDto} from "../../dtos/MaterialDto.ts";
-import {fetchTasks, updateTaskLocally, deleteTaskLocally } from "../../store/taskSlice.ts";
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "../../store/store.ts";
-import {TaskContentDto} from "../../dtos/TaskContentDto.ts";
-import {getTaskContents} from "../../services/taskContentService.ts";
 import "./TaskManager.css";
+import {TaskDto} from "../../dtos/TaskDto.ts";
 
 function TaskManager() {
     const { user, getRole } = useAuth();
     const mentorId = user?.id;
 
     const [localError, setLocalError] = useState<string | null>(null);
+    const [loadingTaskIds, setLoadingTaskIds] = useState<Set<number>>(new Set());
 
     const dispatch: AppDispatch = useDispatch();
     const { tasksByUser, loading, error } = useSelector((state: RootState) => state.tasks);
@@ -33,19 +37,27 @@ function TaskManager() {
     const [showAssignModal, setShowAssignModal] = useState(false);
 
     const [categories, setCategories] = useState<CategoryDto[]>([]);
-    const [materials, setMaterials] = useState<MaterialDto[]>([]);
     const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
     const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
     const [userRole, setUserRole] = useState<string | null>(null);
+
+    // Map to store tasks by status
+    const [tasksByStatus, setTasksByStatus] = useState<{[key in StatusEnum]: FullTaskDto[]}>({
+        [StatusEnum.ToDo]: [] as FullTaskDto[],
+        [StatusEnum.InProgress]: [] as FullTaskDto[],
+        [StatusEnum.ToReview]: [] as FullTaskDto[],
+        [StatusEnum.ReOpen]: [] as FullTaskDto[],
+        [StatusEnum.Done]: [] as FullTaskDto[]
+    });
 
     // On change of a newbie
     useEffect(() => {
         if (selectedNewbie) {
             dispatch(fetchTasks(selectedNewbie));
         }
-    }, [selectedNewbie]);
+    }, [selectedNewbie, dispatch]);
 
-    // fetches only once on mount
+    // fetches only on mount
     useEffect(() => {
         setLocalError(null);
         const fetchData = async () => {
@@ -53,9 +65,8 @@ function TaskManager() {
                 const role = await getRole(user?.id!);
                 setUserRole(role);
 
-                const [categoriesData, materialsData, taskContentsData] = await Promise.all([
+                const [categoriesData, taskContentsData] = await Promise.all([
                     getCategories(),
-                    materialService.getAllMaterials(),
                     getTaskContents()
                 ]);
 
@@ -69,7 +80,6 @@ function TaskManager() {
                 }
 
                 setCategories(categoriesData);
-                setMaterials(materialsData);
                 setNewbies(newbieList);
                 setTaskContents(taskContentsData);
             } catch (err) {
@@ -82,7 +92,7 @@ function TaskManager() {
         };
 
         fetchData();
-    }, []);
+    }, [user?.id, mentorId, getRole]);
 
     // filter when something changes
     useEffect(() => {
@@ -99,6 +109,22 @@ function TaskManager() {
         }
 
         setFilteredTasks(updatedTasks);
+
+        const newTasksByStatus = {
+            [StatusEnum.ToDo]: [] as FullTaskDto[],
+            [StatusEnum.InProgress]: [] as FullTaskDto[],
+            [StatusEnum.ToReview]: [] as FullTaskDto[],
+            [StatusEnum.ReOpen]: [] as FullTaskDto[],
+            [StatusEnum.Done]: [] as FullTaskDto[]
+        };
+
+        updatedTasks.forEach(task => {
+            if (task.status !== undefined && Object.values(StatusEnum).includes(task.status)) {
+                newTasksByStatus[task.status as StatusEnum].push(task);
+            }
+        });
+
+        setTasksByStatus(newTasksByStatus);
     }, [searchTerm, selectedNewbie, selectedCategoryId, tasksByUser]);
 
     // on task assign
@@ -110,109 +136,173 @@ function TaskManager() {
     // on task edit
     const handleTaskUpdate = (updatedTask: FullTaskDto) => {
         dispatch(updateTaskLocally(updatedTask));
+        editTask(updatedTask, updatedTask.id!, mentorId!)
     };
 
     // on task delete
     const handleTaskDelete = (taskId: number) => {
         if (selectedNewbie) {
             dispatch(deleteTaskLocally({ taskId, newbieId: selectedNewbie }));
+            deleteTask(taskId);
         }
     };
 
+    const handleTaskDrop = async (taskId: number, newStatus: StatusEnum, itemType?: string) => {
+        const taskToUpdate = filteredTasks.find(task => task.id === taskId);
+        try {
+            if (!selectedNewbie) return;
+
+            if (itemType === 'poolTask') {
+                handlePoolTaskDrop(taskId, newStatus);
+                return;
+            }
+
+            if (taskToUpdate) {
+                const optimisticTask: FullTaskDto = {
+                    ...taskToUpdate,
+                    status: newStatus,
+                };
+
+                setLoadingTaskIds(prev => new Set(prev).add(taskId));
+                dispatch(updateTaskLocally(optimisticTask));
+            } else {
+                console.warn(`Task with ID ${taskId} not found in filteredTasks`);
+                return;
+            }
+
+            await setTaskStatus(taskId, newStatus);
+
+            setLoadingTaskIds(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(taskId);
+                return newSet;
+            });
+        } catch (error) {
+            console.error('Failed to update task status:', error);
+            setLocalError('Failed to update task status. Reverting change.');
+
+            if (taskToUpdate) {
+                dispatch(updateTaskLocally(taskToUpdate));
+                setLoadingTaskIds(prev => {
+                    const newSet = new Set(prev);
+                    newSet.delete(taskId);
+                    return newSet;
+                });
+            }
+        }
+    };
+
+    const handlePoolTaskDrop = async (taskContentId: number, newStatus: StatusEnum) => {
+        if (!selectedNewbie) return;
+
+        const taskData : TaskDto = {
+            newbieId: selectedNewbie,
+            assigningId: mentorId!,
+            taskContentId: taskContentId,
+            deadline: null,
+            status: newStatus
+        };
+
+        const addedTask : FullTaskDto = await assignTask(taskData);
+        handleTaskAssigned(addedTask);
+    };
+
     return (
-        <div className="container">
-            <h2>Task Manager</h2>
-            <div className="row g-2 mb-3 align-items-center">
-                <div className="col-6">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Search tasks..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        disabled={!selectedNewbie}
-                    />
+        <DndProvider backend={HTML5Backend}>
+            <div className="container-fluid task-manager-container">
+                <h2>Task Manager</h2>
+
+
+                {(error || localError) && (
+                    <div className="alert alert-danger mt-3">{error || localError}</div>
+                )}
+
+                <div className="task-management-wrapper">
+                    <div className="task-columns-container">
+                        <div className="row mb-3 align-items-center">
+                            <div className="col-6">
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Search tasks..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    disabled={!selectedNewbie}
+                                />
+                            </div>
+
+                            <div className="col-3">
+                                <select
+                                    className="form-select"
+                                    value={selectedNewbie}
+                                    onChange={(e) => setSelectedNewbie(e.target.value)}
+                                >
+                                    <option value="">None</option>
+                                    {newbies.map((newbie) => (
+                                        <option key={newbie.id} value={newbie.id}>
+                                            {`${newbie.name} ${newbie.surname}`}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="col-3">
+                                <select
+                                    className="form-select"
+                                    value={selectedCategoryId}
+                                    onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
+                                    disabled={!selectedNewbie}
+                                >
+                                    <option value={0}>All</option>
+                                    {categories.map((category) => (
+                                        <option key={category.id} value={category.id}>
+                                            {category.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Task Columns */}
+                        <TaskColumns
+                            tasksByStatus={tasksByStatus}
+                            onTaskUpdate={handleTaskUpdate}
+                            onTaskDelete={handleTaskDelete}
+                            onTaskDrop={handleTaskDrop}
+                            categories={categories}
+                            taskContents={taskContents}
+                            role={userRole || ""}
+                            loading={loading}
+                            loadingTaskIds={loadingTaskIds}
+                        />
+                    </div>
+
+                    {/* Task Pool Section */}
+                    <div className={`task-pool-container ${!selectedNewbie ? "disabled-pool" : ""}`}>
+                        <TaskPool
+                            taskContents={taskContents}
+                            categories={categories}
+                            selectedCategoryId={selectedCategoryId}
+                            onTaskDrop={handlePoolTaskDrop}
+                            isDisabled={!selectedNewbie}
+                        />
+                    </div>
                 </div>
 
-                <div className="col-3">
-                    <select
-                        className="form-select"
-                        value={selectedNewbie}
-                        onChange={(e) => setSelectedNewbie(e.target.value)}
-                    >
-                        <option value="">None</option>
-                        {newbies.map((newbie) => (
-                            <option key={newbie.id} value={newbie.id}>
-                                {`${newbie.name} ${newbie.surname}`}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div className="col-2">
-                    <select
-                        className="form-select"
-                        value={selectedCategoryId}
-                        onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
-                        disabled={!selectedNewbie}
-                    >
-                        <option value={0}>All</option>
-                        {categories.map((category) => (
-                            <option key={category.id} value={category.id}>
-                                {category.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div className="col-1">
-                    <Button
-                        className="w-100"
-                        disabled={!selectedNewbie}
-                        variant={selectedNewbie ? "primary" : "secondary"}
-                        onClick={() => setShowAssignModal(true)}
-                    >
-                        Assign
-                    </Button>
-                </div>
-            </div>
-
-            {showAssignModal && (
-                <AssignTask
-                    isEditMode={false}
-                    task={null}
-                    show={showAssignModal}
-                    handleClose={() => setShowAssignModal(false)}
-                    onTaskUpdate={handleTaskAssigned}
-                    selectedNewbieId={selectedNewbie}
-                    categories={categories}
-                    materials={materials}
-                    taskContents={taskContents}
-                />
-            )}
-
-            <div className="border p-3 mt-3 scrollable-container">
-                {!selectedNewbie ? (
-                    <p className="text-muted">Please select a newbie to view tasks.</p>
-                ) : (
-                    <TaskList
-                        tasks={filteredTasks}
-                        loading={loading}
-                        onTaskUpdate={handleTaskUpdate}
-                        onTaskDelete={handleTaskDelete}
-                        isEditMode={true}
+                {showAssignModal && (
+                    <AssignTask
+                        isEditMode={false}
+                        task={null}
+                        show={showAssignModal}
+                        handleClose={() => setShowAssignModal(false)}
+                        onTaskUpdate={handleTaskAssigned}
+                        selectedNewbieId={selectedNewbie}
                         categories={categories}
-                        materials={materials}
                         taskContents={taskContents}
-                        role={userRole!}
                     />
                 )}
             </div>
-
-            {(error || localError) && (
-                <div className="alert alert-danger mt-3">{error || localError}</div>
-            )}
-        </div>
+        </DndProvider>
     );
 }
 
