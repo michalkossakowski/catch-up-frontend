@@ -13,8 +13,9 @@ interface MaterialItemProps {
   addedFiles?: number
   onDeleteItem: (materialID: number) => void
   onMaterialSelect: (materialID: number, fileIds: number[], action: string) => void
+  readOnly?: boolean
 }
-const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, addedFiles, onDeleteItem, onMaterialSelect }) => {
+const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, addedFiles, onDeleteItem, onMaterialSelect, readOnly = false }) => {
 
   const [material, setMaterial] = useState<MaterialDto>()
   const [isEditing, setIsEditing] = useState(false)
@@ -221,21 +222,25 @@ const MaterialItem: React.FC<MaterialItemProps> = ({ materialDto, addedFiles, on
           {material?.files && material.files.map((file) => (
             <div className="badge text-bg-secondary p-3 m-1 position-relative" key={file.id}>
               {shortedFileName(file, 64)}
-              <a onClick={isEditing ? () => handleDeleteFile(file.id) : undefined} className={`fs-5 position-absolute top-0 start-100 translate-middle pt-2 pe-2 ${(isEditing ? "visible" : "invisible")}`}>
+              <a onClick={isEditing && !readOnly ? () => handleDeleteFile(file.id) : undefined} className={`fs-5 position-absolute top-0 start-100 translate-middle pt-2 pe-2 ${(isEditing && !readOnly ? "visible" : "invisible")}`}>
                       <i className={`bi bi-trash2-fill deleteIcon `}></i>
                   </a>
             </div>
 
           ))}
-          <hr />
-          <div><FileAdd materialId={material?.id || 0} onFileUploaded={onFileUploaded} /></div>
-          <hr />
-          <div className="d-flex justify-content-end mt-3 me-3">
-            {isEditing &&
-              <Button variant="primary" className="me-2" onClick={cancelChanges}>Cancel</Button>}
-              <Button variant="primary" disabled={!!nameError} className="me-2 ms-2 disactive" onClick={toggleEditMode}>{isEditing ? "Save" : "Edit"}</Button>
-              <Button variant="danger" className="ms-2" onClick={clickDeleteitem}>Delete</Button>
-          </div>
+          {!readOnly && (
+            <>
+              <hr />
+              <div><FileAdd materialId={material?.id || 0} onFileUploaded={onFileUploaded} /></div>
+              <hr />
+              <div className="d-flex justify-content-end mt-3 me-3">
+                {isEditing &&
+                  <Button variant="primary" className="me-2" onClick={cancelChanges}>Cancel</Button>}
+                  <Button variant="primary" disabled={!!nameError} className="me-2 ms-2 disactive" onClick={toggleEditMode}>{isEditing ? "Save" : "Edit"}</Button>
+                  <Button variant="danger" className="ms-2" onClick={clickDeleteitem}>Delete</Button>
+              </div>
+            </>
+          )}
         </Accordion.Body >
       </Accordion.Item>
     </>

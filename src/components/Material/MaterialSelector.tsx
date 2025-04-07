@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, ListGroup, Form } from "react-bootstrap";
 import { MaterialDto } from "../../dtos/MaterialDto";
 
@@ -20,7 +20,16 @@ const MaterialSelector: React.FC<MaterialSelectorProps> =  ({
     submitSelection,
     clearSelectedMaterials,
 }) => {
-  const handleCheckboxChange = (id: number) => {
+  const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (show) {
+      setSelectedMaterialId(null);
+    }
+  }, [show]);
+
+  const handleRadioChange = (id: number) => {
+    setSelectedMaterialId(id);
     toggleSelection(id);
   };
 
@@ -35,7 +44,7 @@ const MaterialSelector: React.FC<MaterialSelectorProps> =  ({
       aria-labelledby="materialSelectionLabel"
     >
       <Modal.Header closeButton>
-        <Modal.Title id="materialSelectionLabel">Select Materials</Modal.Title>
+        <Modal.Title id="materialSelectionLabel">Select Material</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {materials && materials.length > 0 ? (
@@ -43,11 +52,13 @@ const MaterialSelector: React.FC<MaterialSelectorProps> =  ({
             {materials.map((material) => (
               <ListGroup.Item key={material.id}>
                 <Form.Check
-                  type="checkbox"
+                  type="radio"
                   id={`material-${material.id}`}
+                  name="materialSelection"
                   label={material.name}
                   value={material.id}
-                  onChange={() => handleCheckboxChange(material.id ?? 0)}
+                  checked={selectedMaterialId === material.id}
+                  onChange={() => handleRadioChange(material.id ?? 0)}
                 />
               </ListGroup.Item>
             ))}
@@ -67,7 +78,11 @@ const MaterialSelector: React.FC<MaterialSelectorProps> =  ({
           Close
         </Button>
         {materials && materials.length > 0 && (
-          <Button variant="primary" onClick={submitSelection}>
+          <Button 
+            variant="primary" 
+            onClick={submitSelection}
+            disabled={selectedMaterialId === null}
+          >
             Submit
           </Button>
         )}
