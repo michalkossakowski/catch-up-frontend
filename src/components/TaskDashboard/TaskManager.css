@@ -12,17 +12,17 @@
 }
 
 .task-columns-container {
-    flex: 4; /* Updated ratio */
-    width: 75%; /* Fixed percentage width */
-    max-width: 75%; /* Maximum width percentage */
+    flex: 4;
+    width: 75%;
+    max-width: 75%;
     min-height: 600px;
 }
 
 .task-pool-container {
     flex: 1;
-    width: 25%; /* Fixed percentage width */
+    width: 25%;
     min-width: 300px;
-    max-width: 25%; /* Maximum width percentage */
+    max-width: 25%;
 }
 
 /* Column styling */
@@ -31,17 +31,14 @@
 }
 
 .task-columns .row {
-    height: 100%;
     display: flex;
-    flex-wrap: nowrap; /* Prevent columns from wrapping */
-    width: 100%;
+    flex-wrap: nowrap;
 }
 
 .task-columns .col {
-    flex: 1 0 20%; /* Each col takes 20% with no growth */
-    max-width: 20%; /* Maximum width for each column */
-    min-width: 180px; /* Minimum column width */
-    padding: 0 5px; /* Consistent padding */
+    flex: 1 0 20%;
+    max-width: 20%;
+    padding: 0 5px;
 }
 
 .task-column {
@@ -50,7 +47,7 @@
     display: flex;
     flex-direction: column;
     transition: all 0.2s ease;
-    width: 100%; /* Ensure columns take full width of their parent */
+    width: 100%;
 }
 
 .column-header {
@@ -60,7 +57,7 @@
     padding: 10px;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
-    width: 100%; /* Ensure header takes full width */
+    width: 100%;
 }
 
 .column-body {
@@ -82,7 +79,7 @@
     border-radius: 4px;
     border-left: 4px solid #007bff;
     transition: all 0.2s ease;
-    width: 100%; /* Force cards to full width of container */
+    width: 100%;
     margin-bottom: 10px;
     box-sizing: border-box;
 }
@@ -97,7 +94,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: calc(100% - 30px); /* Fixed space for menu button */
+    width: calc(100% - 30px);
     max-width: 100%;
 }
 
@@ -106,12 +103,10 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Drag operations - prevent layout shifts */
 .task-card:active, .task-card[data-is-dragging="true"] {
     animation: pulse 1s infinite;
     cursor: grabbing;
     opacity: 0.6;
-    /* Don't affect layout when dragging */
     position: relative;
     z-index: 1000;
 }
@@ -191,24 +186,21 @@
         max-width: 100%;
     }
 
-    /* Keep columns in a row even on smaller screens */
     .task-columns .row {
-        overflow-x: auto; /* Add horizontal scrolling on small screens */
-        padding-bottom: 10px; /* Space for scrollbar */
+        overflow-x: auto;
+        padding-bottom: 10px;
     }
 
     .task-columns .col {
-        min-width: 200px; /* Minimum width for columns */
+        min-width: 200px;
     }
 }
 
-/* Scrollable containers */
 .scrollable-container {
     max-height: 600px;
     overflow-y: auto;
 }
 
-/* Task Pool container */
 .pool-tasks-container {
     max-height: 532px;
     overflow-y: auto;
@@ -247,4 +239,34 @@
     100% {
         box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
     }
+}
+
+.columns-container-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.columns-highlight {
+    position: relative;
+    border-radius: 8px;
+}
+
+.columns-highlight:before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: -5px;
+    right: -5px;
+    bottom: 5px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border: 2px dashed #007bff;
+    border-radius: 8px;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.columns-highlight .task-column {
+    position: relative;
+    z-index: 10;
 }

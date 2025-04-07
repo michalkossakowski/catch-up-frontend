@@ -20,6 +20,7 @@ interface TaskColumnProps {
     materials?: MaterialDto[];
     taskContents?: TaskContentDto[];
     role: string;
+    isDraggingPoolTask?: boolean;
 }
 
 const TaskColumn: React.FC<TaskColumnProps> = ({
@@ -33,7 +34,8 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
                                                    categories,
                                                    materials,
                                                    taskContents,
-                                                   role
+                                                   role,
+                                                   isDraggingPoolTask = false
                                                }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState<FullTaskDto | null>(null);
@@ -41,15 +43,15 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
     const [{ isOver }, drop] = useDrop({
         accept: 'TASK',
         drop: (item: { id: number, type: string }) => {
+            // Only handle existing tasks at this level
             if (item.type === 'existingTask') {
-                onTaskDrop(item.id, status);
-            } else if (item.type === 'poolTask') {
                 onTaskDrop(item.id, status);
             }
             return { status };
         },
         collect: (monitor) => ({
-            isOver: !!monitor.isOver(),
+            isOver: monitor.isOver() &&
+                (monitor.getItem()?.type === 'existingTask' || !isDraggingPoolTask),
         }),
     });
 
@@ -77,7 +79,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
         <div
             ref={dropRef}
             className={`task-column card ${isOver ? 'column-highlight' : ''}`}
-            style={{ height: '600px' }} // Fixed height for the column
+            style={{ height: '600px' }}
         >
             <div className={`column-header ${colorClass} text-white p-2 rounded-top`}>
                 <h5 className="m-0">{title}</h5>
