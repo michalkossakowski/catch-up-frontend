@@ -62,6 +62,16 @@ export const getAdmins = async (): Promise<UserDto[]> => {
     }
 };
 
+export const getAll = async (): Promise<UserDto[]> => {
+    try {
+        const response = await axiosInstance.get<UserDto[]>('/User/GetAll');
+        return response.data;
+    } catch (error: any) {
+        handleError('getAll', error);
+        throw error;
+    }
+};
+
 const handleError = (operation: string, error: any): void => {
     console.error(`${operation} failed:`, error);
     if (!error.response) {

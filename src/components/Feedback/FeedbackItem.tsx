@@ -41,10 +41,9 @@ const FeedbackItem: React.FC<FeedbackItemProps> = ({
                 <td>
                     <div>
                         <button 
-                            className="btn btn-primary me-1" 
+                            className="btn btn-primary bi bi-info-circle-fill" 
                             onClick={() => setIsDetailsDialogOpen(true)}
                         >
-                            Details
                         </button>
                     </div>
                 </td>
