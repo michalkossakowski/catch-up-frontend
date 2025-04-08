@@ -16,8 +16,8 @@ const TooltipButton: React.FC<TooltipButtonProps> = ({ tooltipText, onClick, var
       {tooltipText}
     </Tooltip>}  
     key={placement}
-    trigger="hover"
-    >
+    trigger={["hover", "focus"]}
+>
     <Button variant={variant || "outline-secondary"} onClick={onClick}>
       {children}
     </Button>
