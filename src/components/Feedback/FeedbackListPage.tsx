@@ -4,15 +4,19 @@ import { getFeedbacks, deleteFeedback, getTitleFeedbacks } from '../../services/
 import { FeedbackDto } from '../../dtos/FeedbackDto';
 import NotificationToast from '../Toast/NotificationToast';
 import Loading from '../Loading/Loading';
-import { getRole } from '../../services/userService';
+import { getAll, getRole } from '../../services/userService';
 import FeedbackItem from './FeedbackItem';
 import ConfirmModal from '../Modal/ConfirmModal';
 import { Button, Form, InputGroup, Row } from 'react-bootstrap';
 import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 import './FeedbackListPage.css';
+import Select from 'react-select'
+import makeAnimated from 'react-select/animated';
+import { UserDto } from '../../dtos/UserDto';
 
 
 const FeedbackListPage: React.FC = () => {
+    const animatedComponents = makeAnimated();
     const { user } = useAuth();
     const [feedbacks, setFeedbacks] = useState<FeedbackDto[]>([]);
     const [feedbackToDelete, setFeedbackToDelete] = useState<FeedbackDto | null>(null);
@@ -25,19 +29,26 @@ const FeedbackListPage: React.FC = () => {
     const [selectedResolved, setSelectedResolved] = useState<string[]>(["unresolved"]);
     const [originalFeedbacks, setOriginalFeedbacks] = useState<FeedbackDto[]>([]);
     const [selectedResourceTypes, setSelectedResourceTypes] = useState<ResourceTypeEnum[]>([]);
-    const [filterSentByMe, setFilterSentByMe] = useState(false);
+    const [filterSentByMe, setFilterSentByMe] = useState(isNewbie ? true : false);
+    const [filterSentToMe, setFilterSentToMe] = useState(true);
     const [sortColumn, setSortColumn] = useState<keyof FeedbackDto | null>(null);
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const [searchTitle, setSearchTitle] = useState('');
     const [isSearching, setIsSearching] = useState(false);
+    const [dateFrom, setDateFrom] = useState<string>("");
+    const [dateTo, setDateTo] = useState<string>("");
+    const [users, setUsers] = useState<UserDto[]>([]);
+    const [selectedSender, setSelectedSender] = useState<string>("");
+    const [selectedReceiver, setSelectedReceiver] = useState<string>("");
     useEffect(() => {
         const loadFeedbacks = async () => {
             if (!user) return;
             try {
                 const userRoleResponse = await getRole(user.id ?? 'defaultId');
                 setIsNewbie(userRoleResponse === 'Newbie');
+                setUsers(await getAll());
                 const feedbackList = await getFeedbacks();
-                setFeedbacks(feedbackList);
+                setFeedbacks(feedbackList.reverse());
                 setOriginalFeedbacks(feedbackList);
             } catch (error) {
                 setApiError(true);
@@ -51,7 +62,6 @@ const FeedbackListPage: React.FC = () => {
 
     useEffect(() => {
         let filtered = originalFeedbacks;
-    
         if (selectedResolved.length === 1) {
             if (selectedResolved.includes("resolved")) {
                 filtered = filtered.filter(feedback => feedback.isResolved);
@@ -65,7 +75,27 @@ const FeedbackListPage: React.FC = () => {
         }
     
         if (filterSentByMe) {
-            filtered = filtered.filter(feedback => isNewbie ? feedback.senderId === user?.id : feedback.receiverId === user?.id);
+            filtered = filtered.filter(feedback => feedback.senderId === user?.id);
+        }
+
+        if (filterSentToMe) {
+            filtered = filtered.filter(feedback => feedback.receiverId === user?.id);
+        }
+
+        if (dateFrom) {
+            filtered = filtered.filter(feedback => feedback.createdDate.toString().substring(0, 10) >= dateFrom);
+        }
+        
+        if (dateTo) {
+            filtered = filtered.filter(feedback => feedback.createdDate.toString().substring(0, 10) <= dateTo);
+        }
+
+        if(selectedSender){
+            filtered = filtered.filter(feedback => feedback.senderId === selectedSender);
+        }
+
+        if(selectedReceiver){
+            filtered = filtered.filter(feedback => feedback.receiverId === selectedReceiver);
         }
     
         filtered = filtered.sort((a, b) => {
@@ -86,13 +116,18 @@ const FeedbackListPage: React.FC = () => {
                     const dateB = new Date(b.createdDate).getTime();
                     return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
                 }
+
+                if (typeof valueA === "boolean" && typeof valueB === "boolean") {
+                    if (valueA === valueB) return 0;
+                    return sortOrder === "asc" ? Number(valueA) - Number(valueB) : Number(valueB) - Number(valueA);
+                }
             }
     
             return 0;
         });
     
         setFeedbacks(filtered);
-    }, [selectedResolved, selectedResourceTypes, originalFeedbacks, sortColumn, sortOrder, filterSentByMe, isNewbie, user]);
+    }, [selectedResolved, selectedResourceTypes, originalFeedbacks, sortColumn, sortOrder, filterSentByMe, filterSentToMe, dateTo, dateFrom, selectedSender, selectedReceiver, isNewbie, user]);
     
 
     const searchFeedback = async () => {
@@ -115,10 +150,9 @@ const FeedbackListPage: React.FC = () => {
         setIsSearching(false);
     };
 
-    const toggleResourceType = (type: ResourceTypeEnum) => {
-        setSelectedResourceTypes(prev =>
-            prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
-        );
+    const handleResourceTypeChange = (selectedOptions: any) => {
+        const values = selectedOptions ? selectedOptions.map((option: any) => option.value) : [];
+        setSelectedResourceTypes(values);
     };
     
     const toggleResolved = (type: "resolved" | "unresolved") => {
@@ -159,6 +193,31 @@ const FeedbackListPage: React.FC = () => {
         }
     };
 
+    const resourceTypeOptions = Object.values(ResourceTypeEnum)
+    .filter(value => typeof value === "number")
+    .map(value => ({
+        value: value,
+        label: ResourceTypeEnum[value as unknown as keyof typeof ResourceTypeEnum]
+    }));
+
+    const userTypes = ['newbie', 'mentor', 'admin', 'hr', 'other'];
+
+    const groupedUsers = userTypes.reduce((acc, type) => {
+        acc[type] = users.filter(user => 
+            user.type != undefined && 
+            (type === 'other' ? !['hr', 'admin', 'mentor', 'newbie'].includes(user.type.toLowerCase()) : user.type.toLowerCase() === type)
+        );
+        return acc;
+    }, {} as Record<string, typeof users>);
+
+    const groupedOptions = userTypes.map((type) => ({
+        label: type.charAt(0).toUpperCase() + type.slice(1),
+        options: groupedUsers[type].map((user) => ({
+            value: user.id,
+            label: `${user.name} ${user.surname}`,
+        }))
+    }));
+
     if (isLoading) {
         return (
             <div className="m-3">
@@ -192,21 +251,32 @@ const FeedbackListPage: React.FC = () => {
                     <div className="col-2">
                         <h4 className="text-start mt-3">Filters</h4>
                         <hr></hr>
-                        <Form.Group as={Row} className="text-start">
-                        <Form.Label><h6>Only {isNewbie ? "Sent by Me" : "Sent to Me"}:</h6></Form.Label>
+                        <Form.Group as={Row} className="text-start m-0">
+                        <Form.Label className="p-0"><h6>Filter by Sender:</h6></Form.Label>
                         <Form.Check
                             type="switch"
                             id="sentByMeSwitch"
-                            label={`Only ${isNewbie ? "Sent by Me" : "Sent to Me"}`}
+                            label={`Only Sent by Me`}
                             checked={filterSentByMe}
                             onChange={() => setFilterSentByMe(prev => !prev)}
                             className="custom-switch"
                         />
                         </Form.Group>
+                        {!isNewbie && (                            
+                            <Form.Group as={Row} className="text-start m-0">
+                                <Form.Check
+                                    type="switch"
+                                    id="sentToMeSwitch"
+                                    label="Only Sent to Me"
+                                    checked={filterSentToMe}
+                                    onChange={() => setFilterSentToMe(prev => !prev)}
+                                    className="custom-switch"
+                                />
+                            </Form.Group>
+                        )}
                         <hr></hr>
-                        <Form.Group as={Row} className="text-start">
-                            <Form.Label><h6>Filter by Resolved:</h6></Form.Label>
-                        
+                        <Form.Group as={Row} className="text-start m-0">
+                            <Form.Label className="p-0"><h6>Filter by Resolved:</h6></Form.Label>
                             <Form.Check
                                 type="checkbox"
                                 label="Resolved"
@@ -224,23 +294,103 @@ const FeedbackListPage: React.FC = () => {
                             />
                         </Form.Group>
                         <hr></hr>
-                        <Form.Group as={Row} className="text-start">
-                            <Form.Label><h6>Filter by Resource Type:</h6></Form.Label>
-                            {Object.values(ResourceTypeEnum)
-                                .filter(value => typeof value === "number")
-                                .map(value => (
-                                    <Form.Check
-                                        key={value}
-                                        type="checkbox"
-                                        label={ResourceTypeEnum[value as unknown as keyof typeof ResourceTypeEnum]}
-                                        value={value}
-                                        checked={selectedResourceTypes.includes(value as ResourceTypeEnum)}
-                                        onChange={() => toggleResourceType(value as ResourceTypeEnum)}
-                                        className="me-3 text-start"
-                                    />
-                                ))}
+                        <Form.Group as={Row} className="text-start m-0">
+                            <Form.Label className="p-0">
+                                <h6>Filter by Resource Type:</h6>
+                                <Select
+                                    closeMenuOnSelect={false}
+                                    components={animatedComponents}
+                                    isMulti
+                                    options={resourceTypeOptions}
+                                    value={resourceTypeOptions.filter(option => selectedResourceTypes.includes(option.value))}
+                                    onChange={handleResourceTypeChange}
+                                    styles={{
+                                        option: (provided) => ({
+                                        ...provided,
+                                        color: 'black',
+                                        }),
+                                        multiValueLabel: (provided) => ({
+                                        ...provided,
+                                        color: 'black',
+                                        }),
+                                        singleValue: (provided) => ({
+                                        ...provided,
+                                        color: 'black',
+                                        }),
+                                    }}
+                                />
+                            </Form.Label>
                         </Form.Group>
                         <hr></hr>
+                        <Form.Group as={Row} className="text-start m-0">
+                            <Form.Label className="p-0 mb-0">
+                                <h6>Feedback sent from:</h6></Form.Label>
+                            <Form.Control 
+                            type="date" 
+                            className="mb-2"
+                            value={dateFrom}
+                            onChange={(e) => setDateFrom(e.target.value)} 
+                            />
+                            <Form.Label className="p-0 mt-2 mb-0"><h6>Feedback sent to:</h6></Form.Label>
+                            <Form.Control 
+                            type="date" 
+                            value={dateTo}
+                            onChange={(e) => setDateTo(e.target.value)} 
+                            />
+                        </Form.Group>
+                        <hr></hr>
+                        <Form.Group as={Row} className="text-start m-0">
+                        <Form.Label className="p-0 mb-0"><h6>Filter by Sender:</h6>
+                        <Select
+                            closeMenuOnSelect={true}
+                            components={animatedComponents}
+                            options={groupedOptions}
+                            isClearable={true}
+                            isMulti={false}
+                            value={groupedOptions.flatMap(group => group.options).find(option => option.value === selectedSender)}
+                            onChange={(selectedOption) => setSelectedSender(selectedOption?.value || '')}
+                            styles={{
+                                option: (provided) => ({
+                                    ...provided,
+                                    color: 'black',
+                                }),
+                                multiValueLabel: (provided) => ({
+                                    ...provided,
+                                    color: 'black',
+                                }),
+                                singleValue: (provided) => ({
+                                    ...provided,
+                                    color: 'black',
+                                }),
+                            }}
+                        />
+                        </Form.Label>
+                        <Form.Label className="p-0 mt-2 mb-0"><h6>Filter by Receiver:</h6>
+                        <Select
+                            closeMenuOnSelect={true}
+                            components={animatedComponents}
+                            options={groupedOptions}
+                            isClearable={true}
+                            isMulti={false}
+                            value={groupedOptions.flatMap(group => group.options).find(option => option.value === selectedReceiver)}
+                            onChange={(selectedOption) => setSelectedReceiver(selectedOption?.value || '')}
+                            styles={{
+                                option: (provided) => ({
+                                    ...provided,
+                                    color: 'black',
+                                }),
+                                multiValueLabel: (provided) => ({
+                                    ...provided,
+                                    color: 'black',
+                                }),
+                                singleValue: (provided) => ({
+                                    ...provided,
+                                    color: 'black',
+                                }),
+                            }}
+                        />
+                        </Form.Label>
+                        </Form.Group>
                     </div>
                     <div className="col-10">
                         {isSearching ? (
@@ -271,7 +421,10 @@ const FeedbackListPage: React.FC = () => {
                                             Resource Type 
                                             <i className="bi bi-arrow-down-up ms-2"></i>
                                         </th>
-                                        <th>Resolved</th>
+                                        <th onClick={() => handleSort("isResolved")} style={{ cursor: "pointer" }}>
+                                            Resolved
+                                            <i className="bi bi-arrow-down-up ms-2"></i>
+                                        </th>
                                         <th>Detail</th>
                                     </tr>
                                 </thead>
