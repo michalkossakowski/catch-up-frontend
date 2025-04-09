@@ -133,10 +133,9 @@ function App() {
     const handleNotificationClick = (notification: NotificationDto) => {
         if (!notification.isRead) {
             dispatch(markNotificationAsRead(notification.notificationId));
+            readNotification(notification.notificationId)
         }
         navigate(notification.source);
-
-        readNotification(notification.notificationId)
 
         if (notificationDropdownRef.current) {
             const dropdownToggle = notificationDropdownRef.current.querySelector('.dropdown-toggle');
