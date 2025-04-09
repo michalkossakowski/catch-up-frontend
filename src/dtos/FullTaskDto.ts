@@ -2,6 +2,7 @@ export interface FullTaskDto {
     id?: number;
     newbieId: string;
     assigningId: string;
+    assigningName: string;
     materialsId?: number;
     categoryId?: number;
     title: string;
