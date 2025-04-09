@@ -7,6 +7,8 @@ import { StatusEnum } from '../../Enums/StatusEnum';
 import Loading from '../Loading/Loading';
 import './RoadMapDetails.css';
 import RoadMapPointDetails from './RoadMapPointDetails';
+import { useWindowSize } from 'react-use'
+import Confetti from 'react-confetti'
 
 const RoadMapDetails: React.FC = () => {
     const { roadMapId, title } = useParams<{ roadMapId: string; title: string }>();
@@ -16,6 +18,7 @@ const RoadMapDetails: React.FC = () => {
     const [alertMessage, setAlertMessage] = useState('');
     const [selectedPointId, setSelectedPointId] = useState<number | null>(null); // New state for selected point
     const navigate = useNavigate();
+    const { width, height } = useWindowSize()
 
     useEffect(() => {
         if (roadMapId) {
@@ -55,6 +58,21 @@ const RoadMapDetails: React.FC = () => {
 
     return (
         <>
+            {!loading && roadMapPoints.find(rmp => rmp.status !== StatusEnum.Done) == null && (
+                <>
+                    <Confetti style={{zIndex: 10}}
+                        width={width}
+                        height={height}
+                        numberOfPieces={1000}
+                        gravity={0.2}
+                        colors={['#5CD3B4','#DB91D1','#F2E267']}
+                        tweenDuration={2000}
+                        recycle={false}
+                    />
+                </>
+            )}
+
+
             <div className="roadmap-container">
                 <div className="d-flex justify-content-center align-items-center">
                     <h1 className="title">
