@@ -33,6 +33,17 @@ export const readNotifications = async (): Promise<any> => {
     }
 };
 
+
+export const readNotification = async (notificationId: number): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/Notification/ReadNotification/${notificationId}`,{});
+        return response.data;
+    } catch (error: any) {
+        handleError('readNotification', error);
+        throw error;
+    }
+};
+
 export const hasUnreadNotifications = async (): Promise<boolean> => {
     try {
         const response = await axiosInstance.get<boolean>('/Notification/HasUnreadNotifications',{});

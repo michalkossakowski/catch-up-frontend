@@ -1,12 +1,12 @@
 import './App.css';
-import { Alert, Button, Image } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
+import { Alert, Button, Image, NavDropdown } from 'react-bootstrap';
+import { useEffect, useRef, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './components/Home/Home.tsx';
 import { useAuth } from './Provider/authProvider';
 import Badge from './components/Badge/BadgeComponent';
 import FaqComponent from './components/Faq/FaqComponent';
-import { Routes, Route, NavLink, useLocation } from 'react-router-dom';
+import { Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import AdminPanel from "./components/Admin/AdminPanel.tsx";
 import defaultUserIcon from './assets/defaultUserIcon.jpg';
 import UserProfile from './components/User/UserProfile.tsx';
@@ -16,7 +16,7 @@ import PresetManage from "./components/Preset/PresetManage.tsx";
 import TaskContentManage from './components/Task/TaskContentManage';
 import TaskContentCreate from './components/Task/TaskContentCreate';
 import TaskContentEditPage from './components/Task/TaskContentEditPage';
-import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { Container, Nav, Navbar } from 'react-bootstrap';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
 import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
@@ -38,17 +38,16 @@ import { NotificationDto } from './dtos/NotificationDto.ts';
 import NotificationToast from './components/Toast/NotificationToast.tsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './store/store';
-import { setNotifications, addNotification, setNotificationsCount } from './store/notificationSlice';
-import { getNotifications } from './services/notificationService';
+import { setNotifications, addNotification, setNotificationsCount, markNotificationAsRead } from './store/notificationSlice';
+import { getNotifications, readNotification } from './services/notificationService';
 import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
-
 import { useTranslation } from "react-i18next";
 import "./i18n.ts";
-import { useNavigate } from 'react-router-dom';
 import HRHomePage from './components/HR/HRHomePage.tsx';
 import NewbieHomePage from './components/Newbie/NewbieHomePage.tsx';
 import EventCreator from './components/HR/EventCreator.tsx';
+
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
@@ -56,13 +55,14 @@ function App() {
     const [theme, setTheme] = useState<'night' | 'day'>('night');
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { hasUnread } = useSelector((state: RootState) => state.notifications);
+    const { hasUnread, notifications } = useSelector((state: RootState) => state.notifications);
     const location = useLocation();
 
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [toastSource, setToastSource] = useState('');
     const notificationSound = new Audio('/Notifications/notification.mp3');
+    const notificationDropdownRef = useRef<HTMLDivElement>(null);
 
     const { t, i18n } = useTranslation();
     const availableLanguages: { [key: string]: string } = {
@@ -100,11 +100,9 @@ function App() {
             if (location.pathname === '/') {
                 if (userRole === 'HR') {
                     navigate('/hrhomepage');
-                }
-                else if (userRole === 'Newbie') {
+                } else if (userRole === 'Newbie') {
                     navigate('/newbiehomepage');
-                } 
-                else {
+                } else {
                     navigate('/');
                 }
             }
@@ -117,7 +115,7 @@ function App() {
     }, [user?.id]);
 
     const handleNotifications = async () => {
-        const data = await getNotifications(1,50);
+        const data = await getNotifications(1, 50);
         dispatch(setNotifications(data.notifications));
         dispatch(setNotificationsCount(data.totalCount));
 
@@ -131,6 +129,33 @@ function App() {
             setShowToast(true);
         });
     };
+
+    const handleNotificationClick = (notification: NotificationDto) => {
+        if (!notification.isRead) {
+            dispatch(markNotificationAsRead(notification.notificationId));
+        }
+        navigate(notification.source);
+
+        readNotification(notification.notificationId)
+
+        if (notificationDropdownRef.current) {
+            const dropdownToggle = notificationDropdownRef.current.querySelector('.dropdown-toggle');
+            if (dropdownToggle) {
+                (dropdownToggle as HTMLElement).click(); // Symuluj kliknięcie, aby zwinąć dropdown
+            }
+        }
+    };
+
+    const handleSeeMoreNotifications = () => {
+        navigate('/notifications');
+        if (notificationDropdownRef.current) {
+            const dropdownToggle = notificationDropdownRef.current.querySelector('.dropdown-toggle');
+            if (dropdownToggle) {
+                (dropdownToggle as HTMLElement).click(); // Symuluj kliknięcie, aby zwinąć dropdown
+            }
+        }
+    };
+
 
     const isManageToolsActive = [
         "/taskmanage",
@@ -164,6 +189,9 @@ function App() {
         setShowAIChat(prev => !prev);
     };
 
+    // Pobierz 5 najnowszych powiadomień
+    const latestNotifications = notifications.slice(0, 5);
+
     return (
         <>
             <link
@@ -177,7 +205,7 @@ function App() {
                             <Navbar expand="lg" className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-navbar">
                                 <Navbar.Brand href="/" className="nav-brand">catchUp</Navbar.Brand>
                                 <Nav className="flex-column w-100">
-                                    <NavLink to={role === 'HR' ? '/hrhomepage' : role=== 'Newbie'? 'newbiehomepage' :'/'} className="nav-link">
+                                    <NavLink to={role === 'HR' ? '/hrhomepage' : role === 'Newbie' ? '/newbiehomepage' : '/'} className="nav-link">
                                         <i className="bi bi-house-door" /> <span>{t('home')}</span>
                                     </NavLink>
                                     {role === "Newbie" && (
@@ -240,29 +268,14 @@ function App() {
                                     {role === "HR" && (
                                         <NavDropdown
                                             className={isAdminToolsActive ? "navdropdown-active" : ""}
-                                            title={
-                                                <>
-                                                    <i className="bi bi-person-lock" />{" "}
-                                                    <span>HR Tools</span>
-                                                </>
-                                            }
+                                            title={<><i className="bi bi-person-lock" /> <span>HR Tools</span></>}
                                         >
-                                            <NavDropdown.Item
-                                                as={NavLink}
-                                                to="/employesassignment"
-                                                className="nav-dropdown-item"
-                                            >
-                                                <i className="bi bi-people" />{" "}
-                                                Assignment
+                                            <NavDropdown.Item as={NavLink} to="/employesassignment" className="nav-dropdown-item">
+                                                <i className="bi bi-people" /> Assignment
                                             </NavDropdown.Item>
                                             <NavDropdown.Divider />
-                                            <NavDropdown.Item
-                                                as={NavLink}
-                                                to="/eventCreator"
-                                                className="nav-dropdown-item"
-                                            >
-                                                <i className="bi bi-calendar-plus" />{" "}
-                                                Event Creator
+                                            <NavDropdown.Item as={NavLink} to="/eventCreator" className="nav-dropdown-item">
+                                                <i className="bi bi-calendar-plus" /> Event Creator
                                             </NavDropdown.Item>
                                         </NavDropdown>
                                     )}
@@ -306,12 +319,59 @@ function App() {
                                             <Image src={avatar || defaultUserIcon} className="avatar rounded-circle" width={30} height={30} alt="User avatar" />
                                         </div>
                                     </NavLink>
-                                    <NavLink title="Notifications" to="/notifications" className="nav-link">
-                                        <span className="notification-wrapper">
-                                            <i className="bi bi-bell" />
-                                            {hasUnread && <span className="unread-dot" />}
-                                        </span>
-                                    </NavLink>
+                                    <NavDropdown
+                                        id="notifications-dropdown"
+                                        ref={notificationDropdownRef}
+                                        title={
+                                            <span className="notification-wrapper">
+                                                <i className="bi bi-bell" />
+                                                {hasUnread && <span className="unread-dot" />}
+                                            </span>
+                                        }
+                                        align="end"
+                                        className="notifications-dropdown-containter">
+                                        <div className="notifications-dropdown text-center">
+                                            {latestNotifications.length === 0 ? (
+                                                <NavDropdown.ItemText style={{ padding: '10px', width: '260px' }}>
+                                                    You don't have any notifications
+                                                </NavDropdown.ItemText>
+                                            ) : (
+                                                <>
+                                                {latestNotifications.map((notification, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="notification-card-container"
+                                                    >
+                                                        {!notification.isRead && (
+                                                            <small className="text-primary notification-new-nav" >
+                                                                New
+                                                            </small>
+                                                        )}
+                                                        <div
+                                                            style={{ cursor: 'pointer' }}
+                                                            onClick={() => handleNotificationClick(notification)}
+                                                            className={`notification-card-nav ${!notification.isRead ? 'notification-card-nav-unread' : ''}`}
+                                                        >
+                                                            <h5 style={{ fontSize: '1rem', marginBottom: '5px' }}>{notification.title}</h5>
+                                                            <p style={{ fontSize: '0.9rem', marginBottom: '5px' }}>{notification.message}</p>
+                                                            <div className="notification-footer" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
+                                                                <small className="text-primary">
+                                                                    See more: {notification.source}
+                                                                </small>
+                                                                <small className="text-muted">
+                                                                    {new Date(notification.sendDate).toLocaleString()}
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                                <button className='btn btn-primary mb-2 more-notifications' onClick={() => handleSeeMoreNotifications()}>
+                                                    See more notifications
+                                                </button>
+                                                </>
+                                            )}
+                                        </div>
+                                    </NavDropdown>
                                     <NavLink title="Settings" to="/settings" className="nav-link"><i className="bi bi-gear" /></NavLink>
                                     <NavLink title="Logout" to="/logout" onClick={logout} className="nav-link">
                                         <i className="bi bi-box-arrow-right" />
@@ -356,7 +416,7 @@ function App() {
                                 <Route path="/settings" element={<><h1>Settings</h1></>} />
                                 <Route path="/notifications" element={<><NotificationPage /></>} />
                                 <Route path="/eventCreator" element={<EventCreator />} />
-                                <Route path="/material" element={<MaterialTest/>} />
+                                <Route path="/material" element={<MaterialTest />} />
                             </Routes>
                         </Container>
                         <NotificationToast
@@ -375,7 +435,7 @@ function App() {
                     <AIAssistant show={showAIChat} onHide={() => setShowAIChat(false)} />
                 </>
             )}
-            {!user && <LoginComponent toggleTheme={toggleTheme} theme={theme}/>}
+            {!user && <LoginComponent toggleTheme={toggleTheme} theme={theme} />}
         </>
     );
 }
