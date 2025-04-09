@@ -58,7 +58,7 @@ const RoadMapDetails: React.FC = () => {
 
     return (
         <>
-            {!loading && roadMapPoints.find(rmp => rmp.status !== StatusEnum.Done) == null && (
+            {!loading && roadMapPoints.length>0 && roadMapPoints.find(rmp => rmp.status !== StatusEnum.Done) == null && (
                 <>
                     <Confetti style={{zIndex: 10}}
                         width={width}
