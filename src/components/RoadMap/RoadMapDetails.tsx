@@ -19,6 +19,7 @@ const RoadMapDetails: React.FC = () => {
     const [selectedPointId, setSelectedPointId] = useState<number | null>(null); // New state for selected point
     const navigate = useNavigate();
     const { width, height } = useWindowSize()
+    const fanfareSound = new Audio('/Notifications/fanfare.mp3');
 
     useEffect(() => {
         if (roadMapId) {
