@@ -111,7 +111,11 @@ const RoadMapPointDetails: React.FC<RoadMapPointTasksProps> = ({ roadMapPointId,
                             ))
                         ) : (
                             <div className="d-flex justify-content-center align-items-center m-4">
-                                <Alert variant="warning">No tasks found for this roadmap point contact your mentor</Alert>
+                                <Alert variant="warning">
+                                    <i className="bi bi-list-task" />
+                                    &nbsp;
+                                    No tasks found for this roadmap point contact your mentor
+                                </Alert>
                             </div>
                         )}
                     </div>

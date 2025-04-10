@@ -7,8 +7,8 @@ import { StatusEnum } from '../../Enums/StatusEnum';
 import Loading from '../Loading/Loading';
 import './RoadMapDetails.css';
 import RoadMapPointDetails from './RoadMapPointDetails';
-import { useWindowSize } from 'react-use'
-import Confetti from 'react-confetti'
+import { useWindowSize } from 'react-use';
+import Confetti from 'react-confetti';
 
 const RoadMapDetails: React.FC = () => {
     const { roadMapId, title } = useParams<{ roadMapId: string; title: string }>();
@@ -16,9 +16,9 @@ const RoadMapDetails: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
-    const [selectedPointId, setSelectedPointId] = useState<number | null>(null); // New state for selected point
+    const [selectedPointId, setSelectedPointId] = useState<number | null>(null);
     const navigate = useNavigate();
-    const { width, height } = useWindowSize()
+    const { width, height } = useWindowSize();
     const fanfareSound = new Audio('/Notifications/fanfare.mp3');
 
     useEffect(() => {
@@ -26,6 +26,19 @@ const RoadMapDetails: React.FC = () => {
             fetchRoadMapPoints(parseInt(roadMapId));
         }
     }, [roadMapId]);
+
+    useEffect(() => {
+        if (
+            !loading && 
+            roadMapPoints.length > 0 && 
+            roadMapPoints.every(rmp => rmp.status === StatusEnum.Done)
+        ) {
+            console.log("play fanfare")
+            fanfareSound.play().catch(error => {
+                console.error('Cannot play fanfare sound:', error);
+            });
+        }
+    }, [loading, roadMapPoints]);
 
     const fetchRoadMapPoints = async (id: number) => {
         try {
@@ -44,35 +57,32 @@ const RoadMapDetails: React.FC = () => {
     };
 
     const getIconClass = (status?: StatusEnum) => {
-        if(status === StatusEnum.Done ){
+        if (status === StatusEnum.Done) {
             return 'bi bi-check-circle-fill text-success';
-        }
-        else if(status === StatusEnum.InProgress ){
-            return 'bi bi-hourglass-split ';
+        } else if (status === StatusEnum.InProgress) {
+            return 'bi bi-hourglass-split';
         }
         return 'bi bi-dash-circle text-muted';
     };
 
     const handlePointClick = (id?: number) => {
-        setSelectedPointId(id || null); 
+        setSelectedPointId(id || null);
     };
 
     return (
         <>
-            {!loading && roadMapPoints.length>0 && roadMapPoints.find(rmp => rmp.status !== StatusEnum.Done) == null && (
-                <>
-                    <Confetti style={{zIndex: 10}}
-                        width={width}
-                        height={height}
-                        numberOfPieces={1000}
-                        gravity={0.2}
-                        colors={['#5CD3B4','#DB91D1','#F2E267']}
-                        tweenDuration={2000}
-                        recycle={false}
-                    />
-                </>
+            {!loading && roadMapPoints.length > 0 && roadMapPoints.every(rmp => rmp.status === StatusEnum.Done) && (
+                <Confetti
+                    style={{ zIndex: 10 }}
+                    width={width}
+                    height={height}
+                    numberOfPieces={1000}
+                    gravity={0.2}
+                    colors={['#5CD3B4', '#DB91D1', '#F2E267']}
+                    tweenDuration={2000}
+                    recycle={false}
+                />
             )}
-
 
             <div className="roadmap-container">
                 <div className="d-flex justify-content-center align-items-center">
@@ -82,21 +92,20 @@ const RoadMapDetails: React.FC = () => {
                 </div>
                 <Button
                     variant="outline-secondary"
-                    className='me-2'
+                    className="me-2"
                     onClick={() => navigate('/roadmapexplore')}
                 >
                     <i className="bi bi-arrow-left me-2" />
-                        Back to Road Maps
+                    Back to Road Maps
                 </Button>
     
                 <Button
                     variant="outline-secondary"
-                    className='ms-2'
+                    className="ms-2"
                     onClick={() => navigate('/tasks')}
                 >
-                        Go to Task Board
+                    Go to Task Board
                     <i className="bi bi-arrow-right ms-2" />
-
                 </Button>
                 
                 {showAlert && (
@@ -145,20 +154,31 @@ const RoadMapDetails: React.FC = () => {
                         ) : (
                             <div className="d-flex justify-content-center align-items-center m-5">
                                 <Alert variant="warning">
-                                <i className="bi bi-map" />&nbsp; No Road Map Points found for this Road Map contact your mentor
+                                    <i className="bi bi-map" />
+                                    &nbsp;
+                                    No Road Map Points found for this Road Map contact your mentor
                                 </Alert>
                             </div>
                         )}
                     </>
                 )}
                 {selectedPointId ? (
-                    <div className='container-roadmap-point-details'>
-                        <RoadMapPointDetails roadMapPointId={selectedPointId} roadMapPointName={roadMapPoints.find(rmp => rmp.id == selectedPointId)?.name} />
+                    <div className="container-roadmap-point-details">
+                        <RoadMapPointDetails 
+                            roadMapPointId={selectedPointId} 
+                            roadMapPointName={roadMapPoints.find(rmp => rmp.id === selectedPointId)?.name} 
+                        />
                     </div>
-                ): roadMapPoints.length > 0 && (
-                    <div className="d-flex justify-content-center align-items-center m-4">
+                ) : roadMapPoints.length > 0 && (
+                    <div className="d-flex justify-content-center align-items-center m-4 road-map-details-bottom-container">
+                        {roadMapPoints.every(rmp => rmp.status === StatusEnum.Done) && (
+                            <div>
+                                <h3>Congratulations you have finished this road map !</h3>
+                                <i className="bi bi-trophy-fill"></i>
+                            </div>
+                        )}
                         <Alert variant="info">
-                            <i className='bi bi-list-task'/>
+                            <i className="bi bi-list-task" />
                             &nbsp;
                             Click on a roadmap point to see its tasks inside
                         </Alert>

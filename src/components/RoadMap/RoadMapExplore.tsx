@@ -83,7 +83,7 @@ const RoadMapExplore: React.FC = () => {
             <h1 className='title'> <i className="bi bi-compass"/> My Road Maps</h1>
 
             <div className='roadmap-search-contaier'>
-                {!showAlert && !loading && filteredRoadMaps.length > 0 && (
+                {!showAlert && !loading && myRoadMaps.length > 0 && (
                     <div className='roadmap-search'>
                         <InputGroup className="inputGroup serach-bar-item-left">
                             <Form.Control
