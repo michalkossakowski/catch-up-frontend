@@ -69,6 +69,12 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ toggleTheme, theme }) =
             else if (userData?.position === 'Newbie') {
                 navigate('/newbiehomepage');
             }
+            else if (userData?.position === 'Admin') {
+                navigate('/adminhomepage');
+            }
+            else if (userData?.position === 'Mentor') {
+                navigate('/mentorhomepage');
+            }
             else {
                 navigate('/');
             }

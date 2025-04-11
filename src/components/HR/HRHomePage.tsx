@@ -21,7 +21,7 @@ const HRHomePage: React.FC = () => {
             className="btn btn-primary"
             onClick={() => navigate("/eventCreator")}
           >
-            View Tasks
+            Create Event
           </button>
         </div>
       </div>
