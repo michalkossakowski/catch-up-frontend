@@ -46,6 +46,8 @@ import { useTranslation } from "react-i18next";
 import "./i18n.ts";
 import HRHomePage from './components/HR/HRHomePage.tsx';
 import NewbieHomePage from './components/Newbie/NewbieHomePage.tsx';
+import MentorHomePage from './components/Mentor/MentorHomePage.tsx';
+import AdminHomePage from './components/Admin/AdminHomePage.tsx';
 import EventCreator from './components/HR/EventCreator.tsx';
 
 function App() {
@@ -102,6 +104,12 @@ function App() {
                     navigate('/hrhomepage');
                 } else if (userRole === 'Newbie') {
                     navigate('/newbiehomepage');
+                }
+                else if (userRole === 'Mentor') {
+                    navigate('/mentorhomepage');
+                }
+                else if (userRole === 'Admin') {
+                    navigate('/adminhomepage');
                 } else {
                     navigate('/');
                 }
@@ -204,7 +212,20 @@ function App() {
                             <Navbar expand="lg" className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-navbar">
                                 <Navbar.Brand href="/" className="nav-brand">catchUp</Navbar.Brand>
                                 <Nav className="flex-column w-100">
-                                    <NavLink to={role === 'HR' ? '/hrhomepage' : role === 'Newbie' ? '/newbiehomepage' : '/'} className="nav-link">
+                                    <NavLink
+                                        to={
+                                            role === 'HR'
+                                                ? '/hrhomepage'
+                                                : role === 'Newbie'
+                                                    ? '/newbiehomepage'
+                                                    : role === 'Mentor'
+                                                        ? '/mentorhomepage'
+                                                        : role === 'Admin'
+                                                            ? '/adminhomepage'
+                                                            : '/'
+                                        }
+                                        className="nav-link"
+                                    >
                                         <i className="bi bi-house-door" /> <span>{t('home')}</span>
                                     </NavLink>
                                     {role === "Newbie" && (
@@ -336,37 +357,37 @@ function App() {
                                                 </NavDropdown.ItemText>
                                             ) : (
                                                 <>
-                                                {latestNotifications.map((notification, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className="notification-card-container"
-                                                    >
-                                                        {!notification.isRead && (
-                                                            <small className="text-primary notification-new-nav" >
-                                                                New
-                                                            </small>
-                                                        )}
+                                                    {latestNotifications.map((notification, index) => (
                                                         <div
-                                                            style={{ cursor: 'pointer' }}
-                                                            onClick={() => handleNotificationClick(notification)}
-                                                            className={`notification-card-nav ${!notification.isRead ? 'notification-card-nav-unread' : ''}`}
+                                                            key={index}
+                                                            className="notification-card-container"
                                                         >
-                                                            <h5 style={{ fontSize: '1rem', marginBottom: '5px' }}>{notification.title}</h5>
-                                                            <p style={{ fontSize: '0.9rem', marginBottom: '5px' }}>{notification.message}</p>
-                                                            <div className="notification-footer" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
-                                                                <small className="text-primary">
-                                                                    See more: {notification.source}
+                                                            {!notification.isRead && (
+                                                                <small className="text-primary notification-new-nav" >
+                                                                    New
                                                                 </small>
-                                                                <small className="text-muted">
-                                                                    {new Date(notification.sendDate).toLocaleString()}
-                                                                </small>
+                                                            )}
+                                                            <div
+                                                                style={{ cursor: 'pointer' }}
+                                                                onClick={() => handleNotificationClick(notification)}
+                                                                className={`notification-card-nav ${!notification.isRead ? 'notification-card-nav-unread' : ''}`}
+                                                            >
+                                                                <h5 style={{ fontSize: '1rem', marginBottom: '5px' }}>{notification.title}</h5>
+                                                                <p style={{ fontSize: '0.9rem', marginBottom: '5px' }}>{notification.message}</p>
+                                                                <div className="notification-footer" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
+                                                                    <small className="text-primary">
+                                                                        See more: {notification.source}
+                                                                    </small>
+                                                                    <small className="text-muted">
+                                                                        {new Date(notification.sendDate).toLocaleString()}
+                                                                    </small>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                ))}
-                                                <button className='btn btn-primary mb-2 more-notifications' onClick={() => handleSeeMoreNotifications()}>
-                                                    See more notifications
-                                                </button>
+                                                    ))}
+                                                    <button className='btn btn-primary mb-2 more-notifications' onClick={() => handleSeeMoreNotifications()}>
+                                                        See more notifications
+                                                    </button>
                                                 </>
                                             )}
                                         </div>
@@ -386,6 +407,8 @@ function App() {
                                 <Route path="/" element={<Home />} />
                                 <Route path="/hrhomepage" element={<HRHomePage />} />
                                 <Route path="/newbiehomepage" element={<NewbieHomePage />} />
+                                <Route path="/adminhomepage" element={<AdminHomePage />} />
+                                <Route path="/mentorhomepage" element={<MentorHomePage />} />
                                 <Route path="/tasks" element={<TaskDashboard />} />
                                 <Route path="/adminpanel" element={<AdminPanel isAdmin={role === "Admin"} />} />
                                 <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
