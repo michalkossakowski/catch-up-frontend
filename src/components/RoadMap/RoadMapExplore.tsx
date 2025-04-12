@@ -178,7 +178,7 @@ const RoadMapExplore: React.FC = () => {
                             </Card>     
                             ))
                         ) : (
-                            !showSearchMessage && (
+                            !showSearchMessage && !showAlert && (
                                 <Alert className='alert' variant='info'>
                                    <i className='bi bi-compass'/> No road maps found contact your mentor.
                                 </Alert>
