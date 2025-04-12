@@ -39,13 +39,11 @@ const FeedbackItem: React.FC<FeedbackItemProps> = ({
                     {isResolved ? <i className="bi bi-check-circle-fill"></i> : <i className="bi bi-x-circle-fill text-danger"></i>}
                 </td>
                 <td>
-                    <div>
-                        <button 
-                            className="btn btn-primary bi bi-info-circle-fill" 
-                            onClick={() => setIsDetailsDialogOpen(true)}
-                        >
-                        </button>
-                    </div>
+                    <button 
+                        className="btn btn-primary bi bi-info-circle-fill" 
+                        onClick={() => setIsDetailsDialogOpen(true)}
+                    >
+                    </button>
                 </td>
             </tr>
 

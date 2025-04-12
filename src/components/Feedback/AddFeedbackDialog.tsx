@@ -7,6 +7,7 @@ import { addFeedback } from '../../services/feedbackService';
 import { getAdmins } from '../../services/userService';
 import NotificationToast from '../Toast/NotificationToast';
 import { useAuth } from '../../Provider/authProvider';
+import MaterialItem from '../MaterialManager/MaterialItem';
 
 interface AddFeedbackDialogProps {
     resourceId: number;
@@ -22,6 +23,9 @@ export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId
     const [toastMessage, setToastMessage] = useState('');
     const [toastColor, setToastColor] = useState('');
     const [chosen, setChosen] = useState(false);
+    const [materialId, setMaterialId] = useState<number | null>(null);
+    const [isTitleValid, setTitleValidation] = useState<boolean>(false);
+    const [isReceiverValid, setReceiverValidation] = useState<boolean>(false);
     const [feedback, setFeedback] = useState<FeedbackDto>({
         title: '',
         description: '',
@@ -47,6 +51,21 @@ export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId
 
         loadAdmins();
     }, []);
+
+    const validateTitle = (title: string) => {
+        setTitleValidation(title.length >= 5);
+        setFeedback({ ...feedback, title: title })
+    };
+
+    const validateReceiver = (receiver: string) => {
+        setReceiverValidation(receiver !== null);
+        setFeedback({ ...feedback, receiverId: receiver })
+    };
+
+    const materialCreated = (materialId: number) => {
+        setMaterialId(materialId);
+        setFeedback({ ...feedback, materialId: materialId })
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -80,16 +99,21 @@ export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId
                             <Form.Control
                                 type="text"
                                 required
+                                className={`form-control ${!isTitleValid ? 'is-invalid' : ''}`}
                                 value={feedback.title}
-                                onChange={(e) => setFeedback({ ...feedback, title: e.target.value })}
+                                onChange={(e) => validateTitle(e.target.value)}
                             />
+                            {!isTitleValid && (
+                                <div className="invalid-feedback">
+                                    The title must be at least 5 characters long
+                                </div>
+                            )}
                         </Form.Group>
 
                         <Form.Group className="mb-3">
                             <Form.Label>Description</Form.Label>
                             <Form.Control
                                 as="textarea"
-                                required
                                 value={feedback.description}
                                 onChange={(e) => setFeedback({ ...feedback, description: e.target.value })}
                             />
@@ -101,8 +125,9 @@ export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId
                                 <Form.Select
                                     required
                                     value={feedback.receiverId}
+                                    className={`form-control ${!isReceiverValid ? 'is-invalid' : ''}`}
                                     onChange={(e) => {
-                                        setFeedback({ ...feedback, receiverId: e.target.value });
+                                        validateReceiver(e.target.value);
                                         setChosen(true);
                                     }}
                                 >
@@ -115,12 +140,24 @@ export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId
                                 </Form.Select>
                             </Form.Group>
                         )}
+                        <div >
+                            <MaterialItem
+                                materialId={materialId ?? 0} 
+                                materialCreated={materialCreated} 
+                                enableAddingFile={true}
+                                enableDownloadFile={true}
+                                enableRemoveFile={true}
+                                enableEdittingMaterialName={true}
+                                enableEdittingFile={true}
+                                >
+                            </MaterialItem>
+                        </div>
 
                         <div className="d-flex justify-content-end gap-2">
                             <Button variant="secondary" onClick={onClose}>
                                 Cancel
                             </Button>
-                            <Button variant="primary" type="submit">
+                            <Button variant="primary" type="submit" disabled={!isTitleValid || feedback.receiverId === ""}>
                                 Submit
                             </Button>
                         </div>
