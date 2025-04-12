@@ -49,7 +49,7 @@ import NewbieHomePage from './components/Newbie/NewbieHomePage.tsx';
 import MentorHomePage from './components/Mentor/MentorHomePage.tsx';
 import AdminHomePage from './components/Admin/AdminHomePage.tsx';
 import EventCreator from './components/HR/EventCreator.tsx';
-
+import SchoolingProgressBar from './components/Schooling/SchoolingProgressBar/SchoolingProgressBar.tsx';
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
@@ -429,6 +429,7 @@ function App() {
                                     path="/schoolinglist"
                                     element={role === 'Admin' || role === 'Mentor' ? <SchoolingListMentor /> : <SchoolingListNewbie />}
                                 />
+                                <Route path="/schoolingprogressbar" element={<SchoolingProgressBar />} />
                                 <Route path="/schoolingpartedit/:id?" element={<SchoolingPartEdit />} />
                                 <Route path="/schoolinglistparts" element={<SchoolingListParts />} />
                                 <Route path="/preset/assign/:presetId" element={<PresetAssign />} />

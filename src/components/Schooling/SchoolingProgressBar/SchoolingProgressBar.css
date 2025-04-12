@@ -1,0 +1,80 @@
+.sidebar-container {
+  position: relative;
+}
+
+.sidebar {
+  width: 0;
+  height: 90vh;
+  overflow-x: hidden;
+  position: static;
+  top: 0;
+  left: 0;
+}
+
+.sidebar.open {
+  width: 200px;
+}
+
+.sidebar.closed {
+  width: 65px;
+}
+
+.nav-link {
+  padding: 10px 20px;
+  white-space: nowrap;
+}
+
+.sidebar-button {
+  position: absolute;
+  top: 0px;
+  transition: left 0.3s ease;
+  z-index: 1001;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.sidebar-button.closed {
+  left: 70px; 
+  top: 10px;
+  rotate: 180deg;
+}
+
+.sidebar-button.open {
+  left: 200px;
+  top: 10px;
+}
+.schooling-ProgressBar-img {
+  width: 100%;
+  height: 100%; 
+  object-fit: cover; 
+  height: 36px;
+  width: 36px;
+}
+.schooling-ProgressBar-el{
+  width: 100%;
+  line-height: 1.1;
+}
+
+.schooling-ProgressBar-el span, p{
+  font-size: 12px;
+  font-weight: 400;
+}
+.sidebar-navlink{
+  background-color: transparent !important;
+  text-decoration: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.schooling-ProgressBar-vl{
+  height: calc(100% + 10px);
+  top: 90%;
+  z-index: -1;
+  color: #7f7f7f;;
+  width: 2px;
+}
+.schooling-ProgressBar-vl.text-success{
+  opacity: 0.9;
+}
+.schooling-ProgressBar-img.border-success{
+  opacity: 1;
+}
