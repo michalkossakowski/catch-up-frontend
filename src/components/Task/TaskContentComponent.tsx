@@ -14,6 +14,7 @@ import { MaterialDto } from '../../dtos/MaterialDto';
 import materialService from '../../services/materialService';
 import MaterialItem from '../Material/DndMaterial/MaterialItem';
 import styles from '../Material/Material.module.css';
+import NotificationToast from '../Toast/NotificationToast';
 
 interface TaskContentComponentProps {
     isAdmin: boolean;
@@ -34,6 +35,9 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     const [sortOption, setSortOption] = useState<string>('title');
     const [sortDirection, setSortDirection] = useState<string>('asc');
     const [expandedMaterials, setExpandedMaterials] = useState<{[key: number]: MaterialDto}>({});
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastColor, setToastColor] = useState('');
     
     const navigate = useNavigate();
 
@@ -128,11 +132,16 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                 await removeTaskFromAllPresets(taskContentId);
                 await deleteTaskContent(taskContentId);
                 getAllTaskContents();
-
+                setToastMessage("Task content deleted successfully");
+                setToastColor("green");
+                setShowToast(true);
             } catch (error: any) {
                 console.error('Error in deletion process:', error);
                 setShowError(true);
                 setAlertMessage('Error deleting TaskContent: ' + error.message);
+                setToastMessage('Error deleting task content');
+                setToastColor('red');
+                setShowToast(true);
             }
         }
     };
@@ -335,6 +344,14 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                     )}
                 </div>
             )}
+            
+            <NotificationToast
+                show={showToast}
+                title="Task Content Operation"
+                message={toastMessage}
+                color={toastColor}
+                onClose={() => setShowToast(false)}
+            />
         </section>
     );
 };

@@ -7,6 +7,7 @@ import { CategoryDto } from '../../dtos/CategoryDto';
 import { Alert, Button, Container } from 'react-bootstrap';
 import TaskContentEdit from './TaskContentEdit';
 import Loading from '../Loading/Loading';
+import NotificationToast from '../Toast/NotificationToast';
 
 const TaskContentEditPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -14,6 +15,9 @@ const TaskContentEditPage: React.FC = () => {
     const [categories, setCategories] = useState<CategoryDto[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastColor, setToastColor] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,11 +33,17 @@ const TaskContentEditPage: React.FC = () => {
                     setCategories(categoriesData);
                 } else {
                     setError('Task content not found');
+                    setToastMessage('Task content not found');
+                    setToastColor('red');
+                    setShowToast(true);
                 }
                 setLoading(false);
             })
             .catch(err => {
                 setError('Error loading data. Please try again later.');
+                setToastMessage('Error loading data');
+                setToastColor('red');
+                setShowToast(true);
                 setLoading(false);
             });
         }
@@ -58,28 +68,52 @@ const TaskContentEditPage: React.FC = () => {
                 <div>
                     <h2>Edit Task Content</h2>
                     <Alert variant="danger">{error}</Alert>
+                    <NotificationToast
+                        show={showToast}
+                        title="Task Content Operation"
+                        message={toastMessage}
+                        color={toastColor}
+                        onClose={() => setShowToast(false)}
+                    />
                 </div>
             ) : taskContent ? (
-                <TaskContentEdit 
-                    taskContent={taskContent} 
-                    isEditMode={true} 
-                    onTaskContentEdited={handleTaskContentUpdated} 
-                    categories={categories}
-                    formHeader={
-                        <div className="d-flex justify-content-between align-items-center mb-4">
-                            <h2>Edit Task Content</h2>
-                            <Button variant="outline-secondary" onClick={handleCancel}>
-                                Back to List
-                            </Button>
-                        </div>
-                    }
-                />
+                <>
+                    <TaskContentEdit 
+                        taskContent={taskContent} 
+                        isEditMode={true} 
+                        onTaskContentEdited={handleTaskContentUpdated} 
+                        categories={categories}
+                        formHeader={
+                            <div className="d-flex justify-content-between align-items-center mb-4">
+                                <h2>Edit Task Content</h2>
+                                <Button variant="outline-secondary" onClick={handleCancel}>
+                                    Back to List
+                                </Button>
+                            </div>
+                        }
+                    />
+                    <NotificationToast
+                        show={showToast}
+                        title="Task Content Operation"
+                        message={toastMessage}
+                        color={toastColor}
+                        onClose={() => setShowToast(false)}
+                    />
+                </>
             ) : (
                 <div>
                     <h2>Edit Task Content</h2>
                     <Alert variant="warning">Task content not found</Alert>
+                    <NotificationToast
+                        show={showToast}
+                        title="Task Content Operation"
+                        message={toastMessage}
+                        color={toastColor}
+                        onClose={() => setShowToast(false)}
+                    />
                 </div>
             )}
+
         </Container>
     );
 };

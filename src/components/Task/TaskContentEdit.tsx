@@ -16,6 +16,7 @@ import Material from '../Material/Material';
 import MaterialItem from '../Material/DndMaterial/MaterialItem';
 import FilesContainer from '../Material/DndMaterial/FilesContainer';
 import styles from '../Material/Material.module.css';
+import NotificationToast from '../Toast/NotificationToast';
 
 const formContainerStyles = {
     centered: {
@@ -75,6 +76,9 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
     const [localCategories, setLocalCategories] = useState<CategoryDto[]>(categories);
     const { user } = useAuth();
     const [key, setKey] = useState(0);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastColor, setToastColor] = useState('');
     
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
@@ -99,11 +103,15 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
 
     const validateForm = (): boolean => {
         if (!title?.trim()) {
-            alert('Title is required');
+            setToastMessage("Title is required");
+            setToastColor('red');
+            setShowToast(true);
             return false;
         }
         if (!user?.id) {
-            alert('User must be logged in');
+            setToastMessage("User must be logged in");
+            setToastColor('red');
+            setShowToast(true);
             return false;
         }
         return true;
@@ -142,7 +150,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
             const result = await getCategories();
             setLocalCategories(result);
         } catch (error) {
-            console.error('Błąd podczas ładowania kategorii:', error);
+            console.error('Error loading categories:', error);
         }
     };
 
@@ -169,8 +177,13 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
             setMaterialAccordion(materialId);
         } catch (error) {
             console.error('Error loading selected material:', error);
-            setAlertMessage('Error loading selected material. It may have been deleted.');
+            setAlertMessage('Error loading selected material');
             setShowAlert(true);
+
+            setToastMessage('Error loading material');
+            setToastColor('red');
+            setShowToast(true);
+
             setMaterialsId(null);
             setSelectedMaterial(null);
         }
@@ -260,7 +273,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
                 handleMaterialUpdate(targetMaterialId);
                 loadSelectedMaterial(targetMaterialId);
             } catch (error) {
-                setAlertMessage(`Error adding file ${draggedFileId} to material ${targetMaterialId}: ${error}`);
+                setAlertMessage(`Error adding file to material`);
                 setShowAlert(true);
                 console.error(`Error adding file ${draggedFileId} to material ${targetMaterialId}:`, error);
             }
@@ -269,6 +282,10 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        
+        if (!validateForm()) {
+            return;
+        }
 
         let finalCategoryId = categoryId;
 
@@ -290,6 +307,10 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
                 }
             } catch (error) {
                 console.error('Error creating category:', error);
+                setToastMessage('Error creating category');
+                setToastColor('red');
+                setShowToast(true);
+                return;
             }
         }
 
@@ -302,17 +323,28 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
             categoryId: finalCategoryId
         };
 
-        const updateTaskContent = isEditMode ? editTaskContent(taskContentDto) : addTaskContent(taskContentDto);
-
-        updateTaskContent
-            .then(() => {
+        try {
+            if (isEditMode) {
+                await editTaskContent(taskContentDto);
+                setToastMessage('Task content updated successfully');
+            } else {
+                await addTaskContent(taskContentDto);
+                setToastMessage('Task content created successfully');
+            }
+            setToastColor('green');
+            setShowToast(true);
+            resetForm();
+            setKey(prev => prev + 1);
+            
+            setTimeout(() => {
                 onTaskContentEdited();
-                resetForm();
-                setKey(prev => prev + 1);
-            })
-            .catch((error) => {
-                console.error('Error saving TaskContent:', error);
-            });
+            }, 1500);
+        } catch (error) {
+            console.error('Error saving TaskContent:', error);
+            setToastMessage('Error saving task content');
+            setToastColor('red');
+            setShowToast(true);
+        }
     };
 
     return (
@@ -495,7 +527,17 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({ onTaskContentEdited, 
                         />
                     </Modal.Body>
                 </Modal>
+
+
             )}
+            
+            <NotificationToast
+                show={showToast}
+                title="Task Content Operation"
+                message={toastMessage}
+                color={toastColor}
+                onClose={() => setShowToast(false)}
+            />
         </section>
     );
 };

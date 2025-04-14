@@ -5,11 +5,15 @@ import { CategoryDto } from '../../dtos/CategoryDto';
 import { Alert, Button, Container, Row, Col } from 'react-bootstrap';
 import TaskContentEdit from './TaskContentEdit';
 import Loading from '../Loading/Loading';
+import NotificationToast from '../Toast/NotificationToast';
 
 const TaskContentCreate: React.FC = () => {
     const [categories, setCategories] = useState<CategoryDto[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastColor, setToastColor] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,6 +29,9 @@ const TaskContentCreate: React.FC = () => {
             console.error("Error loading data:", error);
             setError('Error loading data. Please try again later.');
             setLoading(false);
+            setToastMessage('Error loading data');
+            setToastColor('red');
+            setShowToast(true);
         }
     };
 
@@ -55,6 +62,13 @@ const TaskContentCreate: React.FC = () => {
                 <Button variant="secondary" onClick={handleCancel}>
                     Back to List
                 </Button>
+                <NotificationToast
+                    show={showToast}
+                    title="Task Content Operation"
+                    message={toastMessage}
+                    color={toastColor}
+                    onClose={() => setShowToast(false)}
+                />
             </Container>
         );
     }
@@ -73,6 +87,13 @@ const TaskContentCreate: React.FC = () => {
                         </Button>
                     </div>
                 }
+            />
+            <NotificationToast
+                show={showToast}
+                title="Task Content Operation"
+                message={toastMessage}
+                color={toastColor}
+                onClose={() => setShowToast(false)}
             />
         </Container>
     );
