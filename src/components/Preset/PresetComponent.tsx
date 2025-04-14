@@ -9,6 +9,7 @@ import { getTaskContents } from '../../services/taskContentService';
 import PresetEdit from './PresetEdit';
 import './PresetComponent.css';
 import { useNavigate } from 'react-router-dom';
+import NotificationToast from '../Toast/NotificationToast';
 
 interface PresetComponentProps {
     isAdmin: boolean;
@@ -26,6 +27,9 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
     const [presetTasks, setPresetTasks] = useState<Map<number, TaskContentDto[]>>(new Map());
     const navigate = useNavigate();
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastColor, setToastColor] = useState('');
 
     useEffect(() => {
         getAllPresets();
@@ -36,6 +40,9 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
         
         if (successParam === 'assigned') {
             showSuccessMessage('Tasks have been successfully assigned to the user');
+            setToastMessage('Tasks have been successfully assigned');
+            setToastColor('green');
+            setShowToast(true);
             window.history.replaceState({}, '', window.location.pathname);
         }
     }, []);
@@ -50,6 +57,9 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
         } catch (error: any) {
             setShowError(true);
             setAlertMessage('Error: ' + error.message);
+            setToastMessage('Error loading presets');
+            setToastColor('red');
+            setShowToast(true);
         } finally {
             setLoading(false);
         }
@@ -59,8 +69,11 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
         try {
             const data = await getTaskContents();
             setTaskContents(data);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error loading task contents:', error);
+            setToastMessage('Error loading task contents');
+            setToastColor('red');
+            setShowToast(true);
         }
     };
 
@@ -76,8 +89,11 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
                 ).filter((tc): tc is TaskContentDto => tc !== undefined);
                 
                 tasksMap.set(preset.id, matchingTasks);
-            } catch (error) {
+            } catch (error: any) {
                 console.error(`Error loading tasks for preset ${preset.id}:`, error);
+                setToastMessage(`Error loading preset tasks`);
+                setToastColor('red');
+                setShowToast(true);
             }
         }
         setPresetTasks(tasksMap);
@@ -96,18 +112,29 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
         } catch (error: any) {
             setShowError(true);
             setAlertMessage(error.message);
+            setToastMessage('Error searching presets');
+            setToastColor('red');
+            setShowToast(true);
         } finally {
             setLoading(false);
         }
     };
 
     const handleDelete = async (presetId: number) => {
-        try {
-            await deletePreset(presetId);
-            setPresets(prevPresets => prevPresets.filter(preset => preset.id !== presetId));
-        } catch (error: any) {
-            setShowError(true);
-            setAlertMessage('Error deleting Preset: ' + error.message);
+        if (window.confirm("Are you sure you want to delete this preset?")) {
+            try {
+                await deletePreset(presetId);
+                setPresets(prevPresets => prevPresets.filter(preset => preset.id !== presetId));
+                setToastMessage("Preset deleted successfully");
+                setToastColor("green");
+                setShowToast(true);
+            } catch (error: any) {
+                setShowError(true);
+                setAlertMessage('Error deleting Preset: ' + error.message);
+                setToastMessage('Error deleting preset');
+                setToastColor('red');
+                setShowToast(true);
+            }
         }
     };
 
@@ -120,6 +147,9 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
         getAllPresets();
         setShowEdit(false);
         setEditedPreset(null);
+        setToastMessage("Preset updated successfully");
+        setToastColor("green");
+        setShowToast(true);
     };
 
     const handleAssign = (presetId: number) => {
@@ -237,6 +267,14 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
                         )}
                     </div>
                 )}
+                
+                <NotificationToast
+                    show={showToast}
+                    title="Preset Operation"
+                    message={toastMessage}
+                    color={toastColor}
+                    onClose={() => setShowToast(false)}
+                />
             </section>
         </>
     );

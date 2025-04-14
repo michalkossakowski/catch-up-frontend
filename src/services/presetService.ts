@@ -81,8 +81,8 @@ export const addPreset = async (preset: PresetDto): Promise<PresetDto> => {
 
 export const editPreset = async (preset: PresetDto): Promise<PresetDto> => {
     try {
-        const response = await axiosInstance.put<PresetDto>('/Preset/Edit', preset);
-        return response.data;
+        const response = await axiosInstance.put<PresetResponse>(`/Preset/Edit/${preset.id}`, preset);
+        return response.data.preset;
     } catch (error: any) {
         handleError('editPreset', error);
         throw error;
