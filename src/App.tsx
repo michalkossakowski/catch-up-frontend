@@ -43,7 +43,7 @@ import { getNotifications, readNotification } from './services/notificationServi
 import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
 import { useTranslation } from "react-i18next";
-import "./i18n.ts";
+import {availableLanguages, changeLanguage, normalizeLanguage} from "./i18n.ts";
 import HRHomePage from './components/HR/HRHomePage.tsx';
 import NewbieHomePage from './components/Newbie/NewbieHomePage.tsx';
 import MentorHomePage from './components/Mentor/MentorHomePage.tsx';
@@ -67,31 +67,6 @@ function App() {
     const notificationDropdownRef = useRef<HTMLDivElement>(null);
 
     const { t, i18n } = useTranslation();
-    const availableLanguages: { [key: string]: string } = {
-        'en': "English",
-        'pl': "Polski",
-        'fr': "Français",
-        'de': "Deutsch",
-        'es': "Español",
-    };
-
-    const changeLanguage = (lng: string) => {
-        i18n.changeLanguage(lng);
-        if (!availableLanguages.hasOwnProperty(lng)) {
-            i18n.changeLanguage("en");
-            return "en";
-        }
-        localStorage.setItem("i18nextLng", lng);
-    };
-
-    const normalizeLanguage = (lng: string) => {
-        if (!lng) return "en";
-        if (!availableLanguages.hasOwnProperty(lng)) {
-            i18n.changeLanguage("en");
-            return "en";
-        }
-        return lng.split("-")[0];
-    };
 
     const fetchRole = async () => {
         if (user?.id) {
