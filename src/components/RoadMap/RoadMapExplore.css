@@ -1,0 +1,78 @@
+
+/*road maps*/
+
+.roadmap-list-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.roadmap-list-item{
+    width: 70%;
+    transition: box-shadow 0.3s ease;
+    transition: scale 1s ease;
+    scale: 1.0;
+    margin: 20px;
+}
+
+
+.roadmap-list-item:hover{
+    cursor: pointer;
+    scale: 1.05;
+    box-shadow: 0 0 10px 0 #DB91D1;
+    transition:  box-shadow 0.3s ease;
+    transition:  scale 0.3s ease;
+}
+
+.progress-bar {
+    background-color: #d63ac1;
+    font-weight: bold;
+}
+
+.bg-info {
+    background-color:#14bd90 !important;
+}
+.finish-date{
+    color: #5CD3B4;
+}
+
+.roadmap-item-card-link{
+    text-decoration: none;
+    margin-top: 0.2rem;
+}
+
+.roadmap-list-item-icon{
+    justify-content: center;
+    align-items: center;
+
+}
+.roadmap-list-item-icon .bi-hourglass-split{
+    color: #DB91D1;
+}
+
+.roadmap-list-item-icon .bi-dash-circle{
+    color: #585858;
+}
+
+.roadmap-search-contaier{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   
+}
+.roadmap-search{
+    display: flex;
+    flex-direction: row;
+}
+.roadmap-search .serach-bar-item-left{
+    margin: 0rem 1rem;
+    width: 17rem;
+    height: 2.5rem;
+}
+
+.roadmap-search .serach-bar-item-right{
+    width: 8.5rem;
+    height: 2.5rem;
+}

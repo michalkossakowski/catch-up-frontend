@@ -49,6 +49,8 @@ import NewbieHomePage from './components/Newbie/NewbieHomePage.tsx';
 import MentorHomePage from './components/Mentor/MentorHomePage.tsx';
 import AdminHomePage from './components/Admin/AdminHomePage.tsx';
 import EventCreator from './components/HR/EventCreator.tsx';
+import RoadMapExplore from './components/RoadMap/RoadMapExplore.tsx';
+import RoadMapDetails from './components/RoadMap/RoadMapDetails.tsx';
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -204,9 +206,14 @@ function App() {
                                         <i className="bi bi-house-door" /> <span>{t('home')}</span>
                                     </NavLink>
                                     {role === "Newbie" && (
+                                        <>
                                         <NavLink to="/tasks" className="nav-link left-sidebar">
                                             <i className="bi bi-list-task" /> <span>{t('tasks')}</span>
                                         </NavLink>
+                                        <NavLink to="/roadmapexplore" className="nav-link left-sidebar">
+                                            <i className="bi bi-compass" /> <span>{t('roadmaps')}</span>
+                                        </NavLink>
+                                        </>
                                     )}
                                     <NavLink to="/schoolinglist" className="nav-link">
                                         <i className="bi bi-book" /> <span>{t('schoolings')}</span>
@@ -396,6 +403,8 @@ function App() {
                                 <Route path="/taskcontent/details/:id" element={<TaskContentDetails />} />
                                 <Route path="/editmatlist" element={<EditMatList />} />
                                 <Route path="/roadmapmanage" element={<RoadMapManage />} />
+                                <Route path="/roadmapexplore" element={<RoadMapExplore />} />
+                                <Route path="/roadmap/:roadMapId/:title" element={<RoadMapDetails />} />
                                 <Route path="/feedbacks" element={<FeedbackList />} />
                                 <Route path="/badges" element={<Badge />} />
                                 <Route path="/presetmanage" element={<PresetManage />} />

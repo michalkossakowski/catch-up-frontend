@@ -3,8 +3,12 @@ import { StatusEnum } from "../Enums/StatusEnum";
 export interface RoadMapDto {
     id?: number;
     newbieId?: string;
-    name?: string;
-    startDate?: Date;
+    creatorId?: string;
+    creatorName?: string;
+    title?: string;
+    description?: string;
+    assignDate?: Date;
     finishDate?: Date;
     status?: StatusEnum;
+    progress?: number;
 }
