@@ -29,8 +29,8 @@ const FeedbackListPage: React.FC = () => {
     const [selectedResolved, setSelectedResolved] = useState<string[]>(["unresolved"]);
     const [originalFeedbacks, setOriginalFeedbacks] = useState<FeedbackDto[]>([]);
     const [selectedResourceTypes, setSelectedResourceTypes] = useState<ResourceTypeEnum[]>([]);
-    const [filterSentByMe, setFilterSentByMe] = useState(isNewbie ? true : false);
-    const [filterSentToMe, setFilterSentToMe] = useState(true);
+    const [filterSentByMe, setFilterSentByMe] = useState(false);
+    const [filterSentToMe, setFilterSentToMe] = useState(false);
     const [sortColumn, setSortColumn] = useState<keyof FeedbackDto | null>(null);
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const [searchTitle, setSearchTitle] = useState('');
@@ -250,29 +250,31 @@ const FeedbackListPage: React.FC = () => {
                 <Row className="mb-3">
                     <div className="col-2">
                         <h4 className="text-start mt-3">Filters</h4>
-                        <hr></hr>
-                        <Form.Group as={Row} className="text-start m-0">
-                        <Form.Label className="p-0"><h6>Filter by Sender:</h6></Form.Label>
-                        <Form.Check
-                            type="switch"
-                            id="sentByMeSwitch"
-                            label={`Only Sent by Me`}
-                            checked={filterSentByMe}
-                            onChange={() => setFilterSentByMe(prev => !prev)}
-                            className="custom-switch"
-                        />
-                        </Form.Group>
-                        {!isNewbie && (                            
-                            <Form.Group as={Row} className="text-start m-0">
-                                <Form.Check
-                                    type="switch"
-                                    id="sentToMeSwitch"
-                                    label="Only Sent to Me"
-                                    checked={filterSentToMe}
-                                    onChange={() => setFilterSentToMe(prev => !prev)}
-                                    className="custom-switch"
-                                />
-                            </Form.Group>
+                        {!isNewbie && (
+                            <>
+                                <hr />
+                                <Form.Group as={Row} className="text-start m-0">
+                                    <Form.Label className="p-0"><h6>Filter by Sender:</h6></Form.Label>
+                                    <Form.Check
+                                        type="switch"
+                                        id="sentByMeSwitch"
+                                        label="Only Sent by Me"
+                                        checked={filterSentByMe}
+                                        onChange={() => setFilterSentByMe(prev => !prev)}
+                                        className="custom-switch"
+                                    />
+                                </Form.Group>
+                                <Form.Group as={Row} className="text-start m-0">
+                                    <Form.Check
+                                        type="switch"
+                                        id="sentToMeSwitch"
+                                        label="Only Sent to Me"
+                                        checked={filterSentToMe}
+                                        onChange={() => setFilterSentToMe(prev => !prev)}
+                                        className="custom-switch"
+                                    />
+                                </Form.Group>
+                            </>
                         )}
                         <hr></hr>
                         <Form.Group as={Row} className="text-start m-0">
@@ -340,31 +342,33 @@ const FeedbackListPage: React.FC = () => {
                         </Form.Group>
                         <hr></hr>
                         <Form.Group as={Row} className="text-start m-0">
-                        <Form.Label className="p-0 mb-0"><h6>Filter by Sender:</h6>
-                        <Select
-                            closeMenuOnSelect={true}
-                            components={animatedComponents}
-                            options={groupedOptions}
-                            isClearable={true}
-                            isMulti={false}
-                            value={groupedOptions.flatMap(group => group.options).find(option => option.value === selectedSender)}
-                            onChange={(selectedOption) => setSelectedSender(selectedOption?.value || '')}
-                            styles={{
-                                option: (provided) => ({
-                                    ...provided,
-                                    color: 'black',
-                                }),
-                                multiValueLabel: (provided) => ({
-                                    ...provided,
-                                    color: 'black',
-                                }),
-                                singleValue: (provided) => ({
-                                    ...provided,
-                                    color: 'black',
-                                }),
-                            }}
-                        />
-                        </Form.Label>
+                        {!isNewbie && (
+                            <Form.Label className="p-0 mb-0"><h6>Filter by Sender:</h6>
+                            <Select
+                                closeMenuOnSelect={true}
+                                components={animatedComponents}
+                                options={groupedOptions}
+                                isClearable={true}
+                                isMulti={false}
+                                value={groupedOptions.flatMap(group => group.options).find(option => option.value === selectedSender)}
+                                onChange={(selectedOption) => setSelectedSender(selectedOption?.value || '')}
+                                styles={{
+                                    option: (provided) => ({
+                                        ...provided,
+                                        color: 'black',
+                                    }),
+                                    multiValueLabel: (provided) => ({
+                                        ...provided,
+                                        color: 'black',
+                                    }),
+                                    singleValue: (provided) => ({
+                                        ...provided,
+                                        color: 'black',
+                                    }),
+                                }}
+                            />
+                            </Form.Label>
+                        )}
                         <Form.Label className="p-0 mt-2 mb-0"><h6>Filter by Receiver:</h6>
                         <Select
                             closeMenuOnSelect={true}
