@@ -8,6 +8,7 @@ import Loading from '../Loading/Loading';
 import FaqItem from './FaqItem';
 import NotificationToast from '../Toast/NotificationToast';
 import ConfirmModal from '../Modal/ConfirmModal';
+import { useLocation } from 'react-router-dom';
 
 export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.ReactElement {
     const [allFaqs, setAllFaqs] = useState<FaqDto[]>([]);
@@ -37,9 +38,25 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
     
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
+    const location = useLocation();
+    const [locationSearch, setLocationSearch] = useState(false);
+
     useEffect(() => {
-        getAllFaqs();
+        const phrase = location.state?.searchPhrase;
+        if (phrase) {
+            setsearchPhrase(phrase);
+            setLocationSearch(true);
+        } else {
+            getAllFaqs();
+        }
     }, [currentPage, itemsPerPage]);
+
+    useEffect(() => {
+        if (locationSearch && searchPhrase.length > 0) {
+            setLocationSearch(false);
+            searchFaq();
+        }
+    }, [searchPhrase]);
 
     const getAllFaqs = () => {
         setLoading(true);
@@ -68,7 +85,6 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
             return;
         }
         setLoading(true);
-
         getBySearch(searchPhrase)
             .then((data) => {
                 if (data.length === 0) {

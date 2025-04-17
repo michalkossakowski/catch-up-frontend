@@ -19,6 +19,7 @@ import TaskPool from "./TaskPool";
 import AssignTask from "../TaskAssigment/AssignTask.tsx";
 import "./TaskManager.css";
 import {TaskDto} from "../../dtos/TaskDto.ts";
+import { useLocation } from "react-router-dom";
 
 function TaskManager() {
     const { user, getRole } = useAuth();
@@ -41,6 +42,8 @@ function TaskManager() {
     const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
     const [userRole, setUserRole] = useState<string | null>(null);
 
+    const location = useLocation();
+
     // Map to store tasks by status
     const [tasksByStatus, setTasksByStatus] = useState<{[key in StatusEnum]: FullTaskDto[]}>({
         [StatusEnum.ToDo]: [] as FullTaskDto[],
@@ -49,6 +52,13 @@ function TaskManager() {
         [StatusEnum.ReOpen]: [] as FullTaskDto[],
         [StatusEnum.Done]: [] as FullTaskDto[]
     });
+
+    useEffect(() => {
+        const selectedLocalNewbie = location.state?.selectedNewbie;
+        if(selectedLocalNewbie){
+            setSelectedNewbie(selectedLocalNewbie);
+        }
+    },[]);
 
     // On change of a newbie
     useEffect(() => {

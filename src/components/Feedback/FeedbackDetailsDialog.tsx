@@ -7,6 +7,7 @@ import MaterialItem from '../MaterialManager/MaterialItem';
 interface FeedbackDetailsDialogProps {
   feedback: FeedbackDto;
   isOpen: boolean;
+  isNewbie: boolean;
   onClose: () => void;
   onResolveChange: (id: number, isResolved: boolean) => void;
   onDelete: (id: number) => void;
@@ -15,12 +16,12 @@ interface FeedbackDetailsDialogProps {
 const FeedbackDetailsDialog: React.FC<FeedbackDetailsDialogProps> = ({
   feedback,
   isOpen,
+  isNewbie,
   onClose,
   onResolveChange,
   onDelete
 }) => {
   const [isResolved, setIsResolved] = useState(feedback.isResolved);
-
   const handleResolve = async () => {
     if (feedback.id !== undefined) {
       await doneFeedback(feedback.id);
@@ -79,12 +80,14 @@ const FeedbackDetailsDialog: React.FC<FeedbackDetailsDialogProps> = ({
           <div className="modal-footer">
             <div className="d-flex justify-content-between w-100">
               <div>
-                <button 
+                {!isNewbie && (
+                  <button 
                   className={`btn ${isResolved ? 'btn-success' : 'btn-secondary'} me-2`}
                   onClick={handleResolve}
-                >
-                  {isResolved ? 'Resolved' : 'Unresolved'}
-                </button>
+                  >
+                    {isResolved ? 'Resolved' : 'Unresolved'}
+                  </button>
+                )}
                 <button 
                   className="btn btn-danger" 
                   onClick={handleDelete}

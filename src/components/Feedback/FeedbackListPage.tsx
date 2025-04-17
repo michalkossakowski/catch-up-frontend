@@ -436,7 +436,8 @@ const FeedbackListPage: React.FC = () => {
                                     {feedbacks.map((feedback) => (
                                         <FeedbackItem 
                                             key={feedback.id} 
-                                            feedback={feedback} 
+                                            feedback={feedback}
+                                            isNewbie={isNewbie} 
                                             onDeleteClick={setFeedbackToDelete}
                                             onResolveChange={handleResolveChange}
                                         />
