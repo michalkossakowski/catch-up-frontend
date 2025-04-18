@@ -6,6 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import './LoginComponent.css';
 import { useTranslation } from "react-i18next";
 import { Button, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import {availableLanguages, changeLanguage, normalizeLanguage} from "../../i18n";
 
 interface LoginComponentProps {
     toggleTheme: () => void;
@@ -20,31 +21,6 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ toggleTheme, theme }) =
     const { setAccessToken, setRefreshToken, setUser } = useAuth();
     const navigate = useNavigate();
     const { t, i18n } = useTranslation();
-    const availableLanguages: { [key: string]: string } = {
-        'en': "English",
-        'pl': "Polski",
-        'fr': "Français",
-        'de': "Deutsch",
-        'es': "Español",
-    };
-
-    const changeLanguage = (lng: string) => {
-        i18n.changeLanguage(lng);
-        if (!availableLanguages.hasOwnProperty(lng)) {
-            i18n.changeLanguage("en");
-            return "en";
-        }
-        localStorage.setItem("i18nextLng", lng);
-    };
-
-    const normalizeLanguage = (lng: string) => {
-        if (!lng) return "en";
-        if (!availableLanguages.hasOwnProperty(lng)) {
-            i18n.changeLanguage("en");
-            return "en";
-        }
-        return lng.split("-")[0];
-    };
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();

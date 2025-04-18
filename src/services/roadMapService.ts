@@ -54,6 +54,18 @@ export const getRoadMaps = async (): Promise<RoadMapDto[]> => {
 };
 
 
+export const getMyRoadMaps = async (): Promise<RoadMapDto[]> => {
+    try {
+        const response = await axiosInstance.get<RoadMapDto[]>('/RoadMap/GetMyRoadMaps');
+        return response.data;
+    } catch (error: any) {
+        handleError('getMyRoadMaps', error);
+        throw error;
+    }
+};
+
+
+
 export const getByNewbieId = async (newbieId: string): Promise<RoadMapDto[]> => {
     try {
         const response = await axiosInstance.get<RoadMapDto[]>('/RoadMap/GetByNewbieId/' + newbieId);

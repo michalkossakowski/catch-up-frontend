@@ -16,13 +16,13 @@ const AdminHomePage: React.FC = () => {
 
       <div className="card mt-4">
         <div className="card-body">
-          <h5 className="card-title">Manage Users</h5>
-          <p className="card-text">
-            Add, edit, or remove users from the system.
+          <h5 className="card-title">Admin Panel</h5>
+          <p className="card-text">  
+            Add users to system.  
           </p>
           <button
             className="btn btn-primary"
-            onClick={() => navigate("/usermanagement")}
+            onClick={() => navigate("/adminpanel")}
           >
             Manage Users
           </button>
@@ -31,30 +31,72 @@ const AdminHomePage: React.FC = () => {
 
       <div className="card mt-4">
         <div className="card-body">
-          <h5 className="card-title">Manage Events</h5>
+          <h5 className="card-title">Create New Event</h5>
           <p className="card-text">
-            Create and manage events for the organization.
+            Create new events for newbies, mentors and other staff to manage their onboarding process or learn new technologies.
           </p>
           <button
             className="btn btn-secondary"
-            onClick={() => navigate("/eventmanagement")}
+            onClick={() => navigate("/eventCreator")}
           >
-            Manage Events
+            Create Event
+          </button>
+        </div>
+      </div>
+      <div className="card mt-4">
+        <div className="card-body">
+          <h5 className="card-title">Go to Assignments</h5>
+          <p className="card-text">
+            Assign newbies to mentors and manage their onboarding process.
+          </p>
+          <button className="btn btn-secondary"
+           onClick ={() =>navigate("/employesassignment ")}
+           >Assignments
+           </button>
+        </div>
+      </div>
+
+      <div className="card mt-4">
+        <div className="card-body">
+          <h5 className="card-title">Create New Task Preset</h5>
+          <p className="card-text">
+            Create new task presets for your mentees to follow.
+          </p>
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate("/presetmanage")}
+          >
+            Create Preset
           </button>
         </div>
       </div>
 
       <div className="card mt-4">
         <div className="card-body">
-          <h5 className="card-title">System Settings</h5>
+          <h5 className="card-title">Manage Task Content</h5>
           <p className="card-text">
-            Configure system-wide settings and preferences.
+            Create and manage task content for your mentees.
+          </p>
+          <button
+            className="btn btn-secondary" 
+            onClick={() => navigate("/taskcontentmanage")}
+          >
+            View Mentees
+          </button>
+        </div>
+      </div>
+      
+      <div className="card mt-4">
+        <div className="card-body">
+          <h5 className="card-title">Roadmap Manager</h5>
+          <p className="card-text">
+            Create and manage roadmaps for your mentees to follow.
           </p>
           <button
             className="btn btn-success"
-            onClick={() => navigate("/settings")}
+            onClick={() => navigate("/roadmapmanage")}
           >
-            View Settings
+            Manage Roadmaps
           </button>
         </div>
       </div>

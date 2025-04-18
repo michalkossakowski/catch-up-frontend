@@ -10,7 +10,7 @@ const RoadMapAdd: React.FC = () => {
         e.preventDefault();
 
         const newRoadMap: RoadMapDto = {
-            name,
+            title: name,
             newbieId
         };
 

@@ -22,7 +22,7 @@ const MentorHomePage: React.FC = () => {
           </p>
           <button
             className="btn btn-primary"
-            onClick={() => navigate("/mentees")}
+            onClick={() => navigate("/profile/" + user?.id)}
           >
             View Mentees
           </button>
@@ -31,30 +31,45 @@ const MentorHomePage: React.FC = () => {
 
       <div className="card mt-4">
         <div className="card-body">
-          <h5 className="card-title">Tasks</h5>
+          <h5 className="card-title">Create New Task Preset</h5>
           <p className="card-text">
-            Assign and review tasks for your mentees.
+            Create new task presets for your mentees to follow.
           </p>
           <button
             className="btn btn-secondary"
-            onClick={() => navigate("/tasks")}
+            onClick={() => navigate("/presetmanage")}
           >
-            Manage Tasks
+            Create Preset
           </button>
         </div>
       </div>
 
       <div className="card mt-4">
         <div className="card-body">
-          <h5 className="card-title">Resources</h5>
+          <h5 className="card-title">Manage Task Content</h5>
           <p className="card-text">
-            Share helpful resources with your mentees.
+            Create and manage task content for your mentees.
+          </p>
+          <button
+            className="btn btn-secondary" 
+            onClick={() => navigate("/taskcontentmanage")}
+          >
+            View Mentees
+          </button>
+        </div>
+      </div>
+      
+      <div className="card mt-4">
+        <div className="card-body">
+          <h5 className="card-title">Roadmap Manager</h5>
+          <p className="card-text">
+            Create and manage roadmaps for your mentees to follow.
           </p>
           <button
             className="btn btn-success"
-            onClick={() => navigate("/resources")}
+            onClick={() => navigate("/roadmapmanage")}
           >
-            View Resources
+            Manage Roadmaps
           </button>
         </div>
       </div>

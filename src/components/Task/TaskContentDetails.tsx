@@ -11,6 +11,7 @@ import './TaskContentDetails.css';
 import materialService from '../../services/materialService';
 import { MaterialDto } from '../../dtos/MaterialDto';
 import MaterialItem from '../Material/DndMaterial/MaterialItem';
+import NotificationToast from '../Toast/NotificationToast';
 
 const TaskContentDetails: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -19,6 +20,9 @@ const TaskContentDetails: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [material, setMaterial] = useState<MaterialDto | null>(null);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastColor, setToastColor] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -39,10 +43,16 @@ const TaskContentDetails: React.FC = () => {
                     }
                 } else {
                     setError('Task content not found');
+                    setToastMessage('Task content not found');
+                    setToastColor('red');
+                    setShowToast(true);
                 }
             })
             .catch(err => {
                 setError('Error loading data. Please try again later.');
+                setToastMessage('Error loading data');
+                setToastColor('red');
+                setShowToast(true);
             })
             .finally(() => {
                 setLoading(false);
@@ -56,6 +66,9 @@ const TaskContentDetails: React.FC = () => {
             setMaterial(loadedMaterial);
         } catch (error) {
             console.error('Error loading material:', error);
+            setToastMessage('Error loading material data');
+            setToastColor('red');
+            setShowToast(true);
         }
     };
 
@@ -88,6 +101,13 @@ const TaskContentDetails: React.FC = () => {
                 <Button variant="success" onClick={handleBack}>
                     Back to List
                 </Button>
+                <NotificationToast
+                    show={showToast}
+                    title="Task Content Operation"
+                    message={toastMessage}
+                    color={toastColor}
+                    onClose={() => setShowToast(false)}
+                />
             </Container>
         );
     }
@@ -99,6 +119,13 @@ const TaskContentDetails: React.FC = () => {
                 <Button variant="success" onClick={handleBack}>
                     Back to List
                 </Button>
+                <NotificationToast
+                    show={showToast}
+                    title="Task Content Operation"
+                    message={toastMessage}
+                    color={toastColor}
+                    onClose={() => setShowToast(false)}
+                />
             </Container>
         );
     }
@@ -154,6 +181,14 @@ const TaskContentDetails: React.FC = () => {
                     )}
                 </Card.Body>
             </Card>
+            
+            <NotificationToast
+                show={showToast}
+                title="Task Content Operation"
+                message={toastMessage}
+                color={toastColor}
+                onClose={() => setShowToast(false)}
+            />
         </Container>
     );
 };

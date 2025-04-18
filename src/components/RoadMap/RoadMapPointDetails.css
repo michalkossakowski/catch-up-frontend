@@ -1,0 +1,55 @@
+.tasks-container {
+    padding: 0rem 1rem;
+    margin: 0rem 1rem;
+    max-width: 70rem; 
+    margin: auto;
+    margin-bottom: 2rem;
+}
+
+.roadmappoint-tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.roadmappoint-task-item {
+    display: flex; /* Flexbox for horizontal layout */
+    justify-content: space-between; /* Pushes content left and icon right */
+    align-items: flex-start; /* Align items at the top */
+    padding: 1rem;
+    border: 0.01rem solid #3b3b3b;
+    border-radius: 4px;
+    transition: box-shadow 1s ease, scale 1s ease;
+}
+
+.roadmappoint-task-item:hover {
+    cursor: pointer;
+    scale: 1.05;
+    box-shadow: 0 0 10px 0 #DB91D1;
+    transition: box-shadow 0.3s ease, scale 0.3s ease;
+}
+
+.roadmappoint-task-item h5 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+}
+
+.roadmappoint-task-item p {
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.roadmappoint-task-content {
+    flex-grow: 1; /* Takes available space on the left */
+    margin-right: 1rem; /* Adds spacing between content and icon */
+}
+
+.roadmappoint-task-icon {
+    font-size: 1.5rem;
+    color: #5CD3B4;
+    flex-shrink: 0; /* Prevents icon from shrinking */
+}
+
+.roadmappoint-task-icon .bi-hourglass-split {
+    color: #DB91D1;
+}

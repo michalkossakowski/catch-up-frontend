@@ -14,8 +14,6 @@ import RoadMapManage from './components/RoadMap/RoadMapManage';
 import LoginComponent from './components/Login/LoginComponent';
 import PresetManage from "./components/Preset/PresetManage.tsx";
 import TaskContentManage from './components/Task/TaskContentManage';
-import TaskContentCreate from './components/Task/TaskContentCreate';
-import TaskContentEditPage from './components/Task/TaskContentEditPage';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
@@ -43,12 +41,14 @@ import { getNotifications, readNotification } from './services/notificationServi
 import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
 import { useTranslation } from "react-i18next";
-import "./i18n.ts";
+import {availableLanguages, changeLanguage, normalizeLanguage} from "./i18n.ts";
 import HRHomePage from './components/HR/HRHomePage.tsx';
 import NewbieHomePage from './components/Newbie/NewbieHomePage.tsx';
 import MentorHomePage from './components/Mentor/MentorHomePage.tsx';
 import AdminHomePage from './components/Admin/AdminHomePage.tsx';
 import EventCreator from './components/HR/EventCreator.tsx';
+import RoadMapExplore from './components/RoadMap/RoadMapExplore.tsx';
+import RoadMapDetails from './components/RoadMap/RoadMapDetails.tsx';
 import Schooling from './components/Schooling/Schooling.tsx';
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -67,31 +67,6 @@ function App() {
     const notificationDropdownRef = useRef<HTMLDivElement>(null);
 
     const { t, i18n } = useTranslation();
-    const availableLanguages: { [key: string]: string } = {
-        'en': "English",
-        'pl': "Polski",
-        'fr': "Français",
-        'de': "Deutsch",
-        'es': "Español",
-    };
-
-    const changeLanguage = (lng: string) => {
-        i18n.changeLanguage(lng);
-        if (!availableLanguages.hasOwnProperty(lng)) {
-            i18n.changeLanguage("en");
-            return "en";
-        }
-        localStorage.setItem("i18nextLng", lng);
-    };
-
-    const normalizeLanguage = (lng: string) => {
-        if (!lng) return "en";
-        if (!availableLanguages.hasOwnProperty(lng)) {
-            i18n.changeLanguage("en");
-            return "en";
-        }
-        return lng.split("-")[0];
-    };
 
     const fetchRole = async () => {
         if (user?.id) {
@@ -229,9 +204,14 @@ function App() {
                                         <i className="bi bi-house-door" /> <span>{t('home')}</span>
                                     </NavLink>
                                     {role === "Newbie" && (
+                                        <>
                                         <NavLink to="/tasks" className="nav-link left-sidebar">
                                             <i className="bi bi-list-task" /> <span>{t('tasks')}</span>
                                         </NavLink>
+                                        <NavLink to="/roadmapexplore" className="nav-link left-sidebar">
+                                            <i className="bi bi-compass" /> <span>{t('roadmaps')}</span>
+                                        </NavLink>
+                                        </>
                                     )}
                                     <NavLink to="/schoolinglist" className="nav-link">
                                         <i className="bi bi-book" /> <span>{t('schoolings')}</span>
@@ -416,11 +396,11 @@ function App() {
                                 <Route path="/taskmanage" element={<TaskManager />} />
                                 <Route path="/taskcontentmanage" element={<TaskContentManage />} />
                                 <Route path="/taskcontent" element={<TaskContentManage />} />
-                                <Route path="/taskcontent/create" element={<TaskContentCreate />} />
-                                <Route path="/taskcontent/edit/:id" element={<TaskContentEditPage />} />
                                 <Route path="/taskcontent/details/:id" element={<TaskContentDetails />} />
                                 <Route path="/editmatlist" element={<EditMatList />} />
                                 <Route path="/roadmapmanage" element={<RoadMapManage />} />
+                                <Route path="/roadmapexplore" element={<RoadMapExplore />} />
+                                <Route path="/roadmap/:roadMapId/:title" element={<RoadMapDetails />} />
                                 <Route path="/feedbacks" element={<FeedbackList />} />
                                 <Route path="/badges" element={<Badge />} />
                                 <Route path="/presetmanage" element={<PresetManage />} />
