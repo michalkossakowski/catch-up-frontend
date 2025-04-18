@@ -88,14 +88,15 @@
   box-shadow: none !important;
 }
 .sidebar-navlink span{
-  color: rgba(var(--bs-secondary-rgb))
+  color: rgba(var(--bs-secondary-rgb));
 }
 .sidebar-navlink:hover span{
-  color: rgba(var(--bs-primary))
+  color: rgba(var(--bs-primary));
 }
 .sidebar-navlink:focus span{
-  color: rgba(var(--bs-primary))
+  color: rgba(var(--bs-primary));
 }
+
 .schooling-ProgressBar-vl{
   height: calc(120%);
   top: 100%;
@@ -107,6 +108,9 @@
 }
 .schooling-ProgressBar-img.border-success{
   opacity: 1;
+}
+.is-Choosen{
+  color: rgba(var(--bs-primary)) !important;
 }
 
 @media (max-width: 1050px) {

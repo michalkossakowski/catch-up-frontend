@@ -40,7 +40,7 @@ const SchoolingProgressBarElement: React.FC<SchoolingProgressBarProps> = ({
     return (
         <div className="schooling-ProgressBar-el mb-3 d-flex">
             <div className="position-relative img-container">
-                <img src={img ? URL.createObjectURL(img) : undefined} alt="" className={`rounded-1 border border-2 ${isDone ? "border-success" : ""}`}/>
+                <img src={img ? URL.createObjectURL(img) : undefined} alt="" className={`rounded-2 border border-3 ${isDone ? "border-success" : ""}`}/>
                 {showVl && 
                     <span 
                     className={`position-absolute vr schooling-ProgressBar-vl ${isDone ? "text-success" : ""}`}
@@ -50,8 +50,8 @@ const SchoolingProgressBarElement: React.FC<SchoolingProgressBarProps> = ({
             </div>
             {hide &&
                 <div className="ps-2 text-start align-items-start d-flex flex-column">
-                    <span className={`text-wrap`}>{title}</span>
-                    <p className={`p-0 m-0 text-wrap`}>{description}</p>
+                    <span className={`text-wrap ${isChoosen ? "is-Choosen" :""}`}>{title}</span>
+                    <p className={`p-0 m-0 text-wrap  ${isChoosen ? "is-Choosen" :""}`}>{description}</p>
                 </div>
             }
         </div>
