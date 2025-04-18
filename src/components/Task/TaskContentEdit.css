@@ -52,3 +52,11 @@
     margin-top: 15px;
     margin-bottom: 15px;
 }
+
+.editBox .btn-group,
+.editBox [class*="btn-group"],
+.editBox .col.d-flex.justify-content-end > *,
+.editBox .toggle-button-group {
+    display: inline-flex !important;
+    flex-direction: row !important;
+}
