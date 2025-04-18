@@ -1,7 +1,6 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import './SchoolingItem.css';
-import './cath.css';
 
 import { SchoolingDto } from '../../dtos/SchoolingDto';
 import { useEffect, useState } from 'react';
