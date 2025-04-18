@@ -14,8 +14,6 @@ import RoadMapManage from './components/RoadMap/RoadMapManage';
 import LoginComponent from './components/Login/LoginComponent';
 import PresetManage from "./components/Preset/PresetManage.tsx";
 import TaskContentManage from './components/Task/TaskContentManage';
-import TaskContentCreate from './components/Task/TaskContentCreate';
-import TaskContentEditPage from './components/Task/TaskContentEditPage';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
@@ -51,7 +49,7 @@ import AdminHomePage from './components/Admin/AdminHomePage.tsx';
 import EventCreator from './components/HR/EventCreator.tsx';
 import RoadMapExplore from './components/RoadMap/RoadMapExplore.tsx';
 import RoadMapDetails from './components/RoadMap/RoadMapDetails.tsx';
-
+import Schooling from './components/Schooling/Schooling.tsx';
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
@@ -398,8 +396,6 @@ function App() {
                                 <Route path="/taskmanage" element={<TaskManager />} />
                                 <Route path="/taskcontentmanage" element={<TaskContentManage />} />
                                 <Route path="/taskcontent" element={<TaskContentManage />} />
-                                <Route path="/taskcontent/create" element={<TaskContentCreate />} />
-                                <Route path="/taskcontent/edit/:id" element={<TaskContentEditPage />} />
                                 <Route path="/taskcontent/details/:id" element={<TaskContentDetails />} />
                                 <Route path="/editmatlist" element={<EditMatList />} />
                                 <Route path="/roadmapmanage" element={<RoadMapManage />} />
@@ -413,6 +409,8 @@ function App() {
                                     path="/schoolinglist"
                                     element={role === 'Admin' || role === 'Mentor' ? <SchoolingListMentor /> : <SchoolingListNewbie />}
                                 />
+                                <Route path="/schooling/:schoolingId/part/:partId" element={<Schooling />} />
+                                <Route path="/schooling/:schoolingId/" element={<Schooling />} />
                                 <Route path="/schoolingpartedit/:id?" element={<SchoolingPartEdit />} />
                                 <Route path="/schoolinglistparts" element={<SchoolingListParts />} />
                                 <Route path="/preset/assign/:presetId" element={<PresetAssign />} />
