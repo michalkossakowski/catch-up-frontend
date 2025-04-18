@@ -20,6 +20,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
                                                onEditClick,
                                                onDeleteClick,
                                                categoryName,
+                                               role,
                                                isDisabled = false,
                                                isLoading = false
                                            }) => {
@@ -86,12 +87,15 @@ const TaskCard: React.FC<TaskCardProps> = ({
                             <i className="bi bi-three-dots-vertical"></i>
                         </Dropdown.Toggle>
                         <Dropdown.Menu style={{zIndex: 9999}}>
-                            <Dropdown.Item onClick={() => onEditClick(task)}>
-                                <i className="bi bi-pencil me-2"></i>Edit
-                            </Dropdown.Item>
-                            <Dropdown.Item onClick={onDeleteClick}>
-                                <i className="bi bi-trash me-2"></i>Delete
-                            </Dropdown.Item>
+                            {role == "Admin" && (
+                                <>
+                                    <Dropdown.Item onClick={() => onEditClick(task)}>
+                                        <i className="bi bi-pencil me-2"></i>Edit
+                                    </Dropdown.Item><Dropdown.Item onClick={onDeleteClick}>
+                                        <i className="bi bi-trash me-2"></i>Delete
+                                    </Dropdown.Item>
+                                </>
+                            )}
                             <Dropdown.Item
                                 onClick={() => {
                                     setShowFeedbackDialog(true);

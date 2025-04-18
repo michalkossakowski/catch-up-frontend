@@ -20,6 +20,7 @@ import AssignTask from "../TaskAssigment/AssignTask.tsx";
 import "./TaskManager.css";
 import {TaskDto} from "../../dtos/TaskDto.ts";
 import { useLocation } from "react-router-dom";
+import Select from "react-select";
 
 function TaskManager() {
     const { user, getRole } = useAuth();
@@ -242,18 +243,30 @@ function TaskManager() {
                             </div>
 
                             <div className="col-3">
-                                <select
-                                    className="form-select"
-                                    value={selectedNewbie}
-                                    onChange={(e) => setSelectedNewbie(e.target.value)}
-                                >
-                                    <option value="">None</option>
-                                    {newbies.map((newbie) => (
-                                        <option key={newbie.id} value={newbie.id}>
-                                            {`${newbie.name} ${newbie.surname}`}
-                                        </option>
-                                    ))}
-                                </select>
+                                <Select
+                                    isClearable={true}
+                                    isSearchable={true}
+                                    name="newbie"
+                                    options={newbies.map(newbie => ({
+                                        value: newbie.id,
+                                        label: `${newbie.name} ${newbie.surname}`
+                                    }))}
+                                    placeholder="Select a newbie"
+                                    onChange={(selectedOption) => setSelectedNewbie(selectedOption ? selectedOption.value : '')}
+                                    value={newbies.map(newbie => ({
+                                        value: newbie.id,
+                                        label: `${newbie.name} ${newbie.surname}`
+                                    })).find(option => option.value === selectedNewbie) || null}
+
+                                    styles={{
+                                        control: (baseStyles) => ({
+                                            ...baseStyles,
+                                            backgroundColor: 'var(--bs-body-bg)',
+                                            border: '2px solid var(--bs-border-color)',
+                                            boxShadow: 'none'
+                                        })
+                                    }}
+                                />
                             </div>
 
                             <div className="col-3">
@@ -273,7 +286,6 @@ function TaskManager() {
                             </div>
                         </div>
 
-                        {/* Task Columns */}
                         <TaskColumns
                             tasksByStatus={tasksByStatus}
                             onTaskUpdate={handleTaskUpdate}
@@ -287,7 +299,6 @@ function TaskManager() {
                         />
                     </div>
 
-                    {/* Task Pool Section */}
                     <div className={`task-pool-container ${!selectedNewbie ? "disabled-pool" : ""}`}>
                         <TaskPool
                             taskContents={taskContents}
