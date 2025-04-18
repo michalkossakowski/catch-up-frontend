@@ -88,7 +88,7 @@ const SchoolingEdit: React.FC = () => {
             title: values.title,
             categoryId: values.categoryId,
             priority: values.priority,
-            description: values.description,
+            shortDescription: values.description,
             creatorId: fullSchooling?.schooling?.creatorId ?? user?.id,
         };
     
