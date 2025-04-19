@@ -21,6 +21,7 @@
     "@mui/material": "^6.4.5",
     "@reduxjs/toolkit": "^2.5.1",
     "@thomasafg/react-awesome-calendar": "^1.1.6",
+    "@tiptap/extension-color": "^2.11.7",
     "@tiptap/pm": "^2.11.7",
     "@tiptap/react": "^2.11.7",
     "@tiptap/starter-kit": "^2.11.7",

@@ -1,37 +1,39 @@
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
 import './SchoolingItem.css';
 
 import { SchoolingDto } from '../../dtos/SchoolingDto';
 import { useEffect, useState } from 'react';
 import Loading from '../Loading/Loading';
+import TipTap from '../TextEditor/TipTap';
 interface SchoolingItemProps {
   schooling?: SchoolingDto;
+  editMode?: boolean;
 }
 const SchoolingItem: React.FC<SchoolingItemProps> = ({
   schooling,
+  editMode = false,
 }) => {
   const [loading, setLoading] = useState(true);
+  const [content, setContent] = useState("<h3>Start Editing</h3>");
 
   useEffect(() => {
-    if (editor) {
-      editor.commands.setContent(schooling?.content ?? '<h3>Start Editing</h3>');
-      setLoading(false);
+    if (schooling?.content) {
+      setContent(schooling.content);
+    } else {
+      setContent("<h3>Start Editinsg</h3>");
     }
+    setLoading(false);
   }, [schooling?.content]);
 
-  const editor = useEditor({
-      extensions: [StarterKit],
-  });
+
 
   return (
   <>
     {loading ? 
-      <Loading/>
+      <Loading />
     :
-      <EditorContent editor={editor} className='w-100'/>
+      <TipTap content={content} editable={editMode} />
     }
   </>
-  );
+  )
 };
 export default SchoolingItem; 

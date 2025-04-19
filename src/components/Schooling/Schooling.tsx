@@ -1,4 +1,4 @@
-import { Col, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import SchoolingItem from "./SchoolingItem";
 import SchoolingProgressBar from "./SchoolingProgressBar/SchoolingProgressBar";
 import { useEffect, useState } from "react";
@@ -14,7 +14,8 @@ const Schooling: React.FC = () => {
     const [isOpen, setIsOpen] = useState(true);
     const [schooling, setSchooling] = useState<SchoolingDto | null>(null);
     const [noPlace, setNoPlace] = useState(window.innerWidth < 1050);
-    
+    const [editMode, setEditMode] = useState(false);
+
     useEffect(() => {
         fetchSchooling();
     },[])
@@ -23,7 +24,6 @@ const Schooling: React.FC = () => {
         if (!schoolingId) return;
             getUserSchooling(Number(schoolingId)).then((res) => {
                 setSchooling(res);
-                console.log(res);
             })
             .catch((err) => {
                 console.error(err);
@@ -46,7 +46,6 @@ const Schooling: React.FC = () => {
     }   
     const resize = (isToSmall: boolean) => {
         setNoPlace(isToSmall);
-        console.log(isToSmall);
     }
 
     return (
@@ -61,14 +60,25 @@ const Schooling: React.FC = () => {
             <Col sm={noPlace ? 12 : isOpen ? 8 : 10} className={`p-0 m-0 d-flex flex-column align-items-center ${noPlace ? "p-4" : "pe-4"}`}>
                 {partId ? 
                 <SchoolingPart
+                    editMode={editMode}
                     partId={Number(partId)}
                     isDone={schooling?.schoolingPartProgressBar.find((part) => part.id === Number(partId))?.isDone}
                     changePartState={changePartState}
                 />
                 :
                 <SchoolingItem
+                    editMode={editMode}
                     schooling={schooling ?? undefined}
                 />
+                }
+                {editMode
+                ?
+                    <div className="d-flex">
+                        <Button variant="success" className="me-2" onClick={() => {}}>Save</Button>
+                        <Button variant="danger" className="ms-2" onClick={() => setEditMode(false)}>Cancel Editing</Button>
+                    </div>
+                :
+                    <Button onClick={() => setEditMode(true)}>Start Editing</Button>    
                 }
             </Col>
         </Row>
