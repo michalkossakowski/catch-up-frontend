@@ -19,11 +19,6 @@
   width: 65px;
 }
 
-.nav-link {
-  padding: 10px 20px;
-  white-space: nowrap;
-}
-
 .sidebar-button {
   position: absolute;
   top: 0px;
@@ -78,11 +73,13 @@
   line-height: 1.1;
 }
 
-.schooling-ProgressBar-el span,.schooling-ProgressBar-el p{
+.schooling-ProgressBar-el span, .schooling-ProgressBar-el p{
   font-size: 11px;
   font-weight: 400;
 }
 .sidebar-navlink{
+  padding: 10px 20px;
+  white-space: nowrap;
   background-color: transparent !important;
   border: none !important;
   box-shadow: none !important;
