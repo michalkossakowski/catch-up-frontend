@@ -145,9 +145,9 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ toggleTheme, theme }) =
                     </form>
                 </div>
             </div>
-            <footer className="mt-auto">
+            <footer className="mt-3">
                 <p className="text-center text-muted small">
-                    © 2024 Made by UnhandledException
+                    © 2024-2025 Made by UnhandledException
                 </p>
             </footer>
         </>

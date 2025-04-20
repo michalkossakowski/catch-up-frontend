@@ -50,6 +50,7 @@ import EventCreator from './components/HR/EventCreator.tsx';
 import RoadMapExplore from './components/RoadMap/RoadMapExplore.tsx';
 import RoadMapDetails from './components/RoadMap/RoadMapDetails.tsx';
 import Schooling from './components/Schooling/Schooling.tsx';
+
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
@@ -148,7 +149,7 @@ function App() {
     ].some(path => location.pathname.startsWith(path));
 
     const isAdminToolsActive = [
-        "/admin",
+        "/adminpanel",
         "/employesassignment"
     ].some(path => location.pathname.startsWith(path));
 
@@ -281,7 +282,7 @@ function App() {
                                     )}
                                 </Nav>
                                 <footer className="mt-auto">
-                                    <p className="text-center text-muted small">© 2024 Made by UnhandledException</p>
+                                    <p className="text-center text-muted small">© 2024-2025 Made by UnhandledException</p>
                                 </footer>
                             </Navbar>
                         </div>
