@@ -40,6 +40,25 @@ const RoadMapDetails: React.FC = () => {
         }
     }, [loading, roadMapPoints]);
 
+    useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+          const msg = event.data;
+          if (msg && msg['x-tiktok-player'] && msg.type === 'onPlayerReady') {
+            const iframe = document.getElementById('tiktok-player') as HTMLIFrameElement;
+            if (iframe && iframe.contentWindow) {
+              iframe.contentWindow.postMessage({
+                type: 'unMute',
+                value: undefined,
+                'x-tiktok-player': true,
+              }, '*');
+            }
+          }
+        };
+      
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+      }, []);
+      
     const fetchRoadMapPoints = async (id: number) => {
         try {
             setLoading(true);
@@ -172,10 +191,21 @@ const RoadMapDetails: React.FC = () => {
                 ) : roadMapPoints.length > 0 && (
                     <div className="d-flex justify-content-center align-items-center m-4 road-map-details-bottom-container">
                         {roadMapPoints.every(rmp => rmp.status === StatusEnum.Done) && (
-                            <div>
+                            <>
                                 <h3>Congratulations you have finished this road map !</h3>
-                                <i className="bi bi-trophy-fill"></i>
-                            </div>
+                                <div className='congratulations-container'>
+                                    <i className="bi bi-trophy-fill"/>
+                                    <iframe
+                                        id="tiktok-player"
+                                        height="200"
+                                        width="355"
+                                        src="https://www.tiktok.com/player/v1/7488375562155674902?music_info=1&description=1&autoplay=1"
+                                        allow="autoplay; fullscreen"
+                                        title="TikTok video"
+                                    ></iframe>
+                                    <i className="bi bi-trophy-fill"/>
+                                </div>
+                            </>
                         )}
                         <Alert variant="info">
                             <i className="bi bi-list-task" />
