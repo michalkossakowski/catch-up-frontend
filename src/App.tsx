@@ -50,6 +50,7 @@ import EventCreator from './components/HR/EventCreator.tsx';
 import RoadMapExplore from './components/RoadMap/RoadMapExplore.tsx';
 import RoadMapDetails from './components/RoadMap/RoadMapDetails.tsx';
 import Schooling from './components/Schooling/Schooling.tsx';
+import SettingsComponent from './components/Settings/Settings.tsx';
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -418,7 +419,7 @@ function App() {
                                 <Route path="/schoolingdetails" element={<SchoolingDetails />} />
                                 <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
                                 <Route path="/profile/:userId" element={<UserProfile />} />
-                                <Route path="/settings" element={<><h1>Settings</h1></>} />
+                                <Route path="/settings" element={<SettingsComponent/>} />
                                 <Route path="/notifications" element={<><NotificationPage /></>} />
                                 <Route path="/eventCreator" element={<EventCreator />} />
                                 <Route path="/material" element={<MaterialTest />} />
