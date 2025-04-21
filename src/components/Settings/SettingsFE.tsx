@@ -35,8 +35,8 @@ const SettingsFE: React.FC = () => {
   };
 
   const settingLabels: { [key: string]: string } = {
-    isBrainrotAllowed: 'Show brainrot tiktok on road maps congratulations screen',
-    isConfettiDisabled: 'Disable confetti on finished road maps details screen',
+    isBrainrotAllowed: '[RoadMaps] Show congratulations brainrot Tiktok',
+    isConfettiDisabled: '[RoadMaps] Disable confetti',
     placeholder1: 'Placeholder 1',
     placeholder2: 'Placeholder 2',
   };
