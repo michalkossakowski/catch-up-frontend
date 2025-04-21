@@ -198,7 +198,7 @@ const RoadMapDetails: React.FC = () => {
                     </div>
                 ) : roadMapPoints.length > 0 && (
                     <div className="d-flex justify-content-center align-items-center m-4 road-map-details-bottom-container">
-                        {roadMapPoints.every(rmp => rmp.status === StatusEnum.Done) && (
+                        {roadMapPoints.every(rmp => rmp.status === StatusEnum.Done) ? (
                             <>
                                 <h3>Congratulations you have finished this road map !</h3>
                                 <div className='congratulations-container'>
@@ -217,6 +217,13 @@ const RoadMapDetails: React.FC = () => {
                                         </>
                                     )}
 
+                                </div>
+                            </>
+                        ):(
+                            <>
+                                <h3>Road map in progress</h3>
+                                <div className='congratulations-container'>
+                                    <i className="bi bi-clock-history"></i>
                                 </div>
                             </>
                         )}

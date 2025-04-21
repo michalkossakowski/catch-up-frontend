@@ -127,7 +127,7 @@
     padding: 0;
 }
 
-.road-map-details-bottom-container .bi-trophy-fill{
+.road-map-details-bottom-container .bi-trophy-fill,.road-map-details-bottom-container .bi-clock-history {
     font-size: 6rem;
     margin: 2rem;
 }
