@@ -144,3 +144,16 @@
         rgba(219, 145, 209, 0.5) 100%);
     background-size: 45.25px 45.25px;
 }
+
+.login-container{
+    background-color: rgba(0, 0, 0, 0.6); 
+}
+
+    
+.navbar-custom-login Button i{
+    color: #ffffff !important;
+}
+
+.navbar-custom-login Button i:hover{
+    color: #5CD3B4 !important;
+}
