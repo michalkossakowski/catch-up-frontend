@@ -271,6 +271,9 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ toggleTheme, theme }) =
             © 2024-2025 Made by UnhandledException
           </p>
         </footer>
+        <p className="login-credits">
+          *Thanks to Tima Miroshnichenko & Ron Lach from <a href="https://www.pexels.com">pexels.com</a> for the background videos, and S4uMusic & Alex_Kizenkov from <a href="https://www.pixabay.com">pixabay.com</a> for the background music
+        </p>
       </div>
     </div>
   );
