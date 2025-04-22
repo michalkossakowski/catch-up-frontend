@@ -224,6 +224,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ toggleTheme, theme }) =
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
                   autoComplete="username"
+                  placeholder='Enter your email...'
                   required
                 />
               </div>
@@ -239,6 +240,7 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ toggleTheme, theme }) =
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
                   autoComplete="password"
+                  placeholder='Enter your password...'
                   required
                 />
               </div>
