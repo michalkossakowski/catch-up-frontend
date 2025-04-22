@@ -196,16 +196,17 @@
 }
 
 .login-container{
-    background-color: rgba(255, 255, 255, 0.4); 
+    background-color: rgba(211, 211, 211, 0.075); 
+    color: #ffffff !important;
 }
 
     
 .navbar-custom-login Button i{
-    color: #000000 !important;
+    color: #DB91D1 !important;
 }
 
 .navbar-custom-login Button i:hover{
-    color: #DB91D1 !important;
+    color: #5CD3B4 !important;
 }
 
 

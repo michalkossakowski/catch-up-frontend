@@ -7,8 +7,8 @@ import './LoginComponent.css';
 import { useTranslation } from 'react-i18next';
 import { Button, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { availableLanguages, changeLanguage, normalizeLanguage } from '../../i18n';
-import backgroundVideoDark from '/Login/sunset_canal.mp4';
-import backgroundVideoLight from '/Login/moutains_winter.mp4';
+import backgroundVideoDark from '/Login/dark_office.mp4';
+import backgroundVideoLight from '/Login/light_office.mp4';
 
 const darkThemeMusic = '/Login/electro-summer-positive-party.mp3';
 const lightThemeMusic = '/Login/chinese-new-year-festivel_2.mp3';

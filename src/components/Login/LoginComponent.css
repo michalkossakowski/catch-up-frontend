@@ -25,16 +25,12 @@
 .welcome,
 .subtitle {
     color: #ffffff; 
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9); 
+    text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.9); 
     text-align: center;
     margin-bottom: 1.5rem;
 }
 
 .login-footer{
     color: #ffffff !important; 
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 1); 
-}
-
-.navbar-custom-login Button i{
-    color: #ffffff !important;
+    text-shadow: 0px 0px 4px rgba(0, 0, 0, 1); 
 }
