@@ -1,0 +1,113 @@
+.task-content{
+    .AccordionItem .accordion-button:not(.collapsed) {
+        color: #FFFFFF;
+        background-color: #DB91D1;
+        box-shadow: inset 0 calc(-1* var(--bs-accordion-border-width)) 0 #DB91D1;
+    }
+    
+    .AccordionItem .accordion-button:focus {
+        box-shadow: 0 0 0 0.35rem rgba(219, 145, 209, 0.3);
+    }
+    
+    .loaderBox {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .loaderBox.loading {
+        min-height: 100px;
+    }
+    
+    .buttonBox {
+        margin-top: 20px;
+    }
+    
+    .task-category {
+        margin-bottom: 15px;
+    }
+    
+    .task-description {
+        margin-bottom: 20px;
+        white-space: pre-line;
+        max-height: 150px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .task-description::after {
+        content: "...";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding: 0 5px;
+        background-color: var(--bs-accordion-bg);
+        font-weight: bold;
+    }
+    
+    .admin-buttons {
+        display: flex;
+    }
+    
+    .btn-info {
+        background-color: #5CD3B4;
+        border-color: #5CD3B4;
+    }
+    
+    .btn-info:hover, .btn-info:focus {
+        background-color: #4ab99d;
+        border-color: #4ab99d;
+    }
+    
+    .badge.bg-info {
+        background-color: #5CD3B4 !important;
+    }
+    
+    .filter-container {
+        background-color: var(--bs-body-bg);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid var(--bs-border-color);
+    }
+    
+    .filter-container label,
+    .filter-container input,
+    .filter-container select {
+        color: var(--bs-body-color);
+    }
+    
+    /* Material display styles */
+    .material-container {
+        border: 1px solid var(--bs-border-color);
+        border-radius: 8px;
+        padding: 15px;
+        background-color: var(--bs-body-bg);
+    }
+    
+    .material-container h5 {
+        margin-bottom: 15px;
+        color: var(--bs-body-color);
+    }
+    
+    .read-only-material .accordion-button {
+        background-color: var(--bs-tertiary-bg);
+        color: var(--bs-body-color);
+    }
+    
+    .read-only-material .accordion-button:not(.collapsed) {
+        background-color: var(--bs-tertiary-bg);
+        color: var(--bs-body-color);
+        box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.125);
+    }
+    
+    .read-only-material .accordion-button:focus {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        z-index: 3;
+    }
+    
+    .read-only-material .accordion-body {
+        padding: 15px;
+        border-top: none;
+    }
+}

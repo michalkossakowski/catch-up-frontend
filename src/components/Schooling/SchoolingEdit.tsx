@@ -90,6 +90,7 @@ const SchoolingEdit: React.FC = () => {
             priority: values.priority,
             shortDescription: values.description,
             creatorId: fullSchooling?.schooling?.creatorId ?? user?.id,
+            schoolingPartProgressBar: []
         };
     
         try {

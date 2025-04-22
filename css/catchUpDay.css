@@ -194,3 +194,20 @@
         rgba(219, 145, 209, 0.5) 100%);
     background-size: 45.25px 45.25px;
 }
+
+.btn-outline-light {
+    --bs-btn-color: #000;
+    --bs-btn-border-color: #DB91D1;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #DB91D1;
+    --bs-btn-hover-border-color: #DB91D1;
+    --bs-btn-focus-shadow-rgb: 219, 145, 209;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #db52c9;
+    --bs-btn-active-border-color: #db52c9;
+    --bs-btn-disabled-color: #adb5bd;
+    --bs-btn-disabled-border-color: #adb5bd;
+    background-color: transparent;
+    color: var(--bs-btn-color);
+    border-color: var(--bs-btn-border-color);
+}

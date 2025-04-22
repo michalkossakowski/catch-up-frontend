@@ -1,175 +1,220 @@
-import { useCurrentEditor } from "@tiptap/react";
-
-const MenuBar = () => {
-  const { editor } = useCurrentEditor()
+import { Editor } from "@tiptap/react";
+import "./MenuBar.scss"
+interface MenuBarProps {
+  editor: Editor;
+}
+const MenuBar: React.FC<MenuBarProps> = ({
+  editor,
+}) => {
 
   if (!editor) {
     return null
   }
 
   return (
-    <div className="control-group">
-      <div className="button-group">
-        <button
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          disabled={
-            !editor.can()
-              .chain()
-              .focus()
-              .toggleBold()
-              .run()
-          }
-          className={editor.isActive('bold') ? 'is-active' : ''}
-        >
-          Bold
+    <div className="menu-bar">
+      <div className="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        <div className="btn-group me-2" role="group">
+          <button
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            disabled={
+              !editor.can()
+                .chain()
+                .focus()
+                .toggleBold()
+                .run()
+            }
+            className={`btn btn-outline-light ${editor.isActive('bold') ? 'active' : ''}`}
+          >
+            <i className="bi bi-type-bold"></i>
+          </button>
+          <button
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+            disabled={
+              !editor.can()
+                .chain()
+                .focus()
+                .toggleItalic()
+                .run()
+            }
+            className={`btn btn-outline-light ${editor.isActive('italic') ? 'active' : ''}`}
+          >
+            <i className="bi bi-type-italic"></i>          
+          </button>
+          <button
+            onClick={() => editor.chain().focus().toggleStrike().run()}
+            disabled={
+              !editor.can()
+                .chain()
+                .focus()
+                .toggleStrike()
+                .run()
+            }
+            className={`btn btn-outline-light ${editor.isActive('strike') ? 'active' : ''}`}
+          >
+            <i className="bi bi-type-strikethrough"></i>
         </button>
-        <button
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          disabled={
-            !editor.can()
-              .chain()
-              .focus()
-              .toggleItalic()
-              .run()
-          }
-          className={editor.isActive('italic') ? 'is-active' : ''}
-        >
-          Italic
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          disabled={
-            !editor.can()
-              .chain()
-              .focus()
-              .toggleStrike()
-              .run()
-          }
-          className={editor.isActive('strike') ? 'is-active' : ''}
-        >
-          Strike
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleCode().run()}
-          disabled={
-            !editor.can()
-              .chain()
-              .focus()
-              .toggleCode()
-              .run()
-          }
-          className={editor.isActive('code') ? 'is-active' : ''}
-        >
-          Code
-        </button>
-        <button onClick={() => editor.chain().focus().unsetAllMarks().run()}>
-          Clear marks
-        </button>
-        <button onClick={() => editor.chain().focus().clearNodes().run()}>
-          Clear nodes
-        </button>
-        <button
-          onClick={() => editor.chain().focus().setParagraph().run()}
-          className={editor.isActive('paragraph') ? 'is-active' : ''}
-        >
-          Paragraph
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={editor.isActive('heading', { level: 1 }) ? 'is-active' : ''}
-        >
-          H1
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}
-        >
-          H2
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          className={editor.isActive('heading', { level: 3 }) ? 'is-active' : ''}
-        >
-          H3
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-          className={editor.isActive('heading', { level: 4 }) ? 'is-active' : ''}
-        >
-          H4
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
-          className={editor.isActive('heading', { level: 5 }) ? 'is-active' : ''}
-        >
-          H5
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
-          className={editor.isActive('heading', { level: 6 }) ? 'is-active' : ''}
-        >
-          H6
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive('bulletList') ? 'is-active' : ''}
-        >
-          Bullet list
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={editor.isActive('orderedList') ? 'is-active' : ''}
-        >
-          Ordered list
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={editor.isActive('codeBlock') ? 'is-active' : ''}
-        >
-          Code block
-        </button>
+        </div>
+
+
+        <div className="btn-group me-2" role="group">
+          <button
+            onClick={() => editor.chain().focus().setParagraph().run()}
+            className={`btn btn-outline-light ${editor.isActive('paragraph') ? 'active' : ''}`}
+          >
+            <i className="bi bi-paragraph"></i>
+          </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+            className={`btn btn-outline-light ${editor.isActive('heading', { level: 1 }) ? 'active' : ''}`}
+          >
+            <i className="bi bi-type-h1"></i>
+          </button>
+          <button
+            type="button"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            className={`btn btn-outline-light ${editor.isActive('heading', { level: 2 }) ? 'active' : ''}`}
+          >
+            <i className="bi bi-type-h2"></i>
+          </button>
+          <button
+            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+            className={`btn btn-outline-light ${editor.isActive('heading', { level: 3 }) ? 'active' : ''}`}
+          >
+            <i className="bi bi-type-h3"></i>
+          </button>
+          <button
+            onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+            className={`btn btn-outline-light ${editor.isActive('heading', { level: 4 }) ? 'active' : ''}`}
+          >
+            <i className="bi bi-type-h4"></i>
+          </button>
+          <button
+            onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
+            className={`btn btn-outline-light ${editor.isActive('heading', { level: 5 }) ? 'active' : ''}`}
+          >
+            <i className="bi bi-type-h5"></i>
+          </button>
+          <button
+            onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
+            className={`btn btn-outline-light ${editor.isActive('heading', { level: 6 }) ? 'active' : ''}`}
+          >
+            <i className="bi bi-type-h6"></i>
+          </button>
+        </div>
+
+
+        <div className="btn-group me-2" role="group">
+          <button
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            className={`btn btn-outline-light ${editor.isActive('bulletList') ? 'active' : ''}`}
+          >
+            <i className="bi bi-list-ul"></i>          
+          </button>
+          <button
+            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            className={`btn btn-outline-light ${editor.isActive('orderedList') ? 'active' : ''}`}
+          >
+            <i className="bi bi-list-ol"></i>
+          </button>
+        </div>
+
+
         <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={editor.isActive('blockquote') ? 'is-active' : ''}
+          className={`btn btn-outline-light me-2`}
         >
-          Blockquote
+          <i className="bi bi-blockquote-left"></i>
         </button>
-        <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>
-          Horizontal rule
-        </button>
-        <button onClick={() => editor.chain().focus().setHardBreak().run()}>
-          Hard break
-        </button>
-        <button
-          onClick={() => editor.chain().focus().undo().run()}
-          disabled={
-            !editor.can()
-              .chain()
-              .focus()
-              .undo()
-              .run()
-          }
+
+
+        <button onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          className={`btn btn-outline-light me-2 ${editor.isActive('blockquote') ? 'active' : ''}`}  
         >
-          Undo
+          <i className="bi bi-hr"></i>
         </button>
-        <button
-          onClick={() => editor.chain().focus().redo().run()}
-          disabled={
-            !editor.can()
-              .chain()
-              .focus()
-              .redo()
-              .run()
-          }
-        >
-          Redo
+
+
+        <button 
+            onClick={() => editor.chain().focus().toggleHighlight().run()} 
+            className={`btn btn-outline-light me-2 ${editor.isActive('highlight') ? 'active' : ''}`}>
+          <i className="bi bi-highlighter"></i>          
         </button>
-        <button
-          onClick={() => editor.chain().focus().setColor('#958DF1').run()}
-          className={editor.isActive('textStyle', { color: '#958DF1' }) ? 'is-active' : ''}
-        >
-          Purple
-        </button>
+
+        {/* Aligment */}
+        <div className="btn-group me-2" role="group">
+          <button 
+            onClick={() => {
+              editor.chain().focus().setTextAlign('left').run()
+            }} 
+            className={`btn btn-outline-light ${editor.isActive({ textAlign: 'left' }) ? 'active' : ''}`}
+            >
+              <i className="bi bi-justify-left"></i>
+          </button>
+          <button 
+            onClick={() => editor.chain().focus().setTextAlign('center').run()}
+            className={`btn btn-outline-light ${editor.isActive({ textAlign: 'center' }) ? 'active' : ''}`} 
+            >
+              <i className="bi bi-text-center"></i>
+            </button>
+          <button 
+            onClick={() => editor.chain().focus().setTextAlign('right').run()} 
+            className={`btn btn-outline-light ${editor.isActive({ textAlign: 'right' }) ? 'active' : ''}`}
+            >
+              <i className="bi bi-justify-right"></i>
+            </button>
+          <button 
+            onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+            className={`btn btn-outline-light ${editor.isActive({ textAlign: 'justify' }) ? 'active' : ''}`} 
+            >
+              <i className="bi bi-justify"></i>
+          </button>
+        </div>
+
+        <div className="btn-group me-2" role="group">
+          <button onClick={() => editor.chain().focus().clearNodes().run()} 
+            className={`btn btn-outline-light`}
+          >
+            Clear Marks
+          </button>
+          <button onClick={() => editor.chain().focus().clearNodes().run()} 
+            className={`btn btn-outline-light`}
+          >
+            Clear Nodes
+          </button>
+        </div>
+
+        <div className="btn-group me-2" role="group">
+          <button
+            onClick={() => editor.chain().focus().undo().run()}
+            disabled={
+              !editor.can()
+                .chain()
+                .focus()
+                .undo()
+                .run()
+            }
+            className={`btn btn-outline-light`}  
+          >
+            <i className="bi bi-arrow-counterclockwise"></i>
+          </button>
+          <button
+            onClick={() => editor.chain().focus().redo().run()}
+            disabled={
+              !editor.can()
+                .chain()
+                .focus()
+                .redo()
+                .run()
+            }
+            className={`btn btn-outline-light`}  
+          >
+            <i className="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+
+
       </div>
     </div>
   )

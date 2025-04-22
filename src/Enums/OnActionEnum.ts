@@ -1,4 +1,5 @@
 export enum OnActionEnum {
+    None = -1,
     Close = 0,
     Saved = 1,
     FileDeleted = 2,
@@ -6,4 +7,5 @@ export enum OnActionEnum {
     FileAddedToMaterial = 4,
     FileEdited = 5,
     UploadFiles = 6,
+    CancelSave = 7,
 }

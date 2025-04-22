@@ -1,5 +1,4 @@
 import { FileDto } from "./FileDto";
-import { MaterialDto } from "./MaterialDto";
 
 export interface SchoolingPartDto {
     id?: number;
@@ -7,6 +6,6 @@ export interface SchoolingPartDto {
     content?: string;
     shortDescription?: string;
     iconFile?: FileDto;
-    materials?: MaterialDto[];
+    materials?: number[];
     schoolingUserId?: number;
 }

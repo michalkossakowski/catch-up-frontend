@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
 import { addTaskContent, editTaskContent } from '../../services/taskContentService';
-import './TaskContentEdit.css';
 import { Button, Alert } from 'react-bootstrap';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { getCategories, addCategory, isUnique } from '../../services/categoryService';
@@ -9,7 +8,7 @@ import { Autocomplete, TextField, styled } from '@mui/material';
 import { useAuth } from '../../Provider/authProvider';
 import MaterialItem from '../MaterialManager/MaterialItem';
 import NotificationToast from '../Toast/NotificationToast';
-
+import './TaskContentEdit.scss';
 const StyledTextField = styled(TextField)({
     '& .MuiOutlinedInput-root': {
         '& fieldset': {
@@ -185,7 +184,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({
     };
 
     return (
-        <section className='editBox'>
+        <section className='editBox task-content-edit'>
             {showAlert && (
                 <Alert variant='danger' onClose={() => setShowAlert(false)} dismissible>
                     {alertMessage}

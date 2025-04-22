@@ -1,0 +1,13 @@
+.utility-menu {
+    a {
+      display: block;
+      padding: 0.5rem 1rem;
+      color:  var(--bs-link-color);;
+      text-decoration: none;
+      &:hover {
+        color: var(--bs-link-hover-color);
+        text-decoration: none;
+      }
+    }
+  }
+  

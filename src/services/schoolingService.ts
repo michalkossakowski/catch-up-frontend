@@ -2,6 +2,7 @@ import axiosInstance from "../../axiosConfig";
 import { FullSchoolingDto } from "../dtos/FullSchoolingDto";
 import { SchoolingDto } from "../dtos/SchoolingDto";
 import { SchoolingPartDto } from "../dtos/SchoolingPartDto";
+import { SchoolingPartUpdateDto } from "../dtos/SchoolingPartUpdateDto";
 
 export const getSchooling = async(schoolingId: number): Promise<SchoolingDto> =>{
     try
@@ -51,7 +52,18 @@ export const updateUserSchoolingPartState = async(schoolingUserPartId: number, p
         throw error
     }  
 }
-
+export const editSchoolingPart = async(schoolingPart: SchoolingPartUpdateDto) => {
+    try 
+    {
+        const response = await axiosInstance.put(`/Schooling/EditSchoolingPart/`, schoolingPart)
+        return response
+    } 
+    catch (error) 
+    {
+        console.error('Error in editing schooling part:', error)
+        throw error
+    }
+}
 
 //To Delete
 const schoolingService = 
@@ -167,19 +179,6 @@ const schoolingService =
             throw error
         }
     },
-    editSchoolingPart: async(schoolingPart: SchoolingPartDto) => {
-        try 
-        {
-            const response = await axiosInstance.put(`/Schooling/EditSchoolingPart/`, schoolingPart)
-            return response
-        } 
-        catch (error) 
-        {
-            console.error('Error in editing schooling part:', error)
-            throw error
-        }
-    },
-
 }
 export default schoolingService
 

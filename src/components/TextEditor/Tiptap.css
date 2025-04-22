@@ -1,6 +1,0 @@
-.custom-editor.tiptap,
-.custom-editor.ProseMirror,
-.custom-editor.ProseMirror-focused {
-  all: revert;
-  text-align: left !important;
-}
