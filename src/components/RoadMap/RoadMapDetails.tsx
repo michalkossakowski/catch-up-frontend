@@ -291,7 +291,7 @@ const RoadMapDetails: React.FC<RoadMapExploreProps> = ({ manageMode }) => {
                {manageMode && (
                     <Button
                         variant="primary"
-                        className="add-new-roadmap-button ms-3"
+                        className="add-new-roadmap-button"
                         onClick={handleAddClick}
                     >
                         <i className="bi bi-plus-lg me-1" />
