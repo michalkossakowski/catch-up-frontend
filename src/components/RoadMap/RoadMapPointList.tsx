@@ -35,7 +35,7 @@ const RoadMapPointList: React.FC = () => {
                 <InputGroup className="inputGroup mb-3">
                     <Form.Control
                         type ="number"
-                        placeholder="Enter road map id..."
+                        placeholder="Enter Road Map id..."
                         value={searchRoadMapId} 
                         onChange={(e) => setSearchRoadMapId(parseInt(e.target.value))} 
                         onKeyDown={(e) => e.key === 'Enter' && searchRoadMapPoints()}

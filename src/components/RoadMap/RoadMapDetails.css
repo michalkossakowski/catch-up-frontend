@@ -1,30 +1,23 @@
 .timeline-container {
     padding: 20px 0;
     margin: 1rem;
-    width: 100%; /* Ensure it takes full width of its parent */
-    overflow-x: auto; /* Enable horizontal scrolling */
-    overflow-y: hidden; /* Prevent vertical scrolling */
-    white-space: nowrap; /* Keep items in a single row */
+    width: 100%; 
+    overflow-x: auto; 
+    overflow-y: hidden; 
+    white-space: nowrap;
 }
 
 .timeline {
     display: flex;
-    align-items: flex-start; /* Wyrównuje elementy do góry */
+    align-items: flex-start;
     position: relative;
     min-width: fit-content;
 }
 
 .timeline-step {
-    flex: 1;
-    text-align: center;
-    position: relative;
-    min-width: 150px; 
-    height: fit-content; /* Umożliwia dostosowanie wysokości do zawartości */
-    margin: 0rem 1rem;
-    display: inline-flex; /* Zmieniono na inline-flex dla lepszej kontroli */
-    flex-direction: column; /* Ustawia kolumnowy układ dzieci */
-    align-items: center; /* Centruje dzieci w poziomie */
-    white-space: normal;
+    min-width: 10.5rem; 
+    padding: 1rem;
+    transition: color 0.6s ease;
 }
 
 .timeline-icon {
@@ -79,11 +72,6 @@
     border-radius: 4px;
 }
 
-.timeline-step{
-    padding: 1rem;
-    border-radius: 10px;
-    transition: color 0.6s ease;
-}
 
 .timeline-step i{
     border-radius: 10rem;
@@ -103,7 +91,7 @@
 .timeline-step:hover i {
     color: #DB91D1 !important;
     transition: color 0.3s ease;
-    scale: 1.3;
+    scale: 1.2;
     transition: scale 0.3s ease;
 }
 
@@ -115,7 +103,7 @@
 
 .timeline-step.selected i {
     color: #DB91D1 !important;
-    scale: 1.3;
+    scale: 1.2;
 }
 
 .road-map-details-bottom-container{
@@ -136,4 +124,21 @@
     margin: 2rem;
     display: flex;
     flex-wrap: wrap;
+}
+
+.timeline-step-container{
+    flex: 1;
+    text-align: center;
+    position: relative;
+    min-width: 150px; 
+    height: fit-content; 
+    margin: 0rem 1rem;
+    display: inline-flex;
+    flex-direction: column; 
+    align-items: center; 
+    white-space: normal;
+}
+
+.edit-button i{
+    color: #FFFFFF;
 }

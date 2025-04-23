@@ -15,7 +15,7 @@ export const addRoadMap = async (roadMap: RoadMapDto): Promise<RoadMapDto> => {
 
 export const editRoadMap = async (roadMap: RoadMapDto): Promise<RoadMapDto> => {
     try {
-        const response = await axiosInstance.put<RoadMapDto>('/RoadMapPoint/Edit/' + roadMap.id, roadMap);
+        const response = await axiosInstance.put<RoadMapDto>('/RoadMap/Edit/'+roadMap.id, roadMap);
         return response.data;
     } catch (error: any) {
         handleError('editRoadMap', error);
@@ -33,9 +33,9 @@ export const setRoadMapStatus = async (roadMapId: number, status :StatusEnum): P
     }
 };
 
-export const deleteRoadMap = async (roadMapId: number): Promise<any> => {
+export const deleteRoadMap = async (roadMapId: number, deleteTasksInside: boolean = false): Promise<any> => {
     try {
-        const response = await axiosInstance.delete('/RoadMap/Delete/' + roadMapId);
+        const response = await axiosInstance.delete(`/RoadMap/Delete/${roadMapId}/${deleteTasksInside}`);
         return response.data;
     } catch (error: any) {
         handleError('deleteRoadMap', error);
