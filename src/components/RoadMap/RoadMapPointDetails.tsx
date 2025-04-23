@@ -52,82 +52,86 @@ const RoadMapPointDetails: React.FC<RoadMapPointTasksProps> = ({ roadMapPointId,
     };
 
     return (
-        <div className="tasks-container">
-            {showAlert && (
-                <div className="d-flex justify-content-center align-items-center m-4">
-                    <Alert variant="danger">{alertMessage}</Alert>
-                </div>
-            )}
-
-            {loading ? (
-                <div className="loaderBox">
-                    <Loading />
-                </div>
-            ) : (
-                <>
-                    <h3 className="title">
-                        <i className="bi bi-list-task" /> {roadMapPointName}
-                    </h3>
-
-                    <div className="roadmappoint-tasks-list">
-                        {tasks.length > 0 ? (
-                            tasks.map((task) => (
-                                <div key={task.id} onClick={() => navigate(`/tasks/${task.id}`)} className="roadmappoint-task-item">
-                                    <div className="roadmappoint-task-content">
-                                        <div className="d-flex justify-content-between">
-                                            <h5>{task.title}</h5>
-                                            <p className="text-muted">
-                                                <strong>Assigned:</strong>{' '}
-                                                {task.assignmentDate ? new Date(task.assignmentDate).toLocaleString() : 'N/A'} by{' '}
-                                                {task.assigningName || 'N/A'}
-                                            </p>
-                                        </div>
-                                        
-                                        <div className="d-flex justify-content-between">
-                                            <p>{truncateDescription(task.description)}</p>
-                                            {task.finalizationDate ? (
-                                                <strong className="text-success">
-                                                    Finished: {new Date(task.finalizationDate).toLocaleString()}
-                                                </strong>):(
-                                                <strong className='text-danger'>
-                                                    Not Finished
-                                                </strong>
-                                                )}
-                                        </div>
-                                        
-                                        <div className="d-flex justify-content-between">
-                                            <p>
-                                                Priority: {task.priority || 'N/A'}
-                                            </p>
-                                            <p>
-                                                { task.deadline != null ? `Deadline: ${new Date(task.deadline).toLocaleString()}` : 'No deadline set'}
-                                            </p>
-                                        </div>
-
-                                    </div>
-                                    <div className="roadmappoint-task-icon">
-                                        <i className={getIconClass(task.status)} />
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="d-flex justify-content-center align-items-center m-4">
-                                <Alert variant="warning">
-                                    <i className="bi bi-list-task" />
-                                    {' '}
-                                    {manageMode ? (
-                                        <span>No tasks found for this Road Map point</span>
-                                    ):(
-                                        <span>No tasks found for this Road Map point contact your mentor</span>
-                                    )}
-                                  
-                                </Alert>
-                            </div>
-                        )}
+        <>
+            {roadMapPointName !== undefined &&(
+                <div className="tasks-container">
+                {showAlert && (
+                    <div className="d-flex justify-content-center align-items-center m-4">
+                        <Alert variant="danger">{alertMessage}</Alert>
                     </div>
-                </>
+                )}
+
+                {loading ? (
+                    <div className="loaderBox">
+                        <Loading />
+                    </div>
+                ) : (
+                    <>
+                        <h3 className="title">
+                            <i className="bi bi-list-task" /> {roadMapPointName}
+                        </h3>
+
+                        <div className="roadmappoint-tasks-list">
+                            {tasks.length > 0 ? (
+                                tasks.map((task) => (
+                                    <div key={task.id} onClick={() => navigate(`/tasks/${task.id}`)} className="roadmappoint-task-item">
+                                        <div className="roadmappoint-task-content">
+                                            <div className="d-flex justify-content-between">
+                                                <h5>{task.title}</h5>
+                                                <p className="text-muted">
+                                                    <strong>Assigned:</strong>{' '}
+                                                    {task.assignmentDate ? new Date(task.assignmentDate).toLocaleString() : 'N/A'} by{' '}
+                                                    {task.assigningName || 'N/A'}
+                                                </p>
+                                            </div>
+                                            
+                                            <div className="d-flex justify-content-between">
+                                                <p>{truncateDescription(task.description)}</p>
+                                                {task.finalizationDate ? (
+                                                    <strong className="text-success">
+                                                        Finished: {new Date(task.finalizationDate).toLocaleString()}
+                                                    </strong>):(
+                                                    <strong className='text-danger'>
+                                                        Not Finished
+                                                    </strong>
+                                                    )}
+                                            </div>
+                                            
+                                            <div className="d-flex justify-content-between">
+                                                <p>
+                                                    Priority: {task.priority || 'N/A'}
+                                                </p>
+                                                <p>
+                                                    { task.deadline != null ? `Deadline: ${new Date(task.deadline).toLocaleString()}` : 'No deadline set'}
+                                                </p>
+                                            </div>
+
+                                        </div>
+                                        <div className="roadmappoint-task-icon">
+                                            <i className={getIconClass(task.status)} />
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="d-flex justify-content-center align-items-center m-4">
+                                    <Alert variant="warning">
+                                        <i className="bi bi-list-task" />
+                                        {' '}
+                                        {manageMode ? (
+                                            <span>No tasks found for this Road Map point</span>
+                                        ):(
+                                            <span>No tasks found for this Road Map point contact your mentor</span>
+                                        )}
+                                    
+                                    </Alert>
+                                </div>
+                            )}
+                        </div>
+                    </>
+                )}
+                </div>
             )}
-        </div>
+        </>
     );
 };
 
