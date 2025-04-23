@@ -299,7 +299,7 @@ const RoadMapDetails: React.FC<RoadMapExploreProps> = ({ manageMode }) => {
                     </Button>
                 )}
 
-                {selectedPointId ? (
+                {selectedPointId && roadMapPoints.length > 0 ? (
                     <div className="container-roadmap-point-details">
                         <RoadMapPointDetails 
                             roadMapPointId={selectedPointId} 
