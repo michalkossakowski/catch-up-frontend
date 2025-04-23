@@ -277,9 +277,9 @@ const RoadMapDetails: React.FC<RoadMapExploreProps> = ({ manageMode }) => {
                                     <i className="bi bi-map" />
                                     {' '}
                                     {manageMode ? (
-                                        <span>No Road Map points found for this Road Map</span>
+                                        <span>No Road Map Points found for this Road Map</span>
                                     ) : (
-                                        <span>No Road Map points found for this Road Map contact your mentor</span>
+                                        <span>No Road Map Points found for this Road Map contact your mentor</span>
                                     )}
                                 </Alert>
                             </div>
