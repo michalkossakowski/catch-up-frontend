@@ -246,7 +246,7 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
                                 onKeyDown={(e) => e.key === 'Enter' && searchFaq()}
                             />
                             <Button variant="primary" id="searchButton" onClick={searchFaq}> 
-                                <i className="bi bi-search"> {' '};</i>Search 
+                                <i className="bi bi-search"> {' '}</i>Search 
                             </Button>
                         </InputGroup>
                     </div>
