@@ -86,7 +86,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
             className={`task-column card ${isOver ? 'column-highlight' : ''} ${isDisabled ? 'disabled-column' : ''}`}
             style={{ height: '600px' }}
         >
-            <div className={`column-header ${colorClass} text-white p-2 rounded-top ${isDisabled ? 'opacity-50' : ''}`}>
+            <div className={`column-header ${colorClass} text-white p-2 rounded-top`}>
                 <h5 className="m-0">{title}</h5>
                 <span className="badge text-dark">{tasks.length}</span>
                 {isDisabled && role === 'Newbie' && (
@@ -96,7 +96,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
                 )}
             </div>
             <div
-                className={`column-body p-2 rounded-bottom ${isDisabled ? 'bg-light' : ''}`}
+                className={`column-body p-2 rounded-bottom ${isDisabled ? 'bg-secondary' : ''}`}
                 style={{
                     height: 'calc(100% - 50px)',
                     overflowY: 'auto',

@@ -113,9 +113,19 @@ const TaskDashboard: React.FC = () => {
     const handleTaskDrop = async (taskId: number, newStatus: StatusEnum) => {
         if (!user?.id) return;
 
-        if (userRole === 'Newbie' && !allowedStatuses.includes(newStatus)) {
-            setLocalError(`As a Newbie, you can only move tasks to "In Progress" or "To Review" status.`);
-            return;
+        // General restrictions for Newbies
+        if (userRole === 'Newbie') {
+            // Prevent dropping into ReOpen and Done columns
+            if (newStatus === StatusEnum.ReOpen || newStatus === StatusEnum.Done) {
+                setLocalError(`As a Newbie, you cannot move tasks to "${newStatus === StatusEnum.ReOpen ? 'Reopened' : 'Done'}" status.`);
+                return;
+            }
+
+            // Make sure it's one of the allowed statuses
+            if (!allowedStatuses.includes(newStatus)) {
+                setLocalError(`As a Newbie, you can only move tasks to "To Do", "In Progress", or "To Review" status.`);
+                return;
+            }
         }
 
         const userTasks = tasksByUser[user.id] || [];

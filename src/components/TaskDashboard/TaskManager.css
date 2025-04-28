@@ -322,6 +322,20 @@
     color: inherit;
 }
 
-.css-13cymwt-control{
-    background-color: black; !important;
+.search-bar-container {
+    display: flex;
+    width: 100%;
+    gap: 0;
+}
+
+.search-input {
+    width: 50%;
+}
+
+.newbie-select {
+    width: 18.6%;
+}
+
+.category-filter {
+    width: 30%;
 }
