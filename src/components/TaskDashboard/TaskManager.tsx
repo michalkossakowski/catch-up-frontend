@@ -21,6 +21,7 @@ import "./TaskManager.css";
 import {TaskDto} from "../../dtos/TaskDto.ts";
 import { useLocation } from "react-router-dom";
 import Select from "react-select";
+import {customSelectStyles} from "../../componentStyles/selectStyles.tsx";
 
 function TaskManager() {
     const { user, getRole } = useAuth();
@@ -258,14 +259,7 @@ function TaskManager() {
                                         label: `${newbie.name} ${newbie.surname}`
                                     })).find(option => option.value === selectedNewbie) || null}
 
-                                    styles={{
-                                        control: (baseStyles) => ({
-                                            ...baseStyles,
-                                            backgroundColor: 'var(--bs-body-bg)',
-                                            border: '2px solid var(--bs-border-color)',
-                                            boxShadow: 'none'
-                                        })
-                                    }}
+                                    styles={customSelectStyles}
                                 />
                             </div>
 
