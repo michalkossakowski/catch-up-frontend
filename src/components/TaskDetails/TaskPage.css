@@ -1,0 +1,62 @@
+.taskDetails{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    text-align: left;
+    flex-wrap: wrap; /* Pozwala na zawijanie kolumn na mniejszych ekranach */
+    max-width: 2000px; /* Maksymalna szerokość kontenera */
+    margin: 0 auto; /* Centrowanie */
+}
+.column {
+    flex: 1; /* Kolumny zajmują równą przestrzeń */
+    min-width: 400px; /* Minimalna szerokość kolumny */
+    padding: 20px;
+    border-radius: 8px;
+}
+.description{
+    flex: 2;
+}
+.addittionalInfo{
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+}
+.form-select{
+    width:10rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+.taskDetailsHeader {
+    padding: 20px;
+    border-radius: 8px;
+    text-align: left;
+}
+.taskDetailsContent {
+    display: flex;
+    flex-wrap: wrap; /* Zawijanie dla responsywności */
+    gap: 20px; /* Odstęp między dolnymi kolumnami */
+}
+.data-row {
+    display: flex; /* Flexbox dla wyrównania etykiety i wartości */
+    margin-bottom: 10px; /* Odstęp między wierszami */
+}
+.label {
+    flex: 0 0 150px; /* Stała szerokość dla etykiety */
+    font-weight: bold;
+}
+.value {
+    flex: 1; /* Wartość zajmuje resztę przestrzeni */
+}
+.custom-dropdown-toggle {
+    width: 120px;
+}
+@media (max-width: 768px) {
+    .column {
+      min-width: 100%; /* Kolumny zajmują pełną szerokość na małych ekranach */
+    }
+  }

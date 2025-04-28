@@ -49,7 +49,7 @@ import NewbieHomePage from './components/Newbie/NewbieHomePage.tsx';
 import MentorHomePage from './components/Mentor/MentorHomePage.tsx';
 import AdminHomePage from './components/Admin/AdminHomePage.tsx';
 import EventCreator from './components/HR/EventCreator.tsx';
-
+import TaskPage from './components/TaskDetails/TaskPage.tsx';
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
@@ -439,6 +439,7 @@ function App() {
                                 <Route path="/notifications" element={<><NotificationPage /></>} />
                                 <Route path="/eventCreator" element={<EventCreator />} />
                                 <Route path="/material" element={<MaterialTest />} />
+                                <Route path="/task/:id" element={<TaskPage />} />
                             </Routes>
                         </Container>
                         <NotificationToast
