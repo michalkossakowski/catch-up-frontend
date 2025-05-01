@@ -6,7 +6,7 @@ const EmployesAssignmentSelectorComponent = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   return (
-    <div className="container text-center">
+    <div className="text-center">
       <h1 className='title'><i className="bi bi-people"/> Select Assignment Model</h1>
       <div className="d-flex justify-content-center">
         <button
