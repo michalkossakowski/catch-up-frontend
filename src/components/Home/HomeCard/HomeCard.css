@@ -1,0 +1,72 @@
+/*
+#DB91D1
+#5CD3B4
+*/
+
+.home-card-container {
+    border: solid 0.1rem #DB91D1 !important;
+    border-radius: 1rem;
+    width: 14rem;
+    height: 14rem;
+    box-shadow: 0 0 0;
+    transition: box-shadow 2s ease;
+    scale: 1;
+    transition: scale 1s ease;
+    text-align: left;
+    padding: 1rem;
+    position: relative; 
+    margin: 1.25rem;
+}
+
+.home-card-container-title {
+    position: relative;
+    z-index: 2;
+    font-size: 1.5rem;
+}
+
+.home-card-container-desc {
+    position: relative;
+    z-index: 2;
+    visibility: hidden;
+    opacity: 0;
+    filter: blur(5px); 
+    transition: visibility 0s, opacity 0.3s ease, filter 0.3s ease; 
+}
+
+.home-card-container:hover .home-card-container-desc {
+    visibility: visible;
+    opacity: 1;
+    filter: blur(0px);
+    position: relative;
+    z-index: 2;
+}
+
+.home-card-container:hover {
+    box-shadow: 0 0 1rem #db91d1a2;
+    transition: box-shadow 0.3s ease;
+    scale: 1.1;
+    transition: scale 0.3s ease;
+    cursor: pointer;
+}
+
+.home-card-container .home-card-container-icon i {
+    color: #db91d160 !important;
+    transition: color 0.3s ease;
+    font-size: 8rem;
+    position: absolute;
+    right: 2rem;
+    bottom: -0.5rem;
+    scale: 1;
+    transition: scale 1s ease;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.home-card-container:hover .home-card-container-icon i {
+    color: #DB91D1 !important;
+    scale: 0.5;
+    right: -0.5rem;
+    bottom: -2.5rem;
+    transition: color 2s ease;
+    transition: all 0.3s ease;
+}
