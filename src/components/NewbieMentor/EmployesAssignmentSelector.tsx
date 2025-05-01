@@ -6,9 +6,9 @@ const EmployesAssignmentSelectorComponent = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   return (
-    <div className="container text-center mt-5">
-      <h1>Select Assignment Model</h1>
-      <div className="d-flex justify-content-center my-4">
+    <div className="container text-center">
+      <h1 className='title'><i className="bi bi-people"/> Select Assignment Model</h1>
+      <div className="d-flex justify-content-center">
         <button
           onClick={() => setSelectedOption('mentorToNewbie')}
           className={`btn me-3 ${
@@ -26,7 +26,6 @@ const EmployesAssignmentSelectorComponent = () => {
           Assign Newbie To Mentor
         </button>
       </div>
-
       <div>
         {selectedOption === 'mentorToNewbie' && <AssignMentorToNewbie />}
         {selectedOption === 'newbieToMentor' && <AssignNewbieToMentor />}
