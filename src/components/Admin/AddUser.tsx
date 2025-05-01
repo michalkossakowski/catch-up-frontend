@@ -111,7 +111,7 @@ export default function UserEdit(): React.ReactElement {
     return (
         <section className="user-edit-box">
             <form onSubmit={handleSubmit} className="container-lg">
-                <h2>Add New User</h2>
+                <h2><i className='bi bi-person-plus'/> Add New User</h2>
                 <div className="form-group">
                     <label htmlFor="name">Name:</label>
                     <input
