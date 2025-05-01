@@ -42,11 +42,11 @@ import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
 import { useTranslation } from "react-i18next";
 import {availableLanguages, changeLanguage, normalizeLanguage} from "./i18n.ts";
-import HRHomePage from './components/HR/HRHomePage.tsx';
-import NewbieHomePage from './components/Newbie/NewbieHomePage.tsx';
-import MentorHomePage from './components/Mentor/MentorHomePage.tsx';
-import AdminHomePage from './components/Admin/AdminHomePage.tsx';
-import EventCreator from './components/HR/EventCreator.tsx';
+import HRHomePage from './components/Home/HRHomePage.tsx';
+import NewbieHomePage from './components/Home/NewbieHomePage.tsx';
+import MentorHomePage from './components/Home/MentorHomePage.tsx';
+import AdminHomePage from './components/Home/AdminHomePage.tsx';
+import EventCreator from './components/Events/EventCreator.tsx';
 import RoadMapExplore from './components/RoadMap/RoadMapExplore.tsx';
 import RoadMapDetails from './components/RoadMap/RoadMapDetails.tsx';
 import Schooling from './components/Schooling/Schooling.tsx';
@@ -76,20 +76,26 @@ function App() {
             setRole(userRole);
             startConnection();
             handleNotifications();
-            if (location.pathname === '/') {
-                if (userRole === 'HR') {
-                    navigate('/hrhomepage');
-                } else if (userRole === 'Newbie') {
-                    navigate('/newbiehomepage');
-                }
-                else if (userRole === 'Mentor') {
-                    navigate('/mentorhomepage');
-                }
-                else if (userRole === 'Admin') {
-                    navigate('/adminhomepage');
-                } else {
-                    navigate('/');
-                }
+            switch (location.pathname) {
+                case '/':
+                    switch (userRole) {
+                        case 'HR':
+                            navigate('/hrhomepage');
+                            break;
+                        case 'Newbie':
+                            navigate('/newbiehomepage');
+                            break;
+                        case 'Mentor':
+                            navigate('/mentorhomepage');
+                            break;
+                        case 'Admin':
+                            navigate('/adminhomepage');
+                            break;
+                        default:
+                            navigate('/');
+                            break;
+                    }
+                    break;
             }
         }
     };
@@ -191,15 +197,20 @@ function App() {
                                 <Nav className="flex-column w-100">
                                     <NavLink
                                         to={
-                                            role === 'HR'
-                                                ? '/hrhomepage'
-                                                : role === 'Newbie'
-                                                    ? '/newbiehomepage'
-                                                    : role === 'Mentor'
-                                                        ? '/mentorhomepage'
-                                                        : role === 'Admin'
-                                                            ? '/adminhomepage'
-                                                            : '/'
+                                            (() => {
+                                                switch (role) {
+                                                    case 'HR':
+                                                        return '/hrhomepage';
+                                                    case 'Newbie':
+                                                        return '/newbiehomepage';
+                                                    case 'Mentor':
+                                                        return '/mentorhomepage';
+                                                    case 'Admin':
+                                                        return '/adminhomepage';
+                                                    default:
+                                                        return '/';
+                                                }
+                                            })()
                                         }
                                         className="nav-link"
                                     >
@@ -386,7 +397,7 @@ function App() {
                                 </Alert>
                             )}
                             <Routes>
-                                <Route path="/" element={<Home />} />
+                                <Route path="/" element={<Home />} /> 
                                 <Route path="/hrhomepage" element={<HRHomePage />} />
                                 <Route path="/newbiehomepage" element={<NewbieHomePage />} />
                                 <Route path="/adminhomepage" element={<AdminHomePage />} />

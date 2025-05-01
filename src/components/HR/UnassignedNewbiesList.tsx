@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../axiosConfig';
 import Loading from '../Loading/Loading';
+import { Alert } from 'react-bootstrap';
+import './UnassignedNewbiesList.css';
 
 interface Newbie {
   id: string;
@@ -14,8 +15,6 @@ const UnassignedNewbiesList: React.FC = () => {
   const [newbies, setNewbies] = useState<Newbie[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [isTableVisible, setIsTableVisible] = useState<boolean>(true); // Stan kontrolujący widoczność tabeli
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUnassignedNewbies = async () => {
@@ -43,25 +42,15 @@ const UnassignedNewbiesList: React.FC = () => {
   }
 
   return (
-    <div className="mt-4">
-      <h2>Unassigned Newbies</h2>
-      <h3>Count: {newbies.length}</h3>
-      <button
-        className="btn btn-secondary mb-3"
-        onClick={() => setIsTableVisible(!isTableVisible)}
-      >
-        {isTableVisible ? (
-          <i className="bi bi-chevron-up"></i> 
-        ) : (
-          <i className="bi bi-chevron-down"></i> 
-        )}
-      </button>
-      {isTableVisible && (
-        <>
+    <div className='mt-3'>
+      <h5><i className='bi bi-people'/> Unassigned Newbies: {newbies.length}</h5>
+        <div className="mt-3">
           {newbies.length === 0 ? (
-            <p>No unassigned newbies found.</p>
+            <Alert className="alert-no-newbies" variant="info">
+              No unassigned newbies found.
+            </Alert>
           ) : (
-            <table className="table table-striped">
+            <table className="table-unassigned-newbies table table-striped ">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -80,8 +69,7 @@ const UnassignedNewbiesList: React.FC = () => {
               </tbody>
             </table>
           )}
-        </>
-      )}
+        </div>
     </div>
   );
 };

@@ -1,3 +1,35 @@
-.home-container{
-    min-height: 85vh;
+.home-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    flex-wrap: nowrap;
+    width: 100%;
+    margin-bottom: 5rem;
+}
+
+@media (max-width: 1400px) {
+    .home-container {
+        flex-direction: column; 
+        flex-wrap: nowrap;
+    }
+}
+  
+.home-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: row;
+}
+  
+.home-events-container {
+    justify-content: center;
+    height: 30.75rem;
+    min-width: 35rem;
+    margin: 1rem 2rem;
+}
+
+.home-extra-container{
+    min-width: 30rem;
 }
