@@ -1,12 +1,264 @@
 import './Home.css';
+import React from 'react';
+import HomeCard from './HomeCard/HomeCard';
+import './Home.css';
+import UpcomingEvents from '../Events/UpcomingEvents/UpcomingEvents';
+import { useAuth } from '../../Provider/authProvider';
+import UnassignedNewbiesList from '../HR/UnassignedNewbiesList';
 
-export default function Home(): React.ReactElement {
+interface HomeProps {
+    role: string | null;
+}
+    
+export default function Home({ role }: HomeProps): React.ReactElement {
+      const { user } = useAuth();
 
     return(
         <>
-            <div className="container">
-                <h3>Something went wrong, we cannot fetch your role, refresh the page or re-login please.</h3>
-            </div>
+            {role == null ? (
+                <h2>Something went wrong, we cannot fetch your role, refresh the page or re-login please.</h2>
+            ): (
+                <>
+                    <h1 className="title"><i className='bi bi-house-door'/> Welcome in the {role} Dashboard!</h1>
+                    <p className="lead">
+                        From here you have easy access and convenient access to your tools
+                    </p>              
+                        <div className="home-container">
+                        {(() => { switch (role) {
+                            case "Admin":
+                                return(
+                                    <>
+                                        <div className="home-cards-container">
+                                            <HomeCard
+                                                title="Tasks Manager" 
+                                                description="Manage, assign and process tasks for newbies." 
+                                                iconName="bi-list-check" 
+                                                path="/taskmanage"
+                                            />
+                                            
+                                            <HomeCard
+                                                title="Add Users" 
+                                                description="Add new users to your organization." 
+                                                iconName="bi-person-plus" 
+                                                path="/adminpanel"
+                                            />
+                            
+                                            <HomeCard
+                                                title="Create Events" 
+                                                description="Create events for newbies, mentors and other staff." 
+                                                iconName="bi-calendar-event" 
+                                                path="/eventCreator"
+                                            />
+                            
+                                            <HomeCard
+                                                title="Assignments" 
+                                                description="Assign newbies to mentors." 
+                                                iconName="bi-people" 
+                                                path="/employesassignment"
+                                            />
+                            
+                                            <HomeCard
+                                                title="Task Presets" 
+                                                description="Create task presets for faster task assignment." 
+                                                iconName="bi-stack-overflow" 
+                                                path="/presetmanage"
+                                            />
+                            
+                                            <HomeCard
+                                                title="Task Contents" 
+                                                description="Create universal task contents to assign to newbies." 
+                                                iconName="bi-kanban" 
+                                                path="/taskcontentmanage"
+                                            />
+                                            
+                                            <HomeCard
+                                                title="Roadmaps" 
+                                                description="Create and manage roadmaps for your newbies to follow." 
+                                                iconName="bi-compass" 
+                                                path="/roadmapmanage"
+                                            />
+                            
+                                            <HomeCard
+                                                title="Feedbacks" 
+                                                description="Explore and manage feedbacks from your newbies." 
+                                                iconName="bi-arrow-clockwise" 
+                                                path="/feedbacks"
+                                            />
+                                        </div>
+                                    </>
+                                );
+                            case "HR":
+                                return(
+                                    <>     
+                                        <div className="home-cards-container">
+                                            <HomeCard
+                                                title="Add Users" 
+                                                description="Add new users to your organization." 
+                                                iconName="bi-person-plus" 
+                                                path="/adminpanel"
+                                            />
+
+                                            <HomeCard
+                                                title="Assignments" 
+                                                description="Assign newbies to mentors." 
+                                                iconName="bi-people" 
+                                                path="/employesassignment"
+                                            />
+
+                                            <HomeCard
+                                                title="Create Events" 
+                                                description="Create events for newbies, mentors and other staff." 
+                                                iconName="bi-calendar-event" 
+                                                path="/eventCreator"
+                                            />
+
+                                            <HomeCard
+                                                title="Feedbacks" 
+                                                description="Explore and manage feedbacks from application users." 
+                                                iconName="bi-arrow-clockwise" 
+                                                path="/feedbacks"
+                                            />
+                                        </div>
+
+                                        <div className="home-extra-container">
+                                            <UnassignedNewbiesList />
+                                        </div>
+                                    </>
+                                );
+                            case "Mentor":
+                                return(
+                                    <>
+                                        <div className="home-cards-container">          
+                                            <HomeCard
+                                            title="Your Newbies" 
+                                            description="View your assigned newbies." 
+                                            iconName="bi-people" 
+                                            path={`/profile/${user?.id}`}
+                                            />
+                                            
+                                            <HomeCard
+                                            title="Tasks Manager" 
+                                            description="Manage, assign and process tasks for your newbies." 
+                                            iconName="bi-list-check" 
+                                            path="/taskmanage"
+                                            />
+                                
+                                            <HomeCard
+                                            title="Task Presets" 
+                                            description="Create task presets for faster task assignment." 
+                                            iconName="bi-stack-overflow" 
+                                            path="/presetmanage"
+                                            />
+                                
+                                            <HomeCard
+                                            title="Task Contents" 
+                                            description="Create universal task contents to assign to newbies." 
+                                            iconName="bi-kanban" 
+                                            path="/taskcontentmanage"
+                                            />
+                                            
+                                            <HomeCard
+                                            title="Roadmaps" 
+                                            description="Create and manage roadmaps for your newbies to follow." 
+                                            iconName="bi-compass" 
+                                            path="/roadmapmanage"
+                                            />
+                                
+                                            <HomeCard
+                                            title="Feedbacks" 
+                                            description="Explore and manage feedbacks from your newbies." 
+                                            iconName="bi-arrow-clockwise" 
+                                            path="/feedbacks"
+                                            />
+                                            
+                                            <HomeCard
+                                            title="Schoolings" 
+                                            description="Create and manage schoolings for your newbies." 
+                                            iconName="bi-book" 
+                                            path="/schoolinglist"
+                                            />
+                                            
+                                            <HomeCard
+                                            title="Materials" 
+                                            description="Edit and manage materials like pdfs photos videos and other files." 
+                                            iconName="bi-tools" 
+                                            path="/editMatList"
+                                            />
+                                        </div>
+                                    </>
+                                )
+                            case "Newbie":
+                                return(
+                                    <>
+                                        <div className="home-cards-container">          
+                                            <HomeCard
+                                                title="Tasks" 
+                                                description="Check out your assigned tasks and start working on them." 
+                                                iconName="bi-list-check" 
+                                                path="/tasks"
+                                            />
+                                            
+                                            <HomeCard
+                                                title="Schoolings" 
+                                                description="Access helpful schoolings to learn and grow." 
+                                                iconName="bi-book" 
+                                                path="/schoolinglist"
+                                            />
+
+                                            <HomeCard
+                                                title="Roadmaps" 
+                                                description="Process roadmaps to guide your learning journey." 
+                                                iconName="bi-compass" 
+                                                path="/roadmapexplore"
+                                            />
+
+                                            <HomeCard
+                                                title="Feedbacks" 
+                                                description="Explore yours feedbacks." 
+                                                iconName="bi-arrow-clockwise" 
+                                                path="/feedbacks"
+                                            />
+                                            
+                                            <HomeCard
+                                                title="FAQ" 
+                                                description="Find answear for frequently asked questions." 
+                                                iconName="bi-question-circle" 
+                                                path="/faq"
+                                            />
+                                            
+                                            <HomeCard
+                                                title="Yours Mentors" 
+                                                description="View your profile and assigned mentors." 
+                                                iconName="bi-person" 
+                                                path={`/profile/${user?.id}`}
+                                            />
+                                            
+                                            <HomeCard
+                                                title="Settings" 
+                                                description="Customize your application preferences." 
+                                                iconName="bi-gear" 
+                                                path="/settings"
+                                            />
+                                            
+                                            <HomeCard
+                                                title="Notifications" 
+                                                description="Check your notifications and updates." 
+                                                iconName="bi-bell" 
+                                                path="/notifications"
+                                            />
+                                        </div>  
+                                    </>
+                                );
+                                default:
+                                    return <></>
+                                }
+                            })()}
+                        <div className="home-events-container">
+                            <UpcomingEvents />
+                        </div>
+                    </div>       
+                </>  
+            )}
         </>
     );
 }  
