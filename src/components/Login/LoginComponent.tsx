@@ -102,17 +102,9 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ toggleTheme, theme }) =
       const userResponse = await axiosInstance.get(`User/GetById/${userId}`);
       const userData = userResponse.data;
       setUser(userData);
-      if (userData?.position === 'HR') {
-        navigate('/hrhomepage');
-      } else if (userData?.position === 'Newbie') {
-        navigate('/newbiehomepage');
-      } else if (userData?.position === 'Admin') {
-        navigate('/adminhomepage');
-      } else if (userData?.position === 'Mentor') {
-        navigate('/mentorhomepage');
-      } else {
-        navigate('/');
-      }
+      
+      navigate('/');
+
       if (backgroundMusicRef.current) {
         backgroundMusicRef.current.pause();
       }

@@ -42,10 +42,6 @@ import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
 import { useTranslation } from "react-i18next";
 import {availableLanguages, changeLanguage, normalizeLanguage} from "./i18n.ts";
-import HRHomePage from './components/Home/HRHomePage.tsx';
-import NewbieHomePage from './components/Home/NewbieHomePage.tsx';
-import MentorHomePage from './components/Home/MentorHomePage.tsx';
-import AdminHomePage from './components/Home/AdminHomePage.tsx';
 import EventCreator from './components/Events/EventCreator.tsx';
 import RoadMapExplore from './components/RoadMap/RoadMapExplore.tsx';
 import RoadMapDetails from './components/RoadMap/RoadMapDetails.tsx';
@@ -76,27 +72,6 @@ function App() {
             setRole(userRole);
             startConnection();
             handleNotifications();
-            switch (location.pathname) {
-                case '/':
-                    switch (userRole) {
-                        case 'HR':
-                            navigate('/hrhomepage');
-                            break;
-                        case 'Newbie':
-                            navigate('/newbiehomepage');
-                            break;
-                        case 'Mentor':
-                            navigate('/mentorhomepage');
-                            break;
-                        case 'Admin':
-                            navigate('/adminhomepage');
-                            break;
-                        default:
-                            navigate('/');
-                            break;
-                    }
-                    break;
-            }
         }
     };
 
@@ -145,7 +120,6 @@ function App() {
             }
         }
     };
-
 
     const isManageToolsActive = [
         "/taskmanage",
@@ -196,22 +170,7 @@ function App() {
                                 <Navbar.Brand href="/" className="nav-brand">catchUp</Navbar.Brand>
                                 <Nav className="flex-column w-100">
                                     <NavLink
-                                        to={
-                                            (() => {
-                                                switch (role) {
-                                                    case 'HR':
-                                                        return '/hrhomepage';
-                                                    case 'Newbie':
-                                                        return '/newbiehomepage';
-                                                    case 'Mentor':
-                                                        return '/mentorhomepage';
-                                                    case 'Admin':
-                                                        return '/adminhomepage';
-                                                    default:
-                                                        return '/';
-                                                }
-                                            })()
-                                        }
+                                        to='/'
                                         className="nav-link"
                                     >
                                         <i className="bi bi-house-door" /> <span>{t('home')}</span>
@@ -397,11 +356,7 @@ function App() {
                                 </Alert>
                             )}
                             <Routes>
-                                <Route path="/" element={<Home />} /> 
-                                <Route path="/hrhomepage" element={<HRHomePage />} />
-                                <Route path="/newbiehomepage" element={<NewbieHomePage />} />
-                                <Route path="/adminhomepage" element={<AdminHomePage />} />
-                                <Route path="/mentorhomepage" element={<MentorHomePage />} />
+                                <Route path="/" element={<Home role={role}/>} /> 
                                 <Route path="/tasks" element={<TaskDashboard />} />
                                 <Route path="/adminpanel" element={<AdminPanel isAdmin={role === "Admin"} />} />
                                 <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
