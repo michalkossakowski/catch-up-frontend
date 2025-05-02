@@ -1,0 +1,27 @@
+/*
+#DB91D1
+#5CD3B4
+*/
+
+.tutorial-button:hover{
+    background-color: #db91d1e5;
+    bottom: -0.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.tutorial-button{
+    background-color: #db91d169;
+    bottom: -1.75rem;
+    transition: all 0.3s ease;
+    position: fixed;
+    left: 15rem;
+    padding: 0.25rem;
+    padding-bottom: 2rem;
+}
+
+.custom-tour-mask {
+  background-color: rgba(255, 255, 255, 0) !important; 
+  color:  #0000009a !important; 
+}
+

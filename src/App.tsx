@@ -169,7 +169,7 @@ function App() {
                         <div className={`left-sidebar ${isSidebarVisible ? "visible" : "hidden"}`}>
                             <Navbar expand="lg" className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-navbar">
                                 <Navbar.Brand href="/" className="nav-brand">catchUp</Navbar.Brand>
-                                <Nav className="flex-column w-100">
+                                <Nav className="flex-column w-100" data-tour="left-sidebar">
                                     <NavLink to='/' className="nav-link">
                                         <i className="bi bi-house-door" /> <span>{t('home')}</span>
                                     </NavLink>
@@ -194,7 +194,7 @@ function App() {
                                             <i className="bi bi-shield" /> <span>{t('badges')}</span>
                                         </NavLink>
                                     )}
-                                    <NavLink to="/faq" className="nav-link">
+                                    <NavLink to="/faq" className="nav-link" data-tour="faq-nav-link">
                                         <i className="bi bi-question-circle" /> <span>{t('faq')}</span>
                                     </NavLink>
                                     {(role == "Mentor" || role == "Admin") && (
@@ -252,13 +252,14 @@ function App() {
                             title="Show/hide sidebar"
                             className="btn-secondary toggle-sidebar-btn"
                             onClick={() => setSidebarVisible(!isSidebarVisible)}
+                            data-tour="hide-sidebar"
                         >
                             {isSidebarVisible ? <i className="bi bi-arrow-left-square" /> : <i className="bi bi-arrow-right-square" />}
                         </Button>
 
                         <Container fluid className={`main-content ${isSidebarVisible ? "sidebar-visible" : "sidebar-hidden"}`}>
                             <Navbar expand="lg" className="bg-body-tertiary navbar-horizontal">
-                                <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap">
+                                <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap" data-tour="top-navbar">
                                     <Button onClick={toggleTheme} className='theme-btn' title='Dark/Light theme'>
                                         {theme === 'night' ? <i className="bi bi-brightness-high" /> : <i className="bi bi-moon" />}
                                     </Button>
@@ -335,7 +336,7 @@ function App() {
                                         </div>
                                     </NavDropdown>
                                     <NavLink title="Settings" to="/settings" className="nav-link"><i className="bi bi-gear" /></NavLink>
-                                    <NavLink title="Logout" to="/logout" onClick={logout} className="nav-link">
+                                    <NavLink title="Logout" to="/logout" onClick={logout} className="nav-link" data-tour="top-navbar-logout">
                                         <i className="bi bi-box-arrow-right" />
                                     </NavLink>
                                 </Nav>
@@ -391,7 +392,7 @@ function App() {
                             onClose={() => setShowToast(false)}
                         />
                     </div>
-                    <Button variant="primary" className='ai-button' title="AI Assistant" onClick={handleToggleAIChat}>
+                    <Button variant="primary" className='ai-button' title="AI Assistant" data-tour="ai-assistant" onClick={handleToggleAIChat}>
                         <i className="bi bi-stars" style={{ fontSize: '1.5rem' }} />
                     </Button>
                     <AIAssistant show={showAIChat} onHide={() => setShowAIChat(false)} />
