@@ -21,7 +21,7 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                 <>
                     <h1 className="title"><i className='bi bi-house-door'/> Welcome in the {role} Dashboard!</h1>
                     <p className="lead">
-                        From here you have easy access and convenient access to your tools
+                        From here you have easy and convenient access to your tools
                     </p>              
                         <div className="home-container">
                         {(() => { switch (role) {
