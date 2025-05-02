@@ -7,7 +7,7 @@ import { useAuth } from './Provider/authProvider';
 import Badge from './components/Badge/BadgeComponent';
 import FaqComponent from './components/Faq/FaqComponent';
 import { Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import AdminPanel from "./components/Admin/AdminPanel.tsx";
+import AddUser from "./components/Admin/AddUser.tsx";
 import defaultUserIcon from './assets/defaultUserIcon.jpg';
 import UserProfile from './components/User/UserProfile.tsx';
 import RoadMapManage from './components/RoadMap/RoadMapManage';
@@ -129,9 +129,10 @@ function App() {
         "/editMatList"
     ].some(path => location.pathname.startsWith(path));
 
-    const isAdminToolsActive = [
-        "/adminpanel",
-        "/employesassignment"
+    const isHRToolsActive = [
+        "/adduser",
+        "/employesassignment",
+        "/eventCreator",
     ].some(path => location.pathname.startsWith(path));
 
     const toggleTheme = () => {
@@ -169,10 +170,7 @@ function App() {
                             <Navbar expand="lg" className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-navbar">
                                 <Navbar.Brand href="/" className="nav-brand">catchUp</Navbar.Brand>
                                 <Nav className="flex-column w-100">
-                                    <NavLink
-                                        to='/'
-                                        className="nav-link"
-                                    >
+                                    <NavLink to='/' className="nav-link">
                                         <i className="bi bi-house-door" /> <span>{t('home')}</span>
                                     </NavLink>
                                     {role === "Newbie" && (
@@ -191,13 +189,15 @@ function App() {
                                     <NavLink to="/feedbacks" className="nav-link">
                                         <i className="bi bi-arrow-clockwise" /> <span>{t('feedbacks')}</span>
                                     </NavLink>
-                                    <NavLink to="/badges" className="nav-link">
-                                        <i className="bi bi-shield" /> <span>{t('badges')}</span>
-                                    </NavLink>
+                                    {role == "Mentor" &&(
+                                        <NavLink to="/badges" className="nav-link">
+                                            <i className="bi bi-shield" /> <span>{t('badges')}</span>
+                                        </NavLink>
+                                    )}
                                     <NavLink to="/faq" className="nav-link">
                                         <i className="bi bi-question-circle" /> <span>{t('faq')}</span>
                                     </NavLink>
-                                    {role !== "Newbie" && role != null && (
+                                    {(role == "Mentor" || role == "Admin") && (
                                         <NavDropdown
                                             className={isManageToolsActive ? "navdropdown-active" : ""}
                                             title={<><i className="bi bi-pencil-square" /> <span>{t('manage-tools')}</span></>}
@@ -223,25 +223,15 @@ function App() {
                                             </NavDropdown.Item>
                                         </NavDropdown>
                                     )}
-                                    {role === "Admin" && (
+                                    {role === "HR" || role === "Admin" && (
                                         <NavDropdown
-                                            className={isAdminToolsActive ? "navdropdown-active" : ""}
-                                            title={<><i className="bi bi-person-lock" /> <span>{t('admin-tools')}</span></>}
-                                        >
-                                            <NavDropdown.Item as={NavLink} to="/adminpanel" className="nav-dropdown-item">
-                                                <i className="bi bi-shield-lock" /> {t('panel')}
-                                            </NavDropdown.Item>
-                                            <NavDropdown.Divider />
-                                            <NavDropdown.Item as={NavLink} to="/employesassignment" className="nav-dropdown-item">
-                                                <i className="bi bi-people" /> {t('assignment')}
-                                            </NavDropdown.Item>
-                                        </NavDropdown>
-                                    )}
-                                    {role === "HR" && (
-                                        <NavDropdown
-                                            className={isAdminToolsActive ? "navdropdown-active" : ""}
+                                            className={isHRToolsActive ? "navdropdown-active" : ""}
                                             title={<><i className="bi bi-person-lock" /> <span>HR Tools</span></>}
                                         >
+                                            <NavDropdown.Item as={NavLink} to="/adduser" className="nav-dropdown-item">
+                                                <i className="bi bi-person-plus" /> {t('Add User')}
+                                            </NavDropdown.Item>
+                                            <NavDropdown.Divider />
                                             <NavDropdown.Item as={NavLink} to="/employesassignment" className="nav-dropdown-item">
                                                 <i className="bi bi-people" /> Assignment
                                             </NavDropdown.Item>
@@ -358,7 +348,7 @@ function App() {
                             <Routes>
                                 <Route path="/" element={<Home role={role}/>} /> 
                                 <Route path="/tasks" element={<TaskDashboard />} />
-                                <Route path="/adminpanel" element={<AdminPanel isAdmin={role === "Admin"} />} />
+                                <Route path="/adduser" element={<AddUser/>}/>
                                 <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
                                 <Route path="/employesassignment" element={<EmployesAssignmentSelector />} />
                                 <Route path="/taskmanage" element={<TaskManager />} />
