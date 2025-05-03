@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Tour, { ReactourStep } from 'reactour';
-import disableScroll from 'disable-scroll';
 import './Tutorial.css';
 import {tourStepStyle} from "../../componentStyles/tourStyles.tsx";
 
@@ -66,8 +65,7 @@ const steps : ReactourStep[] = [
 const TutorialComponent: React.FC = () => {
   const [isTourOpen, setIsTourOpen] = useState<boolean>(false);
 
-  const disableBody = (target: HTMLElement) => disableScroll.on(target);
-  const enableBody = () => disableScroll.off();
+
 
   const closeTour = () => {
     setIsTourOpen(false);
@@ -86,8 +84,7 @@ const TutorialComponent: React.FC = () => {
         accentColor="#db91d1"
         rounded={5}
         maskSpace={5}
-        onAfterOpen={disableBody}
-        onBeforeClose={enableBody}
+
         maskClassName='custom-tour-mask'
         showNavigation
         showButtons

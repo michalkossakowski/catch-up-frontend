@@ -4,14 +4,15 @@
 */
 
 .tutorial-button:hover{
-    background-color: #db91d1e5;
+    background-color: #db91d1;
     bottom: -0.5rem;
     transition: all 0.3s ease;
     cursor: pointer;
 }
 
 .tutorial-button{
-    background-color: #db91d169;
+  color: #FFFFFF !important;
+    background-color: #db91d1c5;
     bottom: -1.75rem;
     transition: all 0.3s ease;
     position: fixed;
