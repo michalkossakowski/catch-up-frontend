@@ -40,7 +40,7 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                                 title="Add Users" 
                                                 description="Add new users to your organization." 
                                                 iconName="bi-person-plus" 
-                                                path="/adminpanel"
+                                                path="/adduser"
                                             />
                             
                                             <HomeCard
@@ -95,7 +95,7 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                                 title="Add Users" 
                                                 description="Add new users to your organization." 
                                                 iconName="bi-person-plus" 
-                                                path="/adminpanel"
+                                                path="/adduser"
                                             />
 
                                             <HomeCard
