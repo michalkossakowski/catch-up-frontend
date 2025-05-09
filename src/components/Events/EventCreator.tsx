@@ -17,7 +17,7 @@ const EventCreator: React.FC = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [message, setMessage] = useState<string | null>(null);
-
+  const [isSubmitting, setIsSubmitting] = useState(false); 
   const [isTitleValid, setTitleValid] = useState<boolean>(false);
   const [isDescriptionValid, setDescriptionValid] = useState<boolean>(false);
   const [isPositionValid, setPositionValid] = useState<boolean>(false);
@@ -66,7 +66,7 @@ const EventCreator: React.FC = () => {
 
   const handleCreateEvent = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     if (
       !isTitleValid ||
       !isDescriptionValid ||
@@ -78,14 +78,16 @@ const EventCreator: React.FC = () => {
       setMessage('Please fill in all required fields correctly.');
       return;
     }
-
+  
+    setIsSubmitting(true);
+  
     try {
       const formattedStartDate = new Date(startDate).toISOString();
       const formattedEndDate = new Date(endDate).toISOString();
-
+  
       let endpoint = '';
       let params: any = { ownerId, title, description, startDate: formattedStartDate, endDate: formattedEndDate };
-
+  
       if (eventType === 'position') {
         endpoint = '/Event/AddEventByPosition';
         params.position = position;
@@ -95,26 +97,25 @@ const EventCreator: React.FC = () => {
       } else if (eventType === 'allGroups') {
         endpoint = '/Event/AddEventForAllGroups';
       }
-
+  
       await axiosInstance.post(endpoint, null, { params });
-
+  
       setToastMessage('Event successfully added');
       setToastColor('green');
       setShowToast(true);
+  
       const userRole = await getRole(user?.id ?? '');
       setRole(userRole);
+  
       setTimeout(() => {
-        if (userRole === 'HR') { 
-          navigate('/hrhomepage'); 
-        } 
-        else {
-          navigate('/'); 
-        }
+        setIsSubmitting(false); 
+        navigate('/'); 
       }, 2000);
     } catch (error: any) {
       setToastMessage(error.response?.data?.message || 'Failed to create event');
       setToastColor('red');
       setShowToast(true);
+      setIsSubmitting(false); 
     }
   };
 
@@ -237,6 +238,7 @@ const EventCreator: React.FC = () => {
           type="submit"
           className="btn btn-primary"
           disabled={
+            isSubmitting ||
             !isTitleValid ||
             !isDescriptionValid ||
             !isStartDateValid ||
