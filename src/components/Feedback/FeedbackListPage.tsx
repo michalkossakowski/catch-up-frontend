@@ -13,6 +13,7 @@ import './FeedbackListPage.css';
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
 import { UserDto } from '../../dtos/UserDto';
+import FeedbackDetailsDialog from './FeedbackDetailsDialog';
 
 
 const FeedbackListPage: React.FC = () => {
@@ -20,6 +21,7 @@ const FeedbackListPage: React.FC = () => {
     const { user } = useAuth();
     const [feedbacks, setFeedbacks] = useState<FeedbackDto[]>([]);
     const [feedbackToDelete, setFeedbackToDelete] = useState<FeedbackDto | null>(null);
+    const [feedbackToDialog, setFeedbackToDialog] = useState<FeedbackDto | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isNewbie, setIsNewbie] = useState(false);
     const [showToast, setShowToast] = useState(false);
@@ -40,6 +42,7 @@ const FeedbackListPage: React.FC = () => {
     const [users, setUsers] = useState<UserDto[]>([]);
     const [selectedSender, setSelectedSender] = useState<string>("");
     const [selectedReceiver, setSelectedReceiver] = useState<string>("");
+    const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
     useEffect(() => {
         const loadFeedbacks = async () => {
             if (!user) return;
@@ -170,6 +173,11 @@ const FeedbackListPage: React.FC = () => {
     const handleSort = (column: keyof FeedbackDto) => {
         setSortOrder(prevOrder => (sortColumn === column ? (prevOrder === "asc" ? "desc" : "asc") : "asc"));
         setSortColumn(column);
+    };
+
+    const handleInfoClick = (fb: FeedbackDto) => {
+     setFeedbackToDialog(fb);
+     setIsDetailsDialogOpen(true);
     };
 
     const handleDelete = async () => {
@@ -429,7 +437,7 @@ const FeedbackListPage: React.FC = () => {
                                             Resolved
                                             <i className="bi bi-arrow-down-up ms-2"></i>
                                         </th>
-                                        <th>Detail</th>
+                                        <th>Details</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -437,9 +445,8 @@ const FeedbackListPage: React.FC = () => {
                                         <FeedbackItem 
                                             key={feedback.id} 
                                             feedback={feedback}
-                                            isNewbie={isNewbie} 
-                                            onDeleteClick={setFeedbackToDelete}
-                                            onResolveChange={handleResolveChange}
+                                            isNewbie={isNewbie}
+                                            onInfoClick={handleInfoClick}
                                         />
                                     ))}
                                 </tbody>
@@ -455,6 +462,16 @@ const FeedbackListPage: React.FC = () => {
                     onConfirm={handleDelete}
                     onCancel={() => setFeedbackToDelete(null)}
                 />
+                {feedbackToDialog && (
+                    <FeedbackDetailsDialog 
+                        feedback={feedbackToDialog}
+                        isOpen={isDetailsDialogOpen}
+                        isNewbie={isNewbie}
+                        onClose={() => setIsDetailsDialogOpen(false)}
+                        onResolveChange={handleResolveChange}
+                        onDelete={setFeedbackToDelete}
+                    />
+                )}
             </div>
 
             <NotificationToast
