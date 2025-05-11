@@ -10,12 +10,10 @@ import NotificationToast from "../Toast/NotificationToast";
 import { setSchooling } from "../../store/schoolingSlice";
 import { FullSchoolingDto } from "../../dtos/FullSchoolingDto";
 import { useNavigate } from "react-router-dom";
-import MaterialSelector from "../Material/MaterialSelector";
 import { MaterialDto } from "../../dtos/MaterialDto";
 import materialService from "../../services/materialService";
 import Loading from "../Loading/Loading";
 import { SchoolingPartDto } from "../../dtos/SchoolingPartDto";
-import Material from "../Material/Material";
 
 const SchoolingListParts: React.FC = () => {
     const fullSchooling = useSelector((state: RootState) => state.schooling.selectedSchooling);
@@ -256,7 +254,7 @@ const SchoolingListParts: React.FC = () => {
                                 {part.materials.map((material, index_material) => (
                                     <li className="list-group-item " key={`${material.id}-${index_material}-${material.name}`} >
                                         <span>{material.name}</span>
-                                        <Material materialId={material.id} showDownloadFile={true} showRemoveFile={true}/>
+                                        {/* <Material materialId={material.id} showDownloadFile={true} showRemoveFile={true}/> */}
                                    </li>
                                 ))}
                             </ol>
@@ -300,14 +298,14 @@ const SchoolingListParts: React.FC = () => {
                         onConfirm={handleDelete} 
                         onCancel={() => setShowConfirmModal(false)} 
                     />
-                    <MaterialSelector
+                    {/* <MaterialSelector
                         show={showMaterialSelectorModal}
                         onHide={() => setShowMaterialSelectorModal(false)}
                         toggleSelection={toggleSelection}
                         submitSelection={submitSelection}
                         clearSelectedMaterials={clearSelectedMaterials} 
                         materials={selectableMaterials}                        
-                    />
+                    /> */}
                 </>
             )}
             </>
