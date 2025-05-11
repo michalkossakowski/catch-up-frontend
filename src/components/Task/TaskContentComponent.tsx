@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './TaskContentComponent.css';
 import { Accordion, Alert, Button, Form, InputGroup, Row, Col, Modal } from 'react-bootstrap';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
-import { getTaskContents, getByTitle, deleteTaskContent } from '../../services/taskContentService';
-import Material from '../Material/Material';
+import { getAllTaskContents, getByTitle, deleteTaskContent } from '../../services/taskContentService';
 import TaskContentEdit from './TaskContentEdit';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { getCategories } from '../../services/categoryService';
@@ -13,7 +12,6 @@ import { useNavigate } from 'react-router-dom';
 import { MaterialDto } from '../../dtos/MaterialDto';
 import materialService from '../../services/materialService';
 import MaterialItem from '../Material/DndMaterial/MaterialItem';
-import styles from '../Material/Material.module.css';
 import NotificationToast from '../Toast/NotificationToast';
 import ConfirmModal from '../Modal/ConfirmModal';
 
@@ -62,7 +60,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
 
     const getAllTaskContents = () => {
         setLoading(true);
-        getTaskContents()
+        getAllTaskContents()
             .then((data) => {
                 setTaskContents(data);
                 setFilteredTaskContents(data);

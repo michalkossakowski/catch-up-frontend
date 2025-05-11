@@ -11,7 +11,7 @@ import { TaskContentDto } from "../../dtos/TaskContentDto.ts";
 import { fetchTasks, updateTaskLocally, deleteTaskLocally } from "../../store/taskSlice.ts";
 import NewbieMentorService from '../../services/newbieMentorService';
 import { getCategories } from "../../services/categoryService.ts";
-import { getTaskContents } from "../../services/taskContentService.ts";
+import { getAllTaskContents } from "../../services/taskContentService.ts";
 import {setTaskStatus, deleteTask, editTask, assignTask} from "../../services/taskService";
 import { StatusEnum } from "../../Enums/StatusEnum";
 import TaskColumns from "./TaskColumns";
@@ -79,7 +79,7 @@ function TaskManager() {
 
                 const [categoriesData, taskContentsData] = await Promise.all([
                     getCategories(),
-                    getTaskContents()
+                    getAllTaskContents()
                 ]);
 
                 let newbieList;
@@ -298,9 +298,7 @@ function TaskManager() {
 
                     <div className={`task-pool-container ${!selectedNewbie ? "disabled-pool" : ""}`}>
                         <TaskPool
-                            taskContents={taskContents}
                             categories={categories}
-                            onTaskDrop={handlePoolTaskDrop}
                             isDisabled={!selectedNewbie}
                         />
                     </div>

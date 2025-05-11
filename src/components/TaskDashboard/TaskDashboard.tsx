@@ -11,7 +11,7 @@ import { FullTaskDto } from "../../dtos/FullTaskDto";
 import { StatusEnum } from "../../Enums/StatusEnum";
 import TaskColumns from "./TaskColumns";
 import { getCategories } from "../../services/categoryService.ts";
-import { getTaskContents } from "../../services/taskContentService.ts";
+import { getAllTaskContents } from "../../services/taskContentService.ts";
 import { setTaskStatus, deleteTask, editTask } from "../../services/taskService";
 import "./TaskManager.css";
 
@@ -58,7 +58,7 @@ const TaskDashboard: React.FC = () => {
 
                     const [categoriesData, taskContentsData] = await Promise.all([
                         getCategories(),
-                        getTaskContents()
+                        getAllTaskContents()
                     ]);
 
                     setCategories(categoriesData);

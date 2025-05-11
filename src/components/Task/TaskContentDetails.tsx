@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getTaskContents } from '../../services/taskContentService';
+import { getAllTaskContents } from '../../services/taskContentService';
 import { getCategories } from '../../services/categoryService';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { Container, Row, Col, Card, Button, Alert, Accordion } from 'react-bootstrap';
-import Material from '../Material/Material';
 import Loading from '../Loading/Loading';
 import './TaskContentDetails.css';
 import materialService from '../../services/materialService';
@@ -29,7 +28,7 @@ const TaskContentDetails: React.FC = () => {
         if (id) {
             setLoading(true);
             Promise.all([
-                getTaskContents(),
+                getAllTaskContents(),
                 getCategories()
             ])
             .then(([taskContents, categoriesData]) => {

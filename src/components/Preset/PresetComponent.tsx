@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Accordion, Alert, Button, Form, InputGroup } from 'react-bootstrap';
 import { PresetDto } from '../../dtos/PresetDto';
-import { TaskPresetDto } from '../../dtos/TaskPresetDto';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
 import { getPresets, getPresetsByName, deletePreset } from '../../services/presetService';
 import { getTaskPresetsByPreset, getTaskPresetsByTaskContent } from '../../services/taskPresetService';
-import { getTaskContents } from '../../services/taskContentService';
+import { getAllTaskContents } from '../../services/taskContentService';
 import PresetEdit from './PresetEdit';
 import './PresetComponent.css';
 import { useNavigate } from 'react-router-dom';
@@ -67,7 +66,7 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
 
     const loadTaskContents = async () => {
         try {
-            const data = await getTaskContents();
+            const data = await getAllTaskContents();
             setTaskContents(data);
         } catch (error: any) {
             console.error('Error loading task contents:', error);
@@ -79,7 +78,7 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
 
     const loadPresetTasks = async (presetsData: PresetDto[]) => {
         const tasksMap = new Map<number, TaskContentDto[]>();
-        const allTaskContents = await getTaskContents();
+        const allTaskContents = await getAllTaskContents();
         
         for (const preset of presetsData) {
             try {

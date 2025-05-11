@@ -3,7 +3,7 @@ import { PresetDto } from '../../dtos/PresetDto';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
 import { TaskPresetDto } from '../../dtos/TaskPresetDto';
 import { Button, Form } from 'react-bootstrap';
-import { getTaskContents } from '../../services/taskContentService';
+import { getAllTaskContents } from '../../services/taskContentService';
 import { addPreset, editPreset } from '../../services/presetService';
 import { addTaskPreset, removeTaskFromPreset, getTaskPresetsByPreset } from '../../services/taskPresetService';
 import { Autocomplete, TextField, Chip } from '@mui/material';
@@ -38,7 +38,7 @@ const PresetEdit: React.FC<PresetEditProps> = ({ preset, isEditMode, onPresetEdi
 
     const loadCurrentPresetTasks = async (presetId: number) => {
         try {
-            const allTasks = await getTaskContents();
+            const allTasks = await getAllTaskContents();
             const presetTaskPresets = await getTaskPresetsByPreset(presetId);
             
             const presetTaskIds = presetTaskPresets.map(tp => tp.taskContentId);
@@ -56,7 +56,7 @@ const PresetEdit: React.FC<PresetEditProps> = ({ preset, isEditMode, onPresetEdi
 
     const loadAvailableTasks = async () => {
         try {
-            const tasks = await getTaskContents();
+            const tasks = await getAllTaskContents();
             
             if (isEditMode && preset) {
                 setAvailableTasks(tasks);
