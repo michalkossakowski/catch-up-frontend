@@ -2,7 +2,7 @@ import { Alert, Button, Col, Form, InputGroup, Row, ToggleButton, ToggleButtonGr
 import fileService from '../../services/fileService';
 import materialService from '../../services/materialService';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import styles from './material.module.css';
+import styles from './material.module.scss';
 import FileIcon from './FileIcon';
 import { MaterialDto } from '../../dtos/MaterialDto';
 import { FileDto } from '../../dtos/FileDto';
@@ -508,13 +508,13 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
           {show && (
             <div> 
                 <div className='d-flex align-items-center'>
-                    <a  onClick={() => setOpen(!open)} className='fs-3 rounded-circle me-3'>
-                        {open ? <i className="bi bi-chevron-down"></i> : <i className="bi bi-chevron-right"></i>}
+                    <a onClick={() => setOpen(!open)} className='fs-3 rounded-circle me-3'>
+                        <i className={`bi bi-chevron-right ${styles.chevron} ${open ? styles.open : ''}`}></i>
                     </a>
-                    <h3 className='mb-0'>{nameTitle}</h3>
+                    <h4 className='mb-0'>{nameTitle}</h4>
                 </div>
-                {open && (
-                    <div className='mt-3'>
+                <div className={`${styles.content_collapse} ${open ? styles.open : ''}`}>
+                    <div className='mt-3 content-inner'>
                         {enableEdittingMaterialName ? (
                             <>
                                 <InputGroup className="mb-3">
@@ -664,7 +664,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                         )}
                         <hr />
                     </div>
-                )}
+                </div>
             </div>)}
         </>)}
             <ConfirmModal 
