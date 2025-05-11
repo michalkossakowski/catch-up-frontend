@@ -1,0 +1,9 @@
+.modal-feedback{
+    display: block !important;
+    background-color: rgba(0, 0, 0, 0.483);
+}
+
+.modal-dialog .modal-lg{
+    padding: '0';
+    border-radius: '0.5rem';
+}
