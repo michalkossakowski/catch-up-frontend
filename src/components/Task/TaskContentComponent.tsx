@@ -3,7 +3,6 @@ import './TaskContentComponent.css';
 import { Accordion, Alert, Button, Form, InputGroup, Row, Col, Modal } from 'react-bootstrap';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
 import { getTaskContents, getByTitle, deleteTaskContent } from '../../services/taskContentService';
-import Material from '../Material/Material';
 import TaskContentEdit from './TaskContentEdit';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { getCategories } from '../../services/categoryService';
@@ -12,10 +11,9 @@ import Loading from '../Loading/Loading';
 import { useNavigate } from 'react-router-dom';
 import { MaterialDto } from '../../dtos/MaterialDto';
 import materialService from '../../services/materialService';
-import MaterialItem from '../Material/DndMaterial/MaterialItem';
-import styles from '../Material/Material.module.css';
 import NotificationToast from '../Toast/NotificationToast';
 import ConfirmModal from '../Modal/ConfirmModal';
+import MaterialItem from '../MaterialManager/MaterialItem';
 
 interface TaskContentComponentProps {
     isAdmin: boolean;
@@ -192,7 +190,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     };
     
     const handleMaterialSelect = () => {};
-    const handleDeleteItem = () => {};
+    // const handleDeleteItem = () => {};
 
     return (
         <section className='container'>
@@ -310,10 +308,10 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                                                 <div className="material-content">
                                                     <Accordion defaultActiveKey={`item${taskContent.materialsId}`} className="read-only-material">
                                                         <MaterialItem
-                                                            materialDto={expandedMaterials[taskContent.materialsId]}
-                                                            onDeleteItem={handleDeleteItem}
-                                                            onMaterialSelect={handleMaterialSelect}
-                                                            readOnly={true}
+                                                            materialId={taskContent.materialsId}
+                                                            // onDeleteItem={handleDeleteItem}
+                                                            // onMaterialSelect={handleMaterialSelect}
+                                                            // readOnly={true}
                                                         />
                                                     </Accordion>
                                                 </div>
