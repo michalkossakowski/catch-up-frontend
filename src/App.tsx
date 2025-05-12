@@ -188,7 +188,7 @@ function App() {
                                     <NavLink to="/feedbacks" className="nav-link">
                                         <i className="bi bi-arrow-clockwise" /> <span>{t('feedbacks')}</span>
                                     </NavLink>
-                                    {role == "Mentor" &&(
+                                    {role != "Newbie" &&(
                                         <NavLink to="/badges" className="nav-link">
                                             <i className="bi bi-shield" /> <span>{t('badges')}</span>
                                         </NavLink>
