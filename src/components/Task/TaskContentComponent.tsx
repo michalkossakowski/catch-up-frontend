@@ -48,7 +48,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     const navigate = useNavigate();
 
     useEffect(() => {
-        getAllTaskContents();
+        getTaskContents();
         getCategories()
             .then((data) => setCategories(data))
             .catch((error) => console.error('Error loading categories:', error));
@@ -58,7 +58,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
         filterTaskContents();
     }, [taskContents, searchTitle, selectedCategoryId, sortOption, sortDirection]);
 
-    const getAllTaskContents = () => {
+    const getTaskContents = () => {
         setLoading(true);
         getAllTaskContents()
             .then((data) => {
@@ -143,7 +143,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
             try {
                 await removeTaskFromAllPresets(taskContentIdToDelete);
                 await deleteTaskContent(taskContentIdToDelete);
-                getAllTaskContents();
+                getTaskContents();
                 setToastMessage("Task content deleted successfully");
                 setToastColor("green");
                 setShowToast(true);
@@ -171,7 +171,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
         setToastColor("green");
         setShowToast(true);
         
-        getAllTaskContents();
+        getTaskContents();
         setShowEditModal(false);
         setEditedTaskContent(null);
     };
