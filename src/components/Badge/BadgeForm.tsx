@@ -88,8 +88,6 @@ const BadgeForm: React.FC<BadgeFormProps> = ({ show, onHide, onSuccess, badge })
             countType: countType ?? null,
         };
 
-        console.log('Submitting badge data:', badgeData);
-
         try {
             if (badge) {
                 await editBadge(badgeData);
