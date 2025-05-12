@@ -6,12 +6,10 @@ import { AppDispatch, RootState } from '../../store/store.ts';
 import { fetchTasks, updateTaskLocally, deleteTaskLocally } from '../../store/taskSlice';
 import { useAuth } from "../../Provider/authProvider";
 import { CategoryDto } from "../../dtos/CategoryDto.ts";
-import { TaskContentDto } from "../../dtos/TaskContentDto.ts";
 import { FullTaskDto } from "../../dtos/FullTaskDto";
 import { StatusEnum } from "../../Enums/StatusEnum";
 import TaskColumns from "./TaskColumns";
 import { getCategories } from "../../services/categoryService.ts";
-import { getAllTaskContents } from "../../services/taskContentService.ts";
 import { setTaskStatus, deleteTask, editTask } from "../../services/taskService";
 import "./TaskManager.css";
 
@@ -29,7 +27,6 @@ const TaskDashboard: React.FC = () => {
 
     const [userRole, setUserRole] = useState<string | null>(null);
     const [categories, setCategories] = useState<CategoryDto[]>([]);
-    const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
     const [loadingTaskIds, setLoadingTaskIds] = useState<Set<number>>(new Set());
     const [localError, setLocalError] = useState<string | null>(null);
     const [allowedStatuses, setAllowedStatuses] = useState<StatusEnum[]>([]);
@@ -56,13 +53,11 @@ const TaskDashboard: React.FC = () => {
                     setUserRole(role);
                     setAllowedStatuses(allowedStatusChanges[role] || []);
 
-                    const [categoriesData, taskContentsData] = await Promise.all([
+                    const [categoriesData] = await Promise.all([
                         getCategories(),
-                        getAllTaskContents()
                     ]);
 
                     setCategories(categoriesData);
-                    setTaskContents(taskContentsData);
                 } catch (err) {
                     if (err instanceof Error) {
                         setLocalError(err.message);
@@ -187,7 +182,6 @@ const TaskDashboard: React.FC = () => {
                             onTaskDelete={handleTaskDelete}
                             onTaskDrop={handleTaskDrop}
                             categories={categories}
-                            taskContents={taskContents}
                             role={userRole}
                             loading={loading}
                             loadingTaskIds={loadingTaskIds}
