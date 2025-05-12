@@ -12,11 +12,11 @@
 }
 
 .sidebar.open {
-  width: 200px;
+  width: 100%;
 }
 
 .sidebar.closed {
-  width: 65px;
+  width: 100%;
 }
 
 .sidebar-button {
@@ -32,14 +32,14 @@
   color: rgba(var(--bs-primary))
 }
 .sidebar-button.closed {
-  left: 70px; 
-  top: 10px;
+  left: 65.5%;
+  top: -15px;
   rotate: 180deg;
 }
 
 .sidebar-button.open {
-  left: 200px;
-  top: 10px;
+  left: 82.5%;
+  top: -15px;
 }
 
 .acc-button{
@@ -58,10 +58,10 @@
   rotate: 180deg;
 }
 .img-container{
-  min-width: 40px;
-  min-height: 40px;
-  max-width: 40px;
-  max-height: 40px;
+  min-width: 50px;
+  min-height: 50px;
+  max-width: 50px;
+  max-height: 50px;
 }
 .img-container img {
   width: 100%;
@@ -74,7 +74,7 @@
 }
 
 .schooling-ProgressBar-el span, .schooling-ProgressBar-el p{
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 400;
 }
 .sidebar-navlink{
@@ -111,7 +111,7 @@
   color: rgba(var(--bs-primary)) !important;
 }
 
-@media (max-width: 1050px) {
+@media (max-width: 1250px) {
   .img-container {
     min-width: 64px;
     min-height: 64px;

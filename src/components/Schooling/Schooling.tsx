@@ -15,7 +15,7 @@ const Schooling: React.FC = () => {
 
     const [isOpen, setIsOpen] = useState(true);
     const [schooling, setSchooling] = useState<SchoolingDto | null>(null);
-    const [noPlace, setNoPlace] = useState(window.innerWidth < 1050);
+    const [noPlace, setNoPlace] = useState(window.innerWidth < 1250);
     const [editMode, setEditMode] = useState(false);
     const [actionTrigger, setActionTrigger] = useState<OnActionEnum>(-1);
 
@@ -64,7 +64,7 @@ const Schooling: React.FC = () => {
 
     return (
       <>
-        <div className="utility-menu d-flex justify-content-end me-5 border-bottom">
+        <div className="utility-menu d-flex justify-content-end border-2 border-bottom">
           {editMode
             ?
               <>
@@ -78,14 +78,14 @@ const Schooling: React.FC = () => {
           <a className="me-2" onClick={() => {}}>Feedback</a>
         </div>
         <Row className={`position-relative p-0 m-0 ${noPlace ? "flex-column" : ""}`}>
-            <Col sm={noPlace ? 12 : isOpen ? 3 : 2} className={`p-0 m-0 ps-2 pt-2 ${!noPlace? "border-end" :""}`}>      
+            <Col sm={noPlace ? 12 : isOpen ? 2 : 1} className={`p-0 m-0 pt-3 border-2 ${!noPlace? "border-end" :""}`}>      
                 <SchoolingProgressBar 
                     schooling={schooling ?? undefined}
                     onOpen={onOpen}
                     resize={resize}
                 />
             </Col>
-            <Col sm={noPlace ? 12 : isOpen ? 9 : 10} className={`p-0 ps-3 pt-2 m-0 d-flex flex-column align-items-center ${noPlace ? "p-4" : "pe-5"}`}>
+            <Col sm={noPlace ? 12 : isOpen ? 10 : 11} className={`p-0 ps-3 pt-3 m-0 d-flex flex-column align-items-center ${noPlace ? "p-4" : "pe-5"}`}>
                 {partId ? 
                 <SchoolingPart
               

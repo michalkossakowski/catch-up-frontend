@@ -1,4 +1,4 @@
-import { act, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { editSchoolingPart, getSchoolingPart, updateUserSchoolingPartState } from '../../services/schoolingService';
 import Loading from '../Loading/Loading';
 import { SchoolingPartDto } from '../../dtos/SchoolingPartDto';

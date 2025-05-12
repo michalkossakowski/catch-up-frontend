@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Card, CardBody, Col, Nav, Navbar, Row } from "react-bootstrap";
+import { Button, Card, CardBody, Nav, Navbar } from "react-bootstrap";
 import "./SchoolingProgressBar.css";
 import SchoolingProgressBarElement from "./SchoolingProgressBarElement";
 import fileService from "../../../services/fileService";
@@ -19,10 +19,10 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
   const [isOpen, setIsOpen] = useState(true);
   const [lastElement, setLastElement] = useState<number>(0);
   const [icons, setIcons] = useState<{ [key: number]: File | null }>({});
-  const [noPlace, setNoPlace] = useState(window.innerWidth < 1050);
+  const [noPlace, setNoPlace] = useState(window.innerWidth < 1250);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 1050px)");
+    const mediaQuery = window.matchMedia("(max-width: 1250px)");
 
     const handleMediaChange = (e: MediaQueryListEvent) => {
       console.log(e.matches);
@@ -89,7 +89,7 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
             </div>
             <div className="pe-5">
               <Button
-                onClick={(e) => {
+                onClick={() => {
                   toggleSidebar()
                 }}
                 className={`acc-button ${isOpen ? 'open' : 'closed'}`}
@@ -102,10 +102,10 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
           {isOpen 
             &&
             <div className="position-absolute m-0 p-0 w-100 h-100" style={{ zIndex: 1000}}>
-              <Card className="m-0 p-0 border-0 h-100">
+              <Card className="m-0 p-0  h-100">
                 <CardBody className="align-items-center d-flex flex-column">
                   <Navbar expand="lg" className="flex-column p-0 m-0 w-100">
-                  <Nav className="flex-column p-0 m-0 ms-3 me-3 ">
+                  <Nav className="flex-column p-0 m-0  ">
                   <Nav.Link className="sidebar-navlink" href={schooling?.id ? `/Schooling/${schooling.id}` : "#"}>
                     <SchoolingProgressBarElement 
                       showVl = {false}
@@ -116,7 +116,7 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
                       Id={0}
                       />
                   </Nav.Link>
-                  <hr className="border border-1 opacity-100 m-0"/>
+                  <hr className="border border-2 opacity-100 m-0"/>
                   {
                     schooling?.schoolingPartProgressBar?.map((part, index) => (
                       <Nav.Link key={index} className="sidebar-navlink" onClick={handleClickNavLink} href={part.id ? `/Schooling/${schooling.id}/part/${part.id}` : "#"}>
@@ -142,7 +142,7 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
         <div className="sidebar-container">
           <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
               <Navbar expand="lg" className="flex-column p-0 m-0">
-              <Nav className="flex-column p-0 m-0 ms-3" style={{ width: '100%' }}>
+              <Nav className="flex-column p-0 m-0" >
               <Nav.Link className="sidebar-navlink" href={schooling?.id ? `/Schooling/${schooling.id}` : "#"}>
                 <SchoolingProgressBarElement 
                   showVl = {false}
@@ -153,7 +153,7 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
                   Id={0}
                   />
               </Nav.Link>
-              <hr className="border border-1 opacity-100 m-0"/>
+              <hr className="border border-2 opacity-100 m-0"/>
                   {
                     schooling?.schoolingPartProgressBar?.map((part, index) => (
                       <Nav.Link key={index} className="sidebar-navlink" href={part.id ? `/Schooling/${schooling.id}/part/${part.id}` : "#"}>

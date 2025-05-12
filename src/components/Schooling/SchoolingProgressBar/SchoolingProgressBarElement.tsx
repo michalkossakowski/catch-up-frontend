@@ -40,7 +40,7 @@ const SchoolingProgressBarElement: React.FC<SchoolingProgressBarProps> = ({
     return (
         <div className="schooling-ProgressBar-el mb-3 d-flex">
             <div className="position-relative img-container">
-                <img src={img ? URL.createObjectURL(img) : undefined} alt="" className={`rounded-2 border border-3 ${isDone ? "border-success" : ""}`}/>
+                <img src={img ? URL.createObjectURL(img) : undefined} alt="" className={`rounded-2 border border-2 ${isDone ? "border-success" : ""}`}/>
                 {showVl && 
                     <span 
                     className={`position-absolute vr schooling-ProgressBar-vl ${isDone ? "text-success" : ""}`}

@@ -17,14 +17,8 @@ import TaskContentManage from './components/Task/TaskContentManage';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import EditMatList from './components/Material/DndMaterial/EditMatList';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
-import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
-import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
-import SchoolingEdit from "./components/Schooling/SchoolingEdit.tsx";
-import SchoolingListMentor from "./components/Schooling/SchoolingListMentor.tsx";
-import SchoolingListParts from "./components/Schooling/SchoolingListParts.tsx";
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
 import TaskManager from "./components/TaskDashboard/TaskManager.tsx";
-import SchoolingPartEdit from './components/Schooling/SchoolingPartEdit.tsx';
 import SchoolingAssignment from './components/Schooling/SchoolingAssignment.tsx';
 import PresetAssign from './components/Preset/PresetAssign';
 import FeedbackList from './components/Feedback/FeedbackListPage.tsx';
@@ -404,17 +398,9 @@ function App() {
                                 <Route path="/feedbacks" element={<FeedbackList />} />
                                 <Route path="/badges" element={<Badge />} />
                                 <Route path="/presetmanage" element={<PresetManage />} />
-                                <Route path="/schoolingedit" element={<SchoolingEdit />} />
-                                <Route
-                                    path="/schoolinglist"
-                                    element={role === 'Admin' || role === 'Mentor' ? <SchoolingListMentor /> : <SchoolingListNewbie />}
-                                />
                                 <Route path="/schooling/:schoolingId/part/:partId" element={<Schooling />} />
                                 <Route path="/schooling/:schoolingId/" element={<Schooling />} />
-                                <Route path="/schoolingpartedit/:id?" element={<SchoolingPartEdit />} />
-                                <Route path="/schoolinglistparts" element={<SchoolingListParts />} />
                                 <Route path="/preset/assign/:presetId" element={<PresetAssign />} />
-                                <Route path="/schoolingdetails" element={<SchoolingDetails />} />
                                 <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
                                 <Route path="/profile/:userId" element={<UserProfile />} />
                                 <Route path="/settings" element={<><h1>Settings</h1></>} />
