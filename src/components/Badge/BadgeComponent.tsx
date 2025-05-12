@@ -56,7 +56,6 @@ const Badge: React.FC = () => {
                     newImageUrls.set(badge.iconId, url);
                 } catch (error) {
                     console.error(`Failed to fetch image for badge ${badge.id}:`, error);
-                    // Użycie domyślnego obrazka w przypadku błędu
                     newImageUrls.set(badge.iconId, defaultBadgeIcon);
                 }
             }
