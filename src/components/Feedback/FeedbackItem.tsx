@@ -1,34 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FeedbackDto } from '../../dtos/FeedbackDto';
 import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
-import FeedbackDetailsDialog from './FeedbackDetailsDialog';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 type FeedbackItemProps = {
     feedback: FeedbackDto;
     isNewbie: boolean;
-    onDeleteClick: (feedback: FeedbackDto) => void;
-    onResolveChange: (id: number, isResolved: boolean) => void;
+    onInfoClick: (feedback: FeedbackDto) => void;
 };
 
 const FeedbackItem: React.FC<FeedbackItemProps> = ({ 
     feedback, 
     isNewbie,
-    onDeleteClick, 
-    onResolveChange 
+    onInfoClick
 }) => {
-    const [isResolved, setIsResolved] = useState(feedback.isResolved);
-    const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
-    const handleDelete = () => {
-        onDeleteClick(feedback);
-    };
-
-    const handleResolveChange = (id: number, newIsResolved: boolean) => {
-        setIsResolved(newIsResolved);
-        
-        onResolveChange(id, newIsResolved);
-    };
-
     return (
         <>
             <tr key={feedback.id}>
@@ -68,25 +53,16 @@ const FeedbackItem: React.FC<FeedbackItemProps> = ({
                 )}
                 </td>
                 <td>
-                    {isResolved ? <i className="bi bi-check-circle-fill"></i> : <i className="bi bi-x-circle-fill text-danger"></i>}
+                    {feedback.isResolved ? <i className="bi bi-check-circle-fill"></i> : <i className="bi bi-x-circle-fill text-danger"></i>}
                 </td>
                 <td>
                     <button 
                         className="btn btn-primary bi bi-info-circle-fill" 
-                        onClick={() => setIsDetailsDialogOpen(true)}
+                        onClick={() => onInfoClick(feedback)}
                     >
                     </button>
                 </td>
             </tr>
-
-            <FeedbackDetailsDialog 
-                feedback={feedback}
-                isOpen={isDetailsDialogOpen}
-                isNewbie={isNewbie}
-                onClose={() => setIsDetailsDialogOpen(false)}
-                onResolveChange={handleResolveChange}
-                onDelete={handleDelete}
-            />
         </>
     );
 };

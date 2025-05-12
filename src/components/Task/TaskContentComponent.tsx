@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './TaskContentComponent.css';
 import { Accordion, Alert, Button, Form, InputGroup, Row, Col, Modal } from 'react-bootstrap';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
-import { getAllTaskContents, getByTitle, deleteTaskContent } from '../../services/taskContentService';
+import { getTaskContents, getByTitle, deleteTaskContent } from '../../services/taskContentService';
 import TaskContentEdit from './TaskContentEdit';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { getCategories } from '../../services/categoryService';
@@ -11,9 +11,9 @@ import Loading from '../Loading/Loading';
 import { useNavigate } from 'react-router-dom';
 import { MaterialDto } from '../../dtos/MaterialDto';
 import materialService from '../../services/materialService';
-import MaterialItem from '../Material/DndMaterial/MaterialItem';
 import NotificationToast from '../Toast/NotificationToast';
 import ConfirmModal from '../Modal/ConfirmModal';
+import MaterialItem from '../MaterialManager/MaterialItem';
 
 interface TaskContentComponentProps {
     isAdmin: boolean;
@@ -48,7 +48,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     const navigate = useNavigate();
 
     useEffect(() => {
-        getTaskContents();
+        getAllTaskContents();
         getCategories()
             .then((data) => setCategories(data))
             .catch((error) => console.error('Error loading categories:', error));
@@ -58,9 +58,9 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
         filterTaskContents();
     }, [taskContents, searchTitle, selectedCategoryId, sortOption, sortDirection]);
 
-    const getTaskContents = () => {
+    const getAllTaskContents = () => {
         setLoading(true);
-        getAllTaskContents()
+        getTaskContents()
             .then((data) => {
                 setTaskContents(data);
                 setFilteredTaskContents(data);
@@ -143,7 +143,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
             try {
                 await removeTaskFromAllPresets(taskContentIdToDelete);
                 await deleteTaskContent(taskContentIdToDelete);
-                getTaskContents();
+                getAllTaskContents();
                 setToastMessage("Task content deleted successfully");
                 setToastColor("green");
                 setShowToast(true);
@@ -171,7 +171,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
         setToastColor("green");
         setShowToast(true);
         
-        getTaskContents();
+        getAllTaskContents();
         setShowEditModal(false);
         setEditedTaskContent(null);
     };

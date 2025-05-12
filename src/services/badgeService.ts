@@ -11,6 +11,16 @@ export const getAllBadges = async (): Promise<BadgeDto[]> => {
     }
 };
 
+export const getByMentorId = async (): Promise<BadgeDto[]> => {
+    try {
+        const response = await axiosInstance.get<BadgeDto[]>('/Badge/GetByMentorId');
+        return response.data;
+    } catch (error: any) {
+        handleError('getByMentorId', error);
+        throw error;
+    }
+};
+
 export const getBadgeById = async (id: number): Promise<BadgeDto> => {
     try {
         const response = await axiosInstance.get<BadgeDto>(`/Badge/GetById/${id}`);
