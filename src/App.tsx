@@ -372,7 +372,7 @@ function App() {
                                 <Route path="/profile/:userId" element={<UserProfile />} />
                                 <Route path="/settings" element={<SettingsComponent/>} />
                                 <Route path="/notifications" element={<><NotificationPage /></>} />
-                                <Route path="/eventCreator" element={<EventCreator />} />
+                                <Route path="/eventCreator" element={<EventCreator/>} />
                                 <Route path="/material" element={<MaterialTest />} />
                             </Routes>
                         </Container>

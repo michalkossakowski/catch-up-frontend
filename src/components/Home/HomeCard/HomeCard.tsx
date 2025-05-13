@@ -5,21 +5,26 @@ import './HomeCard.css';
 interface TaskCardProps {
   title: string;
   description: string;
-  iconName: string; 
-  path: string;
+  iconName: string;
+  path?: string; 
+  onClick?: () => void; 
 }
 
-const HomeCard: React.FC<TaskCardProps> = ({ title, description, iconName, path }) => {
+const HomeCard: React.FC<TaskCardProps> = ({ title, description, iconName, path, onClick }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(path);
+    if (onClick) {
+      onClick(); 
+    } else if (path) {
+      navigate(path); 
+    }
   };
 
   return (
     <div 
       className="home-card-container"
-      onClick={handleClick}
+      onClick={handleClick} 
     >
       <h2 className="home-card-container-title">{title}</h2>
       <p className="home-card-container-desc">{description}</p>

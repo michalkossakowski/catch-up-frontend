@@ -1,0 +1,11 @@
+.modal-body .form-label {
+    text-align: left; 
+    display: block;
+    font-weight: bold;
+  }
+  
+  .modal-body .invalid-feedback {
+    text-align: left; 
+    font-size: 0.875rem;
+  }
+  
