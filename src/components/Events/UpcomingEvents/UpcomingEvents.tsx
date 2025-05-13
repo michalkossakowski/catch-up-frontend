@@ -19,7 +19,7 @@ const UpcomingEvents: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null); // Dodano stan dla wybranego wydarzenia
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null); 
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -64,7 +64,7 @@ const UpcomingEvents: React.FC = () => {
             <li
               key={event.id}
               className="event-item"
-              onClick={() => setSelectedEvent(event)} // Ustawienie wybranego wydarzenia
+              onClick={() => setSelectedEvent(event)} 
             >
               <hr className="event-divider" />
               <h3>{event.title}</h3>
