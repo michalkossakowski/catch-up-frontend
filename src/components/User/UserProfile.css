@@ -1,0 +1,11 @@
+.profile-avatar {
+    border: 3px solid #5CD3B4;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    background-color: var(--bs-tertiary-bg);
+}
+
+.profile-role-badge {
+    background-color: #DB91D1;
+    color: white;
+    padding: 0.5rem 1rem;
+} 

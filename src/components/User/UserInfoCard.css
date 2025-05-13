@@ -2,6 +2,9 @@
     border-radius: 50%;
     cursor: pointer;
     transition: background-color 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .overlay:hover {
@@ -13,6 +16,6 @@
     pointer-events: none;
 }
 
-.image-padding-cover{
-    padding: 3px;
-}
+.cursor-pointer {
+    cursor: pointer;
+} 
