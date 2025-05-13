@@ -19,6 +19,7 @@ const UpcomingEvents: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null); // Dodano stan dla wybranego wydarzenia
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -60,27 +61,72 @@ const UpcomingEvents: React.FC = () => {
       {!loading && !error && events.length > 0 && (
         <ul className="ul">
           {events.map((event) => (
-            <li key={event.id} className="event-item">
+            <li
+              key={event.id}
+              className="event-item"
+              onClick={() => setSelectedEvent(event)} // Ustawienie wybranego wydarzenia
+            >
               <hr className="event-divider" />
               <h3>{event.title}</h3>
               <p>{event.description}</p>
               <p>
-                <strong>Start:</strong> {new Date(event.startDate).toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit' })}
+                <strong>Start:</strong>{' '}
+                {new Date(event.startDate).toLocaleString(undefined, {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                })}
               </p>
               <p>
-                <strong>End:</strong> {new Date(event.endDate).toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit' })}
+                <strong>End:</strong>{' '}
+                {new Date(event.endDate).toLocaleString(undefined, {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                })}
               </p>
             </li>
           ))}
         </ul>
-
       )}
 
       <button className="btn btn-primary calendar-button" onClick={openModal}>
         <i className="bi-calendar-event" /> Open Calendar
       </button>
 
-      <CalendarModal isOpen={isModalOpen} onClose={closeModal} userId={userId} />
+      <CalendarModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        userId={userId}
+      />
+
+      {selectedEvent && (
+        <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title w-100 text-center fw-bold">{selectedEvent.title}</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setSelectedEvent(null)}
+                ></button>
+              </div>
+              <div className="modal-body" style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
+                <p className="fw-bold">
+                  {new Date(selectedEvent.startDate).toLocaleString()} -{' '}
+                  {new Date(selectedEvent.endDate).toLocaleString()}
+                </p>
+                <p>{selectedEvent.description}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
