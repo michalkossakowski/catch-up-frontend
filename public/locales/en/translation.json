@@ -73,5 +73,21 @@
   "search": "Search",
   "search-file-by-names": "Search file by names",
   "cancel-search": "Cancel Search",
-  "roadmaps": "Road Maps"
+  "roadmaps": "Road Maps",
+  
+  "user-not-found": "User not found",
+  "my-mentors": "My Mentors",
+  "my-newbies": "My Newbies",
+  "all-newbies": "All Newbies",
+  "profile-info": "Profile Information",
+  "department": "Department",
+  "location": "Location",
+  "phone": "Phone",
+  "teams": "Teams",
+  "slack": "Slack",
+  "interests-and-skills": "Interests & Skills",
+  "interests": "Interests",
+  "languages": "Languages",
+  "about": "About",
+  "no-users-found": "No users found"
 }

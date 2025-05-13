@@ -69,5 +69,21 @@
   "search": "Szukaj",
   "search-file-by-names": "Wyszukaj plik według nazwisk",
   "cancel-search": "Anuluj wyszukiwanie",
-  "roadmaps": "Ścieżki rozwoju"
+  "roadmaps": "Ścieżki rozwoju",
+  
+  "user-not-found": "Nie znaleziono użytkownika",
+  "my-mentors": "Moi mentorzy",
+  "my-newbies": "Moi nowicjusze",
+  "all-newbies": "Wszyscy nowicjusze",
+  "profile-info": "Informacje o profilu",
+  "department": "Dział",
+  "location": "Lokalizacja",
+  "phone": "Telefon",
+  "teams": "Teams",
+  "slack": "Slack",
+  "interests-and-skills": "Zainteresowania i umiejętności",
+  "interests": "Zainteresowania",
+  "languages": "Języki",
+  "about": "O mnie",
+  "no-users-found": "Nie znaleziono użytkowników"
 }

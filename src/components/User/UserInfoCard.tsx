@@ -30,7 +30,7 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({
         (avatarUrl || defaultUserIcon);
 
     if (compact) {
-        return (
+    return (
             <div className="text-center">
                 <div
                     className="position-relative d-inline-block mb-2"
@@ -55,14 +55,14 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({
                 </div>
 
                 <h4 className="mb-2">
-                    {name} {surname}
+                        {name} {surname}
                 </h4>
                 
                 {position && (
                     <div className="badge rounded-pill profile-role-badge">
                         <i className="bi bi-person-badge me-1"></i>
                         {position}
-                    </div>
+                </div>
                 )}
 
                 {canEdit && (

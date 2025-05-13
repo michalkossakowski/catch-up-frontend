@@ -70,5 +70,21 @@
   "search": "Suchen",
   "search-file-by-names": "Suchdatei mit Namen",
   "cancel-search": "Suche nach der Suche",
-  "roadmaps": "Straßenkarte"
+  "roadmaps": "Straßenkarte",
+
+  "user-not-found": "Benutzer nicht gefunden",
+  "my-mentors": "Meine Mentoren",
+  "my-newbies": "Meine Neulinge",
+  "all-newbies": "Alle Neulinge",
+  "profile-info": "Profilinformationen",
+  "department": "Abteilung",
+  "location": "Standort",
+  "phone": "Telefon",
+  "teams": "Teams",
+  "slack": "Slack",
+  "interests-and-skills": "Interessen & Fähigkeiten",
+  "interests": "Interessen",
+  "languages": "Sprachen",
+  "about": "Über mich",
+  "no-users-found": "Keine Benutzer gefunden"
 }
