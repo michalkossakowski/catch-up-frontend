@@ -34,7 +34,7 @@ const UnassignedNewbiesList: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <p><Loading /></p>;
+    return <div><Loading /></div>;
   }
 
   if (error) {

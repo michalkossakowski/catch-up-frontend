@@ -69,6 +69,7 @@ function App() {
         if (user?.id) {
             const userRole = await getRole(user.id);
             setRole(userRole);
+            console.log(`User role: "${userRole}"`);
             startConnection();
             handleNotifications();
         }
@@ -219,7 +220,7 @@ function App() {
                                             <NavDropdown.Divider />
                                         </NavDropdown>
                                     )}
-                                    {role === "HR" || role === "Admin" && (
+                                    {(role === "Admin" || role == "HR")  && (
                                         <NavDropdown
                                             className={isHRToolsActive ? "navdropdown-active" : ""}
                                             title={<><i className="bi bi-person-lock" /> <span>HR Tools</span></>}

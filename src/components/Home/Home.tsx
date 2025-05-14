@@ -263,7 +263,7 @@ export default function Home({ role }: HomeProps): React.ReactElement {
 
                     <EventCreatorModal
                         show={showEventModal}
-                        onClose={() => setShowEventModal(false)} // Zamknięcie modala
+                        onClose={() => setShowEventModal(false)}
                     />   
 
                     <TutorialComponent />     
