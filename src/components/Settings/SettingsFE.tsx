@@ -3,14 +3,13 @@ import { Form } from 'react-bootstrap';
 import './Settings.css';
 
 interface Settings {
-  [key: string]: boolean;
+  [key: string]: boolean | string;
 }
 
 const initialSettings: Settings = {
   isBrainrotAllowed: false,
   isConfettiDisabled: false,
-  placeholder1: false,
-  placeholder2: false,
+  aiResponseStyle: ""
 };
 
 const SettingsFE: React.FC = () => {
@@ -27,18 +26,17 @@ const SettingsFE: React.FC = () => {
     localStorage.setItem('localSettings', JSON.stringify(settings));
   }, [settings]);
 
-  const handleToggle = (key: string) => {
+  const handleChange = (key: string, value: boolean | string) => {
     setSettings(prev => ({
       ...prev,
-      [key]: !prev[key],
+      [key]: value,
     }));
   };
 
   const settingLabels: { [key: string]: string } = {
-    isBrainrotAllowed: '[RoadMaps] Show congratulations brainrot Tiktok',
-    isConfettiDisabled: '[RoadMaps] Disable confetti',
-    placeholder1: 'Placeholder 1',
-    placeholder2: 'Placeholder 2',
+    isBrainrotAllowed: 'RoadMaps - Show congratulations brainrot Tiktok',
+    isConfettiDisabled: 'RoadMaps - Disable confetti',
+    aiResponseStyle: 'AI Assistant - Response language style',
   };
 
   return (
@@ -47,15 +45,23 @@ const SettingsFE: React.FC = () => {
       <div className='settings-list'>
         {Object.keys(initialSettings).map((key) => (
           <div key={key} className='single-setting'>
-            {settingLabels[key]}
-            <Form>
+            <label htmlFor={`${key}-input`}>{settingLabels[key]}</label>
+            {typeof initialSettings[key] === 'boolean' ? (
               <Form.Check
                 type="switch"
                 id={`${key}-switch`}
-                checked={settings[key]}
-                onChange={() => handleToggle(key)}
+                checked={settings[key] as boolean}
+                onChange={() => handleChange(key, !settings[key])}
               />
-            </Form>
+            ) : (
+              <Form.Control
+                type="text"
+                id={`${key}-input`}
+                value={settings[key] as string}
+                onChange={(e) => handleChange(key, e.target.value)}
+                placeholder={`Enter string value here...`}
+              />
+            )}
           </div>
         ))}
       </div>
@@ -64,4 +70,3 @@ const SettingsFE: React.FC = () => {
 };
 
 export default SettingsFE;
-

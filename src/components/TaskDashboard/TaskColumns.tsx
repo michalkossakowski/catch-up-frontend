@@ -23,11 +23,11 @@ interface TaskColumnsProps {
 }
 
 const statusConfig = [
-    { status: StatusEnum.ToDo, title: "To Do", color: "bg-secondary" },
-    { status: StatusEnum.InProgress, title: "In Progress", color: "bg-primary" },
-    { status: StatusEnum.ToReview, title: "To Review", color: "bg-warning" },
-    { status: StatusEnum.ReOpen, title: "Reopened", color: "bg-danger" },
-    { status: StatusEnum.Done, title: "Done", color: "bg-success" }
+    { status: StatusEnum.ToDo, title: "To Do", color: "to-do-status" },
+    { status: StatusEnum.InProgress, title: "In Progress", color: "in-progress-status" },
+    { status: StatusEnum.ToReview, title: "To Review", color: "review-status" },
+    { status: StatusEnum.ReOpen, title: "Reopened", color: "reopened-status" },
+    { status: StatusEnum.Done, title: "Done", color: "done-status" }
 ];
 
 const TaskColumns: React.FC<TaskColumnsProps> = ({

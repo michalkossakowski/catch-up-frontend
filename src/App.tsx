@@ -15,7 +15,6 @@ import LoginComponent from './components/Login/LoginComponent';
 import PresetManage from "./components/Preset/PresetManage.tsx";
 import TaskContentManage from './components/Task/TaskContentManage';
 import { Container, Nav, Navbar } from 'react-bootstrap';
-import EditMatList from './components/Material/DndMaterial/EditMatList';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
 import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
 import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
@@ -189,7 +188,7 @@ function App() {
                                     <NavLink to="/feedbacks" className="nav-link">
                                         <i className="bi bi-arrow-clockwise" /> <span>{t('feedbacks')}</span>
                                     </NavLink>
-                                    {role == "Mentor" &&(
+                                    {role != "Newbie" &&(
                                         <NavLink to="/badges" className="nav-link">
                                             <i className="bi bi-shield" /> <span>{t('badges')}</span>
                                         </NavLink>
@@ -218,9 +217,6 @@ function App() {
                                                 <i className="bi bi-compass" /> {t('road-maps')}
                                             </NavDropdown.Item>
                                             <NavDropdown.Divider />
-                                            <NavDropdown.Item as={NavLink} to="/editMatList" className="nav-dropdown-item">
-                                                <i className="bi bi-tools" /> {t('material-lists')}
-                                            </NavDropdown.Item>
                                         </NavDropdown>
                                     )}
                                     {role === "HR" || role === "Admin" && (
@@ -356,7 +352,6 @@ function App() {
                                 <Route path="/taskcontentmanage" element={<TaskContentManage />} />
                                 <Route path="/taskcontent" element={<TaskContentManage />} />
                                 <Route path="/taskcontent/details/:id" element={<TaskContentDetails />} />
-                                <Route path="/editmatlist" element={<EditMatList />} />
                                 <Route path="/roadmapmanage" element={<RoadMapManage />} />
                                 <Route path="/roadmapexplore" element={<RoadMapExplore />} />
                                 <Route path="/roadmap/:roadMapId/:title" element={<RoadMapDetails />} />
@@ -378,7 +373,7 @@ function App() {
                                 <Route path="/profile/:userId" element={<UserProfile />} />
                                 <Route path="/settings" element={<SettingsComponent/>} />
                                 <Route path="/notifications" element={<><NotificationPage /></>} />
-                                <Route path="/eventCreator" element={<EventCreator />} />
+                                <Route path="/eventCreator" element={<EventCreator/>} />
                                 <Route path="/material" element={<MaterialTest />} />
                             </Routes>
                         </Container>

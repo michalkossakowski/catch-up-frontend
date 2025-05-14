@@ -4,7 +4,7 @@ import { Alert, Button, Form, InputGroup, Container, Row, Col } from 'react-boot
 import { TaskContentDto } from '../../dtos/TaskContentDto';
 import { UserDto } from '../../dtos/UserDto';
 import { getTaskPresetsByPreset } from '../../services/taskPresetService';
-import { getTaskContents } from '../../services/taskContentService';
+import { getAllTaskContents } from '../../services/taskContentService';
 import { searchUsers } from '../../services/userService';
 import { TaskDto } from '../../dtos/TaskDto';
 import { assignTask } from '../../services/taskService';
@@ -44,7 +44,7 @@ const PresetAssign: React.FC = () => {
 
         try {
             setLoading(true);
-            const allTaskContents = await getTaskContents();
+            const allTaskContents = await getAllTaskContents();
             const presetTasks = await getTaskPresetsByPreset(Number(presetId));
             
             const matchingTasks = presetTasks

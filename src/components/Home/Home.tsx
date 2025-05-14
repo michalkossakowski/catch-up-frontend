@@ -1,19 +1,19 @@
+import React, { useState } from 'react';
 import './Home.css';
-import React from 'react';
 import HomeCard from './HomeCard/HomeCard';
 import './Home.css';
 import UpcomingEvents from '../Events/UpcomingEvents/UpcomingEvents';
 import { useAuth } from '../../Provider/authProvider';
 import UnassignedNewbiesList from '../HR/UnassignedNewbiesList';
 import TutorialComponent from '../Tutorial/Tutorial';
+import EventCreatorModal from '../Events/EventCreatorModal';
 
 interface HomeProps {
     role: string | null;
 }
-    
 export default function Home({ role }: HomeProps): React.ReactElement {
       const { user } = useAuth();
-
+      const [showEventModal, setShowEventModal] = useState(false);
     return(
         <>
             {role == null ? (
@@ -41,15 +41,16 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                                 title="Add Users" 
                                                 description="Add new users to your organization." 
                                                 iconName="bi-person-plus" 
-                                                path="/adminpanel"
+                                                path="/adduser"
                                             />
                             
                                             <HomeCard
-                                                title="Create Events" 
-                                                description="Create events for newbies, mentors and other staff." 
-                                                iconName="bi-calendar-event" 
-                                                path="/eventCreator"
-                                            />
+                                                    title="Create Events"
+                                                    description="Create events for newbies, mentors and other staff."
+                                                    iconName="bi-calendar-event"
+                                                    path="#"
+                                                    onClick={() => setShowEventModal(true)} 
+                                                />
                             
                                             <HomeCard
                                                 title="Assignments" 
@@ -96,7 +97,7 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                                 title="Add Users" 
                                                 description="Add new users to your organization." 
                                                 iconName="bi-person-plus" 
-                                                path="/adminpanel"
+                                                path="/adduser"
                                             />
 
                                             <HomeCard
@@ -107,11 +108,12 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                             />
 
                                             <HomeCard
-                                                title="Create Events" 
-                                                description="Create events for newbies, mentors and other staff." 
-                                                iconName="bi-calendar-event" 
-                                                path="/eventCreator"
-                                            />
+                                                    title="Create Events"
+                                                    description="Create events for newbies, mentors and other staff."
+                                                    iconName="bi-calendar-event"
+                                                    path="#"
+                                                    onClick={() => setShowEventModal(true)} 
+                                                />
 
                                             <HomeCard
                                                 title="Feedbacks" 
@@ -258,6 +260,12 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                             <UpcomingEvents />
                         </div>
                     </div>  
+
+                    <EventCreatorModal
+                        show={showEventModal}
+                        onClose={() => setShowEventModal(false)} // Zamknięcie modala
+                    />   
+
                     <TutorialComponent />     
                 </>  
             )}

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FeedbackDto } from '../../dtos/FeedbackDto';
 import { doneFeedback, deleteFeedback } from '../../services/feedbackService';
 import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 import MaterialItem from '../MaterialManager/MaterialItem';
+import './FeedbackDetailsDialog.css'
 
 interface FeedbackDetailsDialogProps {
   feedback: FeedbackDto;
@@ -10,7 +11,7 @@ interface FeedbackDetailsDialogProps {
   isNewbie: boolean;
   onClose: () => void;
   onResolveChange: (id: number, isResolved: boolean) => void;
-  onDelete: (id: number) => void;
+  onDelete: (feedback: FeedbackDto) => void;
 }
 
 const FeedbackDetailsDialog: React.FC<FeedbackDetailsDialogProps> = ({
@@ -22,6 +23,11 @@ const FeedbackDetailsDialog: React.FC<FeedbackDetailsDialogProps> = ({
   onDelete
 }) => {
   const [isResolved, setIsResolved] = useState(feedback.isResolved);
+  
+  useEffect(() => {
+    setIsResolved(feedback.isResolved);
+  }, [feedback.id, feedback.isResolved]);
+
   const handleResolve = async () => {
     if (feedback.id !== undefined) {
       await doneFeedback(feedback.id);
@@ -34,7 +40,7 @@ const FeedbackDetailsDialog: React.FC<FeedbackDetailsDialogProps> = ({
   const handleDelete = async () => {
     if (feedback.id !== undefined) {
       await deleteFeedback(feedback.id);
-      onDelete(feedback.id);
+      onDelete(feedback);
       onClose();
     }
   };
@@ -42,7 +48,7 @@ const FeedbackDetailsDialog: React.FC<FeedbackDetailsDialogProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    <div className="modal modal-feedback">
       <div className="modal-dialog modal-lg">
         <div className="modal-content">
           <div className="modal-header">
@@ -60,11 +66,14 @@ const FeedbackDetailsDialog: React.FC<FeedbackDetailsDialogProps> = ({
             </div>
             <p className="text-start h6 m-0"><strong>To:</strong> {feedback.userReceive}</p>
             <hr></hr>
+            <h5>Description</h5>
             <p>{feedback.description || "No description..."}</p>
             <hr></hr>
-            <p className='mb-0'><strong>{feedback.resourceName || 'No title'}</strong></p>
-            <p className='mt-0'>{ResourceTypeEnum[feedback.resourceType]}</p>
+            <h5>Resource Name</h5>
+            <p className='mb-0'>{feedback.resourceName || 'No title'} ({ResourceTypeEnum[feedback.resourceType]})</p>
             {feedback.materialId && (
+              <>
+                <hr></hr>
                 <MaterialItem 
                     materialId={feedback.materialId} 
                     enableDownloadFile={true} 
@@ -75,10 +84,11 @@ const FeedbackDetailsDialog: React.FC<FeedbackDetailsDialogProps> = ({
                     showMaterialName= {true}
                     nameTitle='Attachments'
                 />
+              </>
             )}
           </div>
           <div className="modal-footer">
-            <div className="d-flex justify-content-between w-100">
+            <div className="d-flex justify-content-end w-100">
               <div>
                 {!isNewbie && (
                   <button 
@@ -95,12 +105,6 @@ const FeedbackDetailsDialog: React.FC<FeedbackDetailsDialogProps> = ({
                   Delete
                 </button>
               </div>
-              <button 
-                className="btn btn-secondary" 
-                onClick={onClose}
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>

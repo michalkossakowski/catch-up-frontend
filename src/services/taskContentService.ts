@@ -1,9 +1,26 @@
 import axiosInstance from '../../axiosConfig';
 import { TaskContentDto } from '../dtos/TaskContentDto';
 
-export const getTaskContents = async (): Promise<TaskContentDto[]> => {
+// to jest stary getContents [deprecated]
+export const getAllTaskContents = async (): Promise<TaskContentDto[]> => {
     try {
-        const response = await axiosInstance.get<TaskContentDto[]>('/TaskContent/GetAll');
+        const response = await axiosInstance.get<{taskContents: TaskContentDto[], totalCount: number}>(
+            `/TaskContent/GetAll/${1}/${999999}` // temp change
+        );
+        return response.data.taskContents;
+    } catch (error: any) {
+        console.error('Błąd API:', error.response);
+        handleError('getTaskContents', error);
+        throw error;
+    }
+};
+
+// nowy getAll z paginacja - uzywac tego!
+export const getTaskContents = async (page: number = 1, pageSize: number = 5): Promise<{taskContents: TaskContentDto[], totalCount: number}> => {
+    try {
+        const response = await axiosInstance.get<{taskContents: TaskContentDto[], totalCount: number}>(
+            `/TaskContent/GetAll/${page}/${pageSize}`
+        );
         return response.data;
     } catch (error: any) {
         console.error('Błąd API:', error.response);

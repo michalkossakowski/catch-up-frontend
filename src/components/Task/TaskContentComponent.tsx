@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './TaskContentComponent.css';
 import { Accordion, Alert, Button, Form, InputGroup, Row, Col, Modal } from 'react-bootstrap';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
-import { getTaskContents, getByTitle, deleteTaskContent } from '../../services/taskContentService';
-import Material from '../Material/Material';
+import {getTaskContents, deleteTaskContent, getAllTaskContents} from '../../services/taskContentService';
 import TaskContentEdit from './TaskContentEdit';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { getCategories } from '../../services/categoryService';
@@ -12,10 +11,9 @@ import Loading from '../Loading/Loading';
 import { useNavigate } from 'react-router-dom';
 import { MaterialDto } from '../../dtos/MaterialDto';
 import materialService from '../../services/materialService';
-import MaterialItem from '../Material/DndMaterial/MaterialItem';
-import styles from '../Material/Material.module.css';
 import NotificationToast from '../Toast/NotificationToast';
 import ConfirmModal from '../Modal/ConfirmModal';
+import MaterialItem from '../MaterialManager/MaterialItem';
 
 interface TaskContentComponentProps {
     isAdmin: boolean;
@@ -50,7 +48,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     const navigate = useNavigate();
 
     useEffect(() => {
-        getAllTaskContents();
+        getTaskContents();
         getCategories()
             .then((data) => setCategories(data))
             .catch((error) => console.error('Error loading categories:', error));
@@ -60,9 +58,9 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
         filterTaskContents();
     }, [taskContents, searchTitle, selectedCategoryId, sortOption, sortDirection]);
 
-    const getAllTaskContents = () => {
+    const getTaskContents = () => {
         setLoading(true);
-        getTaskContents()
+        getAllTaskContents()
             .then((data) => {
                 setTaskContents(data);
                 setFilteredTaskContents(data);
@@ -145,7 +143,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
             try {
                 await removeTaskFromAllPresets(taskContentIdToDelete);
                 await deleteTaskContent(taskContentIdToDelete);
-                getAllTaskContents();
+                getTaskContents();
                 setToastMessage("Task content deleted successfully");
                 setToastColor("green");
                 setShowToast(true);
@@ -173,7 +171,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
         setToastColor("green");
         setShowToast(true);
         
-        getAllTaskContents();
+        getTaskContents();
         setShowEditModal(false);
         setEditedTaskContent(null);
     };
