@@ -54,7 +54,8 @@ function App() {
     const [theme, setTheme] = useState<'night' | 'day'>('night');
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { hasUnread, notifications } = useSelector((state: RootState) => state.notifications);
+    const hasUnread = useSelector((state: RootState) => state.notifications.hasUnread);
+    const notifications = useSelector((state: RootState) => state.notifications.notifications);
     const location = useLocation();
 
     const [showToast, setShowToast] = useState(false);
@@ -69,7 +70,6 @@ function App() {
         if (user?.id) {
             const userRole = await getRole(user.id);
             setRole(userRole);
-            console.log(`User role: "${userRole}"`);
             startConnection();
             handleNotifications();
         }
