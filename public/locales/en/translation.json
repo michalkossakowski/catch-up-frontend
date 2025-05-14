@@ -89,5 +89,23 @@
   "interests": "Interests",
   "languages": "Languages",
   "about": "About",
-  "no-users-found": "No users found"
+  "no-users-found": "No users found",
+  
+  "edit": "Edit",
+  "no-bio-available": "No bio available",
+  "no-interests-available": "No interests listed",
+  "no-languages-available": "No languages listed",
+  "not-specified": "Not specified",
+  "edit-profile": "Edit Profile",
+  "bio": "Bio",
+  "enter-bio": "Enter your bio",
+  "enter-department": "Enter your department",
+  "enter-location": "Enter your location",
+  "enter-phone": "Enter your phone number",
+  "enter-teams-username": "Enter your Teams username",
+  "enter-slack-username": "Enter your Slack username",
+  "enter-interests": "E.g., Programming, UI Design, Project Management",
+  "enter-languages": "E.g., English (Fluent), Polish (Native)",
+  "save": "Save",
+  "comma-separated": "comma separated"
 }

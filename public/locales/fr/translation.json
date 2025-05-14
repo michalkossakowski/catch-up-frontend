@@ -86,5 +86,23 @@
   "interests": "Intérêts",
   "languages": "Langues",
   "about": "À propos de moi",
-  "no-users-found": "Aucun utilisateur trouvé"
+  "no-users-found": "Aucun utilisateur trouvé",
+  
+  "edit": "Modifier",
+  "no-bio-available": "Aucune biographie disponible",
+  "no-interests-available": "Aucun intérêt listé",
+  "no-languages-available": "Aucune langue listée",
+  "not-specified": "Non spécifié",
+  "edit-profile": "Modifier le profil",
+  "bio": "Biographie",
+  "enter-bio": "Entrez votre biographie",
+  "enter-department": "Entrez votre département",
+  "enter-location": "Entrez votre emplacement",
+  "enter-phone": "Entrez votre numéro de téléphone",
+  "enter-teams-username": "Entrez votre nom d'utilisateur Teams",
+  "enter-slack-username": "Entrez votre nom d'utilisateur Slack",
+  "enter-interests": "Par ex., Programmation, Design UI, Gestion de projets",
+  "enter-languages": "Par ex., Anglais (Courant), Français (Natif)",
+  "save": "Enregistrer",
+  "comma-separated": "séparés par des virgules"
 }

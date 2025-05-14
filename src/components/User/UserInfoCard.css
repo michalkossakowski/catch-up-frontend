@@ -1,21 +1,10 @@
-.overlay {
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.overlay:hover {
-    background-color: rgba(0, 0, 0, 0.6);
-}
-
-.bi-camera-fill {
-    font-size: 1.5rem;
-    pointer-events: none;
-}
-
 .cursor-pointer {
     cursor: pointer;
+}
+
+.text-center.w-100 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
 }

@@ -31,7 +31,7 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({
 
     if (compact) {
     return (
-            <div className="text-center">
+            <div className="text-center w-100">
                 <div
                     className="position-relative d-inline-block mb-2"
                     onMouseEnter={() => canEdit && setIsHovering(true)}
@@ -47,7 +47,16 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({
                     />
                     {canEdit && isHovering && (
                         <div
-                            className="overlay position-absolute top-0 start-0 w-100 h-100 rounded-circle d-flex justify-content-center align-items-center"
+                            className="position-absolute rounded-circle d-flex justify-content-center align-items-center"
+                            style={{
+                                width: '120px',
+                                height: '120px',
+                                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                cursor: 'pointer',
+                                left: '50%',
+                                top: '50%',
+                                transform: 'translate(-50%, -50%)'
+                            }}
                             onClick={() => setShowUploadModal(true)}>
                             <i className="bi bi-camera-fill text-white fs-4"></i>
                         </div>
@@ -59,10 +68,12 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({
                 </h4>
                 
                 {position && (
-                    <div className="badge rounded-pill profile-role-badge">
-                        <i className="bi bi-person-badge me-1"></i>
-                        {position}
-                </div>
+                    <div className="profile-badge">
+                        <span className="badge rounded-pill profile-role-badge" style={{ width: 'auto', display: 'inline-block' }}>
+                            <i className="bi bi-person-badge me-1"></i>
+                            {position}
+                        </span>
+                    </div>
                 )}
 
                 {canEdit && (
@@ -94,7 +105,16 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({
                         />
                         {canEdit && isHovering && (
                             <div
-                                className="overlay position-absolute top-0 start-0 w-100 h-100 rounded-circle d-flex justify-content-center align-items-center"
+                                className="position-absolute rounded-circle d-flex justify-content-center align-items-center"
+                                style={{
+                                    width: '150px',
+                                    height: '150px',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                    cursor: 'pointer',
+                                    left: '50%',
+                                    top: '50%',
+                                    transform: 'translate(-50%, -50%)'
+                                }}
                                 onClick={() => setShowUploadModal(true)}>
                                 <i className="bi bi-camera-fill text-white fs-3"></i>
                             </div>
@@ -108,7 +128,7 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({
                         
                         {position && (
                             <div className="profile-badge">
-                                <span className="badge rounded-pill profile-role-badge">
+                                <span className="badge rounded-pill profile-role-badge" style={{ width: 'auto', display: 'inline-block' }}>
                                     <i className="bi bi-person-badge me-1"></i>
                                     {position}
                                 </span>
