@@ -106,7 +106,7 @@ function App() {
         if (notificationDropdownRef.current) {
             const dropdownToggle = notificationDropdownRef.current.querySelector('.dropdown-toggle');
             if (dropdownToggle) {
-                (dropdownToggle as HTMLElement).click(); // Symuluj kliknięcie, aby zwinąć dropdown
+                (dropdownToggle as HTMLElement).click(); 
             }
         }
     };
@@ -116,7 +116,7 @@ function App() {
         if (notificationDropdownRef.current) {
             const dropdownToggle = notificationDropdownRef.current.querySelector('.dropdown-toggle');
             if (dropdownToggle) {
-                (dropdownToggle as HTMLElement).click(); // Symuluj kliknięcie, aby zwinąć dropdown
+                (dropdownToggle as HTMLElement).click(); 
             }
         }
     };
@@ -154,7 +154,6 @@ function App() {
         setShowAIChat(prev => !prev);
     };
 
-    // Pobierz 5 najnowszych powiadomień
     const latestNotifications = notifications.slice(0, 5);
 
     return (
