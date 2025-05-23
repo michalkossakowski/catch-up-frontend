@@ -1,8 +1,35 @@
-.mentor-list-item {
+.user-list-item {
     transition: background-color 0.2s;
     cursor: pointer;
+    border-bottom: 1px solid var(--bs-border-color);
 }
 
-.mentor-list-item:hover {
-    background-color: #373b3e;
+.user-list-item:hover {
+    background-color: var(--bs-tertiary-bg);
+}
+
+.user-list-avatar {
+    border: 2px solid #5CD3B4;
+    background-color: var(--bs-tertiary-bg);
+}
+
+.user-list-arrow {
+    color: #DB91D1;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.user-list-item:hover .user-list-arrow {
+    opacity: 1;
+    transform: translateX(3px);
+}
+
+.user-list {
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-list-item:last-child {
+    border-bottom: none;
 }
