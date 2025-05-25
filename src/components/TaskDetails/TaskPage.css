@@ -23,14 +23,7 @@
     padding: 20px;
     border-radius: 8px;
 }
-.form-select{
-    width:10rem;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-    margin-bottom: 1rem;
-}
+
 .taskDetailsHeader {
     padding: 20px;
     border-radius: 8px;
@@ -40,6 +33,7 @@
     display: flex;
     flex-wrap: wrap; /* Zawijanie dla responsywności */
     gap: 20px; /* Odstęp między dolnymi kolumnami */
+    min-width: 550px; /* Minimalna szerokość kolumny */
 }
 .data-row {
     display: flex; /* Flexbox dla wyrównania etykiety i wartości */
@@ -54,6 +48,10 @@
 }
 .custom-dropdown-toggle {
     width: 120px;
+    color: black;
+}
+.custom-dropdown-item {
+    color: black;
 }
 @media (max-width: 768px) {
     .column {

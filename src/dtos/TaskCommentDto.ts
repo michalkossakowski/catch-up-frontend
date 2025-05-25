@@ -1,10 +1,10 @@
 export interface TaskCommentDto {
-    Id?: number;
-    TaskId?: number;
-    CreatorId?: string;
-    CreatorName?: string;
-    MaterialId?: number;
-    Content?: string;
-    CreationDate?: Date;
-    ModificaionDate?: Date;
+    id?: number;
+    taskId?: number;
+    creatorId?: string;
+    creatorName?: string;
+    materialId?: number;
+    content?: string;
+    creationDate?: Date;
+    modificationDate?: Date;
 }

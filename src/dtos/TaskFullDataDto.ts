@@ -10,4 +10,5 @@ export interface TaskFullDataDto {
     timeLogTotalCount: number;
     hours: number;
     minutes: number;
+    isTimeLogEnabled: boolean;
   }
