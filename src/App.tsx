@@ -7,17 +7,14 @@ import { useAuth } from './Provider/authProvider';
 import Badge from './components/Badge/BadgeComponent';
 import FaqComponent from './components/Faq/FaqComponent';
 import { Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import AdminPanel from "./components/Admin/AdminPanel.tsx";
+import AddUser from "./components/Admin/AddUser.tsx";
 import defaultUserIcon from './assets/defaultUserIcon.jpg';
 import UserProfile from './components/User/UserProfile.tsx';
 import RoadMapManage from './components/RoadMap/RoadMapManage';
 import LoginComponent from './components/Login/LoginComponent';
 import PresetManage from "./components/Preset/PresetManage.tsx";
 import TaskContentManage from './components/Task/TaskContentManage';
-import TaskContentCreate from './components/Task/TaskContentCreate';
-import TaskContentEditPage from './components/Task/TaskContentEditPage';
 import { Container, Nav, Navbar } from 'react-bootstrap';
-import EditMatList from './components/Material/DndMaterial/EditMatList';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
 import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
 import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
@@ -43,6 +40,7 @@ import { getNotifications, readNotification } from './services/notificationServi
 import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
 import { useTranslation } from "react-i18next";
+<<<<<<< HEAD
 import "./i18n.ts";
 import HRHomePage from './components/HR/HRHomePage.tsx';
 import NewbieHomePage from './components/Newbie/NewbieHomePage.tsx';
@@ -50,6 +48,15 @@ import MentorHomePage from './components/Mentor/MentorHomePage.tsx';
 import AdminHomePage from './components/Admin/AdminHomePage.tsx';
 import EventCreator from './components/HR/EventCreator.tsx';
 import TaskPage from './components/TaskDetails/TaskPage.tsx';
+=======
+import {availableLanguages, changeLanguage, normalizeLanguage} from "./i18n.ts";
+import EventCreator from './components/Events/EventCreator.tsx';
+import RoadMapExplore from './components/RoadMap/RoadMapExplore.tsx';
+import RoadMapDetails from './components/RoadMap/RoadMapDetails.tsx';
+import Schooling from './components/Schooling/Schooling.tsx';
+import SettingsComponent from './components/Settings/Settings.tsx';
+
+>>>>>>> main
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
@@ -57,7 +64,8 @@ function App() {
     const [theme, setTheme] = useState<'night' | 'day'>('night');
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { hasUnread, notifications } = useSelector((state: RootState) => state.notifications);
+    const hasUnread = useSelector((state: RootState) => state.notifications.hasUnread);
+    const notifications = useSelector((state: RootState) => state.notifications.notifications);
     const location = useLocation();
 
     const [showToast, setShowToast] = useState(false);
@@ -67,31 +75,6 @@ function App() {
     const notificationDropdownRef = useRef<HTMLDivElement>(null);
 
     const { t, i18n } = useTranslation();
-    const availableLanguages: { [key: string]: string } = {
-        'en': "English",
-        'pl': "Polski",
-        'fr': "Français",
-        'de': "Deutsch",
-        'es': "Español",
-    };
-
-    const changeLanguage = (lng: string) => {
-        i18n.changeLanguage(lng);
-        if (!availableLanguages.hasOwnProperty(lng)) {
-            i18n.changeLanguage("en");
-            return "en";
-        }
-        localStorage.setItem("i18nextLng", lng);
-    };
-
-    const normalizeLanguage = (lng: string) => {
-        if (!lng) return "en";
-        if (!availableLanguages.hasOwnProperty(lng)) {
-            i18n.changeLanguage("en");
-            return "en";
-        }
-        return lng.split("-")[0];
-    };
 
     const fetchRole = async () => {
         if (user?.id) {
@@ -99,21 +82,6 @@ function App() {
             setRole(userRole);
             startConnection();
             handleNotifications();
-            if (location.pathname === '/') {
-                if (userRole === 'HR') {
-                    navigate('/hrhomepage');
-                } else if (userRole === 'Newbie') {
-                    navigate('/newbiehomepage');
-                }
-                else if (userRole === 'Mentor') {
-                    navigate('/mentorhomepage');
-                }
-                else if (userRole === 'Admin') {
-                    navigate('/adminhomepage');
-                } else {
-                    navigate('/');
-                }
-            }
         }
     };
 
@@ -148,7 +116,7 @@ function App() {
         if (notificationDropdownRef.current) {
             const dropdownToggle = notificationDropdownRef.current.querySelector('.dropdown-toggle');
             if (dropdownToggle) {
-                (dropdownToggle as HTMLElement).click(); // Symuluj kliknięcie, aby zwinąć dropdown
+                (dropdownToggle as HTMLElement).click(); 
             }
         }
     };
@@ -158,11 +126,10 @@ function App() {
         if (notificationDropdownRef.current) {
             const dropdownToggle = notificationDropdownRef.current.querySelector('.dropdown-toggle');
             if (dropdownToggle) {
-                (dropdownToggle as HTMLElement).click(); // Symuluj kliknięcie, aby zwinąć dropdown
+                (dropdownToggle as HTMLElement).click(); 
             }
         }
     };
-
 
     const isManageToolsActive = [
         "/taskmanage",
@@ -172,9 +139,10 @@ function App() {
         "/editMatList"
     ].some(path => location.pathname.startsWith(path));
 
-    const isAdminToolsActive = [
-        "/admin",
-        "/employesassignment"
+    const isHRToolsActive = [
+        "/adduser",
+        "/employesassignment",
+        "/eventCreator",
     ].some(path => location.pathname.startsWith(path));
 
     const toggleTheme = () => {
@@ -196,7 +164,6 @@ function App() {
         setShowAIChat(prev => !prev);
     };
 
-    // Pobierz 5 najnowszych powiadomień
     const latestNotifications = notifications.slice(0, 5);
 
     return (
@@ -211,27 +178,19 @@ function App() {
                         <div className={`left-sidebar ${isSidebarVisible ? "visible" : "hidden"}`}>
                             <Navbar expand="lg" className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-navbar">
                                 <Navbar.Brand href="/" className="nav-brand">catchUp</Navbar.Brand>
-                                <Nav className="flex-column w-100">
-                                    <NavLink
-                                        to={
-                                            role === 'HR'
-                                                ? '/hrhomepage'
-                                                : role === 'Newbie'
-                                                    ? '/newbiehomepage'
-                                                    : role === 'Mentor'
-                                                        ? '/mentorhomepage'
-                                                        : role === 'Admin'
-                                                            ? '/adminhomepage'
-                                                            : '/'
-                                        }
-                                        className="nav-link"
-                                    >
+                                <Nav className="flex-column w-100" data-tour="left-sidebar">
+                                    <NavLink to='/' className="nav-link">
                                         <i className="bi bi-house-door" /> <span>{t('home')}</span>
                                     </NavLink>
                                     {role === "Newbie" && (
+                                        <>
                                         <NavLink to="/tasks" className="nav-link left-sidebar">
                                             <i className="bi bi-list-task" /> <span>{t('tasks')}</span>
                                         </NavLink>
+                                        <NavLink to="/roadmapexplore" className="nav-link left-sidebar">
+                                            <i className="bi bi-compass" /> <span>{t('roadmaps')}</span>
+                                        </NavLink>
+                                        </>
                                     )}
                                     <NavLink to="/schoolinglist" className="nav-link">
                                         <i className="bi bi-book" /> <span>{t('schoolings')}</span>
@@ -239,13 +198,15 @@ function App() {
                                     <NavLink to="/feedbacks" className="nav-link">
                                         <i className="bi bi-arrow-clockwise" /> <span>{t('feedbacks')}</span>
                                     </NavLink>
-                                    <NavLink to="/badges" className="nav-link">
-                                        <i className="bi bi-shield" /> <span>{t('badges')}</span>
-                                    </NavLink>
-                                    <NavLink to="/faq" className="nav-link">
+                                    {role != "Newbie" &&(
+                                        <NavLink to="/badges" className="nav-link">
+                                            <i className="bi bi-shield" /> <span>{t('badges')}</span>
+                                        </NavLink>
+                                    )}
+                                    <NavLink to="/faq" className="nav-link" data-tour="faq-nav-link">
                                         <i className="bi bi-question-circle" /> <span>{t('faq')}</span>
                                     </NavLink>
-                                    {role !== "Newbie" && role != null && (
+                                    {(role == "Mentor" || role == "Admin") && (
                                         <NavDropdown
                                             className={isManageToolsActive ? "navdropdown-active" : ""}
                                             title={<><i className="bi bi-pencil-square" /> <span>{t('manage-tools')}</span></>}
@@ -266,30 +227,17 @@ function App() {
                                                 <i className="bi bi-compass" /> {t('road-maps')}
                                             </NavDropdown.Item>
                                             <NavDropdown.Divider />
-                                            <NavDropdown.Item as={NavLink} to="/editMatList" className="nav-dropdown-item">
-                                                <i className="bi bi-tools" /> {t('material-lists')}
-                                            </NavDropdown.Item>
                                         </NavDropdown>
                                     )}
-                                    {role === "Admin" && (
+                                    {(role === "Admin" || role == "HR")  && (
                                         <NavDropdown
-                                            className={isAdminToolsActive ? "navdropdown-active" : ""}
-                                            title={<><i className="bi bi-person-lock" /> <span>{t('admin-tools')}</span></>}
-                                        >
-                                            <NavDropdown.Item as={NavLink} to="/adminpanel" className="nav-dropdown-item">
-                                                <i className="bi bi-shield-lock" /> {t('panel')}
-                                            </NavDropdown.Item>
-                                            <NavDropdown.Divider />
-                                            <NavDropdown.Item as={NavLink} to="/employesassignment" className="nav-dropdown-item">
-                                                <i className="bi bi-people" /> {t('assignment')}
-                                            </NavDropdown.Item>
-                                        </NavDropdown>
-                                    )}
-                                    {role === "HR" && (
-                                        <NavDropdown
-                                            className={isAdminToolsActive ? "navdropdown-active" : ""}
+                                            className={isHRToolsActive ? "navdropdown-active" : ""}
                                             title={<><i className="bi bi-person-lock" /> <span>HR Tools</span></>}
                                         >
+                                            <NavDropdown.Item as={NavLink} to="/adduser" className="nav-dropdown-item">
+                                                <i className="bi bi-person-plus" /> {t('Add User')}
+                                            </NavDropdown.Item>
+                                            <NavDropdown.Divider />
                                             <NavDropdown.Item as={NavLink} to="/employesassignment" className="nav-dropdown-item">
                                                 <i className="bi bi-people" /> Assignment
                                             </NavDropdown.Item>
@@ -301,7 +249,7 @@ function App() {
                                     )}
                                 </Nav>
                                 <footer className="mt-auto">
-                                    <p className="text-center text-muted small">© 2024 Made by UnhandledException</p>
+                                    <p className="text-center text-muted small">© 2024-2025 Made by UnhandledException</p>
                                 </footer>
                             </Navbar>
                         </div>
@@ -310,13 +258,14 @@ function App() {
                             title="Show/hide sidebar"
                             className="btn-secondary toggle-sidebar-btn"
                             onClick={() => setSidebarVisible(!isSidebarVisible)}
+                            data-tour="hide-sidebar"
                         >
                             {isSidebarVisible ? <i className="bi bi-arrow-left-square" /> : <i className="bi bi-arrow-right-square" />}
                         </Button>
 
                         <Container fluid className={`main-content ${isSidebarVisible ? "sidebar-visible" : "sidebar-hidden"}`}>
                             <Navbar expand="lg" className="bg-body-tertiary navbar-horizontal">
-                                <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap">
+                                <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap" data-tour="top-navbar">
                                     <Button onClick={toggleTheme} className='theme-btn' title='Dark/Light theme'>
                                         {theme === 'night' ? <i className="bi bi-brightness-high" /> : <i className="bi bi-moon" />}
                                     </Button>
@@ -393,7 +342,7 @@ function App() {
                                         </div>
                                     </NavDropdown>
                                     <NavLink title="Settings" to="/settings" className="nav-link"><i className="bi bi-gear" /></NavLink>
-                                    <NavLink title="Logout" to="/logout" onClick={logout} className="nav-link">
+                                    <NavLink title="Logout" to="/logout" onClick={logout} className="nav-link" data-tour="top-navbar-logout">
                                         <i className="bi bi-box-arrow-right" />
                                     </NavLink>
                                 </Nav>
@@ -404,23 +353,18 @@ function App() {
                                 </Alert>
                             )}
                             <Routes>
-                                <Route path="/" element={<Home />} />
-                                <Route path="/hrhomepage" element={<HRHomePage />} />
-                                <Route path="/newbiehomepage" element={<NewbieHomePage />} />
-                                <Route path="/adminhomepage" element={<AdminHomePage />} />
-                                <Route path="/mentorhomepage" element={<MentorHomePage />} />
+                                <Route path="/" element={<Home role={role}/>} /> 
                                 <Route path="/tasks" element={<TaskDashboard />} />
-                                <Route path="/adminpanel" element={<AdminPanel isAdmin={role === "Admin"} />} />
+                                <Route path="/adduser" element={<AddUser/>}/>
                                 <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
                                 <Route path="/employesassignment" element={<EmployesAssignmentSelector />} />
                                 <Route path="/taskmanage" element={<TaskManager />} />
                                 <Route path="/taskcontentmanage" element={<TaskContentManage />} />
                                 <Route path="/taskcontent" element={<TaskContentManage />} />
-                                <Route path="/taskcontent/create" element={<TaskContentCreate />} />
-                                <Route path="/taskcontent/edit/:id" element={<TaskContentEditPage />} />
                                 <Route path="/taskcontent/details/:id" element={<TaskContentDetails />} />
-                                <Route path="/editmatlist" element={<EditMatList />} />
                                 <Route path="/roadmapmanage" element={<RoadMapManage />} />
+                                <Route path="/roadmapexplore" element={<RoadMapExplore />} />
+                                <Route path="/roadmap/:roadMapId/:title" element={<RoadMapDetails />} />
                                 <Route path="/feedbacks" element={<FeedbackList />} />
                                 <Route path="/badges" element={<Badge />} />
                                 <Route path="/presetmanage" element={<PresetManage />} />
@@ -429,15 +373,17 @@ function App() {
                                     path="/schoolinglist"
                                     element={role === 'Admin' || role === 'Mentor' ? <SchoolingListMentor /> : <SchoolingListNewbie />}
                                 />
+                                <Route path="/schooling/:schoolingId/part/:partId" element={<Schooling />} />
+                                <Route path="/schooling/:schoolingId/" element={<Schooling />} />
                                 <Route path="/schoolingpartedit/:id?" element={<SchoolingPartEdit />} />
                                 <Route path="/schoolinglistparts" element={<SchoolingListParts />} />
                                 <Route path="/preset/assign/:presetId" element={<PresetAssign />} />
                                 <Route path="/schoolingdetails" element={<SchoolingDetails />} />
                                 <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
                                 <Route path="/profile/:userId" element={<UserProfile />} />
-                                <Route path="/settings" element={<><h1>Settings</h1></>} />
+                                <Route path="/settings" element={<SettingsComponent/>} />
                                 <Route path="/notifications" element={<><NotificationPage /></>} />
-                                <Route path="/eventCreator" element={<EventCreator />} />
+                                <Route path="/eventCreator" element={<EventCreator/>} />
                                 <Route path="/material" element={<MaterialTest />} />
                                 <Route path="/task/:id" element={<TaskPage />} />
                             </Routes>
@@ -452,7 +398,7 @@ function App() {
                             onClose={() => setShowToast(false)}
                         />
                     </div>
-                    <Button variant="primary" className='ai-button' title="AI Assistant" onClick={handleToggleAIChat}>
+                    <Button variant="primary" className='ai-button' title="AI Assistant" data-tour="ai-assistant" onClick={handleToggleAIChat}>
                         <i className="bi bi-stars" style={{ fontSize: '1.5rem' }} />
                     </Button>
                     <AIAssistant show={showAIChat} onHide={() => setShowAIChat(false)} />

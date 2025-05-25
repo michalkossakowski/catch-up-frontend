@@ -4,7 +4,12 @@ import { Dropdown } from 'react-bootstrap';
 import { FullTaskDto } from '../../dtos/FullTaskDto';
 import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 import {AddFeedbackDialog} from "../Feedback/AddFeedbackDialog.tsx";
+<<<<<<< HEAD
 import { useNavigate } from 'react-router-dom';
+=======
+import {StatusEnum} from "../../Enums/StatusEnum.ts";
+
+>>>>>>> main
 interface TaskCardProps {
     task: FullTaskDto;
     onEditClick: (task: FullTaskDto) => void;
@@ -20,6 +25,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
                                                onEditClick,
                                                onDeleteClick,
                                                categoryName,
+                                               role,
                                                isDisabled = false,
                                                isLoading = false
                                            }) => {
@@ -31,7 +37,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
         collect: (monitor : any) => ({
             isDragging: !!monitor.isDragging(),
         }),
-        canDrag: !isDisabled
+        canDrag: !isDisabled || task.status === StatusEnum.ReOpen
     });
 
     const formatDate = (dateString?: string) => {
@@ -43,11 +49,11 @@ const TaskCard: React.FC<TaskCardProps> = ({
 
     const dragRef = useCallback(
         (node: HTMLDivElement | null) => {
-            if (node && !isDisabled) {
+            if (node && (!isDisabled || task.status === StatusEnum.ReOpen)) {
                 drag(node);
             }
         },
-        [drag, isDisabled]
+        [drag, isDisabled, task.status]
     );
 
     const truncateText = (text: string, maxLength: number) => {
@@ -58,10 +64,10 @@ const TaskCard: React.FC<TaskCardProps> = ({
     return (
         <div
             ref={dragRef}
-            className={`task-card card mb-2 shadow-sm ${isDragging ? 'opacity-50' : ''} ${isDisabled ? 'opacity-50' : ''}`}
+            className={`task-card card mb-2 shadow-sm ${isDragging ? 'opacity-50' : ''} ${isDisabled && task.status !== StatusEnum.ReOpen ? 'opacity-50' : ''}`}
             style={{
-                cursor: isDisabled ? 'not-allowed' : 'grab',
-                pointerEvents: isDisabled ? 'none' : 'auto',
+                cursor: isDisabled && task.status !== StatusEnum.ReOpen ? 'not-allowed' : 'grab',
+                pointerEvents: isDisabled && task.status !== StatusEnum.ReOpen ? 'none' : 'auto',
             }}
             onClick={() => {
                 navigate(`/task/${task.id}`);
@@ -90,12 +96,15 @@ const TaskCard: React.FC<TaskCardProps> = ({
                             <i className="bi bi-three-dots-vertical"></i>
                         </Dropdown.Toggle>
                         <Dropdown.Menu style={{zIndex: 9999}}>
-                            <Dropdown.Item onClick={() => onEditClick(task)}>
-                                <i className="bi bi-pencil me-2"></i>Edit
-                            </Dropdown.Item>
-                            <Dropdown.Item onClick={onDeleteClick}>
-                                <i className="bi bi-trash me-2"></i>Delete
-                            </Dropdown.Item>
+                            {role == "Admin" && (
+                                <>
+                                    <Dropdown.Item onClick={() => onEditClick(task)}>
+                                        <i className="bi bi-pencil me-2"></i>Edit
+                                    </Dropdown.Item><Dropdown.Item onClick={onDeleteClick}>
+                                    <i className="bi bi-trash me-2"></i>Delete
+                                </Dropdown.Item>
+                                </>
+                            )}
                             <Dropdown.Item
                                 onClick={() => {
                                     setShowFeedbackDialog(true);

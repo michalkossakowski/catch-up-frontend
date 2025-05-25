@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './TaskContentComponent.css';
-import { Accordion, Alert, Button, Form, InputGroup, Row, Col } from 'react-bootstrap';
+import { Accordion, Alert, Button, Form, InputGroup, Row, Col, Modal } from 'react-bootstrap';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
-import { getTaskContents, getByTitle, deleteTaskContent } from '../../services/taskContentService';
-import Material from '../Material/Material';
+import {getTaskContents, deleteTaskContent, getAllTaskContents} from '../../services/taskContentService';
 import TaskContentEdit from './TaskContentEdit';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { getCategories } from '../../services/categoryService';
@@ -12,8 +11,9 @@ import Loading from '../Loading/Loading';
 import { useNavigate } from 'react-router-dom';
 import { MaterialDto } from '../../dtos/MaterialDto';
 import materialService from '../../services/materialService';
-import MaterialItem from '../Material/DndMaterial/MaterialItem';
-import styles from '../Material/Material.module.css';
+import NotificationToast from '../Toast/NotificationToast';
+import ConfirmModal from '../Modal/ConfirmModal';
+import MaterialItem from '../MaterialManager/MaterialItem';
 
 interface TaskContentComponentProps {
     isAdmin: boolean;
@@ -34,11 +34,21 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     const [sortOption, setSortOption] = useState<string>('title');
     const [sortDirection, setSortDirection] = useState<string>('asc');
     const [expandedMaterials, setExpandedMaterials] = useState<{[key: number]: MaterialDto}>({});
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastColor, setToastColor] = useState('');
+    
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editedTaskContent, setEditedTaskContent] = useState<TaskContentDto | null>(null);
+    
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [confirmMessage, setConfirmMessage] = useState('');
+    const [taskContentIdToDelete, setTaskContentIdToDelete] = useState<number | null>(null);
     
     const navigate = useNavigate();
 
     useEffect(() => {
-        getAllTaskContents();
+        getTaskContents();
         getCategories()
             .then((data) => setCategories(data))
             .catch((error) => console.error('Error loading categories:', error));
@@ -48,9 +58,9 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
         filterTaskContents();
     }, [taskContents, searchTitle, selectedCategoryId, sortOption, sortDirection]);
 
-    const getAllTaskContents = () => {
+    const getTaskContents = () => {
         setLoading(true);
-        getTaskContents()
+        getAllTaskContents()
             .then((data) => {
                 setTaskContents(data);
                 setFilteredTaskContents(data);
@@ -122,37 +132,48 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
         filterTaskContents();
     };
 
-    const handleDelete = async (taskContentId: number) => {
-        if (window.confirm("Are you sure you want to delete this TaskContent?")) {
-            try {
-                await removeTaskFromAllPresets(taskContentId);
-                await deleteTaskContent(taskContentId);
-                getAllTaskContents();
+    const initDelete = (taskContentId: number) => {
+        setTaskContentIdToDelete(taskContentId);
+        setConfirmMessage("Are you sure you want to delete this TaskContent?");
+        setShowConfirmModal(true);
+    };
 
+    const handleDelete = async () => {
+        if (taskContentIdToDelete) {
+            try {
+                await removeTaskFromAllPresets(taskContentIdToDelete);
+                await deleteTaskContent(taskContentIdToDelete);
+                getTaskContents();
+                setToastMessage("Task content deleted successfully");
+                setToastColor("green");
+                setShowToast(true);
             } catch (error: any) {
                 console.error('Error in deletion process:', error);
                 setShowError(true);
                 setAlertMessage('Error deleting TaskContent: ' + error.message);
+                setToastMessage('Error deleting task content');
+                setToastColor('red');
+                setShowToast(true);
             }
+            setTaskContentIdToDelete(null);
+            setShowConfirmModal(false);
         }
     };
 
-    const editClick = (taskContentId: number) => {
-        navigate(`/taskcontent/edit/${taskContentId}`);
+    const initEdit = (taskContentId: number) => {
+        const foundTaskContent = filteredTaskContents.find(content => content.id === taskContentId);
+        setEditedTaskContent(foundTaskContent || null);
+        setShowEditModal(true);
     };
 
-    const handleTaskContentUpdated = async () => {
-        try {
-            const updatedCategories = await getCategories();
-            setCategories(updatedCategories);
-        } catch (error) {
-            console.error('Error refreshing categories:', error);
-        }
-        getAllTaskContents();
-    };
-
-    const goToCreateTaskContent = () => {
-        navigate('/taskcontent/create');
+    const handleTaskContentUpdated = (updatedTaskContent: TaskContentDto) => {
+        setToastMessage(`Task content successfully ${editedTaskContent ? 'edited' : 'added'}!`);
+        setToastColor("green");
+        setShowToast(true);
+        
+        getTaskContents();
+        setShowEditModal(false);
+        setEditedTaskContent(null);
     };
 
     const getCategoryName = (categoryId: number) => {
@@ -308,13 +329,13 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                                                 <div className="admin-buttons">
                                                     <Button
                                                         variant="outline-success"
-                                                        onClick={() => editClick(taskContent.id)}
+                                                        onClick={() => initEdit(taskContent.id)}
                                                         className="me-2">
                                                         Edit
                                                     </Button>
                                                     <Button
                                                         variant="danger"
-                                                        onClick={() => handleDelete(taskContent.id)}>
+                                                        onClick={() => initDelete(taskContent.id)}>
                                                         Delete
                                                     </Button>
                                                 </div>
@@ -328,13 +349,49 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                     
                     {isAdmin && (
                         <div className="d-grid gap-2 col-6 mx-auto">
-                            <Button variant="success" onClick={() => goToCreateTaskContent()}>
+                            <Button variant="success" onClick={() => {setShowEditModal(true); setEditedTaskContent(null)}}>
                                 Create new task content
                             </Button>
                         </div>
                     )}
                 </div>
             )}
+            
+            <NotificationToast
+                show={showToast}
+                title="Task Content Operation"
+                message={toastMessage}
+                color={toastColor}
+                onClose={() => setShowToast(false)}
+            />
+            
+            <ConfirmModal 
+                show={showConfirmModal} 
+                title="Task Content Operation"
+                message={confirmMessage}
+                onConfirm={handleDelete} 
+                onCancel={() => setShowConfirmModal(false)} 
+            />
+            
+            <Modal 
+                show={showEditModal} 
+                onHide={() => {setShowEditModal(false); setEditedTaskContent(null)}} 
+                size="lg" 
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>{editedTaskContent ? 'Edit Task Content' : 'Add new Task Content'}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <TaskContentEdit 
+                        isEditMode={!!editedTaskContent} 
+                        taskContent={editedTaskContent || undefined} 
+                        onTaskContentEdited={handleTaskContentUpdated}
+                        categories={categories}
+                        onCancel={() => {setShowEditModal(false); setEditedTaskContent(null)}}
+                    />
+                </Modal.Body>
+            </Modal>
         </section>
     );
 };

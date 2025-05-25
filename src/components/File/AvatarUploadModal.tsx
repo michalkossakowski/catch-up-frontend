@@ -156,7 +156,7 @@ const AvatarUploadModal: React.FC<AvatarUploadModalProps> = ({ show, onHide }) =
                         bi bi-camera-fill fs-1 mb-4
                         ${isDragActive ? 'text-primary' : 'text-secondary'}
                         transition-colors duration-200
-                    `} />
+                    `}/>
                     <p className={`
                         mb-2 text-sm 
                         ${isDragActive ? 'text-primary' : 'text-gray-500'}
@@ -168,7 +168,7 @@ const AvatarUploadModal: React.FC<AvatarUploadModalProps> = ({ show, onHide }) =
                     <input
                         type="file"
                         id="avatar-upload"
-                        className="hidden"
+                        className="absolute opacity-0 w-0 h-0"
                         accept="image/png,image/jpeg,image/gif"
                         onChange={handleFileSelect}
                     />

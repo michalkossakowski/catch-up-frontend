@@ -4,13 +4,14 @@ import { Alert, Button, Form, InputGroup, Container, Row, Col } from 'react-boot
 import { TaskContentDto } from '../../dtos/TaskContentDto';
 import { UserDto } from '../../dtos/UserDto';
 import { getTaskPresetsByPreset } from '../../services/taskPresetService';
-import { getTaskContents } from '../../services/taskContentService';
+import { getAllTaskContents } from '../../services/taskContentService';
 import { searchUsers } from '../../services/userService';
 import { TaskDto } from '../../dtos/TaskDto';
 import { assignTask } from '../../services/taskService';
 import './PresetAssign.css';
 import { StatusEnum } from '../../Enums/StatusEnum';
 import { useAuth } from '../../Provider/authProvider';
+import NotificationToast from '../Toast/NotificationToast';
 
 const PresetAssign: React.FC = () => {
     const { presetId } = useParams<{ presetId: string }>();
@@ -21,6 +22,9 @@ const PresetAssign: React.FC = () => {
     const [searchPhrase, setSearchPhrase] = useState('');
     const [users, setUsers] = useState<UserDto[]>([]);
     const [selectedUser, setSelectedUser] = useState<UserDto | null>(null);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastColor, setToastColor] = useState('');
 
     const { user } = useAuth();
 
@@ -31,13 +35,16 @@ const PresetAssign: React.FC = () => {
     const loadPresetTasks = async () => {
         if (!presetId) {
             setError('No preset ID provided');
+            setToastMessage('Failed to load preset tasks');
+            setToastColor('red');
+            setShowToast(true);
             setLoading(false);
             return;
         }
 
         try {
             setLoading(true);
-            const allTaskContents = await getTaskContents();
+            const allTaskContents = await getAllTaskContents();
             const presetTasks = await getTaskPresetsByPreset(Number(presetId));
             
             const matchingTasks = presetTasks
@@ -46,8 +53,12 @@ const PresetAssign: React.FC = () => {
 
             setTasks(matchingTasks);
             setError(null);
-        } catch (error) {
+            
+        } catch (error: any) {
             setError('Failed to load preset tasks');
+            setToastMessage('Failed to load preset tasks');
+            setToastColor('red');
+            setShowToast(true);
             console.error('Error loading preset tasks:', error);
         } finally {
             setLoading(false);
@@ -59,15 +70,30 @@ const PresetAssign: React.FC = () => {
             try {
                 const foundUsers = await searchUsers(searchPhrase);
                 setUsers(foundUsers);
-            } catch (error) {
+                
+            } catch (error: any) {
                 console.error('Error searching users:', error);
+                setToastMessage('Error searching users');
+                setToastColor('red');
+                setShowToast(true);
             }
         }
     };
 
     const handleAssignPreset = async () => {
-        if (!selectedUser) {
-            setError('Please select a user');
+        if (!selectedUser || !selectedUser.id) {
+            setError('Please select a valid user');
+            setToastMessage('Please select a valid user');
+            setToastColor('red');
+            setShowToast(true);
+            return;
+        }
+
+        if (!user?.id) {
+            setError('User must be logged in');
+            setToastMessage('User must be logged in');
+            setToastColor('red');
+            setShowToast(true);
             return;
         }
 
@@ -80,25 +106,34 @@ const PresetAssign: React.FC = () => {
                 deadline.setDate(deadline.getDate() + 14);
 
                 const taskDto: TaskDto = {
-                    NewbieId: selectedUser.id,
-                    AssigningId: user?.id,
-                    TaskContentId: task.id,
-                    RoadMapPointId: undefined,
-                    Status: StatusEnum.ToDo,
-                    AssignmentDate: now.toISOString(),
-                    FinalizationDate: undefined,
-                    Deadline: deadline.toISOString(),
-                    SpendTime: 0,
-                    Priority: 2,
-                    Rate: undefined
+                    newbieId: selectedUser.id,
+                    assigningId: user.id,
+                    taskContentId: task.id,
+                    roadMapPointId: null,
+                    status: StatusEnum.ToDo,
+                    assignmentDate: now.toISOString(),
+                    finalizationDate: null,
+                    deadline: deadline.toISOString(),
+                    spendTime: 0,
+                    priority: 2,
+                    rate: null
                 };
 
                 await assignTask(taskDto);
             }
 
-            navigate('/presetmanage?success=assigned');
-        } catch (error) {
+            setToastMessage('Tasks successfully assigned');
+            setToastColor('green');
+            setShowToast(true);
+            
+            setTimeout(() => {
+                navigate('/presetmanage?success=assigned');
+            }, 1500);
+        } catch (error: any) {
             setError('Failed to assign preset');
+            setToastMessage('Failed to assign preset');
+            setToastColor('red');
+            setShowToast(true);
             console.error('Error assigning preset:', error);
         } finally {
             setLoading(false);
@@ -121,11 +156,15 @@ const PresetAssign: React.FC = () => {
                         {error && <Alert variant="danger">{error}</Alert>}
                         <div className="card">
                             <ul className="list-group list-group-flush">
-                                {tasks.map((task, index) => (
-                                    <li key={task.id} className="list-group-item">
-                                        {index + 1}. {task.title}
-                                    </li>
-                                ))}
+                                {tasks.length > 0 ? (
+                                    tasks.map((task, index) => (
+                                        <li key={task.id} className="list-group-item">
+                                            {index + 1}. {task.title}
+                                        </li>
+                                    ))
+                                ) : (
+                                    <li className="list-group-item">No tasks in this preset</li>
+                                )}
                             </ul>
                         </div>
                     </section>
@@ -148,16 +187,20 @@ const PresetAssign: React.FC = () => {
 
                         <div className="card">
                             <ul className="list-group list-group-flush">
-                                {users.map(user => (
-                                    <li 
-                                        key={user.id} 
-                                        className={`list-group-item ${selectedUser?.id === user.id ? 'active' : ''}`}
-                                        onClick={() => setSelectedUser(user)}
-                                        style={{ cursor: 'pointer' }}
-                                    >
-                                        {user.name} {user.surname} ({user.email})
-                                    </li>
-                                ))}
+                                {users.length > 0 ? (
+                                    users.map(user => (
+                                        <li 
+                                            key={user.id} 
+                                            className={`list-group-item ${selectedUser?.id === user.id ? 'active' : ''}`}
+                                            onClick={() => setSelectedUser(user)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            {user.name} {user.surname} ({user.email})
+                                        </li>
+                                    ))
+                                ) : (
+                                    <li className="list-group-item">No users found</li>
+                                )}
                             </ul>
                         </div>
                     </section>
@@ -180,6 +223,14 @@ const PresetAssign: React.FC = () => {
                     Assign Preset
                 </Button>
             </div>
+            
+            <NotificationToast
+                show={showToast}
+                title="Preset Assignment"
+                message={toastMessage}
+                color={toastColor}
+                onClose={() => setShowToast(false)}
+            />
         </Container>
     );
 };

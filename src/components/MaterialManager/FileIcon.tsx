@@ -1,5 +1,5 @@
 import { t } from 'i18next';
-import styles from './material.module.css';
+import styles from './material.module.scss';
 
 interface FileIconProps {
     fileName: string;

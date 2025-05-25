@@ -26,7 +26,7 @@ yellow
 
 /* Alert Styles */
 .api-alert{
-    max-width: 350px;
+    max-width: 400px;
     margin: 20px auto 20px  auto;
 }
 .alert-info {
@@ -447,10 +447,10 @@ select option:checked {
     border-color: #DB91D1 !important;
 }
 
-
+/* notifications */
 .notification-card-nav{
     width: 360px !important;
-    border: 1px rgb(62, 62, 62) solid;
+    border: 1px rgba(100, 100, 100, 0.322) solid;
     border-radius: 10px;
     padding: 10px;
     margin: 2px;
@@ -492,4 +492,23 @@ font-size: 0.8rem;
 .notifications-dropdown .notification-card-container{
     padding: 5px; 
     position: relative;
+}
+
+.form-check-input:checked {
+    background-color: #DB91D1;
+    border-color: #DB91D1;
+}
+
+.form-check-input:focus {
+    border-color: #DB91D1;
+    outline: 0;
+    box-shadow: 0 0 0 .25rem rgba(238, 121, 232, 0.25);
+}
+
+.input-group .btn {
+    z-index: 0;
+}
+
+.card{
+    text-align: left;
 }

@@ -3,8 +3,59 @@ import { FullSchoolingDto } from "../dtos/FullSchoolingDto";
 import { SchoolingDto } from "../dtos/SchoolingDto";
 import { SchoolingPartDto } from "../dtos/SchoolingPartDto";
 
+export const getSchooling = async(schoolingId: number): Promise<SchoolingDto> =>{
+    try
+    {
+        const response = await axiosInstance.get<SchoolingDto>(`/Schooling/Get/${schoolingId}`)
+        return response.data
+    }
+    catch(error)
+    {
+        handleError('Error while getting schooling', error)
+        throw error
+    }  
+}
+export const getUserSchooling = async(schoolingId: number): Promise<SchoolingDto> =>{
+    try
+    {
+        const response = await axiosInstance.get<SchoolingDto>(`/Schooling/GetUserSchooling/${schoolingId}`)
+        return response.data
+    }
+    catch(error)
+    {
+        handleError('Error while getting schooling', error)
+        throw error
+    }  
+}
+export const getSchoolingPart = async(schoolingPartId: number): Promise<SchoolingPartDto> =>{
+    try
+    {
+        const response = await axiosInstance.get<SchoolingPartDto>(`/Schooling/GetSchoolingPart/${schoolingPartId}`)
+        return response.data
+    }
+    catch(error)
+    {
+        handleError('Error while getting schooling Part', error)
+        throw error
+    }  
+}
+export const updateUserSchoolingPartState = async(schoolingUserPartId: number, partId: number, state: boolean): Promise<SchoolingPartDto> =>{
+    try
+    {
+        const response = await axiosInstance.patch(`/Schooling/ChangeUserSchoolingPartState/${schoolingUserPartId}/${partId}/${state}`)
+        return response.data
+    }
+    catch(error)
+    {
+        handleError('Error while updating schooling Part state', error)
+        throw error
+    }  
+}
+
+
+//To Delete
 const schoolingService = 
-{
+{    
     getFullSchooling: async(schoolingId: number): Promise<FullSchoolingDto> =>{
         try
         {
@@ -131,3 +182,11 @@ const schoolingService =
 
 }
 export default schoolingService
+
+const handleError = (operation: string, error: any): void => {
+    console.error(`${operation} failed:`, error);
+    if (!error.response) {
+        throw new Error('API is not available');
+    }
+    throw new Error(error.response.data?.message || 'An unexpected error occurred');
+};

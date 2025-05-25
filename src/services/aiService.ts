@@ -1,10 +1,23 @@
 import axiosInstance from '../../axiosConfig';
+import { AIChatDto } from '../dtos/AIChatDto';
+import { getLocalSetting } from '../Provider/LocalSettingProvider';
 
 
 export const GetAIChatResponse = async (message: string): Promise<string> => {
   try {
-    const response = await axiosInstance.post('/AI/GetAIChatResponse', message)
-    console.log('res',response);
+    let aiResponseStyle = getLocalSetting('aiResponseStyle')?.toString();
+   
+    if(aiResponseStyle == undefined || aiResponseStyle.trim() === ""){
+      aiResponseStyle = "normal"
+    }
+
+    let aiChatDto: AIChatDto = {
+        message: message,
+        additionalPromptPreferences: `Use "${aiResponseStyle}" language style.`
+    };
+    
+    const response = await axiosInstance.post("/AI/GetAIChatResponse", aiChatDto)
+
     return response.data.message;
   } catch (error: any) {
     handleError('getAIChatResponse', error);

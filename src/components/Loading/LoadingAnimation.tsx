@@ -1,70 +1,51 @@
-import React, { useEffect, useRef } from "react";
+import { useState, useEffect } from 'react';
+import { AnimateKeyframes } from 'react-simple-animate';
 
-const LoadingAnimation: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+const LoadingAnimation = () => {
+  const text = 'catchUp';
+  const characters = text.split('');
+  const [playKey, setPlayKey] = useState(0);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const interval = setInterval(() => {
+      setPlayKey((prev) => prev + 1);
+    }, 1500); 
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const width = 100;
-    const height = 50;
-    canvas.width = width;
-    canvas.height = height;
-
-    const text = "catchUp";
-    let currentCharIndex = 0;
-    let removing = false;
-    let animationFrameId: number;
-    const charDelay = 40;
-    const loopDelay = 500;
-    const theme = localStorage.getItem('theme') as 'night' | 'day' | null;
-
-    const drawText = () => {
-      ctx.clearRect(0, 0, width, height);
-
-      const textToDraw = text.substring(0, currentCharIndex);
-      ctx.font = "24px Arial";
-      ctx.fillStyle = theme === 'day' ? "black" : "white";
-      ctx.textAlign = "left";
-      ctx.fillText(textToDraw, 5, 30);
-
-      if (!removing) {
-        if (currentCharIndex < text.length) {
-          setTimeout(() => {
-            currentCharIndex++;
-            animationFrameId = requestAnimationFrame(drawText);
-          }, charDelay);
-        } else {
-          setTimeout(() => {
-            removing = true;
-            animationFrameId = requestAnimationFrame(drawText);
-          }, loopDelay);
-        }
-      } else {
-        if (currentCharIndex > 0) {
-          setTimeout(() => {
-            currentCharIndex--;
-            animationFrameId = requestAnimationFrame(drawText);
-          }, charDelay);
-        } else {
-          setTimeout(() => {
-            removing = false;
-            animationFrameId = requestAnimationFrame(drawText);
-          }, loopDelay);
-        }
-      }
-    };
-
-    animationFrameId = requestAnimationFrame(drawText);
-
-    return () => cancelAnimationFrame(animationFrameId);
+    return () => clearInterval(interval);
   }, []);
 
-  return <canvas ref={canvasRef} style={{ display: "block", margin: "auto" }} />;
+  return (
+    <div
+      style={{
+        fontSize: '24px',
+        fontFamily: 'monospace',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '3rem',
+      }}
+    >
+      {characters.map((char, index) => (
+        <AnimateKeyframes
+          key={`${playKey}-${index}`}
+          play
+          duration={0.75}
+          delay={index * 0.1}
+          keyframes={[
+            'transform: translateY(0px)',
+            'transform: translateY(-15px)',
+            'transform: translateY(0px)',
+          ]}
+          iterationCount={1}
+          easeType="ease-in-out"
+        >
+          <span style={{ display: 'inline-block' }}>
+            {char}
+          </span>
+        </AnimateKeyframes>
+      ))}
+    </div>
+  );
 };
 
 export default LoadingAnimation;

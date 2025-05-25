@@ -7,11 +7,9 @@ import { AppDispatch, RootState } from "../../store/store.ts";
 import { CategoryDto } from "../../dtos/CategoryDto.ts";
 import { FullTaskDto } from "../../dtos/FullTaskDto";
 import { UserAssignCountDto } from "../../dtos/UserAssignCountDto";
-import { TaskContentDto } from "../../dtos/TaskContentDto.ts";
 import { fetchTasks, updateTaskLocally, deleteTaskLocally } from "../../store/taskSlice.ts";
 import NewbieMentorService from '../../services/newbieMentorService';
 import { getCategories } from "../../services/categoryService.ts";
-import { getTaskContents } from "../../services/taskContentService.ts";
 import {setTaskStatus, deleteTask, editTask, assignTask} from "../../services/taskService";
 import { StatusEnum } from "../../Enums/StatusEnum";
 import TaskColumns from "./TaskColumns";
@@ -19,6 +17,9 @@ import TaskPool from "./TaskPool";
 import AssignTask from "../TaskAssigment/AssignTask.tsx";
 import "./TaskManager.css";
 import {TaskDto} from "../../dtos/TaskDto.ts";
+import { useLocation } from "react-router-dom";
+import Select from "react-select";
+import {customSelectStyles} from "../../componentStyles/selectStyles.tsx";
 
 function TaskManager() {
     const { user, getRole } = useAuth();
@@ -37,9 +38,10 @@ function TaskManager() {
     const [showAssignModal, setShowAssignModal] = useState(false);
 
     const [categories, setCategories] = useState<CategoryDto[]>([]);
-    const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
     const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
     const [userRole, setUserRole] = useState<string | null>(null);
+
+    const location = useLocation();
 
     // Map to store tasks by status
     const [tasksByStatus, setTasksByStatus] = useState<{[key in StatusEnum]: FullTaskDto[]}>({
@@ -49,6 +51,13 @@ function TaskManager() {
         [StatusEnum.ReOpen]: [] as FullTaskDto[],
         [StatusEnum.Done]: [] as FullTaskDto[]
     });
+
+    useEffect(() => {
+        const selectedLocalNewbie = location.state?.selectedNewbie;
+        if(selectedLocalNewbie){
+            setSelectedNewbie(selectedLocalNewbie);
+        }
+    },[]);
 
     // On change of a newbie
     useEffect(() => {
@@ -62,12 +71,11 @@ function TaskManager() {
         setLocalError(null);
         const fetchData = async () => {
             try {
-                const role = await getRole(user?.id!);
+                const role = await getRole(user?.id as string);
                 setUserRole(role);
 
-                const [categoriesData, taskContentsData] = await Promise.all([
-                    getCategories(),
-                    getTaskContents()
+                const [categoriesData] = await Promise.all([
+                    getCategories()
                 ]);
 
                 let newbieList;
@@ -81,7 +89,6 @@ function TaskManager() {
 
                 setCategories(categoriesData);
                 setNewbies(newbieList);
-                setTaskContents(taskContentsData);
             } catch (err) {
                 if (err instanceof Error) {
                     setLocalError(err.message);
@@ -220,70 +227,72 @@ function TaskManager() {
                 <div className="task-management-wrapper">
                     <div className="task-columns-container">
                         <div className="row mb-3 align-items-center">
-                            <div className="col-6">
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Search tasks..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    disabled={!selectedNewbie}
-                                />
-                            </div>
+                            <div className="row g-0">
+                                <div className="search-bar-container">
+                                    <div className="search-input">
+                                        <input
+                                            type="text"
+                                            className="form-control rounded-0 border-end-0"
+                                            placeholder="Search tasks..."
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            disabled={!selectedNewbie}
+                                        />
+                                    </div>
 
-                            <div className="col-3">
-                                <select
-                                    className="form-select"
-                                    value={selectedNewbie}
-                                    onChange={(e) => setSelectedNewbie(e.target.value)}
-                                >
-                                    <option value="">None</option>
-                                    {newbies.map((newbie) => (
-                                        <option key={newbie.id} value={newbie.id}>
-                                            {`${newbie.name} ${newbie.surname}`}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                                    <div className="newbie-select">
+                                        <Select
+                                            isClearable={true}
+                                            isSearchable={true}
+                                            name="newbie"
+                                            options={newbies.map(newbie => ({
+                                                value: newbie.id,
+                                                label: `${newbie.name} ${newbie.surname}`
+                                            }))}
+                                            placeholder="Select a newbie"
+                                            onChange={(selectedOption) => setSelectedNewbie(selectedOption ? selectedOption.value : '')}
+                                            value={newbies.map(newbie => ({
+                                                value: newbie.id,
+                                                label: `${newbie.name} ${newbie.surname}`
+                                            })).find(option => option.value === selectedNewbie) || null}
+                                            styles={customSelectStyles}
+                                        />
+                                    </div>
 
-                            <div className="col-3">
-                                <select
-                                    className="form-select"
-                                    value={selectedCategoryId}
-                                    onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
-                                    disabled={!selectedNewbie}
-                                >
-                                    <option value={0}>All</option>
-                                    {categories.map((category) => (
-                                        <option key={category.id} value={category.id}>
-                                            {category.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                    <div className="category-filter">
+                                        <select
+                                            className="form-select rounded-0 border-start-0"
+                                            value={selectedCategoryId}
+                                            onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
+                                            disabled={!selectedNewbie}
+                                        >
+                                            <option value={0}>All</option>
+                                            {categories.map((category) => (
+                                                <option key={category.id} value={category.id}>
+                                                    {category.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        {/* Task Columns */}
                         <TaskColumns
                             tasksByStatus={tasksByStatus}
                             onTaskUpdate={handleTaskUpdate}
                             onTaskDelete={handleTaskDelete}
                             onTaskDrop={handleTaskDrop}
                             categories={categories}
-                            taskContents={taskContents}
                             role={userRole || ""}
                             loading={loading}
                             loadingTaskIds={loadingTaskIds}
                         />
                     </div>
 
-                    {/* Task Pool Section */}
                     <div className={`task-pool-container ${!selectedNewbie ? "disabled-pool" : ""}`}>
                         <TaskPool
-                            taskContents={taskContents}
                             categories={categories}
-                            selectedCategoryId={selectedCategoryId}
-                            onTaskDrop={handlePoolTaskDrop}
                             isDisabled={!selectedNewbie}
                         />
                     </div>
@@ -298,7 +307,6 @@ function TaskManager() {
                         onTaskUpdate={handleTaskAssigned}
                         selectedNewbieId={selectedNewbie}
                         categories={categories}
-                        taskContents={taskContents}
                     />
                 )}
             </div>

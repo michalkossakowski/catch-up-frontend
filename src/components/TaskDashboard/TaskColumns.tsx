@@ -1,4 +1,3 @@
-// In TaskColumns.tsx, modify the component to handle pool tasks
 import React, {useEffect, useRef, useState} from 'react';
 import { useDrop } from 'react-dnd';
 import { FullTaskDto } from '../../dtos/FullTaskDto';
@@ -13,21 +12,22 @@ interface TaskColumnsProps {
     tasksByStatus: {[key in StatusEnum]: FullTaskDto[]};
     onTaskUpdate: (task: FullTaskDto) => void;
     onTaskDelete: (taskId: number) => void;
-    onTaskDrop: (taskId: number, newStatus: StatusEnum) => void;
+    onTaskDrop: (taskId: number, newStatus: StatusEnum, itemType?: string) => void;
     categories?: CategoryDto[];
     materials?: MaterialDto[];
     taskContents?: TaskContentDto[];
     role: string;
     loading: boolean;
     loadingTaskIds: Set<number>;
+    allowedStatuses?: StatusEnum[];
 }
 
 const statusConfig = [
-    { status: StatusEnum.ToDo, title: "To Do", color: "bg-secondary" },
-    { status: StatusEnum.InProgress, title: "In Progress", color: "bg-primary" },
-    { status: StatusEnum.ToReview, title: "To Review", color: "bg-warning" },
-    { status: StatusEnum.ReOpen, title: "Reopened", color: "bg-danger" },
-    { status: StatusEnum.Done, title: "Done", color: "bg-success" }
+    { status: StatusEnum.ToDo, title: "To Do", color: "to-do-status" },
+    { status: StatusEnum.InProgress, title: "In Progress", color: "in-progress-status" },
+    { status: StatusEnum.ToReview, title: "To Review", color: "review-status" },
+    { status: StatusEnum.ReOpen, title: "Reopened", color: "reopened-status" },
+    { status: StatusEnum.Done, title: "Done", color: "done-status" }
 ];
 
 const TaskColumns: React.FC<TaskColumnsProps> = ({
@@ -40,7 +40,8 @@ const TaskColumns: React.FC<TaskColumnsProps> = ({
                                                      taskContents,
                                                      role,
                                                      loading,
-                                                     loadingTaskIds
+                                                     loadingTaskIds,
+                                                     allowedStatuses = []
                                                  }) => {
     const [isDraggingPoolTask, setIsDraggingPoolTask] = useState(false);
 
@@ -90,25 +91,30 @@ const TaskColumns: React.FC<TaskColumnsProps> = ({
                 className={`task-columns ${isDraggingPoolTask ? 'columns-highlight' : ''}`}
             >
                 <div className="row g-3">
-                    {statusConfig.map(({ status, title, color }) => (
-                        <div key={status} className="col">
-                            <TaskColumn
-                                status={status}
-                                title={title}
-                                colorClass={color}
-                                tasks={tasksByStatus[status] || []}
-                                onTaskUpdate={onTaskUpdate}
-                                onTaskDelete={onTaskDelete}
-                                onTaskDrop={onTaskDrop}
-                                categories={categories}
-                                materials={materials}
-                                taskContents={taskContents}
-                                role={role}
-                                isDraggingPoolTask={isDraggingPoolTask}
-                                loadingTaskIds={loadingTaskIds}
-                            />
-                        </div>
-                    ))}
+                    {statusConfig.map(({ status, title, color }) => {
+                        const isColumnEnabled = role !== 'Newbie' || allowedStatuses.includes(status);
+
+                        return (
+                            <div key={status} className="col">
+                                <TaskColumn
+                                    status={status}
+                                    title={title}
+                                    colorClass={color}
+                                    tasks={tasksByStatus[status] || []}
+                                    onTaskUpdate={onTaskUpdate}
+                                    onTaskDelete={onTaskDelete}
+                                    onTaskDrop={onTaskDrop}
+                                    categories={categories}
+                                    materials={materials}
+                                    taskContents={taskContents}
+                                    role={role}
+                                    isDraggingPoolTask={isDraggingPoolTask}
+                                    loadingTaskIds={loadingTaskIds}
+                                    isDisabled={!isColumnEnabled}
+                                />
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </div>

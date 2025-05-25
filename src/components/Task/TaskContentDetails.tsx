@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getTaskContents } from '../../services/taskContentService';
+import { getAllTaskContents } from '../../services/taskContentService';
 import { getCategories } from '../../services/categoryService';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { Container, Row, Col, Card, Button, Alert, Accordion } from 'react-bootstrap';
-import Material from '../Material/Material';
 import Loading from '../Loading/Loading';
 import './TaskContentDetails.css';
 import materialService from '../../services/materialService';
 import { MaterialDto } from '../../dtos/MaterialDto';
-import MaterialItem from '../Material/DndMaterial/MaterialItem';
+import NotificationToast from '../Toast/NotificationToast';
+import MaterialItem from '../MaterialManager/MaterialItem';
 
 const TaskContentDetails: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -19,13 +19,16 @@ const TaskContentDetails: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [material, setMaterial] = useState<MaterialDto | null>(null);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastColor, setToastColor] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
         if (id) {
             setLoading(true);
             Promise.all([
-                getTaskContents(),
+                getAllTaskContents(),
                 getCategories()
             ])
             .then(([taskContents, categoriesData]) => {
@@ -39,10 +42,16 @@ const TaskContentDetails: React.FC = () => {
                     }
                 } else {
                     setError('Task content not found');
+                    setToastMessage('Task content not found');
+                    setToastColor('red');
+                    setShowToast(true);
                 }
             })
             .catch(err => {
                 setError('Error loading data. Please try again later.');
+                setToastMessage('Error loading data');
+                setToastColor('red');
+                setShowToast(true);
             })
             .finally(() => {
                 setLoading(false);
@@ -56,6 +65,9 @@ const TaskContentDetails: React.FC = () => {
             setMaterial(loadedMaterial);
         } catch (error) {
             console.error('Error loading material:', error);
+            setToastMessage('Error loading material data');
+            setToastColor('red');
+            setShowToast(true);
         }
     };
 
@@ -88,6 +100,13 @@ const TaskContentDetails: React.FC = () => {
                 <Button variant="success" onClick={handleBack}>
                     Back to List
                 </Button>
+                <NotificationToast
+                    show={showToast}
+                    title="Task Content Operation"
+                    message={toastMessage}
+                    color={toastColor}
+                    onClose={() => setShowToast(false)}
+                />
             </Container>
         );
     }
@@ -99,6 +118,13 @@ const TaskContentDetails: React.FC = () => {
                 <Button variant="success" onClick={handleBack}>
                     Back to List
                 </Button>
+                <NotificationToast
+                    show={showToast}
+                    title="Task Content Operation"
+                    message={toastMessage}
+                    color={toastColor}
+                    onClose={() => setShowToast(false)}
+                />
             </Container>
         );
     }
@@ -142,10 +168,10 @@ const TaskContentDetails: React.FC = () => {
                                 <div className="material-content">
                                     <Accordion defaultActiveKey={`item${material.id}`} className="read-only-material">
                                         <MaterialItem
-                                            materialDto={material}
-                                            onDeleteItem={handleDeleteItem}
-                                            onMaterialSelect={handleMaterialSelect}
-                                            readOnly={true}
+                                            materialId={material.id}
+                                            // onDeleteItem={handleDeleteItem}
+                                            // onMaterialSelect={handleMaterialSelect}
+                                            // readOnly={true}
                                         />
                                     </Accordion>
                                 </div>
@@ -154,6 +180,14 @@ const TaskContentDetails: React.FC = () => {
                     )}
                 </Card.Body>
             </Card>
+            
+            <NotificationToast
+                show={showToast}
+                title="Task Content Operation"
+                message={toastMessage}
+                color={toastColor}
+                onClose={() => setShowToast(false)}
+            />
         </Container>
     );
 };

@@ -13,6 +13,7 @@ import './FeedbackListPage.css';
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
 import { UserDto } from '../../dtos/UserDto';
+import FeedbackDetailsDialog from './FeedbackDetailsDialog';
 
 
 const FeedbackListPage: React.FC = () => {
@@ -20,6 +21,7 @@ const FeedbackListPage: React.FC = () => {
     const { user } = useAuth();
     const [feedbacks, setFeedbacks] = useState<FeedbackDto[]>([]);
     const [feedbackToDelete, setFeedbackToDelete] = useState<FeedbackDto | null>(null);
+    const [feedbackToDialog, setFeedbackToDialog] = useState<FeedbackDto | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isNewbie, setIsNewbie] = useState(false);
     const [showToast, setShowToast] = useState(false);
@@ -29,8 +31,8 @@ const FeedbackListPage: React.FC = () => {
     const [selectedResolved, setSelectedResolved] = useState<string[]>(["unresolved"]);
     const [originalFeedbacks, setOriginalFeedbacks] = useState<FeedbackDto[]>([]);
     const [selectedResourceTypes, setSelectedResourceTypes] = useState<ResourceTypeEnum[]>([]);
-    const [filterSentByMe, setFilterSentByMe] = useState(isNewbie ? true : false);
-    const [filterSentToMe, setFilterSentToMe] = useState(true);
+    const [filterSentByMe, setFilterSentByMe] = useState(false);
+    const [filterSentToMe, setFilterSentToMe] = useState(false);
     const [sortColumn, setSortColumn] = useState<keyof FeedbackDto | null>(null);
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const [searchTitle, setSearchTitle] = useState('');
@@ -40,6 +42,7 @@ const FeedbackListPage: React.FC = () => {
     const [users, setUsers] = useState<UserDto[]>([]);
     const [selectedSender, setSelectedSender] = useState<string>("");
     const [selectedReceiver, setSelectedReceiver] = useState<string>("");
+    const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
     useEffect(() => {
         const loadFeedbacks = async () => {
             if (!user) return;
@@ -172,6 +175,11 @@ const FeedbackListPage: React.FC = () => {
         setSortColumn(column);
     };
 
+    const handleInfoClick = (fb: FeedbackDto) => {
+     setFeedbackToDialog(fb);
+     setIsDetailsDialogOpen(true);
+    };
+
     const handleDelete = async () => {
         if (!feedbackToDelete || feedbackToDelete.id === undefined) return;
     
@@ -250,29 +258,31 @@ const FeedbackListPage: React.FC = () => {
                 <Row className="mb-3">
                     <div className="col-2">
                         <h4 className="text-start mt-3">Filters</h4>
-                        <hr></hr>
-                        <Form.Group as={Row} className="text-start m-0">
-                        <Form.Label className="p-0"><h6>Filter by Sender:</h6></Form.Label>
-                        <Form.Check
-                            type="switch"
-                            id="sentByMeSwitch"
-                            label={`Only Sent by Me`}
-                            checked={filterSentByMe}
-                            onChange={() => setFilterSentByMe(prev => !prev)}
-                            className="custom-switch"
-                        />
-                        </Form.Group>
-                        {!isNewbie && (                            
-                            <Form.Group as={Row} className="text-start m-0">
-                                <Form.Check
-                                    type="switch"
-                                    id="sentToMeSwitch"
-                                    label="Only Sent to Me"
-                                    checked={filterSentToMe}
-                                    onChange={() => setFilterSentToMe(prev => !prev)}
-                                    className="custom-switch"
-                                />
-                            </Form.Group>
+                        {!isNewbie && (
+                            <>
+                                <hr />
+                                <Form.Group as={Row} className="text-start m-0">
+                                    <Form.Label className="p-0"><h6>Filter by Sender:</h6></Form.Label>
+                                    <Form.Check
+                                        type="switch"
+                                        id="sentByMeSwitch"
+                                        label="Only Sent by Me"
+                                        checked={filterSentByMe}
+                                        onChange={() => setFilterSentByMe(prev => !prev)}
+                                        className="custom-switch"
+                                    />
+                                </Form.Group>
+                                <Form.Group as={Row} className="text-start m-0">
+                                    <Form.Check
+                                        type="switch"
+                                        id="sentToMeSwitch"
+                                        label="Only Sent to Me"
+                                        checked={filterSentToMe}
+                                        onChange={() => setFilterSentToMe(prev => !prev)}
+                                        className="custom-switch"
+                                    />
+                                </Form.Group>
+                            </>
                         )}
                         <hr></hr>
                         <Form.Group as={Row} className="text-start m-0">
@@ -340,31 +350,33 @@ const FeedbackListPage: React.FC = () => {
                         </Form.Group>
                         <hr></hr>
                         <Form.Group as={Row} className="text-start m-0">
-                        <Form.Label className="p-0 mb-0"><h6>Filter by Sender:</h6>
-                        <Select
-                            closeMenuOnSelect={true}
-                            components={animatedComponents}
-                            options={groupedOptions}
-                            isClearable={true}
-                            isMulti={false}
-                            value={groupedOptions.flatMap(group => group.options).find(option => option.value === selectedSender)}
-                            onChange={(selectedOption) => setSelectedSender(selectedOption?.value || '')}
-                            styles={{
-                                option: (provided) => ({
-                                    ...provided,
-                                    color: 'black',
-                                }),
-                                multiValueLabel: (provided) => ({
-                                    ...provided,
-                                    color: 'black',
-                                }),
-                                singleValue: (provided) => ({
-                                    ...provided,
-                                    color: 'black',
-                                }),
-                            }}
-                        />
-                        </Form.Label>
+                        {!isNewbie && (
+                            <Form.Label className="p-0 mb-0"><h6>Filter by Sender:</h6>
+                            <Select
+                                closeMenuOnSelect={true}
+                                components={animatedComponents}
+                                options={groupedOptions}
+                                isClearable={true}
+                                isMulti={false}
+                                value={groupedOptions.flatMap(group => group.options).find(option => option.value === selectedSender)}
+                                onChange={(selectedOption) => setSelectedSender(selectedOption?.value || '')}
+                                styles={{
+                                    option: (provided) => ({
+                                        ...provided,
+                                        color: 'black',
+                                    }),
+                                    multiValueLabel: (provided) => ({
+                                        ...provided,
+                                        color: 'black',
+                                    }),
+                                    singleValue: (provided) => ({
+                                        ...provided,
+                                        color: 'black',
+                                    }),
+                                }}
+                            />
+                            </Form.Label>
+                        )}
                         <Form.Label className="p-0 mt-2 mb-0"><h6>Filter by Receiver:</h6>
                         <Select
                             closeMenuOnSelect={true}
@@ -425,16 +437,16 @@ const FeedbackListPage: React.FC = () => {
                                             Resolved
                                             <i className="bi bi-arrow-down-up ms-2"></i>
                                         </th>
-                                        <th>Detail</th>
+                                        <th>Details</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {feedbacks.map((feedback) => (
                                         <FeedbackItem 
                                             key={feedback.id} 
-                                            feedback={feedback} 
-                                            onDeleteClick={setFeedbackToDelete}
-                                            onResolveChange={handleResolveChange}
+                                            feedback={feedback}
+                                            isNewbie={isNewbie}
+                                            onInfoClick={handleInfoClick}
                                         />
                                     ))}
                                 </tbody>
@@ -450,6 +462,16 @@ const FeedbackListPage: React.FC = () => {
                     onConfirm={handleDelete}
                     onCancel={() => setFeedbackToDelete(null)}
                 />
+                {feedbackToDialog && (
+                    <FeedbackDetailsDialog 
+                        feedback={feedbackToDialog}
+                        isOpen={isDetailsDialogOpen}
+                        isNewbie={isNewbie}
+                        onClose={() => setIsDetailsDialogOpen(false)}
+                        onResolveChange={handleResolveChange}
+                        onDelete={setFeedbackToDelete}
+                    />
+                )}
             </div>
 
             <NotificationToast

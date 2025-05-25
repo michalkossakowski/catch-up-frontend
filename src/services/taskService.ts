@@ -47,6 +47,15 @@ export const getAllFullTasksByNewbieId = async (newbieId: string): Promise<FullT
         throw error;
     }
 }
+export const getAllFullTasksByRoadMapPointId = async (roadMapPointId: number): Promise<FullTaskDto[]> => {
+    try {
+        const response = await axiosInstance.get<FullTaskDto[]>(`/Task/GetAllFullTasksByRoadMapPointId/${roadMapPointId}`);
+        return response.data;
+    } catch (error: any) {
+        handleError('getAllFullTasksByRoadMapPointId', error);
+        throw error;
+    }
+}
 
 export const getAllFullTasks = async (): Promise<FullTaskDto[]> => {
     try {

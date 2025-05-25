@@ -1,0 +1,17 @@
+.table-unassigned-newbies {
+    border-radius: 1rem !important;
+    border: solid 0.1rem #DB91D1 !important;
+    overflow: hidden !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important; 
+}
+.table-unassigned-newbies thead th {
+
+    background-color: #db91d152 !important;
+}
+
+.table-unassigned-newbies tbody tr,
+.table-unassigned-newbies tbody td {
+    border: none !important;
+}
+

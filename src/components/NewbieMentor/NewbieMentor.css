@@ -11,11 +11,18 @@
     padding: 0 15px;
   }
   
-  .selected-row {
-    background-color: gray !important; 
-    font-weight: bold; 
-  }
+.selected-row {
+  font-weight: bold; 
+}
+
+.selected-row td{
+  background-color: #db91d14d !important;
+  border: solid 1px #db91d1 !important;
+}
+
+
+
 th.sorted-column {
-  background-color: gray; 
+  background-color: #db91d149; 
   font-weight: bold;
 }

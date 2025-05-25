@@ -1,0 +1,139 @@
+.timeline-container {
+    padding: 20px 0;
+    margin: 1rem;
+    width: 100%; /* Ensure it takes full width of its parent */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-y: hidden; /* Prevent vertical scrolling */
+    white-space: nowrap; /* Keep items in a single row */
+}
+
+.timeline {
+    display: flex;
+    align-items: flex-start; /* Wyrównuje elementy do góry */
+    position: relative;
+    min-width: fit-content;
+}
+
+.timeline-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    min-width: 150px; 
+    height: fit-content; /* Umożliwia dostosowanie wysokości do zawartości */
+    margin: 0rem 1rem;
+    display: inline-flex; /* Zmieniono na inline-flex dla lepszej kontroli */
+    flex-direction: column; /* Ustawia kolumnowy układ dzieci */
+    align-items: center; /* Centruje dzieci w poziomie */
+    white-space: normal;
+}
+
+.timeline-icon {
+    margin-bottom: 10px;
+    font-size: 3rem;
+    height: 3rem; /* Ustalona wysokość dla ikon */
+    line-height: 3rem; /* Wyrównuje ikonę w pionie */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.timeline-content h5 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.timeline-content p {
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.text-success {
+    color: #5CD3B4 !important;
+}
+
+.roadmappoints-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 1rem;
+    width: auto;
+    border: 0.01rem solid #303030; 
+    border-radius: 0.5rem;
+    padding: 0rem 1rem;
+}
+
+.timeline-container::-webkit-scrollbar {
+    height: 0.5rem;
+    border-radius: 4px;
+}
+
+.timeline-container::-webkit-scrollbar-thumb {
+    background-color: #DB91D1;
+    border-radius: 4px;
+}
+
+.timeline-container::-webkit-scrollbar-track {
+    background: #6d6d6d49; 
+    border-radius: 4px;
+}
+
+.timeline-step{
+    padding: 1rem;
+    border-radius: 10px;
+    transition: color 0.6s ease;
+}
+
+.timeline-step i{
+    border-radius: 10rem;
+    transition: color 1s ease;
+    transition: scale 1s ease;
+}
+
+.timeline-step .bi-hourglass-split{
+    color: rgba(133, 81, 126, 0.89);
+}
+.timeline-step:hover {
+    cursor: pointer;
+    transition: color 0.3s ease;
+    color: #DB91D1;
+}
+
+.timeline-step:hover i {
+    color: #DB91D1 !important;
+    transition: color 0.3s ease;
+    scale: 1.3;
+    transition: scale 0.3s ease;
+}
+
+.timeline-step.selected {
+    transition: color 0.3s ease;
+    color: #DB91D1;
+
+}
+
+.timeline-step.selected i {
+    color: #DB91D1 !important;
+    scale: 1.3;
+}
+
+.road-map-details-bottom-container{
+    flex-direction: column;
+}
+
+.road-map-details-bottom-container h2{
+    margin: 0;
+    padding: 0;
+}
+
+.road-map-details-bottom-container .bi-trophy-fill,.road-map-details-bottom-container .bi-clock-history {
+    font-size: 6rem;
+    margin: 2rem;
+}
+
+.congratulations-container{
+    margin: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+}
