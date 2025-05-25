@@ -2,15 +2,6 @@ import axios from '../../axiosConfig';
 import { UserAssignCountDto } from '../dtos/UserAssignCountDto';
 import { TypeEnum } from '../Enums/TypeEnum';
 
-interface UsersResponse {
-  users: UserAssignCountDto[];
-  count: number;
-}
-
-interface AssignmentsResponse {
-  assignments: UserAssignCountDto[];
-  count: number;
-}
 
 const NewbieMentorService = {
   // Fetch all users (mentors or newbies, assigned or not)
@@ -18,7 +9,7 @@ const NewbieMentorService = {
     role: TypeEnum,
     assigned?: boolean,
     relatedId?: string
-  ): Promise<UsersResponse> => {
+  ): Promise<UserAssignCountDto[]> => {
     try {
       const params: Record<string, string> = { role };
       if (assigned !== undefined) {
@@ -28,7 +19,7 @@ const NewbieMentorService = {
         params.relatedId = relatedId;
       }
 
-      const response = await axios.get<UsersResponse>('/NewbieMentor/GetUsers', {
+      const response = await axios.get<UserAssignCountDto[]>('/NewbieMentor/GetUsers', {
         params,
       });
       return response.data;
@@ -39,9 +30,9 @@ const NewbieMentorService = {
   },
 
   // Fetch assignments for a mentor or newbie
-  getAssignments: async (id: string, role: TypeEnum): Promise<AssignmentsResponse> => {
+  getAssignments: async (id: string, role: TypeEnum): Promise<UserAssignCountDto[]> => {
     try {
-      const response = await axios.get<AssignmentsResponse>(
+      const response = await axios.get<UserAssignCountDto[]>(
         `/NewbieMentor/GetAssignments/${id}`,
         {
           params: { role },

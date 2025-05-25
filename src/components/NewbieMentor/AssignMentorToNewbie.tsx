@@ -26,6 +26,9 @@ const AssignMentorToNewbieComponent: React.FC = () => {
     key: 'name',
     direction: 'asc',
   });
+  useEffect(() => {
+    console.log('newbies state changed:', newbies);
+  }, [newbies]);
 
   const [sortConfigAssigned, setSortConfigAssigned] = useState<{ key: string, direction: 'asc' | 'desc' }>({
     key: 'name',
@@ -40,20 +43,20 @@ const AssignMentorToNewbieComponent: React.FC = () => {
   // Filter for each table separately
   const filteredNewbies = newbies.filter(
     (newbie) =>
-      newbie.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      newbie.surname.toLowerCase().includes(searchTerm.toLowerCase())
+      newbie.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      newbie.surname?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const filteredAssignedMentors = assignedMentors.filter(
     (mentor) =>
-      mentor.name.toLowerCase().includes(searchTermAssigned.toLowerCase()) ||
-      mentor.surname.toLowerCase().includes(searchTermAssigned.toLowerCase())
+      mentor.name?.toLowerCase().includes(searchTermAssigned.toLowerCase()) ||
+      mentor.surname?.toLowerCase().includes(searchTermAssigned.toLowerCase())
   );
 
   const filteredUnassignedMentors = unassignedMentors.filter(
     (mentor) =>
-      mentor.name.toLowerCase().includes(searchTermUnassigned.toLowerCase()) ||
-      mentor.surname.toLowerCase().includes(searchTermUnassigned.toLowerCase())
+      mentor.name?.toLowerCase().includes(searchTermUnassigned.toLowerCase()) ||
+      mentor.surname?.toLowerCase().includes(searchTermUnassigned.toLowerCase())
   );
 
   useEffect(() => {
@@ -65,20 +68,21 @@ const AssignMentorToNewbieComponent: React.FC = () => {
     setError('');
     try {
       const response = await NewbieMentorService.getUsers(TypeEnum.Newbie);
-      setNewbies(response.users);
+      console.log('API response:', response); 
+      setNewbies(response || []);
     } catch (error: any) {
       setError(error.message || 'An error occurred while fetching newbies');
+      setNewbies([]);
     } finally {
       setLoading(false);
     }
   };
-
   const fetchAssignedMentors = async (newbieId: string) => {
     setLoading(true);
     setError('');
     try {
       const response = await NewbieMentorService.getAssignments(newbieId, TypeEnum.Newbie);
-      setAssignedMentors(response.assignments);
+      setAssignedMentors(response || []);
     } catch (error: any) {
       setError(error.message || 'An error occurred while fetching assigned mentors');
       setAssignedMentors([]);
@@ -92,7 +96,7 @@ const AssignMentorToNewbieComponent: React.FC = () => {
     setError('');
     try {
       const response = await NewbieMentorService.getUsers(TypeEnum.Mentor, false, newbieId);
-      setUnassignedMentors(response.users);
+      setUnassignedMentors(response || []);
     } catch (error: any) {
       setError(error.message || 'An error occurred while fetching unassigned mentors');
       setUnassignedMentors([]);
@@ -116,7 +120,7 @@ const AssignMentorToNewbieComponent: React.FC = () => {
 
   const handleUnassign = async () => {
     if (deletingMentorId && selectedNewbieId) {
-      setLoading(true);
+      //setLoading(true);
       setError('');
       try {
         await NewbieMentorService.setAssignmentState(selectedNewbieId, deletingMentorId, 'Deleted');
@@ -135,7 +139,7 @@ const AssignMentorToNewbieComponent: React.FC = () => {
 
   const handleAssignMentor = async (mentorId: string) => {
     if (selectedNewbieId) {
-      setLoading(true);
+      //setLoading(true);
       setError('');
       try {
         await NewbieMentorService.assignNewbieToMentor(selectedNewbieId, mentorId);
@@ -255,7 +259,7 @@ const AssignMentorToNewbieComponent: React.FC = () => {
                   {sortedNewbies.map((newbie) => (
                     <tr
                       key={newbie.id}
-                      onClick={() => handleNewbieClick(newbie.id, newbie.name, newbie.surname)}
+                      onClick={() => handleNewbieClick(newbie.id ?? '', newbie.name ?? '', newbie.surname ?? '')}
                       style={{ cursor: 'pointer' }}
                       className={newbie.id === selectedNewbieId ? 'table-active' : ''}
                     >
@@ -308,7 +312,7 @@ const AssignMentorToNewbieComponent: React.FC = () => {
                         <td>{mentor.surname}</td>
                         <td>{mentor.position}</td>
                         <td>
-                          <Button variant="danger" onClick={() => handleDeleteClick(mentor.id)}>
+                          <Button variant="danger" onClick={() => handleDeleteClick(mentor.id ?? '')}>
                             Unassign
                           </Button>
                         </td>
@@ -357,7 +361,7 @@ const AssignMentorToNewbieComponent: React.FC = () => {
                         <td>{mentor.surname}</td>
                         <td>{mentor.position}</td>
                         <td>
-                          <Button variant="primary" onClick={() => handleAssignMentor(mentor.id)}>
+                          <Button variant="primary" onClick={() => handleAssignMentor(mentor.id ?? '')}>
                             Assign
                           </Button>
                         </td>

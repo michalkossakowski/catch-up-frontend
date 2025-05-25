@@ -3,6 +3,8 @@ import axiosInstance from '../../../axiosConfig';
 import Loading from '../Loading/Loading';
 import { Alert } from 'react-bootstrap';
 import './UnassignedNewbiesList.css';
+import NewbieMentorService from '../../services/newbieMentorService';
+import { TypeEnum } from '../../Enums/TypeEnum';
 
 interface Newbie {
   id: string;
@@ -18,9 +20,16 @@ const UnassignedNewbiesList: React.FC = () => {
 
   useEffect(() => {
     const fetchUnassignedNewbies = async () => {
-      try {
-        const response = await axiosInstance.get('/NewbieMentor/GetAllUnassignedNewbies');
-        setNewbies(response.data);
+       try {
+        const response = await NewbieMentorService.getUsers(TypeEnum.Newbie, false);
+        setNewbies(
+          (response || []).map((user: any) => ({
+            id: user.id ?? '',
+            name: user.name ?? '',
+            surname: user.surname ?? '',
+            position: user.position ?? ''
+          }))
+        );
       }
       catch (err: any) {
         setError(err.response?.data?.message || 'An error during fetching newbies.');

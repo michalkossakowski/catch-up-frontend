@@ -7,7 +7,7 @@ const EmployesAssignmentSelectorComponent: React.FC = () => {
 
   return (
     <div className="container text-center mt-5">
-      <h1>Wybierz Model Przypisania</h1>
+      <h1>Choose Assign Model:</h1>
       <div className="d-flex justify-content-center my-4">
         <button
           onClick={() => setSelectedOption('mentorToNewbie')}
@@ -15,7 +15,7 @@ const EmployesAssignmentSelectorComponent: React.FC = () => {
             selectedOption === 'mentorToNewbie' ? 'btn-primary' : 'btn-secondary'
           }`}
         >
-          Przypisz Mentora do Nowego Pracownika
+          Mentor -&gt; Newbie
         </button>
         <button
           onClick={() => setSelectedOption('newbieToMentor')}
@@ -23,7 +23,7 @@ const EmployesAssignmentSelectorComponent: React.FC = () => {
             selectedOption === 'newbieToMentor' ? 'btn-primary' : 'btn-secondary'
           }`}
         >
-          Przypisz Nowego Pracownika do Mentora
+          Newbie -&gt; Mentor
         </button>
       </div>
 
