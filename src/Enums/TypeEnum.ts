@@ -1,7 +1,7 @@
  export enum TypeEnum
  {
-     Newbie,
-     Mentor,
-     Menager,
-     Admin
+     Newbie = "Newbie",
+     Mentor = "Mentor",
+     Menager = "Manager",
+     Admin = "Admin"
  }
