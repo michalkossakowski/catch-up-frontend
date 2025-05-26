@@ -287,6 +287,7 @@ function TaskManager() {
                             role={userRole || ""}
                             loading={loading}
                             loadingTaskIds={loadingTaskIds}
+                            selectedNewbie={selectedNewbie}
                         />
                     </div>
 

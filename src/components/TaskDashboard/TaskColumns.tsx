@@ -20,6 +20,7 @@ interface TaskColumnsProps {
     loading: boolean;
     loadingTaskIds: Set<number>;
     allowedStatuses?: StatusEnum[];
+    selectedNewbie?: string;
 }
 
 const statusConfig = [
@@ -41,7 +42,8 @@ const TaskColumns: React.FC<TaskColumnsProps> = ({
                                                      role,
                                                      loading,
                                                      loadingTaskIds,
-                                                     allowedStatuses = []
+                                                     allowedStatuses = [],
+                                                     selectedNewbie
                                                  }) => {
     const [isDraggingPoolTask, setIsDraggingPoolTask] = useState(false);
 
@@ -111,6 +113,7 @@ const TaskColumns: React.FC<TaskColumnsProps> = ({
                                     isDraggingPoolTask={isDraggingPoolTask}
                                     loadingTaskIds={loadingTaskIds}
                                     isDisabled={!isColumnEnabled}
+                                    selectedNewbie={selectedNewbie}
                                 />
                             </div>
                         );
