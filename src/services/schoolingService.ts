@@ -65,6 +65,19 @@ export const editSchoolingPart = async(schoolingPart: SchoolingPartUpdateDto) =>
     }
 }
 
+export const editSchooling = async(schooling: SchoolingDto) => {
+    try 
+    {
+        const response = await axiosInstance.put(`/Schooling/EditSchooling/`, schooling)
+        return response
+    } 
+    catch (error) 
+    {
+        console.error('Error in editing schooling:', error)
+        throw error
+    }
+}
+
 //To Delete
 const schoolingService = 
 {    

@@ -77,6 +77,9 @@
   font-size: 12px;
   font-weight: 400;
 }
+.schooling-ProgressBar-el .vr{
+  width: 2px;
+}
 .sidebar-navlink{
   padding: 10px 20px;
   white-space: nowrap;
@@ -95,7 +98,7 @@
 }
 
 .schooling-ProgressBar-vl{
-  height: calc(200%);
+  height: calc(150%);
   top: 100%;
   color: #7f7f7f;;
   width: 2px;

@@ -53,6 +53,7 @@ const Schooling: React.FC = () => {
 
     const handleSaveButtonClick = () => {
       setActionTrigger(OnActionEnum.Saved);
+      setEditMode(false)
       setTimeout(() => setActionTrigger(OnActionEnum.None), 100);
     }
 
@@ -100,6 +101,7 @@ const Schooling: React.FC = () => {
                 <SchoolingItem
                     editMode={editMode}
                     schooling={schooling ?? undefined}
+                    actionTrigger={actionTrigger}
                 />
                 }
             </Col>

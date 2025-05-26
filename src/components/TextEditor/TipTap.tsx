@@ -9,6 +9,7 @@ import { EditorContent, useEditor, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import MenuBar from "./MenuBar";
 import { useEffect } from "react";
+import { use } from "i18next";
 
 interface TipTapProps {
   content?: string;
@@ -23,6 +24,10 @@ const TipTap: React.FC<TipTapProps> = ({
   onEditorReady,
   onContentChange,
 }) => {
+  useEffect(() => {
+    editor?.commands.setContent(content);
+  }, [content]);
+  
   const editor = useEditor({
     extensions: [
       Color.configure({ types: [TextStyle.name, ListItem.name] }),

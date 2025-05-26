@@ -53,7 +53,6 @@ const SchoolingPart: React.FC<SchoolingPartProps> = ({
     }
 
     useEffect(() => {
-        console.log("Action Trigger: ", actionTrigger);
         switch (actionTrigger) {
             case OnActionEnum.Saved:
                 updateSchoolingPart();
@@ -75,7 +74,6 @@ const SchoolingPart: React.FC<SchoolingPartProps> = ({
             iconFileId: editedSchoolingPart?.iconFile?.id ?? undefined,
             materialsId: editedSchoolingPart?.materials ?? [],
         }).then((res) => {
-            console.log(res);
         });
     }
 

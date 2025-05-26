@@ -3,6 +3,9 @@
   all: revert;
   text-align: left ;
 }
+.custom-editor.tiptap {
+  padding: 0 !important;
+}
 .start-editing {
   display: grid;
   background-color: var(--bs-light-bg-subtle);

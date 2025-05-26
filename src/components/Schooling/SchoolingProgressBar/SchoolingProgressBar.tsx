@@ -102,7 +102,7 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
           {isOpen 
             &&
             <div className="position-absolute m-0 p-0 w-100 h-100" style={{ zIndex: 1000}}>
-              <Card className="m-0 p-0  h-100">
+              <Card className="m-0 p-0  h-100 border-0">
                 <CardBody className="align-items-center d-flex flex-column">
                   <Navbar expand="lg" className="flex-column p-0 m-0 w-100">
                   <Nav className="flex-column p-0 m-0  ">
@@ -116,7 +116,7 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
                       Id={0}
                       />
                   </Nav.Link>
-                  <hr className="border border-2 opacity-100 m-0"/>
+                  <hr className="border border-1 opacity-100 m-0"/>
                   {
                     schooling?.schoolingPartProgressBar?.map((part, index) => (
                       <Nav.Link key={index} className="sidebar-navlink" onClick={handleClickNavLink} href={part.id ? `/Schooling/${schooling.id}/part/${part.id}` : "#"}>
@@ -153,7 +153,7 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
                   Id={0}
                   />
               </Nav.Link>
-              <hr className="border border-2 opacity-100 m-0"/>
+              <hr className="border border-1 opacity-100 m-0"/>
                   {
                     schooling?.schoolingPartProgressBar?.map((part, index) => (
                       <Nav.Link key={index} className="sidebar-navlink" href={part.id ? `/Schooling/${schooling.id}/part/${part.id}` : "#"}>
