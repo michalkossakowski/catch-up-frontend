@@ -327,13 +327,13 @@
     display: flex;
     width: 99.28%;
     gap: 10px;
-    margin-bottom: 15px;
     flex-wrap: wrap;
+    align-items: flex-end;
 }
 
 .search-input {
     flex: 2;
-    min-width: 200px;
+    max-width: 400px;
 }
 
 .filter-control {
@@ -360,7 +360,7 @@
 }
 
 @media (max-width: 992px) {
-    .search-bar-container {
+    .search-bar-containersearch-bar-container {
         flex-direction: column;
         gap: 8px;
     }
@@ -368,6 +368,52 @@
     .search-input,
     .filter-control {
         width: 100%;
+        min-width: 100%;
+    }
+}
+
+.date-range-filter {
+    flex: 1.5;
+    min-width: 250px;
+}
+
+.date-range-group .form-label {
+    margin-bottom: 0;
+    white-space: nowrap;
+    min-width: 200px;
+    text-align: left;
+}
+
+.date-range-picker {
+    display: flex;
+    width: 100%;
+}
+
+.react-datepicker-wrapper {
+    width: 100%;
+}
+
+.react-datepicker__input-container input {
+    width: 100%;
+    height: 38px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.react-datepicker__input-container input:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.react-datepicker-popper {
+    z-index: 1000;
+}
+
+@media (max-width: 768px) {
+    .date-range-filter {
         min-width: 100%;
     }
 }

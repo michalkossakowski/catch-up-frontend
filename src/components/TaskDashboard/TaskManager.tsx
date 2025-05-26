@@ -41,7 +41,10 @@ function TaskManager() {
     const [categories, setCategories] = useState<CategoryDto[]>([]);
     const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
     const [userRole, setUserRole] = useState<string | null>(null);
-    const [timeFilter, setTimeFilter] = useState<string>("all");
+    const [dateRange, setDateRange] = useState<{
+        start: string;
+        end: string;
+    }>({ start: '', end: '' });
 
     const location = useLocation();
 
@@ -117,19 +120,15 @@ function TaskManager() {
             updatedTasks = updatedTasks.filter((task: FullTaskDto) => task.categoryId === selectedCategoryId);
         }
 
-        if (timeFilter !== "all") {
-            const now = new Date();
+        if (dateRange.start || dateRange.end) {
             updatedTasks = updatedTasks.filter((task: FullTaskDto) => {
                 if (!task.assignmentDate) return false;
-                const assignedDate = new Date(task.assignmentDate);
-                const diffDays = Math.floor((now.getTime() - assignedDate.getTime()) / (1000 * 60 * 60 * 24));
+                const assignedDate = new Date(task.assignmentDate).getTime();
 
-                switch (timeFilter) {
-                    case "today": return diffDays === 0;
-                    case "week": return diffDays <= 7;
-                    case "month": return diffDays <= 30;
-                    default: return true;
-                }
+                const startDate = dateRange.start ? new Date(dateRange.start).getTime() : 0;
+                const endDate = dateRange.end ? new Date(dateRange.end).getTime() : Date.now();
+
+                return assignedDate >= startDate && assignedDate <= endDate;
             });
         }
 
@@ -150,7 +149,7 @@ function TaskManager() {
         });
 
         setTasksByStatus(newTasksByStatus);
-    }, [searchTerm, selectedNewbie, selectedCategoryId, tasksByUser, timeFilter]);
+    }, [searchTerm, selectedNewbie, selectedCategoryId, tasksByUser, dateRange]);
 
     // on task assign
     const handleTaskAssigned = (newTask: FullTaskDto) => {
@@ -293,18 +292,36 @@ function TaskManager() {
                                         </select>
                                     </div>
 
-                                    <div className="filter-control time-filter">
-                                        <select
-                                            className="form-select"
-                                            value={timeFilter}
-                                            onChange={(e) => setTimeFilter(e.target.value)}
-                                            disabled={!selectedNewbie}
-                                        >
-                                            <option value="all">All Time</option>
-                                            <option value="today">Today</option>
-                                            <option value="week">This Week</option>
-                                            <option value="month">This Month</option>
-                                        </select>
+                                    <div className="date-range-group">
+                                        <label className="form-label">From</label>
+                                        <div className="input-group">
+                                            <input
+                                                type="datetime-local"
+                                                className="form-control"
+                                                value={dateRange.start}
+                                                onChange={(e) => setDateRange(prev => ({
+                                                    ...prev,
+                                                    start: e.target.value
+                                                }))}
+                                                disabled={!selectedNewbie}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="date-range-group">
+                                        <label className="form-label">To</label>
+                                        <div className="input-group">
+                                            <input
+                                                type="datetime-local"
+                                                className="form-control"
+                                                value={dateRange.end}
+                                                onChange={(e) => setDateRange(prev => ({
+                                                    ...prev,
+                                                    end: e.target.value
+                                                }))}
+                                                disabled={!selectedNewbie}
+                                                min={dateRange.start}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
