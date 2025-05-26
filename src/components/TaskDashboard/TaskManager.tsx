@@ -41,6 +41,7 @@ function TaskManager() {
     const [categories, setCategories] = useState<CategoryDto[]>([]);
     const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
     const [userRole, setUserRole] = useState<string | null>(null);
+    const [timeFilter, setTimeFilter] = useState<string>("all");
 
     const location = useLocation();
 
@@ -116,6 +117,22 @@ function TaskManager() {
             updatedTasks = updatedTasks.filter((task: FullTaskDto) => task.categoryId === selectedCategoryId);
         }
 
+        if (timeFilter !== "all") {
+            const now = new Date();
+            updatedTasks = updatedTasks.filter((task: FullTaskDto) => {
+                if (!task.assignmentDate) return false;
+                const assignedDate = new Date(task.assignmentDate);
+                const diffDays = Math.floor((now.getTime() - assignedDate.getTime()) / (1000 * 60 * 60 * 24));
+
+                switch (timeFilter) {
+                    case "today": return diffDays === 0;
+                    case "week": return diffDays <= 7;
+                    case "month": return diffDays <= 30;
+                    default: return true;
+                }
+            });
+        }
+
         setFilteredTasks(updatedTasks);
 
         const newTasksByStatus = {
@@ -133,7 +150,7 @@ function TaskManager() {
         });
 
         setTasksByStatus(newTasksByStatus);
-    }, [searchTerm, selectedNewbie, selectedCategoryId, tasksByUser]);
+    }, [searchTerm, selectedNewbie, selectedCategoryId, tasksByUser, timeFilter]);
 
     // on task assign
     const handleTaskAssigned = (newTask: FullTaskDto) => {
@@ -233,7 +250,7 @@ function TaskManager() {
                                     <div className="search-input">
                                         <input
                                             type="text"
-                                            className="form-control rounded-0 border-end-0"
+                                            className="form-control"
                                             placeholder="Search tasks..."
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -241,7 +258,7 @@ function TaskManager() {
                                         />
                                     </div>
 
-                                    <div className="newbie-select">
+                                    <div className="filter-control newbie-select">
                                         <Select
                                             isClearable={true}
                                             isSearchable={true}
@@ -260,19 +277,33 @@ function TaskManager() {
                                         />
                                     </div>
 
-                                    <div className="category-filter">
+                                    <div className="filter-control category-filter">
                                         <select
-                                            className="form-select rounded-0 border-start-0"
+                                            className="form-select"
                                             value={selectedCategoryId}
                                             onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
                                             disabled={!selectedNewbie}
                                         >
-                                            <option value={0}>All</option>
+                                            <option value={0}>All Categories</option>
                                             {categories.map((category) => (
                                                 <option key={category.id} value={category.id}>
                                                     {category.name}
                                                 </option>
                                             ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="filter-control time-filter">
+                                        <select
+                                            className="form-select"
+                                            value={timeFilter}
+                                            onChange={(e) => setTimeFilter(e.target.value)}
+                                            disabled={!selectedNewbie}
+                                        >
+                                            <option value="all">All Time</option>
+                                            <option value="today">Today</option>
+                                            <option value="week">This Week</option>
+                                            <option value="month">This Month</option>
                                         </select>
                                     </div>
                                 </div>
