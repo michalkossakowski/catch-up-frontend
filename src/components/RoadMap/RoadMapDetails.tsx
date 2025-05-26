@@ -9,6 +9,7 @@ import './RoadMapDetails.css';
 import RoadMapPointDetails from './RoadMapPointDetails';
 import { useWindowSize } from 'react-use';
 import Confetti from 'react-confetti';
+import { getLocalSetting } from '../../Provider/LocalSettingProvider';
 
 const RoadMapDetails: React.FC = () => {
     const { roadMapId, title } = useParams<{ roadMapId: string; title: string }>();
@@ -20,6 +21,8 @@ const RoadMapDetails: React.FC = () => {
     const navigate = useNavigate();
     const { width, height } = useWindowSize();
     const fanfareSound = new Audio('/Notifications/fanfare.mp3');
+    const isBrainrotAllowed = getLocalSetting('isBrainrotAllowed');
+    const isConfettiDisabled = getLocalSetting('isConfettiDisabled');
 
     useEffect(() => {
         if (roadMapId) {
@@ -31,7 +34,8 @@ const RoadMapDetails: React.FC = () => {
         if (
             !loading && 
             roadMapPoints.length > 0 && 
-            roadMapPoints.every(rmp => rmp.status === StatusEnum.Done)
+            roadMapPoints.every(rmp => rmp.status === StatusEnum.Done)&&
+            !isConfettiDisabled
         ) {
             console.log("play fanfare")
             fanfareSound.play().catch(error => {
@@ -40,6 +44,25 @@ const RoadMapDetails: React.FC = () => {
         }
     }, [loading, roadMapPoints]);
 
+    useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+          const msg = event.data;
+          if (msg && msg['x-tiktok-player'] && msg.type === 'onPlayerReady') {
+            const iframe = document.getElementById('tiktok-player') as HTMLIFrameElement;
+            if (iframe && iframe.contentWindow) {
+              iframe.contentWindow.postMessage({
+                type: 'unMute',
+                value: undefined,
+                'x-tiktok-player': true,
+              }, '*');
+            }
+          }
+        };
+      
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+      }, []);
+      
     const fetchRoadMapPoints = async (id: number) => {
         try {
             setLoading(true);
@@ -71,7 +94,11 @@ const RoadMapDetails: React.FC = () => {
 
     return (
         <>
-            {!loading && roadMapPoints.length > 0 && roadMapPoints.every(rmp => rmp.status === StatusEnum.Done) && (
+            {!loading 
+            && roadMapPoints.length > 0 
+            && roadMapPoints.every(rmp => rmp.status === StatusEnum.Done) 
+            && !isConfettiDisabled
+            && (
                 <Confetti
                     style={{ zIndex: 10 }}
                     width={width}
@@ -171,11 +198,34 @@ const RoadMapDetails: React.FC = () => {
                     </div>
                 ) : roadMapPoints.length > 0 && (
                     <div className="d-flex justify-content-center align-items-center m-4 road-map-details-bottom-container">
-                        {roadMapPoints.every(rmp => rmp.status === StatusEnum.Done) && (
-                            <div>
+                        {roadMapPoints.every(rmp => rmp.status === StatusEnum.Done) ? (
+                            <>
                                 <h3>Congratulations you have finished this road map !</h3>
-                                <i className="bi bi-trophy-fill"></i>
-                            </div>
+                                <div className='congratulations-container'>
+                                    <i className="bi bi-trophy-fill"/>
+                                    {isBrainrotAllowed && (
+                                        <>
+                                            <iframe
+                                                id="tiktok-player"
+                                                height="200"
+                                                width="355"
+                                                src="https://www.tiktok.com/player/v1/7488375562155674902?music_info=1&description=1&autoplay=1"
+                                                allow="autoplay; fullscreen"
+                                                title="TikTok video"
+                                            />
+                                            <i className="bi bi-trophy-fill"/>
+                                        </>
+                                    )}
+
+                                </div>
+                            </>
+                        ):(
+                            <>
+                                <h3>Road map in progress</h3>
+                                <div className='congratulations-container'>
+                                    <i className="bi bi-clock-history"></i>
+                                </div>
+                            </>
                         )}
                         <Alert variant="info">
                             <i className="bi bi-list-task" />

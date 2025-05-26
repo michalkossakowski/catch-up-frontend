@@ -5,13 +5,12 @@ import { getCategories } from '../../services/categoryService';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { Container, Row, Col, Card, Button, Alert, Accordion } from 'react-bootstrap';
-import Material from '../Material/Material';
 import Loading from '../Loading/Loading';
 import './TaskContentDetails.css';
 import materialService from '../../services/materialService';
 import { MaterialDto } from '../../dtos/MaterialDto';
-import MaterialItem from '../Material/DndMaterial/MaterialItem';
 import NotificationToast from '../Toast/NotificationToast';
+import MaterialItem from '../MaterialManager/MaterialItem';
 
 const TaskContentDetails: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -169,10 +168,10 @@ const TaskContentDetails: React.FC = () => {
                                 <div className="material-content">
                                     <Accordion defaultActiveKey={`item${material.id}`} className="read-only-material">
                                         <MaterialItem
-                                            materialDto={material}
-                                            onDeleteItem={handleDeleteItem}
-                                            onMaterialSelect={handleMaterialSelect}
-                                            readOnly={true}
+                                            materialId={material.id}
+                                            // onDeleteItem={handleDeleteItem}
+                                            // onMaterialSelect={handleMaterialSelect}
+                                            // readOnly={true}
                                         />
                                     </Accordion>
                                 </div>

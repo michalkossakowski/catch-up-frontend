@@ -1,121 +1,264 @@
-import { NavLink } from 'react-router-dom';
 import './Home.css';
-import { useTranslation } from "react-i18next";
+import React from 'react';
+import HomeCard from './HomeCard/HomeCard';
+import './Home.css';
+import UpcomingEvents from '../Events/UpcomingEvents/UpcomingEvents';
+import { useAuth } from '../../Provider/authProvider';
+import UnassignedNewbiesList from '../HR/UnassignedNewbiesList';
 
+interface HomeProps {
+    role: string | null;
+}
+    
+export default function Home({ role }: HomeProps): React.ReactElement {
+      const { user } = useAuth();
 
-export default function Home(): React.ReactElement {
-    const { t } = useTranslation();
     return(
         <>
-            <div className="container home_container">
-                <h2>{t('welcome-in-catchup')}</h2>
-                <div className="row">
-                    <div className="col-md-3">
-                        <div className="card home-card">
-                            <img src="HomeImages/task-batman-image.jpg" className="card-img-top" alt="Tasks Image"/>
-                            <div className="card-body">
-                                <h5 className="card-title">
-                                    <i className="bi bi-list-task fs-4"></i> {t('tasks')}
-                                </h5>
-                                <p className="card-text">{t('manage-and-track-your-tasks')}</p>
-                                <NavLink className="btn btn-primary" to="/tasks">{t('see-more')}</NavLink>
-                            </div>
-                        </div>
-                    </div>
+            {role == null ? (
+                <h2>Something went wrong, we cannot fetch your role, refresh the page or re-login please.</h2>
+            ): (
+                <>
+                    <h1 className="title"><i className='bi bi-house-door'/> Welcome in the {role} Dashboard!</h1>
+                    <p className="lead">
+                        From here you have easy and convenient access to your tools
+                    </p>              
+                        <div className="home-container">
+                        {(() => { switch (role) {
+                            case "Admin":
+                                return(
+                                    <>
+                                        <div className="home-cards-container">
+                                            <HomeCard
+                                                title="Tasks Manager" 
+                                                description="Manage, assign and process tasks for newbies." 
+                                                iconName="bi-list-check" 
+                                                path="/taskmanage"
+                                            />
+                                            
+                                            <HomeCard
+                                                title="Add Users" 
+                                                description="Add new users to your organization." 
+                                                iconName="bi-person-plus" 
+                                                path="/adduser"
+                                            />
+                            
+                                            <HomeCard
+                                                title="Create Events" 
+                                                description="Create events for newbies, mentors and other staff." 
+                                                iconName="bi-calendar-event" 
+                                                path="/eventCreator"
+                                            />
+                            
+                                            <HomeCard
+                                                title="Assignments" 
+                                                description="Assign newbies to mentors." 
+                                                iconName="bi-people" 
+                                                path="/employesassignment"
+                                            />
+                            
+                                            <HomeCard
+                                                title="Task Presets" 
+                                                description="Create task presets for faster task assignment." 
+                                                iconName="bi-stack-overflow" 
+                                                path="/presetmanage"
+                                            />
+                            
+                                            <HomeCard
+                                                title="Task Contents" 
+                                                description="Create universal task contents to assign to newbies." 
+                                                iconName="bi-kanban" 
+                                                path="/taskcontentmanage"
+                                            />
+                                            
+                                            <HomeCard
+                                                title="Roadmaps" 
+                                                description="Create and manage roadmaps for your newbies to follow." 
+                                                iconName="bi-compass" 
+                                                path="/roadmapmanage"
+                                            />
+                            
+                                            <HomeCard
+                                                title="Feedbacks" 
+                                                description="Explore and manage feedbacks from your newbies." 
+                                                iconName="bi-arrow-clockwise" 
+                                                path="/feedbacks"
+                                            />
+                                        </div>
+                                    </>
+                                );
+                            case "HR":
+                                return(
+                                    <>     
+                                        <div className="home-cards-container">
+                                            <HomeCard
+                                                title="Add Users" 
+                                                description="Add new users to your organization." 
+                                                iconName="bi-person-plus" 
+                                                path="/adduser"
+                                            />
 
-                    <div className="col-md-3">
-                        <div className="card home-card">
-                            <img src="HomeImages/schooling-batman-image.jpg" className="card-img-top" alt="Schoolings Image"/>
-                            <div className="card-body">
-                                <h5 className="card-title">
-                                    <i className="bi bi-book fs-4"></i> {t('schoolings')}
-                                </h5>
-                                <p className="card-text">{t('access-your-schoolings-list')}</p>
-                                <NavLink className="btn btn-primary" to="/schoolinglist">{t('see-more')}</NavLink>
-                            </div>
-                        </div>
-                    </div>
+                                            <HomeCard
+                                                title="Assignments" 
+                                                description="Assign newbies to mentors." 
+                                                iconName="bi-people" 
+                                                path="/employesassignment"
+                                            />
 
-                    <div className="col-md-3">
-                        <div className="card home-card">
-                            <img src="HomeImages/feedback-batman-image.jpg" className="card-img-top" alt="Feedbacks Image"/>
-                            <div className="card-body">
-                                <h5 className="card-title">
-                                    <i className="bi bi-pencil-square fs-4"></i> {t('feedbacks')}
-                                </h5>
-                                <p className="card-text">{t('submit-and-view-feedbacks')}</p>
-                                <NavLink  className="btn btn-primary" to="/feedbacks">{t('see-more')}</NavLink>
-                            </div>
-                        </div>
-                    </div>
+                                            <HomeCard
+                                                title="Create Events" 
+                                                description="Create events for newbies, mentors and other staff." 
+                                                iconName="bi-calendar-event" 
+                                                path="/eventCreator"
+                                            />
 
-                    <div className="col-md-3">
-                        <div className="card home-card">
-                            <img src="HomeImages/faq-batman-image.jpg" className="card-img-top" alt="FAQ Image"/>
-                            <div className="card-body">
-                                <h5 className="card-title">
-                                    <i className="bi bi-question-circle fs-4"></i> {t('faq')}
-                                </h5>
-                                <p className="card-text">{t('find-answers-to-hard-questions')}</p>
-                                <NavLink className="btn btn-primary" to="/faq">{t('see-more')}</NavLink>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-md-3">
-                        <div className="card home-card">
-                            <img src="HomeImages/inzynierka-na-kolanie.jpg" className="card-img-top" alt="Placegolder Image"/>
-                            <div className="card-body">
-                                <h5 className="card-title">
-                                    <i className="bi bi-arrow-through-heart fs-4"></i>  {t('inzynierka-na-kolanie')}
-                                </h5>
-                                <p className="card-text">{t('grupa-inzynieryjna')}</p>
-                                <NavLink className="btn btn-primary" to="/x">{t('see-more')}</NavLink>
-                            </div>
-                        </div>
-                    </div>
+                                            <HomeCard
+                                                title="Feedbacks" 
+                                                description="Explore and manage feedbacks from application users." 
+                                                iconName="bi-arrow-clockwise" 
+                                                path="/feedbacks"
+                                            />
+                                        </div>
 
-                    <div className="col-md-3">
-                        <div className="card home-card">
-                            <img src="HomeImages/faq-batman-image.jpg" className="card-img-top" alt="Placegolder Image"/>
-                            <div className="card-body">
-                                <h5 className="card-title">
-                                    <i className="bi bi-browser-firefox fs-4"></i>  {t('placeholder')}
-                                </h5>
-                                <p className="card-text">{t('placeholder')}.</p>
-                                <NavLink className="btn btn-primary" to="/x">{t('see-more')}</NavLink>
-                            </div>
-                        </div>
-                    </div>
+                                        <div className="home-extra-container">
+                                            <UnassignedNewbiesList />
+                                        </div>
+                                    </>
+                                );
+                            case "Mentor":
+                                return(
+                                    <>
+                                        <div className="home-cards-container">          
+                                            <HomeCard
+                                            title="Your Newbies" 
+                                            description="View your assigned newbies." 
+                                            iconName="bi-people" 
+                                            path={`/profile/${user?.id}`}
+                                            />
+                                            
+                                            <HomeCard
+                                            title="Tasks Manager" 
+                                            description="Manage, assign and process tasks for your newbies." 
+                                            iconName="bi-list-check" 
+                                            path="/taskmanage"
+                                            />
+                                
+                                            <HomeCard
+                                            title="Task Presets" 
+                                            description="Create task presets for faster task assignment." 
+                                            iconName="bi-stack-overflow" 
+                                            path="/presetmanage"
+                                            />
+                                
+                                            <HomeCard
+                                            title="Task Contents" 
+                                            description="Create universal task contents to assign to newbies." 
+                                            iconName="bi-kanban" 
+                                            path="/taskcontentmanage"
+                                            />
+                                            
+                                            <HomeCard
+                                            title="Roadmaps" 
+                                            description="Create and manage roadmaps for your newbies to follow." 
+                                            iconName="bi-compass" 
+                                            path="/roadmapmanage"
+                                            />
+                                
+                                            <HomeCard
+                                            title="Feedbacks" 
+                                            description="Explore and manage feedbacks from your newbies." 
+                                            iconName="bi-arrow-clockwise" 
+                                            path="/feedbacks"
+                                            />
+                                            
+                                            <HomeCard
+                                            title="Schoolings" 
+                                            description="Create and manage schoolings for your newbies." 
+                                            iconName="bi-book" 
+                                            path="/schoolinglist"
+                                            />
+                                            
+                                            <HomeCard
+                                            title="Materials" 
+                                            description="Edit and manage materials like pdfs photos videos and other files." 
+                                            iconName="bi-tools" 
+                                            path="/editMatList"
+                                            />
+                                        </div>
+                                    </>
+                                )
+                            case "Newbie":
+                                return(
+                                    <>
+                                        <div className="home-cards-container">          
+                                            <HomeCard
+                                                title="Tasks" 
+                                                description="Check out your assigned tasks and start working on them." 
+                                                iconName="bi-list-check" 
+                                                path="/tasks"
+                                            />
+                                            
+                                            <HomeCard
+                                                title="Schoolings" 
+                                                description="Access helpful schoolings to learn and grow." 
+                                                iconName="bi-book" 
+                                                path="/schoolinglist"
+                                            />
 
-                    <div className="col-md-3">
-                        <div className="card home-card">
-                            <img src="HomeImages/faq-batman-image.jpg" className="card-img-top" alt="Placegolder Image"/>
-                            <div className="card-body">
-                                <h5 className="card-title">
-                                    <i className="bi bi-browser-firefox fs-4"></i>  {t('placeholder')}
-                                </h5>
-                                <p className="card-text">{t('placeholder')}.</p>
-                                <NavLink className="btn btn-primary" to="/x">{t('see-more')}</NavLink>
-                            </div>
-                        </div>
-                    </div>
+                                            <HomeCard
+                                                title="Roadmaps" 
+                                                description="Process roadmaps to guide your learning journey." 
+                                                iconName="bi-compass" 
+                                                path="/roadmapexplore"
+                                            />
 
-                    <div className="col-md-3">
-                        <div className="card home-card">
-                            <img src="HomeImages/faq-batman-image.jpg" className="card-img-top" alt="Placegolder Image"/>
-                            <div className="card-body">
-                                <h5 className="card-title">
-                                    <i className="bi bi-browser-firefox fs-4"></i>  {t('materialTest')}
-                                </h5>
-                                <p className="card-text">{t('materialTest')}.</p>
-                                <NavLink className="btn btn-primary" to="/material">{t('see-more')}</NavLink>
-                            </div>
+                                            <HomeCard
+                                                title="Feedbacks" 
+                                                description="Explore yours feedbacks." 
+                                                iconName="bi-arrow-clockwise" 
+                                                path="/feedbacks"
+                                            />
+                                            
+                                            <HomeCard
+                                                title="FAQ" 
+                                                description="Find answear for frequently asked questions." 
+                                                iconName="bi-question-circle" 
+                                                path="/faq"
+                                            />
+                                            
+                                            <HomeCard
+                                                title="Yours Mentors" 
+                                                description="View your profile and assigned mentors." 
+                                                iconName="bi-person" 
+                                                path={`/profile/${user?.id}`}
+                                            />
+                                            
+                                            <HomeCard
+                                                title="Settings" 
+                                                description="Customize your application preferences." 
+                                                iconName="bi-gear" 
+                                                path="/settings"
+                                            />
+                                            
+                                            <HomeCard
+                                                title="Notifications" 
+                                                description="Check your notifications and updates." 
+                                                iconName="bi-bell" 
+                                                path="/notifications"
+                                            />
+                                        </div>  
+                                    </>
+                                );
+                                default:
+                                    return <></>
+                                }
+                            })()}
+                        <div className="home-events-container">
+                            <UpcomingEvents />
                         </div>
-                    </div>
-                </div>
-            </div>
+                    </div>       
+                </>  
+            )}
         </>
     );
 }  

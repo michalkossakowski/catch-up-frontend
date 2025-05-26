@@ -7,7 +7,7 @@ import { useAuth } from './Provider/authProvider';
 import Badge from './components/Badge/BadgeComponent';
 import FaqComponent from './components/Faq/FaqComponent';
 import { Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import AdminPanel from "./components/Admin/AdminPanel.tsx";
+import AddUser from "./components/Admin/AddUser.tsx";
 import defaultUserIcon from './assets/defaultUserIcon.jpg';
 import UserProfile from './components/User/UserProfile.tsx';
 import RoadMapManage from './components/RoadMap/RoadMapManage';
@@ -15,7 +15,6 @@ import LoginComponent from './components/Login/LoginComponent';
 import PresetManage from "./components/Preset/PresetManage.tsx";
 import TaskContentManage from './components/Task/TaskContentManage';
 import { Container, Nav, Navbar } from 'react-bootstrap';
-import EditMatList from './components/Material/DndMaterial/EditMatList';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
 import TaskManager from "./components/TaskDashboard/TaskManager.tsx";
@@ -36,14 +35,12 @@ import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
 import { useTranslation } from "react-i18next";
 import {availableLanguages, changeLanguage, normalizeLanguage} from "./i18n.ts";
-import HRHomePage from './components/HR/HRHomePage.tsx';
-import NewbieHomePage from './components/Newbie/NewbieHomePage.tsx';
-import MentorHomePage from './components/Mentor/MentorHomePage.tsx';
-import AdminHomePage from './components/Admin/AdminHomePage.tsx';
-import EventCreator from './components/HR/EventCreator.tsx';
+import EventCreator from './components/Events/EventCreator.tsx';
 import RoadMapExplore from './components/RoadMap/RoadMapExplore.tsx';
 import RoadMapDetails from './components/RoadMap/RoadMapDetails.tsx';
 import Schooling from './components/Schooling/Schooling.tsx';
+import SettingsComponent from './components/Settings/Settings.tsx';
+
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
@@ -68,21 +65,6 @@ function App() {
             setRole(userRole);
             startConnection();
             handleNotifications();
-            if (location.pathname === '/') {
-                if (userRole === 'HR') {
-                    navigate('/hrhomepage');
-                } else if (userRole === 'Newbie') {
-                    navigate('/newbiehomepage');
-                }
-                else if (userRole === 'Mentor') {
-                    navigate('/mentorhomepage');
-                }
-                else if (userRole === 'Admin') {
-                    navigate('/adminhomepage');
-                } else {
-                    navigate('/');
-                }
-            }
         }
     };
 
@@ -132,7 +114,6 @@ function App() {
         }
     };
 
-
     const isManageToolsActive = [
         "/taskmanage",
         "/taskcontentmanage",
@@ -141,9 +122,10 @@ function App() {
         "/editMatList"
     ].some(path => location.pathname.startsWith(path));
 
-    const isAdminToolsActive = [
-        "/admin",
-        "/employesassignment"
+    const isHRToolsActive = [
+        "/adduser",
+        "/employesassignment",
+        "/eventCreator",
     ].some(path => location.pathname.startsWith(path));
 
     const toggleTheme = () => {
@@ -181,20 +163,7 @@ function App() {
                             <Navbar expand="lg" className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-navbar">
                                 <Navbar.Brand href="/" className="nav-brand">catchUp</Navbar.Brand>
                                 <Nav className="flex-column w-100">
-                                    <NavLink
-                                        to={
-                                            role === 'HR'
-                                                ? '/hrhomepage'
-                                                : role === 'Newbie'
-                                                    ? '/newbiehomepage'
-                                                    : role === 'Mentor'
-                                                        ? '/mentorhomepage'
-                                                        : role === 'Admin'
-                                                            ? '/adminhomepage'
-                                                            : '/'
-                                        }
-                                        className="nav-link"
-                                    >
+                                    <NavLink to='/' className="nav-link">
                                         <i className="bi bi-house-door" /> <span>{t('home')}</span>
                                     </NavLink>
                                     {role === "Newbie" && (
@@ -213,13 +182,15 @@ function App() {
                                     <NavLink to="/feedbacks" className="nav-link">
                                         <i className="bi bi-arrow-clockwise" /> <span>{t('feedbacks')}</span>
                                     </NavLink>
-                                    <NavLink to="/badges" className="nav-link">
-                                        <i className="bi bi-shield" /> <span>{t('badges')}</span>
-                                    </NavLink>
+                                    {role != "Newbie" &&(
+                                        <NavLink to="/badges" className="nav-link">
+                                            <i className="bi bi-shield" /> <span>{t('badges')}</span>
+                                        </NavLink>
+                                    )}
                                     <NavLink to="/faq" className="nav-link">
                                         <i className="bi bi-question-circle" /> <span>{t('faq')}</span>
                                     </NavLink>
-                                    {role !== "Newbie" && role != null && (
+                                    {(role == "Mentor" || role == "Admin") && (
                                         <NavDropdown
                                             className={isManageToolsActive ? "navdropdown-active" : ""}
                                             title={<><i className="bi bi-pencil-square" /> <span>{t('manage-tools')}</span></>}
@@ -240,30 +211,17 @@ function App() {
                                                 <i className="bi bi-compass" /> {t('road-maps')}
                                             </NavDropdown.Item>
                                             <NavDropdown.Divider />
-                                            <NavDropdown.Item as={NavLink} to="/editMatList" className="nav-dropdown-item">
-                                                <i className="bi bi-tools" /> {t('material-lists')}
-                                            </NavDropdown.Item>
                                         </NavDropdown>
                                     )}
-                                    {role === "Admin" && (
+                                    {role === "HR" || role === "Admin" && (
                                         <NavDropdown
-                                            className={isAdminToolsActive ? "navdropdown-active" : ""}
-                                            title={<><i className="bi bi-person-lock" /> <span>{t('admin-tools')}</span></>}
-                                        >
-                                            <NavDropdown.Item as={NavLink} to="/adminpanel" className="nav-dropdown-item">
-                                                <i className="bi bi-shield-lock" /> {t('panel')}
-                                            </NavDropdown.Item>
-                                            <NavDropdown.Divider />
-                                            <NavDropdown.Item as={NavLink} to="/employesassignment" className="nav-dropdown-item">
-                                                <i className="bi bi-people" /> {t('assignment')}
-                                            </NavDropdown.Item>
-                                        </NavDropdown>
-                                    )}
-                                    {role === "HR" && (
-                                        <NavDropdown
-                                            className={isAdminToolsActive ? "navdropdown-active" : ""}
+                                            className={isHRToolsActive ? "navdropdown-active" : ""}
                                             title={<><i className="bi bi-person-lock" /> <span>HR Tools</span></>}
                                         >
+                                            <NavDropdown.Item as={NavLink} to="/adduser" className="nav-dropdown-item">
+                                                <i className="bi bi-person-plus" /> {t('Add User')}
+                                            </NavDropdown.Item>
+                                            <NavDropdown.Divider />
                                             <NavDropdown.Item as={NavLink} to="/employesassignment" className="nav-dropdown-item">
                                                 <i className="bi bi-people" /> Assignment
                                             </NavDropdown.Item>
@@ -275,7 +233,7 @@ function App() {
                                     )}
                                 </Nav>
                                 <footer className="mt-auto">
-                                    <p className="text-center text-muted small">© 2024 Made by UnhandledException</p>
+                                    <p className="text-center text-muted small">© 2024-2025 Made by UnhandledException</p>
                                 </footer>
                             </Navbar>
                         </div>
@@ -378,20 +336,15 @@ function App() {
                                 </Alert>
                             )}
                             <Routes>
-                                <Route path="/" element={<Home />} />
-                                <Route path="/hrhomepage" element={<HRHomePage />} />
-                                <Route path="/newbiehomepage" element={<NewbieHomePage />} />
-                                <Route path="/adminhomepage" element={<AdminHomePage />} />
-                                <Route path="/mentorhomepage" element={<MentorHomePage />} />
+                                <Route path="/" element={<Home role={role}/>} /> 
                                 <Route path="/tasks" element={<TaskDashboard />} />
-                                <Route path="/adminpanel" element={<AdminPanel isAdmin={role === "Admin"} />} />
+                                <Route path="/adduser" element={<AddUser/>}/>
                                 <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
                                 <Route path="/employesassignment" element={<EmployesAssignmentSelector />} />
                                 <Route path="/taskmanage" element={<TaskManager />} />
                                 <Route path="/taskcontentmanage" element={<TaskContentManage />} />
                                 <Route path="/taskcontent" element={<TaskContentManage />} />
                                 <Route path="/taskcontent/details/:id" element={<TaskContentDetails />} />
-                                <Route path="/editmatlist" element={<EditMatList />} />
                                 <Route path="/roadmapmanage" element={<RoadMapManage />} />
                                 <Route path="/roadmapexplore" element={<RoadMapExplore />} />
                                 <Route path="/roadmap/:roadMapId/:title" element={<RoadMapDetails />} />
@@ -403,7 +356,7 @@ function App() {
                                 <Route path="/preset/assign/:presetId" element={<PresetAssign />} />
                                 <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
                                 <Route path="/profile/:userId" element={<UserProfile />} />
-                                <Route path="/settings" element={<><h1>Settings</h1></>} />
+                                <Route path="/settings" element={<SettingsComponent/>} />
                                 <Route path="/notifications" element={<><NotificationPage /></>} />
                                 <Route path="/eventCreator" element={<EventCreator />} />
                                 <Route path="/material" element={<MaterialTest />} />

@@ -4,7 +4,7 @@ export interface BadgeDto {
     id: number;
     name: string;
     description: string;
-    iconSource: string;
+    iconId: number | null;
     count?: number | null;
     countType?: BadgeTypeCountEnum | null;
 }

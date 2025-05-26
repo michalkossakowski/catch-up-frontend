@@ -222,17 +222,14 @@ const AssignNewbieToMentorComponent: React.FC = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h2>List of Mentors</h2>
-
+    <div className="container">
       {loading ? (
         <Loading />
       ) : (
         <div className="row">
           <div className="col-md-6">
-            <div className="mt-4">
               <div className="mb-3">
-                <h3>Mentors</h3>
+                <h4>Mentors</h4>
                 <div className="input-group">
                   <input
                     type="text"
@@ -302,12 +299,11 @@ const AssignNewbieToMentorComponent: React.FC = () => {
                   </tbody>
                 </Table>
               )}
-            </div>
           </div>
           <div className="col-md-6">
             {selectedMentorId && (
-              <div className="mt-4">
-                <h3>Assigned Newbies to {selectedMentorName} {selectedMentorSurname}</h3>
+              <div>
+                <h4>Assigned Newbies to {selectedMentorName} {selectedMentorSurname}</h4>
                 <div className="mb-3">
                   <div className="input-group">
                     <input
@@ -375,8 +371,8 @@ const AssignNewbieToMentorComponent: React.FC = () => {
               </div>
             )}
             {selectedMentorId && (
-              <div className="mt-4">
-                <h3>Unassigned Newbies from {selectedMentorName} {selectedMentorSurname}</h3>
+             <div className="mt-4">
+                <h4>Unassigned Newbies from {selectedMentorName} {selectedMentorSurname}</h4>
                 <div className="mb-3">
                   <div className="input-group">
                     <input

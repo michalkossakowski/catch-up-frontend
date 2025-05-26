@@ -3,7 +3,7 @@ import { Button, Col, Container, Modal, Row, Stack } from "react-bootstrap";
 import { FilePair } from "../../interfaces/FilePair";
 import { UserDto } from "../../dtos/UserDto";
 import { getUserById } from "../../services/userService";
-import styles from './material.module.css';
+import styles from './material.module.scss';
 import fileService from "../../services/fileService";
 import materialService from "../../services/materialService";
 import { OnActionEnum } from "../../Enums/OnActionEnum";
