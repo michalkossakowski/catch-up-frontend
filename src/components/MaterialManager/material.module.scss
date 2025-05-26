@@ -25,7 +25,7 @@ $content-collapse-opacity: 0.4s ease-in;
   overflow: hidden;
   padding-top: 0;
   transition: 
-    max-height $content-collapse-transition,
+    max-height 0.4s ease-in-out ,
     opacity $content-collapse-opacity,
     padding-top $content-collapse-opacity;
   

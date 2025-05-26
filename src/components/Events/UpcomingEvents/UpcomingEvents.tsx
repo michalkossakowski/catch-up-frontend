@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import './UpcomingEvents.css'; 
 import CalendarModal from '../CalendarModal'; 
-import './UpcomingEvents.css';
+import './UpcomingEvents.scss';
 import { useAuth } from '../../../Provider/authProvider';
 
 const UpcomingEvents: React.FC = () => {
@@ -18,7 +17,7 @@ const UpcomingEvents: React.FC = () => {
   };
 
   return (
-    <div className="upcoming-events-container">
+    <div className="upcoming-event upcoming-events-container">
         Place for upcoming events
         <button className="btn btn-primary calendar-button" onClick={openModal}>
           <i className='bi-calendar-event'/> Open Calendar

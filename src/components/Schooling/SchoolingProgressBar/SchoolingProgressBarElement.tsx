@@ -1,5 +1,4 @@
-import { Col, Row } from "react-bootstrap";
-import "./SchoolingProgressBar.css";
+import "./SchoolingProgressBar.scss";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -38,7 +37,7 @@ const SchoolingProgressBarElement: React.FC<SchoolingProgressBarProps> = ({
     },[schoolingId, partId])
 
     return (
-        <div className="schooling-ProgressBar-el mb-3 d-flex">
+        <div className="schooling-progress-bar schooling-ProgressBar-el mb-3 d-flex">
             <div className="position-relative img-container">
                 <img src={img ? URL.createObjectURL(img) : undefined} alt="" className={`rounded-2 border border-2 ${isDone ? "border-success" : ""}`}/>
                 {showVl && 

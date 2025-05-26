@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Card, CardBody, Nav, Navbar } from "react-bootstrap";
-import "./SchoolingProgressBar.css";
+import "./SchoolingProgressBar.scss";
 import SchoolingProgressBarElement from "./SchoolingProgressBarElement";
 import fileService from "../../../services/fileService";
 import { FileDto } from "../../../dtos/FileDto";
@@ -83,7 +83,7 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
     <>
       {noPlace ? 
         <>
-          <div className={`d-flex position-sticky justify-content-between align-items-baseline top-0`}>
+          <div className={`schooling-progress-bar d-flex position-sticky justify-content-between align-items-baseline top-0`}>
             <div className="ps-4">
               <h3>View Course Content</h3>
             </div>
@@ -101,7 +101,7 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
           <hr/>
           {isOpen 
             &&
-            <div className="position-absolute m-0 p-0 w-100 h-100" style={{ zIndex: 1000}}>
+            <div className="schooling-progress-bar position-absolute m-0 p-0 w-100 h-100" style={{ zIndex: 1000}}>
               <Card className="m-0 p-0  h-100 border-0">
                 <CardBody className="align-items-center d-flex flex-column">
                   <Navbar expand="lg" className="flex-column p-0 m-0 w-100">
@@ -139,7 +139,7 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
           }
         </>
       :
-        <div className="sidebar-container">
+        <div className="schooling-progress-bar sidebar-container">
           <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
               <Navbar expand="lg" className="flex-column p-0 m-0">
               <Nav className="flex-column p-0 m-0" >
@@ -172,8 +172,8 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
               </Navbar>
           </div>
             <Button
-            onClick={toggleSidebar}
-            className={`sidebar-button ${isOpen ? 'open' : 'closed'}`}
+              onClick={toggleSidebar}
+              className={`sidebar-button ${isOpen ? 'open' : 'closed'}`}
             >
               <i className="bi bi-arrow-left-square"></i>
             </Button>

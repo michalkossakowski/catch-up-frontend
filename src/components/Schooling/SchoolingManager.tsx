@@ -1,5 +1,3 @@
-
-
 const SchoolingManager: React.FC = () => {
 
 
@@ -11,3 +9,4 @@ const SchoolingManager: React.FC = () => {
     </div>
   );
 }
+export default SchoolingManager;

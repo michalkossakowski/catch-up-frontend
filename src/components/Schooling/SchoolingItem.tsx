@@ -5,7 +5,7 @@ import TipTap from '../TextEditor/TipTap';
 import { useNavigate } from 'react-router-dom';
 import { OnActionEnum } from '../../Enums/OnActionEnum';
 import { editSchooling } from '../../services/schoolingService';
-import { set } from 'date-fns';
+
 interface SchoolingItemProps {
   schooling?: SchoolingDto;
   editMode?: boolean;

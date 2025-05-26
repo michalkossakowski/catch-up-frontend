@@ -1,0 +1,22 @@
+.upcoming-events-container{
+    border: solid 0.1rem #DB91D1 !important;
+    border-radius: 1rem;
+    width: 100%;
+    height: 100%;
+    position: relative;
+
+    .upcoming-events-container .calendar-button {
+        position: absolute; 
+        bottom: 0.75rem;
+        right: 0.75rem;
+    }
+
+    .calendar-button i{
+        color: #FFFFFF;
+    }
+
+    .btn-close{
+        color: red;
+        background-color: #db91d1ee;
+    }
+}
