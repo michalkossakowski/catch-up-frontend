@@ -20,6 +20,7 @@ import {TaskDto} from "../../dtos/TaskDto.ts";
 import { useLocation } from "react-router-dom";
 import Select from "react-select";
 import {customSelectStyles} from "../../componentStyles/selectStyles.tsx";
+import { TypeEnum } from "../../Enums/TypeEnum.ts";
 
 function TaskManager() {
     const { user, getRole } = useAuth();
@@ -80,9 +81,9 @@ function TaskManager() {
 
                 let newbieList;
                 if (role === "Admin") {
-                    newbieList = await NewbieMentorService.getAllNewbies();
+                    newbieList = await NewbieMentorService.getUsers(TypeEnum.Newbie);
                 } else if (role === "Mentor") {
-                    newbieList = await NewbieMentorService.getAssignmentsByMentor(mentorId!);
+                    newbieList = await NewbieMentorService.getAssignments(mentorId!, TypeEnum.Mentor);
                 } else {
                     throw new Error("Unauthorized access");
                 }
@@ -250,7 +251,7 @@ function TaskManager() {
                                                 label: `${newbie.name} ${newbie.surname}`
                                             }))}
                                             placeholder="Select a newbie"
-                                            onChange={(selectedOption) => setSelectedNewbie(selectedOption ? selectedOption.value : '')}
+                                            onChange={(selectedOption) => setSelectedNewbie(selectedOption?.value ?? '')}
                                             value={newbies.map(newbie => ({
                                                 value: newbie.id,
                                                 label: `${newbie.name} ${newbie.surname}`

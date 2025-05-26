@@ -5,13 +5,15 @@ import UserListItem from './UserListItem.tsx';
 import NewbieMentorService from '../../services/newbieMentorService';
 import { UserDto } from '../../dtos/UserDto';
 import { useTranslation } from "react-i18next";
+import { TypeEnum } from '../../Enums/TypeEnum.ts';
+import { UserAssignCountDto } from '../../dtos/UserAssignCountDto.ts';
 
 interface UserListProps {
-    userId?: string;
+    userId: string;
 }
 
 const UserList = ({ userId }: UserListProps) => {
-    const [users, setUsers] = useState<UserDto[]>([]);
+    const [users, setUsers] = useState<UserAssignCountDto[]>([]);
     const [userAvatars, setUserAvatars] = useState<Record<string, string>>({});
     const { getRole } = useAuth();
     const [userRole, setUserRole] = useState<string>('');
@@ -36,20 +38,20 @@ const UserList = ({ userId }: UserListProps) => {
 
     useEffect(() => {
         const fetchUsers = async () => {
-            let userData: UserDto[] = [];
+            let userData: UserAssignCountDto[] = [];
             setIsLoading(true);
 
             try {
                 switch (userRole) {
                     case 'Newbie':
-                        userData = await NewbieMentorService.getAssignmentsByNewbie(userId!);
+                        userData = await NewbieMentorService.getAssignments(userId, TypeEnum.Newbie);
                         break;
                     case 'Mentor':
-                        userData = await NewbieMentorService.getAssignmentsByMentor(userId!);
+                        userData = await NewbieMentorService.getAssignments(userId, TypeEnum.Mentor);
                         break;
                     case 'Admin':
                     case 'HR':
-                        userData = await NewbieMentorService.getAllNewbies();
+                        userData = await NewbieMentorService.getUsers(TypeEnum.Newbie);
                         break;
                 }
 
