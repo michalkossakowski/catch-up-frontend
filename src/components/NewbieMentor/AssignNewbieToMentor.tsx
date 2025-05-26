@@ -78,7 +78,6 @@ const AssignNewbieToMentorComponent: React.FC = () => {
     setError('');
     try {
       const response = await NewbieMentorService.getAssignments(mentorId, TypeEnum.Mentor);
-      console.log('Assigned Newbies Response:', response);
       setAssignedNewbies(response || []);
     } catch (error: any) {
       setError(error.message || 'An error occurred while fetching assigned newbies');

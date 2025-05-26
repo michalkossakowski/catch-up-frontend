@@ -26,10 +26,6 @@ const AssignMentorToNewbieComponent: React.FC = () => {
     key: 'name',
     direction: 'asc',
   });
-  useEffect(() => {
-    console.log('newbies state changed:', newbies);
-  }, [newbies]);
-
   const [sortConfigAssigned, setSortConfigAssigned] = useState<{ key: string, direction: 'asc' | 'desc' }>({
     key: 'name',
     direction: 'asc',
@@ -68,7 +64,6 @@ const AssignMentorToNewbieComponent: React.FC = () => {
     setError('');
     try {
       const response = await NewbieMentorService.getUsers(TypeEnum.Newbie);
-      console.log('API response:', response); 
       setNewbies(response || []);
     } catch (error: any) {
       setError(error.message || 'An error occurred while fetching newbies');
