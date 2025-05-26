@@ -1,58 +1,59 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Alert } from 'react-bootstrap';
+import { Table, Button, Modal } from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import NewbieMentorService from '../../services/newbieMentorService';
 import { UserAssignCountDto } from '../../dtos/UserAssignCountDto';
 import './NewbieMentor.css';
 import Loading from '../Loading/Loading';
+import { TypeEnum } from '../../Enums/TypeEnum';
 
 const AssignNewbieToMentorComponent: React.FC = () => {
-  const [newbieMentors, setNewbieMentors] = useState<UserAssignCountDto[]>([]);
+  const [mentors, setMentors] = useState<UserAssignCountDto[]>([]);
   const [selectedMentorId, setSelectedMentorId] = useState<string | null>(null);
   const [selectedMentorName, setSelectedMentorName] = useState<string | null>(null);
   const [selectedMentorSurname, setSelectedMentorSurname] = useState<string | null>(null);
   const [assignedNewbies, setAssignedNewbies] = useState<UserAssignCountDto[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [, setError] = useState<string>('');
+  const [error, setError] = useState<string>('');
   const [unassignedNewbies, setUnassignedNewbies] = useState<UserAssignCountDto[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [deletingNewbieId, setDeletingNewbieId] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>(''); // dla Mentora
-  const [searchTermAssigned, setSearchTermAssigned] = useState<string>('');
-  const [searchTermUnassigned, setSearchTermUnassigned] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>(''); // for Mentors
+  const [searchTermAssigned, setSearchTermAssigned] = useState<string>(''); // for Assigned Newbies
+  const [searchTermUnassigned, setSearchTermUnassigned] = useState<string>(''); // for Unassigned Newbies
 
   const [sortConfigMentors, setSortConfigMentors] = useState<{ key: string, direction: 'asc' | 'desc' }>({
     key: 'name',
-    direction: 'asc'
+    direction: 'asc',
   });
 
   const [sortConfigAssigned, setSortConfigAssigned] = useState<{ key: string, direction: 'asc' | 'desc' }>({
     key: 'name',
-    direction: 'asc'
+    direction: 'asc',
   });
 
   const [sortConfigUnassigned, setSortConfigUnassigned] = useState<{ key: string, direction: 'asc' | 'desc' }>({
     key: 'name',
-    direction: 'asc'
+    direction: 'asc',
   });
 
-  //  Filtr dla każdej tabeli z osobna
-  const filteredMentors = newbieMentors.filter(
+  // Filter for each table separately
+  const filteredMentors = mentors.filter(
     (mentor) =>
-      mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mentor.surname.toLowerCase().includes(searchTerm.toLowerCase())
+      (mentor.name?.toLowerCase().includes(searchTerm.toLowerCase()) || false) ||
+      (mentor.surname?.toLowerCase().includes(searchTerm.toLowerCase()) || false)
   );
 
   const filteredAssignedNewbies = assignedNewbies.filter(
     (newbie) =>
-      newbie.name.toLowerCase().includes(searchTermAssigned.toLowerCase()) ||
-      newbie.surname.toLowerCase().includes(searchTermAssigned.toLowerCase())
+      newbie.name?.toLowerCase().includes(searchTermAssigned.toLowerCase()) ||
+      newbie.surname?.toLowerCase().includes(searchTermAssigned.toLowerCase())
   );
 
   const filteredUnassignedNewbies = unassignedNewbies.filter(
     (newbie) =>
-      newbie.name.toLowerCase().includes(searchTermUnassigned.toLowerCase()) ||
-      newbie.surname.toLowerCase().includes(searchTermUnassigned.toLowerCase())
+      newbie.name?.toLowerCase().includes(searchTermUnassigned.toLowerCase()) ||
+      newbie.surname?.toLowerCase().includes(searchTermUnassigned.toLowerCase())
   );
 
   useEffect(() => {
@@ -60,55 +61,50 @@ const AssignNewbieToMentorComponent: React.FC = () => {
   }, []);
 
   const fetchMentors = async () => {
-    //setLoading(true);
+    setLoading(true);
     setError('');
     try {
-      const mentors = await NewbieMentorService.getAllMentors();
-      const mentorsWithNewbiesCount = await Promise.all(
-        mentors.map(async (mentor) => {
-          mentor.assignCount = await NewbieMentorService.getNewbieCountByMentor(mentor.id);
-          return { ...mentor };
-        })
-      );
-      setNewbieMentors(mentorsWithNewbiesCount);
+      const response = await NewbieMentorService.getUsers(TypeEnum.Mentor);
+      setMentors(response || []);
     } catch (error: any) {
-      setError(error.message || 'An error occurred while fetching newbie mentors');
+      setError(error.message || 'An error occurred while fetching mentors');
     } finally {
       setLoading(false);
     }
   };
 
   const fetchAssignedNewbies = async (mentorId: string) => {
-    // setLoading(true);
+    setLoading(true);
     setError('');
     try {
-      const newbies = await NewbieMentorService.getAssignmentsByMentor(mentorId);
-      setAssignedNewbies(newbies);
+      const response = await NewbieMentorService.getAssignments(mentorId, TypeEnum.Mentor);
+      setAssignedNewbies(response || []);
     } catch (error: any) {
       setError(error.message || 'An error occurred while fetching assigned newbies');
       setAssignedNewbies([]);
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
   const fetchUnassignedNewbies = async (mentorId: string) => {
-    //setLoading(true);
+    setLoading(true);
     setError('');
     try {
-      const newbies = await NewbieMentorService.getAllUnassignedNewbies(mentorId);
-      setUnassignedNewbies(newbies);
+      const response = await NewbieMentorService.getUsers(TypeEnum.Newbie, false, mentorId);
+      setUnassignedNewbies(response || []);
     } catch (error: any) {
       setError(error.message || 'An error occurred while fetching unassigned newbies');
       setUnassignedNewbies([]);
     } finally {
-      //setLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleMentorClick = (mentorId: string, mentorName: string, mentorSubname: string) => {
+
+  const handleMentorClick = (mentorId: string, mentorName: string, mentorSurname: string) => {
     setSelectedMentorName(mentorName);
-    setSelectedMentorSurname(mentorSubname);
+    setSelectedMentorSurname(mentorSurname);
     setSelectedMentorId(mentorId);
     fetchAssignedNewbies(mentorId);
     fetchUnassignedNewbies(mentorId);
@@ -124,7 +120,7 @@ const AssignNewbieToMentorComponent: React.FC = () => {
       //setLoading(true);
       setError('');
       try {
-        await NewbieMentorService.Unassign(deletingNewbieId, selectedMentorId);
+        await NewbieMentorService.setAssignmentState(deletingNewbieId, selectedMentorId, 'Deleted');
         setAssignedNewbies((prev) => prev.filter((newbie) => newbie.id !== deletingNewbieId));
         setShowModal(false);
         fetchAssignedNewbies(selectedMentorId);
@@ -133,7 +129,7 @@ const AssignNewbieToMentorComponent: React.FC = () => {
       } catch (error: any) {
         setError(error.message || 'An error occurred while deleting the assignment');
       } finally {
-        //setLoading(false);
+        setLoading(false);
       }
     }
   };
@@ -150,12 +146,12 @@ const AssignNewbieToMentorComponent: React.FC = () => {
       } catch (error: any) {
         setError(error.message || 'An error occurred while assigning the newbie to the mentor');
       } finally {
-        // setLoading(false);
+        setLoading(false);
       }
     }
   };
 
-  // Sortowanie mentorów
+  // Sort mentors
   const sortedMentors = filteredMentors.sort((a, b) => {
     const aValue = a[sortConfigMentors.key as keyof UserAssignCountDto]?.toString().toLowerCase() || '';
     const bValue = b[sortConfigMentors.key as keyof UserAssignCountDto]?.toString().toLowerCase() || '';
@@ -169,8 +165,8 @@ const AssignNewbieToMentorComponent: React.FC = () => {
     return 0;
   });
 
-  // Sortowanie przypisanych nowicjuszy
-  const sortedAssigned = filteredAssignedNewbies.sort((a, b) => {
+  // Sort assigned newbies
+  const sortedAssignedNewbies = filteredAssignedNewbies.sort((a, b) => {
     const aValue = a[sortConfigAssigned.key as keyof UserAssignCountDto]?.toString().toLowerCase() || '';
     const bValue = b[sortConfigAssigned.key as keyof UserAssignCountDto]?.toString().toLowerCase() || '';
 
@@ -183,8 +179,8 @@ const AssignNewbieToMentorComponent: React.FC = () => {
     return 0;
   });
 
-  // Sortowanie nieprzypisanych nowicjuszy
-  const sortedUnassigned = filteredUnassignedNewbies.sort((a, b) => {
+  // Sort unassigned newbies
+  const sortedUnassignedNewbies = filteredUnassignedNewbies.sort((a, b) => {
     const aValue = a[sortConfigUnassigned.key as keyof UserAssignCountDto]?.toString().toLowerCase() || '';
     const bValue = b[sortConfigUnassigned.key as keyof UserAssignCountDto]?.toString().toLowerCase() || '';
 
@@ -197,24 +193,20 @@ const AssignNewbieToMentorComponent: React.FC = () => {
     return 0;
   });
 
-  // Funkcja obsługująca sortowanie
+  // Function to handle sorting
   const handleSort = (key: string, table: 'mentors' | 'assigned' | 'unassigned') => {
     let direction: 'asc' | 'desc' = 'asc';
 
-    // Sprawdzanie, czy klucz to ten sam, który jest już sortowany
     if (table === 'mentors' && sortConfigMentors.key === key && sortConfigMentors.direction === 'asc') {
       direction = 'desc';
       setSortConfigMentors({ key, direction });
-    }
-    else if (table === 'assigned' && sortConfigAssigned.key === key && sortConfigAssigned.direction === 'asc') {
+    } else if (table === 'assigned' && sortConfigAssigned.key === key && sortConfigAssigned.direction === 'asc') {
       direction = 'desc';
       setSortConfigAssigned({ key, direction });
-    }
-    else if (table === 'unassigned' && sortConfigUnassigned.key === key && sortConfigUnassigned.direction === 'asc') {
+    } else if (table === 'unassigned' && sortConfigUnassigned.key === key && sortConfigUnassigned.direction === 'asc') {
       direction = 'desc';
       setSortConfigUnassigned({ key, direction });
-    }
-    else {
+    } else {
       if (table === 'mentors') setSortConfigMentors({ key, direction });
       else if (table === 'assigned') setSortConfigAssigned({ key, direction });
       else if (table === 'unassigned') setSortConfigUnassigned({ key, direction });
@@ -222,14 +214,21 @@ const AssignNewbieToMentorComponent: React.FC = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container mt-5">
+      <h2>List of Mentors</h2>
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      )}
       {loading ? (
         <Loading />
       ) : (
         <div className="row">
           <div className="col-md-6">
+            <div className="mt-4">
               <div className="mb-3">
-                <h4>Mentors</h4>
+                <h3>Mentors</h3>
                 <div className="input-group">
                   <input
                     type="text"
@@ -243,67 +242,41 @@ const AssignNewbieToMentorComponent: React.FC = () => {
                   </span>
                 </div>
               </div>
-              {sortedMentors.length === 0 ? (
-                <Alert variant="warning">This list is empty</Alert>
-              ) : (
-                <Table id="mentors" striped bordered hover responsive>
-                  <thead>
-                    <tr>
-                      <th
-                        onClick={() => handleSort('name', 'mentors')}
-                        style={{ cursor: 'pointer' }}
-                        className={sortConfigMentors.key === 'name' ? 'sorted-column' : ''}
-                      >
-                        <div>Name</div> 
-                        <div><i className="bi bi-arrow-down-up"></i></div>
-                      </th>
-                      <th
-                        onClick={() => handleSort('surname', 'mentors')}
-                        style={{ cursor: 'pointer' }}
-                        className={sortConfigMentors.key === 'surname' ? 'sorted-column' : ''}
-                      >
-                       <div>Surname</div> 
-                       <div><i className="bi bi-arrow-down-up"></i></div>
-                      </th>
-                      <th
-                        onClick={() => handleSort('position', 'mentors')}
-                        style={{ cursor: 'pointer' }}
-                        className={sortConfigMentors.key === 'position' ? 'sorted-column' : ''}
-                      >
-                        <div>Position</div> 
-                        <div><i className="bi bi-arrow-down-up"></i></div>
-                      </th>
-                      <th
-                        onClick={() => handleSort('assignCount', 'mentors')}
-                        style={{ cursor: 'pointer' }}
-                        className={sortConfigMentors.key === 'assignCount' ? 'sorted-column' : ''}
-                      >
-                        <div>Number of Newbies</div> 
-                        <div><i className="bi bi-arrow-down-up"></i></div>
-                      </th>
+              <Table id="mentors" striped bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th onClick={() => handleSort('name', 'mentors')} style={{ cursor: 'pointer' }}>
+                      Name <i className="bi bi-arrow-down-up"></i>
+                    </th>
+                    <th onClick={() => handleSort('surname', 'mentors')} style={{ cursor: 'pointer' }}>
+                      Surname <i className="bi bi-arrow-down-up"></i>
+                    </th>
+                    <th onClick={() => handleSort('position', 'mentors')} style={{ cursor: 'pointer' }}>
+                      Position <i className="bi bi-arrow-down-up"></i>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedMentors.map((mentor) => (
+                    <tr
+                      key={mentor.id}
+                      onClick={() => handleMentorClick(mentor.id??' ', mentor.name??' ', mentor.surname?? ' ')}
+                      style={{ cursor: 'pointer' }}
+                      className={mentor.id === selectedMentorId ? 'table-active' : ''}
+                    >
+                      <td>{mentor.name}</td>
+                      <td>{mentor.surname}</td>
+                      <td>{mentor.position}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {sortedMentors.map((mentor) => (
-                      <tr
-                        key={mentor.id}
-                        onClick={() => handleMentorClick(mentor.id, mentor.name, mentor.surname)}
-                        style={{ cursor: 'pointer' }}
-                        className={mentor.id === selectedMentorId ? 'selected-row ' : ''}>
-                        <td>{mentor.name}</td>
-                        <td>{mentor.surname}</td>
-                        <td>{mentor.position}</td>
-                        <td>{mentor.assignCount || 0}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              )}
+                  ))}
+                </tbody>
+              </Table>
+            </div>
           </div>
           <div className="col-md-6">
             {selectedMentorId && (
-              <div>
-                <h4>Assigned Newbies to {selectedMentorName} {selectedMentorSurname}</h4>
+              <div className="mt-4">
+                <h3>Assigned Newbies to {selectedMentorName} {selectedMentorSurname}</h3>
                 <div className="mb-3">
                   <div className="input-group">
                     <input
@@ -318,61 +291,41 @@ const AssignNewbieToMentorComponent: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                {sortedAssigned.length === 0 ? (
-                  <Alert variant="warning">This list is empty</Alert>
-                ) : (
-                  <Table id="assigned" striped bordered hover responsive>
-                    <thead>
-                      <tr>
-                        <th
-                          onClick={() => handleSort('name', 'assigned')}
-                          style={{ cursor: 'pointer' }}
-                          className={sortConfigAssigned.key === 'name' ? 'sorted-column' : ''}
-                        >
-                          <div>Name</div> 
-                          <div><i className="bi bi-arrow-down-up"></i></div>
-                        </th>
-                        <th
-                          onClick={() => handleSort('surname', 'assigned')}
-                          style={{ cursor: 'pointer' }}
-                          className={sortConfigAssigned.key === 'surname' ? 'sorted-column' : ''}
-                        >
-                          <div>Surname</div> 
-                          <div><i className="bi bi-arrow-down-up"></i></div>
-                        </th>
-                        <th
-                          onClick={() => handleSort('position', 'assigned')}
-                          style={{ cursor: 'pointer' }}
-                          className={sortConfigAssigned.key === 'position' ? 'sorted-column' : ''}
-                        >
-                          <div>Position</div> 
-                          <div><i className="bi bi-arrow-down-up"></i></div>
-                        </th>
-                        <th>
-                        <div>Actions</div> 
-                        <div><i className="bi bi-gear-fill"></i></div>
-                        </th>
+                <Table id="assigned" striped bordered hover responsive>
+                  <thead>
+                    <tr>
+                      <th onClick={() => handleSort('name', 'assigned')} style={{ cursor: 'pointer' }}>
+                        Name <i className="bi bi-arrow-down-up"></i>
+                      </th>
+                      <th onClick={() => handleSort('surname', 'assigned')} style={{ cursor: 'pointer' }}>
+                        Surname <i className="bi bi-arrow-down-up"></i>
+                      </th>
+                      <th onClick={() => handleSort('position', 'assigned')} style={{ cursor: 'pointer' }}>
+                        Position <i className="bi bi-arrow-down-up"></i>
+                      </th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sortedAssignedNewbies.map((newbie) => (
+                      <tr key={newbie.id}>
+                        <td>{newbie.name}</td>
+                        <td>{newbie.surname}</td>
+                        <td>{newbie.position}</td>
+                        <td>
+                          <Button variant="danger" onClick={() => handleDeleteClick(newbie.id ?? '')}>
+                            Unassign
+                          </Button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {sortedAssigned.map((newbie) => (
-                        <tr key={newbie.id}>
-                          <td>{newbie.name}</td>
-                          <td>{newbie.surname}</td>
-                          <td>{newbie.position}</td>
-                          <td>
-                            <Button variant="danger" onClick={() => handleDeleteClick(newbie.id)}>Unassign</Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                )}
+                    ))}
+                  </tbody>
+                </Table>
               </div>
             )}
             {selectedMentorId && (
-             <div className="mt-4">
-                <h4>Unassigned Newbies from {selectedMentorName} {selectedMentorSurname}</h4>
+              <div className="mt-4">
+                <h3>Unassigned Newbies for {selectedMentorName} {selectedMentorSurname}</h3>
                 <div className="mb-3">
                   <div className="input-group">
                     <input
@@ -387,61 +340,36 @@ const AssignNewbieToMentorComponent: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                {sortedUnassigned.length === 0 ? (
-                  <Alert variant="warning">This list is empty</Alert>
-                ) : (
-                  <Table id="unassigned" striped bordered hover responsive>
-                    <thead>
-                      <tr>
-                        <th
-                          onClick={() => handleSort('name', 'unassigned')}
-                          style={{ cursor: 'pointer' }}
-                          className={sortConfigUnassigned.key === 'name' ? 'sorted-column' : ''}
-                        >
-                          <div>Name</div> 
-                          <div><i className="bi bi-arrow-down-up"></i></div>
-                        </th>
-                        <th
-                          onClick={() => handleSort('surname', 'unassigned')}
-                          style={{ cursor: 'pointer' }}
-                          className={sortConfigUnassigned.key === 'surname' ? 'sorted-column' : ''}
-                        >
-                          <div>Surname</div> 
-                          <div><i className="bi bi-arrow-down-up"></i></div>
-                        </th>
-                        <th
-                          onClick={() => handleSort('position', 'unassigned')}
-                          style={{ cursor: 'pointer' }}
-                          className={sortConfigUnassigned.key === 'position' ? 'sorted-column' : ''}
-                        >
-                         <div>Position</div> 
-                         <div><i className="bi bi-arrow-down-up"></i></div>
-                        </th>
-                        <th>
-                          <div>Actions</div> 
-                          <div><i className="bi bi-gear-fill"></i></div>
-                        </th>
+                <Table id="unassigned" striped bordered hover responsive>
+                  <thead>
+                    <tr>
+                      <th onClick={() => handleSort('name', 'unassigned')} style={{ cursor: 'pointer' }}>
+                        Name <i className="bi bi-arrow-down-up"></i>
+                      </th>
+                      <th onClick={() => handleSort('surname', 'unassigned')} style={{ cursor: 'pointer' }}>
+                        Surname <i className="bi bi-arrow-down-up"></i>
+                      </th>
+                      <th onClick={() => handleSort('position', 'unassigned')} style={{ cursor: 'pointer' }}>
+                        Position <i className="bi bi-arrow-down-up"></i>
+                      </th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sortedUnassignedNewbies.map((newbie) => (
+                      <tr key={newbie.id}>
+                        <td>{newbie.name}</td>
+                        <td>{newbie.surname}</td>
+                        <td>{newbie.position}</td>
+                        <td>
+                          <Button variant="primary" onClick={() => handleAssignNewbie(newbie.id?? '')}>
+                            Assign
+                          </Button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {sortedUnassigned.map((newbie) => (
-                        <tr key={newbie.id}>
-                          <td>{newbie.name}</td>
-                          <td>{newbie.surname}</td>
-                          <td>{newbie.position}</td>
-                          <td>
-                            <Button
-                              variant="primary"
-                              onClick={() => handleAssignNewbie(newbie.id)}
-                            >
-                              Assign
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                )}
+                    ))}
+                  </tbody>
+                </Table>
               </div>
             )}
           </div>
