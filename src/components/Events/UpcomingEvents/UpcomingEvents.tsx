@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import CalendarModal from '../CalendarModal'; 
+import React, { useState, useEffect } from 'react';
 import './UpcomingEvents.scss';
+import CalendarModal from '../CalendarModal';
 import { useAuth } from '../../../Provider/authProvider';
 import axiosInstance from '../../../../axiosConfig';
 
@@ -127,12 +127,6 @@ const UpcomingEvents: React.FC = () => {
           </div>
         </div>
       )}
-    <div className="upcoming-event upcoming-events-container">
-        Place for upcoming events
-        <button className="btn btn-primary calendar-button" onClick={openModal}>
-          <i className='bi-calendar-event'/> Open Calendar
-        </button>
-        <CalendarModal isOpen={isModalOpen} onClose={closeModal} userId={userId} />
     </div>
   );
 };

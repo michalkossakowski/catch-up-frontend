@@ -5,4 +5,5 @@ export interface SchoolingQueryParameters {
     categoryFilter?: number;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
+    mode?: 'all' | 'owned' | 'subscribed';
 }

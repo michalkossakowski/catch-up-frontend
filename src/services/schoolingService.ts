@@ -88,6 +88,7 @@ export const getSchoolings = async(params: SchoolingQueryParameters = {}): Promi
                 categoryFilter: params.categoryFilter,
                 sortBy: params.sortBy,
                 sortOrder: params.sortOrder ?? 'asc',
+                mode: params.mode ?? 'all',
             }
         });
         return response.data;

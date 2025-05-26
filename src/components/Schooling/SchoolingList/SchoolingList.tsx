@@ -12,8 +12,8 @@ import makeAnimated from 'react-select/animated';
 import "./SchoolingList.scss";
 import { Button, CloseButton, Dropdown, Form, InputGroup, Pagination } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { getRole } from "../../../services/userService";
 import { useAuth } from "../../../Provider/authProvider";
+import { TypeEnum } from "../../../Enums/TypeEnum";
 
 const SchoolingList: React.FC = () => {
     const animatedComponents = makeAnimated();
@@ -28,8 +28,9 @@ const SchoolingList: React.FC = () => {
     const [pageNumber, setPageNumber] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(10);
     const [totalPages, setTotalPages] = useState<number>(1);
-    const [subscribedSchooling, setSubscribedSchooling] = useState(true);
+    const [subscribedSchooling, setSubscribedSchooling] = useState(false);
     const [myCreatedSchoolings, setMyCreatedSchoolings] = useState(true);
+    const [paramMode, setParamMode] = useState<"all" | "owned" | "subscribed">('all');
 
     //Sidebar
     const [show, setShow] = useState(false);
@@ -41,18 +42,22 @@ const SchoolingList: React.FC = () => {
 
     // Role
     const [role, setRole] = useState<string | null>(null);
-
+    
     var params: SchoolingQueryParameters = {
         pageNumber: pageNumber,
         pageSize: pageSize,
         titleFilter: searchTitle,
         categoryFilter: selectedCategory?.value || undefined,
+        mode: paramMode,
     }
 
     useEffect(() => {
+        const fetchAll = async () => {
+            await fetchRole();
+            await fetchSchoolings(params);
+        };
         setLoading(true);
-        fetchRole();
-        fetchSchoolings(params);
+        fetchAll();
         fetchCateregories()
     }, [])
 
@@ -67,9 +72,12 @@ const SchoolingList: React.FC = () => {
     
     const fetchRole = async () => {
         try {
-            setRole(await getRole(user?.id as string));
+            var role = await getRole(user?.id as string)
+            setRole(role);
+            const mode = [TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) ? 'owned' : 'all';
+            setParamMode(mode);
         } catch (error) {
-            console.log('Failed to fetch user role');
+            console.error('Failed to fetch user role');
         }
     };
     
@@ -203,11 +211,31 @@ const SchoolingList: React.FC = () => {
     };
 
     const handleSwitchSchoolingOwner = () => {
-        setMyCreatedSchoolings(prev => !prev);
+        if (myCreatedSchoolings) {
+            setSubscribedSchooling(false);
+        }
+        setMyCreatedSchoolings(prev => {
+            const newValue = !prev;
+            const mode = newValue ? 'owned' : 'all';
+            params.mode = mode;
+            setParamMode(mode);
+            fetchSchoolings(params);
+            return newValue;
+        });
     }
 
     const handleSwitchSubscribedSchoolings = () => {
-        setSubscribedSchooling(prev => !prev);
+        if (myCreatedSchoolings) {
+            return
+        }
+        setSubscribedSchooling(prev => {
+            const newValue = !prev;
+            const mode = newValue ? 'subscribed' : 'all';
+            params.mode = mode;
+            setParamMode(mode);
+            fetchSchoolings(params);
+            return newValue;
+        });
     }
 
     const navigateToSchooling = () => {
@@ -271,14 +299,16 @@ const SchoolingList: React.FC = () => {
                             onChange={() => handleSwitchSubscribedSchoolings()}
                         />
                     </Form.Group>
-                    <Form.Group className="text-start m-0 mb-3 fs-6">
-                        <Form.Check
-                            type="switch"
-                            label="Created Schoolings"
-                            checked={myCreatedSchoolings}
-                            onChange={() => handleSwitchSchoolingOwner()}
-                        />
-                    </Form.Group>
+                    {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
+                        <Form.Group className="text-start m-0 mb-3 fs-6">
+                            <Form.Check
+                                type="switch"
+                                label="Created Schoolings"
+                                checked={myCreatedSchoolings}
+                                onChange={() => handleSwitchSchoolingOwner()}
+                            />
+                        </Form.Group>
+                    )}
                     <hr/>
                     <label className="mb-2 fs-6">Filtr by Category:</label>
                     <Select
@@ -343,9 +373,12 @@ const SchoolingList: React.FC = () => {
                                     <Dropdown.Menu>
                                         <Dropdown.Item href="#/action-1">Subscribe</Dropdown.Item>
                                         <Dropdown.Item href="#/action-2">Unsubscribe</Dropdown.Item>
-                                        <Dropdown.Divider />
-                                        <Dropdown.Item href="#/action-3">Edit</Dropdown.Item>
-                                        <Dropdown.Item href="#/action-3">Delete</Dropdown.Item>
+                                    {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
+                                        <>
+                                            <Dropdown.Divider />
+                                            <Dropdown.Item href="#/action-3">Edit</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-3">Delete</Dropdown.Item>
+                                        </>)}
                                     </Dropdown.Menu>
                                 </Dropdown>
                                 <CloseButton onClick={handleClose} className="fs-5"/>

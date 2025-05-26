@@ -2,6 +2,6 @@
  {
      Newbie = "Newbie",
      Mentor = "Mentor",
-     Menager = "Manager",
+     Manager = "Manager",
      Admin = "Admin"
  }
