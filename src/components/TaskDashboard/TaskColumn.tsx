@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { FullTaskDto } from '../../dtos/FullTaskDto';
 import { StatusEnum } from "../../Enums/StatusEnum";
@@ -43,6 +43,43 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
                                                }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState<FullTaskDto | null>(null);
+
+    const [visibleTasks, setVisibleTasks] = useState<FullTaskDto[]>([]);
+    const CHUNK_SIZE = 50;
+    const CHUNK_INTERVAL = 50;
+
+    useEffect(() => {
+        let currentIndex = 0;
+        let isCancelled = false;
+
+        if (tasks.length <= CHUNK_SIZE) {
+            setVisibleTasks(tasks);
+            return;
+        }
+
+        const newVisibleTasks: FullTaskDto[] = [];
+
+        const loadChunk = () => {
+            if (isCancelled) return;
+
+            newVisibleTasks.push(...tasks.slice(currentIndex, currentIndex + CHUNK_SIZE));
+            setVisibleTasks([...newVisibleTasks]);
+
+            currentIndex += CHUNK_SIZE;
+
+            if (currentIndex < tasks.length) {
+                setTimeout(loadChunk, CHUNK_INTERVAL);
+            }
+        };
+
+        loadChunk();
+
+        return () => {
+            isCancelled = true;
+        };
+    }, [tasks]);
+
+
 
     const [{ isOver }, drop] = useDrop({
         accept: 'TASK',
@@ -110,7 +147,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
                     </div>
                 ) : (
                     <div className="task-cards">
-                        {tasks.map(task => (
+                        {visibleTasks.map(task => (
                             <TaskCard
                                 key={task.id}
                                 task={task}

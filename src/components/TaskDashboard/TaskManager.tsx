@@ -7,11 +7,9 @@ import { AppDispatch, RootState } from "../../store/store.ts";
 import { CategoryDto } from "../../dtos/CategoryDto.ts";
 import { FullTaskDto } from "../../dtos/FullTaskDto";
 import { UserAssignCountDto } from "../../dtos/UserAssignCountDto";
-import { TaskContentDto } from "../../dtos/TaskContentDto.ts";
 import { fetchTasks, updateTaskLocally, deleteTaskLocally } from "../../store/taskSlice.ts";
 import NewbieMentorService from '../../services/newbieMentorService';
 import { getCategories } from "../../services/categoryService.ts";
-import { getTaskContents } from "../../services/taskContentService.ts";
 import {setTaskStatus, deleteTask, editTask, assignTask} from "../../services/taskService";
 import { StatusEnum } from "../../Enums/StatusEnum";
 import TaskColumns from "./TaskColumns";
@@ -22,6 +20,7 @@ import {TaskDto} from "../../dtos/TaskDto.ts";
 import { useLocation } from "react-router-dom";
 import Select from "react-select";
 import {customSelectStyles} from "../../componentStyles/selectStyles.tsx";
+import { TypeEnum } from "../../Enums/TypeEnum.ts";
 
 function TaskManager() {
     const { user, getRole } = useAuth();
@@ -40,7 +39,6 @@ function TaskManager() {
     const [showAssignModal, setShowAssignModal] = useState(false);
 
     const [categories, setCategories] = useState<CategoryDto[]>([]);
-    const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
     const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
     const [userRole, setUserRole] = useState<string | null>(null);
 
@@ -77,23 +75,21 @@ function TaskManager() {
                 const role = await getRole(user?.id as string);
                 setUserRole(role);
 
-                const [categoriesData, taskContentsData] = await Promise.all([
-                    getCategories(),
-                    getTaskContents()
+                const [categoriesData] = await Promise.all([
+                    getCategories()
                 ]);
 
                 let newbieList;
                 if (role === "Admin") {
-                    newbieList = await NewbieMentorService.getAllNewbies();
+                    newbieList = await NewbieMentorService.getUsers(TypeEnum.Newbie);
                 } else if (role === "Mentor") {
-                    newbieList = await NewbieMentorService.getAssignmentsByMentor(mentorId!);
+                    newbieList = await NewbieMentorService.getAssignments(mentorId!, TypeEnum.Mentor);
                 } else {
                     throw new Error("Unauthorized access");
                 }
 
                 setCategories(categoriesData);
                 setNewbies(newbieList);
-                setTaskContents(taskContentsData);
             } catch (err) {
                 if (err instanceof Error) {
                     setLocalError(err.message);
@@ -255,7 +251,7 @@ function TaskManager() {
                                                 label: `${newbie.name} ${newbie.surname}`
                                             }))}
                                             placeholder="Select a newbie"
-                                            onChange={(selectedOption) => setSelectedNewbie(selectedOption ? selectedOption.value : '')}
+                                            onChange={(selectedOption) => setSelectedNewbie(selectedOption?.value ?? '')}
                                             value={newbies.map(newbie => ({
                                                 value: newbie.id,
                                                 label: `${newbie.name} ${newbie.surname}`
@@ -289,7 +285,6 @@ function TaskManager() {
                             onTaskDelete={handleTaskDelete}
                             onTaskDrop={handleTaskDrop}
                             categories={categories}
-                            taskContents={taskContents}
                             role={userRole || ""}
                             loading={loading}
                             loadingTaskIds={loadingTaskIds}
@@ -298,9 +293,7 @@ function TaskManager() {
 
                     <div className={`task-pool-container ${!selectedNewbie ? "disabled-pool" : ""}`}>
                         <TaskPool
-                            taskContents={taskContents}
                             categories={categories}
-                            onTaskDrop={handlePoolTaskDrop}
                             isDisabled={!selectedNewbie}
                         />
                     </div>
@@ -315,7 +308,6 @@ function TaskManager() {
                         onTaskUpdate={handleTaskAssigned}
                         selectedNewbieId={selectedNewbie}
                         categories={categories}
-                        taskContents={taskContents}
                     />
                 )}
             </div>

@@ -50,7 +50,8 @@ function App() {
     const [theme, setTheme] = useState<'night' | 'day'>('night');
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { hasUnread, notifications } = useSelector((state: RootState) => state.notifications);
+    const hasUnread = useSelector((state: RootState) => state.notifications.hasUnread);
+    const notifications = useSelector((state: RootState) => state.notifications.notifications);
     const location = useLocation();
 
     const [showToast, setShowToast] = useState(false);
@@ -101,7 +102,7 @@ function App() {
         if (notificationDropdownRef.current) {
             const dropdownToggle = notificationDropdownRef.current.querySelector('.dropdown-toggle');
             if (dropdownToggle) {
-                (dropdownToggle as HTMLElement).click(); // Symuluj kliknięcie, aby zwinąć dropdown
+                (dropdownToggle as HTMLElement).click(); 
             }
         }
     };
@@ -111,7 +112,7 @@ function App() {
         if (notificationDropdownRef.current) {
             const dropdownToggle = notificationDropdownRef.current.querySelector('.dropdown-toggle');
             if (dropdownToggle) {
-                (dropdownToggle as HTMLElement).click(); // Symuluj kliknięcie, aby zwinąć dropdown
+                (dropdownToggle as HTMLElement).click(); 
             }
         }
     };
@@ -149,7 +150,6 @@ function App() {
         setShowAIChat(prev => !prev);
     };
 
-    // Pobierz 5 najnowszych powiadomień
     const latestNotifications = notifications.slice(0, 5);
 
     return (
@@ -164,7 +164,7 @@ function App() {
                         <div className={`left-sidebar ${isSidebarVisible ? "visible" : "hidden"}`}>
                             <Navbar expand="lg" className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-navbar">
                                 <Navbar.Brand href="/" className="nav-brand">catchUp</Navbar.Brand>
-                                <Nav className="flex-column w-100">
+                                <Nav className="flex-column w-100" data-tour="left-sidebar">
                                     <NavLink to='/' className="nav-link">
                                         <i className="bi bi-house-door" /> <span>{t('home')}</span>
                                     </NavLink>
@@ -189,7 +189,7 @@ function App() {
                                             <i className="bi bi-shield" /> <span>{t('badges')}</span>
                                         </NavLink>
                                     )}
-                                    <NavLink to="/faq" className="nav-link">
+                                    <NavLink to="/faq" className="nav-link" data-tour="faq-nav-link">
                                         <i className="bi bi-question-circle" /> <span>{t('faq')}</span>
                                     </NavLink>
                                     {(role == "Mentor" || role == "Admin") && (
@@ -215,7 +215,7 @@ function App() {
                                             <NavDropdown.Divider />
                                         </NavDropdown>
                                     )}
-                                    {role === "HR" || role === "Admin" && (
+                                    {(role === "Admin" || role == "HR")  && (
                                         <NavDropdown
                                             className={isHRToolsActive ? "navdropdown-active" : ""}
                                             title={<><i className="bi bi-person-lock" /> <span>HR Tools</span></>}
@@ -244,13 +244,14 @@ function App() {
                             title="Show/hide sidebar"
                             className="btn-secondary toggle-sidebar-btn"
                             onClick={() => setSidebarVisible(!isSidebarVisible)}
+                            data-tour="hide-sidebar"
                         >
                             {isSidebarVisible ? <i className="bi bi-arrow-left-square" /> : <i className="bi bi-arrow-right-square" />}
                         </Button>
 
                         <Container fluid className={`main-content ${isSidebarVisible ? "sidebar-visible" : "sidebar-hidden"}`}>
                             <Navbar expand="lg" className="bg-body-tertiary navbar-horizontal">
-                                <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap">
+                                <Nav className="ms-auto d-flex align-items-center flex-row flex-wrap" data-tour="top-navbar">
                                     <Button onClick={toggleTheme} className='theme-btn' title='Dark/Light theme'>
                                         {theme === 'night' ? <i className="bi bi-brightness-high" /> : <i className="bi bi-moon" />}
                                     </Button>
@@ -327,7 +328,7 @@ function App() {
                                         </div>
                                     </NavDropdown>
                                     <NavLink title="Settings" to="/settings" className="nav-link"><i className="bi bi-gear" /></NavLink>
-                                    <NavLink title="Logout" to="/logout" onClick={logout} className="nav-link">
+                                    <NavLink title="Logout" to="/logout" onClick={logout} className="nav-link" data-tour="top-navbar-logout">
                                         <i className="bi bi-box-arrow-right" />
                                     </NavLink>
                                 </Nav>
@@ -357,7 +358,7 @@ function App() {
                                 <Route path="/profile/:userId" element={<UserProfile />} />
                                 <Route path="/settings" element={<SettingsComponent/>} />
                                 <Route path="/notifications" element={<><NotificationPage /></>} />
-                                <Route path="/eventCreator" element={<EventCreator />} />
+                                <Route path="/eventCreator" element={<EventCreator/>} />
                                 <Route path="/material" element={<MaterialTest />} />
 
                                 <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
@@ -377,7 +378,7 @@ function App() {
                             onClose={() => setShowToast(false)}
                         />
                     </div>
-                    <Button variant="primary" className='ai-button' title="AI Assistant" onClick={handleToggleAIChat}>
+                    <Button variant="primary" className='ai-button' title="AI Assistant" data-tour="ai-assistant" onClick={handleToggleAIChat}>
                         <i className="bi bi-stars" style={{ fontSize: '1.5rem' }} />
                     </Button>
                     <AIAssistant show={showAIChat} onHide={() => setShowAIChat(false)} />

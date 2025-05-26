@@ -1,28 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { TaskContentDto } from "../../dtos/TaskContentDto.ts";
 import { CategoryDto } from "../../dtos/CategoryDto.ts";
-import { StatusEnum } from "../../Enums/StatusEnum";
 import { Dropdown, Pagination } from 'react-bootstrap';
 import PoolTaskCard from './PoolTaskCard';
+import {getTaskContents} from "../../services/taskContentService.ts";
 
 interface TaskPoolProps {
     taskContents?: TaskContentDto[];
     categories?: CategoryDto[];
-    onTaskDrop: (taskContentId: number, newStatus: StatusEnum) => void;
     isDisabled?: boolean;
 }
 
 const TaskPool: React.FC<TaskPoolProps> = ({
-                                               taskContents = [],
                                                categories = [],
                                                isDisabled = false,
                                            }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredTasks, setFilteredTasks] = useState<TaskContentDto[]>([]);
     const [activeCategoryId, setActiveCategoryId] = useState<number>(0);
-
+    const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
+    const [totalCount, setTotalCount] = useState<number>(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(false);
     const tasksPerPage = 5;
+
+    useEffect(() => {
+        const fetchTaskContents = async () => {
+            try {
+                setLoading(true);
+                const result = await getTaskContents(currentPage, tasksPerPage);
+                setTaskContents(result.taskContents);
+                setTotalCount(result.totalCount);
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching task contents:", error);
+                setLoading(false);
+            }
+        };
+
+        fetchTaskContents();
+    }, [currentPage]);
 
     // Filter tasks when search or category changes
     useEffect(() => {
@@ -39,7 +56,6 @@ const TaskPool: React.FC<TaskPoolProps> = ({
         }
 
         setFilteredTasks(filtered);
-        setCurrentPage(1);
     }, [searchTerm, activeCategoryId, taskContents]);
 
     const getCategoryName = (categoryId?: number) => {
@@ -60,10 +76,7 @@ const TaskPool: React.FC<TaskPoolProps> = ({
         return text.substring(0, maxLength) + '...';
     };
 
-    const totalPages = Math.ceil(filteredTasks.length / tasksPerPage);
-    const indexOfLastTask = currentPage * tasksPerPage;
-    const indexOfFirstTask = indexOfLastTask - tasksPerPage;
-    const currentTasks = filteredTasks.slice(indexOfFirstTask, indexOfLastTask);
+    const totalPages = Math.ceil(totalCount / tasksPerPage);
 
     const handlePageChange = (pageNumber: number) => {
         setCurrentPage(pageNumber);
@@ -76,14 +89,14 @@ const TaskPool: React.FC<TaskPoolProps> = ({
             <Pagination.First
                 key="first"
                 onClick={() => handlePageChange(1)}
-                disabled={currentPage === 1 || isDisabled}
+                disabled={currentPage === 1 || isDisabled || loading}
             />
         );
         items.push(
             <Pagination.Prev
                 key="prev"
                 onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1 || isDisabled}
+                disabled={currentPage === 1 || isDisabled || loading}
             />
         );
 
@@ -100,26 +113,25 @@ const TaskPool: React.FC<TaskPoolProps> = ({
                     key={i}
                     active={i === currentPage}
                     onClick={() => handlePageChange(i)}
-                    disabled={isDisabled}
+                    disabled={isDisabled || loading}
                 >
                     {i}
                 </Pagination.Item>
             );
         }
 
-        // Add "Next" and "Last" buttons
         items.push(
             <Pagination.Next
                 key="next"
                 onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages || totalPages === 0 || isDisabled}
+                disabled={currentPage === totalPages || totalPages === 0 || isDisabled || loading}
             />
         );
         items.push(
             <Pagination.Last
                 key="last"
                 onClick={() => handlePageChange(totalPages)}
-                disabled={currentPage === totalPages || totalPages === 0 || isDisabled}
+                disabled={currentPage === totalPages || totalPages === 0 || isDisabled || loading}
             />
         );
 
@@ -198,14 +210,20 @@ const TaskPool: React.FC<TaskPoolProps> = ({
             </div>
 
             <div className="pool-tasks-container">
-                {filteredTasks.length === 0 ? (
+                {loading ? (
+                    <div className="text-center py-3">
+                        <div className="spinner-border spinner-border-sm text-primary" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                ) : filteredTasks.length === 0 ? (
                     <div className="text-muted text-center py-3">
                         No tasks available
                     </div>
                 ) : (
                     <>
                         <div className="row g-2">
-                            {currentTasks.map(task => (
+                            {filteredTasks.map(task => (
                                 <div key={task.id} className="col-12">
                                     <PoolTaskCard
                                         task={task}
@@ -223,8 +241,8 @@ const TaskPool: React.FC<TaskPoolProps> = ({
                         )}
 
                         <div className="text-muted text-center mt-2 small">
-                            Showing {Math.min(filteredTasks.length, indexOfFirstTask + 1)}-
-                            {Math.min(filteredTasks.length, indexOfLastTask)} of {filteredTasks.length} tasks
+                            Showing {Math.min(totalCount, (currentPage - 1) * tasksPerPage + 1)}-
+                            {Math.min(totalCount, currentPage * tasksPerPage)} of {totalCount} tasks
                         </div>
                     </>
                 )}

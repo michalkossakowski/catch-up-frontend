@@ -90,6 +90,9 @@ const CalendarModal: React.FC<CalendarModalProps> = ({ isOpen, onClose, userId }
                     style={{ height: 500, margin: '0.1rem' }}
                     tooltipAccessor={(event: Event) => event.description}
                     onSelectEvent={(event: Event) => setSelectedEvent(event)}
+                    eventPropGetter={() => ({
+                      style: { backgroundColor: '#DB91D1', color: 'white' },
+                    })}
                   />
                 </>
               )}
@@ -112,8 +115,8 @@ const CalendarModal: React.FC<CalendarModalProps> = ({ isOpen, onClose, userId }
               </div>
               <div className="modal-body" style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
                 <p className="fw-bold">
-                  {selectedEvent.start.toDateString()} {selectedEvent.start.toLocaleTimeString()} -{' '}
-                  {selectedEvent.end.toDateString()} {selectedEvent.end.toLocaleTimeString()}
+                  {selectedEvent.start.toLocaleDateString('en-GB')} {selectedEvent.start.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })} -{' '}
+                  {selectedEvent.end.toLocaleDateString('en-GB')} {selectedEvent.end.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
                 </p>
                 <br />
                 <p>{selectedEvent.description}</p>

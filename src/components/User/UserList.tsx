@@ -4,16 +4,21 @@ import fileService from '../../services/fileService';
 import UserListItem from './UserListItem.tsx';
 import NewbieMentorService from '../../services/newbieMentorService';
 import { UserDto } from '../../dtos/UserDto';
+import { useTranslation } from "react-i18next";
+import { TypeEnum } from '../../Enums/TypeEnum.ts';
+import { UserAssignCountDto } from '../../dtos/UserAssignCountDto.ts';
 
 interface UserListProps {
-    userId?: string;
+    userId: string;
 }
 
 const UserList = ({ userId }: UserListProps) => {
-    const [users, setUsers] = useState<UserDto[]>([]);
+    const [users, setUsers] = useState<UserAssignCountDto[]>([]);
     const [userAvatars, setUserAvatars] = useState<Record<string, string>>({});
     const { getRole } = useAuth();
     const [userRole, setUserRole] = useState<string>('');
+    const [isLoading, setIsLoading] = useState(true);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchUserRole = async () => {
@@ -33,31 +38,38 @@ const UserList = ({ userId }: UserListProps) => {
 
     useEffect(() => {
         const fetchUsers = async () => {
-            let userData: UserDto[] = [];
+            let userData: UserAssignCountDto[] = [];
+            setIsLoading(true);
 
-            switch (userRole) {
-                case 'Newbie':
-                    userData = await NewbieMentorService.getAssignmentsByNewbie(userId!);
-                    break;
-                case 'Mentor':
-                    userData = await NewbieMentorService.getAssignmentsByMentor(userId!);
-                    break;
-                case 'Admin':
-                case 'HR':
-                    userData = await NewbieMentorService.getAllNewbies();
-                    break;
-            }
-
-            setUsers(userData);
-
-            for (const user of userData) {
-                if (user.avatarId) {
-                    const blob = await fileService.downloadFile(user.avatarId);
-                    setUserAvatars(prev => ({
-                        ...prev,
-                        [user.id!]: URL.createObjectURL(blob)
-                    }));
+            try {
+                switch (userRole) {
+                    case 'Newbie':
+                        userData = await NewbieMentorService.getAssignments(userId, TypeEnum.Newbie);
+                        break;
+                    case 'Mentor':
+                        userData = await NewbieMentorService.getAssignments(userId, TypeEnum.Mentor);
+                        break;
+                    case 'Admin':
+                    case 'HR':
+                        userData = await NewbieMentorService.getUsers(TypeEnum.Newbie);
+                        break;
                 }
+
+                setUsers(userData);
+
+                for (const user of userData) {
+                    if (user.avatarId) {
+                        const blob = await fileService.downloadFile(user.avatarId);
+                        setUserAvatars(prev => ({
+                            ...prev,
+                            [user.id!]: URL.createObjectURL(blob)
+                        }));
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to fetch user list:", error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -70,8 +82,26 @@ const UserList = ({ userId }: UserListProps) => {
         };
     }, [userId, userRole]);
 
+    if (isLoading) {
+        return (
+            <div className="text-center p-3">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">{t('loading')}</span>
+                </div>
+            </div>
+        );
+    }
+
+    if (users.length === 0) {
+        return (
+            <div className="text-center text-muted p-3">
+                {t('no-users-found')}
+            </div>
+        );
+    }
+
     return (
-        <div className="mt-3">
+        <div className="user-list">
             {users.map((user) => (
                 <UserListItem
                     key={user.id}

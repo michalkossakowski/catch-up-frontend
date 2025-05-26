@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './TaskContentComponent.scss';
 import { Accordion, Alert, Button, Form, InputGroup, Row, Col, Modal } from 'react-bootstrap';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
-import { getTaskContents, getByTitle, deleteTaskContent } from '../../services/taskContentService';
+import {getTaskContents, deleteTaskContent, getAllTaskContents} from '../../services/taskContentService';
 import TaskContentEdit from './TaskContentEdit';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { getCategories } from '../../services/categoryService';
@@ -48,7 +48,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     const navigate = useNavigate();
 
     useEffect(() => {
-        getAllTaskContents();
+        getTaskContents();
         getCategories()
             .then((data) => setCategories(data))
             .catch((error) => console.error('Error loading categories:', error));
@@ -58,9 +58,9 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
         filterTaskContents();
     }, [taskContents, searchTitle, selectedCategoryId, sortOption, sortDirection]);
 
-    const getAllTaskContents = () => {
+    const getTaskContents = () => {
         setLoading(true);
-        getTaskContents()
+        getAllTaskContents()
             .then((data) => {
                 setTaskContents(data);
                 setFilteredTaskContents(data);
@@ -143,7 +143,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
             try {
                 await removeTaskFromAllPresets(taskContentIdToDelete);
                 await deleteTaskContent(taskContentIdToDelete);
-                getAllTaskContents();
+                getTaskContents();
                 setToastMessage("Task content deleted successfully");
                 setToastColor("green");
                 setShowToast(true);
@@ -171,7 +171,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
         setToastColor("green");
         setShowToast(true);
         
-        getAllTaskContents();
+        getTaskContents();
         setShowEditModal(false);
         setEditedTaskContent(null);
     };
@@ -190,7 +190,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     };
     
     const handleMaterialSelect = () => {};
-    // const handleDeleteItem = () => {};
+    const handleDeleteItem = () => {};
 
     return (
         <section className='container task-content'>
@@ -308,10 +308,10 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                                                 <div className="material-content">
                                                     <Accordion defaultActiveKey={`item${taskContent.materialsId}`} className="read-only-material">
                                                         <MaterialItem
-                                                            materialId={taskContent.materialsId}
-                                                            // onDeleteItem={handleDeleteItem}
-                                                            // onMaterialSelect={handleMaterialSelect}
-                                                            // readOnly={true}
+                                                            materialDto={expandedMaterials[taskContent.materialsId]}
+                                                            onDeleteItem={handleDeleteItem}
+                                                            onMaterialSelect={handleMaterialSelect}
+                                                            readOnly={true}
                                                         />
                                                     </Accordion>
                                                 </div>

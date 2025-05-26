@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getTaskContents } from '../../services/taskContentService';
+import { getAllTaskContents } from '../../services/taskContentService';
 import { getCategories } from '../../services/categoryService';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
 import { CategoryDto } from '../../dtos/CategoryDto';
@@ -28,7 +28,7 @@ const TaskContentDetails: React.FC = () => {
         if (id) {
             setLoading(true);
             Promise.all([
-                getTaskContents(),
+                getAllTaskContents(),
                 getCategories()
             ])
             .then(([taskContents, categoriesData]) => {

@@ -1,18 +1,19 @@
+import React, { useState } from 'react';
 import './Home.css';
-import React from 'react';
 import HomeCard from './HomeCard/HomeCard';
 import './Home.css';
 import UpcomingEvents from '../Events/UpcomingEvents/UpcomingEvents';
 import { useAuth } from '../../Provider/authProvider';
 import UnassignedNewbiesList from '../HR/UnassignedNewbiesList';
+import TutorialComponent from '../Tutorial/Tutorial';
+import EventCreatorModal from '../Events/EventCreatorModal';
 
 interface HomeProps {
     role: string | null;
 }
-    
 export default function Home({ role }: HomeProps): React.ReactElement {
       const { user } = useAuth();
-
+      const [showEventModal, setShowEventModal] = useState(false);
     return(
         <>
             {role == null ? (
@@ -28,7 +29,7 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                             case "Admin":
                                 return(
                                     <>
-                                        <div className="home-cards-container">
+                                        <div className="home-cards-container" data-tour="home-tools">
                                             <HomeCard
                                                 title="Tasks Manager" 
                                                 description="Manage, assign and process tasks for newbies." 
@@ -44,11 +45,12 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                             />
                             
                                             <HomeCard
-                                                title="Create Events" 
-                                                description="Create events for newbies, mentors and other staff." 
-                                                iconName="bi-calendar-event" 
-                                                path="/eventCreator"
-                                            />
+                                                    title="Create Events"
+                                                    description="Create events for newbies, mentors and other staff."
+                                                    iconName="bi-calendar-event"
+                                                    path="#"
+                                                    onClick={() => setShowEventModal(true)} 
+                                                />
                             
                                             <HomeCard
                                                 title="Assignments" 
@@ -90,7 +92,7 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                             case "HR":
                                 return(
                                     <>     
-                                        <div className="home-cards-container">
+                                        <div className="home-cards-container" data-tour="home-tools">
                                             <HomeCard
                                                 title="Add Users" 
                                                 description="Add new users to your organization." 
@@ -106,11 +108,12 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                             />
 
                                             <HomeCard
-                                                title="Create Events" 
-                                                description="Create events for newbies, mentors and other staff." 
-                                                iconName="bi-calendar-event" 
-                                                path="/eventCreator"
-                                            />
+                                                    title="Create Events"
+                                                    description="Create events for newbies, mentors and other staff."
+                                                    iconName="bi-calendar-event"
+                                                    path="#"
+                                                    onClick={() => setShowEventModal(true)} 
+                                                />
 
                                             <HomeCard
                                                 title="Feedbacks" 
@@ -128,7 +131,7 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                             case "Mentor":
                                 return(
                                     <>
-                                        <div className="home-cards-container">          
+                                        <div className="home-cards-container" data-tour="home-tools">          
                                             <HomeCard
                                             title="Your Newbies" 
                                             description="View your assigned newbies." 
@@ -190,7 +193,7 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                             case "Newbie":
                                 return(
                                     <>
-                                        <div className="home-cards-container">          
+                                        <div className="home-cards-container" data-tour="home-tools">          
                                             <HomeCard
                                                 title="Tasks" 
                                                 description="Check out your assigned tasks and start working on them." 
@@ -253,10 +256,17 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                     return <></>
                                 }
                             })()}
-                        <div className="home-events-container">
+                        <div className="home-events-container" data-tour="home-events">
                             <UpcomingEvents />
                         </div>
-                    </div>       
+                    </div>  
+
+                    <EventCreatorModal
+                        show={showEventModal}
+                        onClose={() => setShowEventModal(false)}
+                    />   
+
+                    <TutorialComponent />     
                 </>  
             )}
         </>
