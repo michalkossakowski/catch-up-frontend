@@ -54,12 +54,17 @@ const SchoolingList: React.FC = () => {
     useEffect(() => {
         const fetchAll = async () => {
             await fetchRole();
-            await fetchSchoolings(params);
+            fetchCateregories();
         };
         setLoading(true);
         fetchAll();
-        fetchCateregories()
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        if (paramMode) {
+            fetchSchoolings({ ...params, mode: paramMode });  // zakładam, że mode jest w params
+        }
+    }, [paramMode]);
 
     const fetchCateregories = async () => {
         getCategories().then((res) => {
