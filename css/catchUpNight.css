@@ -165,3 +165,27 @@
 .form-switch .form-check-input:focus {
     --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23ffffff '/%3e%3c/svg%3e") !important;
 }
+
+[data-bs-theme="dark"] .btn-outline-light {
+    --bs-btn-color: #fff;
+    --bs-btn-border-color: #F2E267;
+    --bs-btn-hover-color: #000;
+    --bs-btn-hover-bg: #F2E267;
+    --bs-btn-hover-border-color: #F2E267;
+    --bs-btn-focus-shadow-rgb: 242, 226, 103;
+    --bs-btn-active-color: #000;
+    --bs-btn-active-bg: #e4d74e;
+    --bs-btn-active-border-color: #e4d74e;
+}
+.btn-close {
+    filter: brightness(0) saturate(100%) invert(81%) sepia(78%) saturate(737%) hue-rotate(227deg) brightness(121%) contrast(118%);
+}
+.form-check-input:checked {
+    background-color: #6e6e6e;
+    border-color: #fff;
+}
+
+.form-check-input {
+    background-color: #373737;
+    border-color: #fff;
+}

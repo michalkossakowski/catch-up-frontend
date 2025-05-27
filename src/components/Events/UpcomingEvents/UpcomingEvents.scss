@@ -1,0 +1,38 @@
+.upcoming-events-container{
+    border: solid 0.1rem #DB91D1 !important;
+    border-radius: 1rem;
+    width: 100%;
+    max-height: 400px; 
+    overflow-y: auto; 
+    position: relative;
+
+    .calendar-button {
+        position: sticky; 
+        bottom: 0.75rem;
+        right: 0.75rem;
+    }
+
+    .ul {
+        list-style-type: none; 
+        padding: 0;
+        margin: 0;
+    }
+
+    .event-item {
+        cursor: pointer;
+        padding: 1px 30px;
+        border-radius: 5px;
+        word-wrap: break-word; 
+        overflow-wrap: break-word; 
+    }
+
+    .event-item p {
+        margin: 0;
+        word-wrap: break-word; 
+        overflow-wrap: break-word; 
+    }
+
+    .calendar-button i {
+        color: #FFFFFF;
+    }
+}

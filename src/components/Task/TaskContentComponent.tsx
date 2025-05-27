@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './TaskContentComponent.css';
+import './TaskContentComponent.scss';
 import { Accordion, Alert, Button, Form, InputGroup, Row, Col, Modal } from 'react-bootstrap';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
 import {getTaskContents, deleteTaskContent, getAllTaskContents} from '../../services/taskContentService';
@@ -193,7 +193,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     const handleDeleteItem = () => {};
 
     return (
-        <section className='container'>
+        <section className='container task-content'>
             <h2 className='title'>Task Contents</h2>
 
             {/* Filters and Search */}
