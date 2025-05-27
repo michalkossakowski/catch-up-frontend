@@ -12,7 +12,7 @@
 .task-columns-container {
     flex: 4;
     width: 75%;
-    max-width: 75%;
+    max-width: 100%;
     min-height: 600px;
 }
 
@@ -29,6 +29,7 @@
     width: 25%;
     min-width: 300px;
     max-width: 25%;
+    margin-left: 7px;
 }
 
 .task-columns {
@@ -324,20 +325,97 @@
 
 .search-bar-container {
     display: flex;
-    width: 100%;
-    gap: 0;
+    width: 99.28%;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-end;
 }
 
 .search-input {
-    width: 50%;
+    flex: 2;
+    max-width: 400px;
 }
 
-.newbie-select {
-    width: 18.6%;
+.filter-control {
+    flex: 1;
+    min-width: 180px;
 }
 
-.category-filter {
-    width: 30%;
+.search-input input,
+.filter-control select,
+.filter-control .react-select__control {
+    border-radius: 6px !important;
+    height: 38px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ced4da;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.search-input input:focus,
+.filter-control select:focus,
+.filter-control .react-select__control--is-focused {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+@media (max-width: 992px) {
+    .search-bar-containersearch-bar-container {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .search-input,
+    .filter-control {
+        width: 100%;
+        min-width: 100%;
+    }
+}
+
+.date-range-filter {
+    flex: 1.5;
+    min-width: 250px;
+}
+
+.date-range-group .form-label {
+    margin-bottom: 0;
+    white-space: nowrap;
+    min-width: 200px;
+    text-align: left;
+}
+
+.date-range-picker {
+    display: flex;
+    width: 100%;
+}
+
+.react-datepicker-wrapper {
+    width: 100%;
+}
+
+.react-datepicker__input-container input {
+    width: 100%;
+    height: 38px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.react-datepicker__input-container input:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.react-datepicker-popper {
+    z-index: 1000;
+}
+
+@media (max-width: 768px) {
+    .date-range-filter {
+        min-width: 100%;
+    }
 }
 
 .to-do-status{
