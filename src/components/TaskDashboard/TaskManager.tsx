@@ -20,6 +20,7 @@ import {TaskDto} from "../../dtos/TaskDto.ts";
 import { useLocation } from "react-router-dom";
 import Select from "react-select";
 import {customSelectStyles} from "../../componentStyles/selectStyles.tsx";
+import { TypeEnum } from "../../Enums/TypeEnum.ts";
 
 function TaskManager() {
     const { user, getRole } = useAuth();
@@ -40,6 +41,10 @@ function TaskManager() {
     const [categories, setCategories] = useState<CategoryDto[]>([]);
     const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
     const [userRole, setUserRole] = useState<string | null>(null);
+    const [dateRange, setDateRange] = useState<{
+        start: string;
+        end: string;
+    }>({ start: '', end: '' });
 
     const location = useLocation();
 
@@ -80,9 +85,9 @@ function TaskManager() {
 
                 let newbieList;
                 if (role === "Admin") {
-                    newbieList = await NewbieMentorService.getAllNewbies();
+                    newbieList = await NewbieMentorService.getUsers(TypeEnum.Newbie);
                 } else if (role === "Mentor") {
-                    newbieList = await NewbieMentorService.getAssignmentsByMentor(mentorId!);
+                    newbieList = await NewbieMentorService.getAssignments(mentorId!, TypeEnum.Mentor);
                 } else {
                     throw new Error("Unauthorized access");
                 }
@@ -115,6 +120,18 @@ function TaskManager() {
             updatedTasks = updatedTasks.filter((task: FullTaskDto) => task.categoryId === selectedCategoryId);
         }
 
+        if (dateRange.start || dateRange.end) {
+            updatedTasks = updatedTasks.filter((task: FullTaskDto) => {
+                if (!task.assignmentDate) return false;
+                const assignedDate = new Date(task.assignmentDate).getTime();
+
+                const startDate = dateRange.start ? new Date(dateRange.start).getTime() : 0;
+                const endDate = dateRange.end ? new Date(dateRange.end).getTime() : Date.now();
+
+                return assignedDate >= startDate && assignedDate <= endDate;
+            });
+        }
+
         setFilteredTasks(updatedTasks);
 
         const newTasksByStatus = {
@@ -132,7 +149,7 @@ function TaskManager() {
         });
 
         setTasksByStatus(newTasksByStatus);
-    }, [searchTerm, selectedNewbie, selectedCategoryId, tasksByUser]);
+    }, [searchTerm, selectedNewbie, selectedCategoryId, tasksByUser, dateRange]);
 
     // on task assign
     const handleTaskAssigned = (newTask: FullTaskDto) => {
@@ -232,7 +249,7 @@ function TaskManager() {
                                     <div className="search-input">
                                         <input
                                             type="text"
-                                            className="form-control rounded-0 border-end-0"
+                                            className="form-control"
                                             placeholder="Search tasks..."
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -240,7 +257,7 @@ function TaskManager() {
                                         />
                                     </div>
 
-                                    <div className="newbie-select">
+                                    <div className="filter-control newbie-select">
                                         <Select
                                             isClearable={true}
                                             isSearchable={true}
@@ -250,7 +267,7 @@ function TaskManager() {
                                                 label: `${newbie.name} ${newbie.surname}`
                                             }))}
                                             placeholder="Select a newbie"
-                                            onChange={(selectedOption) => setSelectedNewbie(selectedOption ? selectedOption.value : '')}
+                                            onChange={(selectedOption) => setSelectedNewbie(selectedOption?.value ?? '')}
                                             value={newbies.map(newbie => ({
                                                 value: newbie.id,
                                                 label: `${newbie.name} ${newbie.surname}`
@@ -259,20 +276,52 @@ function TaskManager() {
                                         />
                                     </div>
 
-                                    <div className="category-filter">
+                                    <div className="filter-control category-filter">
                                         <select
-                                            className="form-select rounded-0 border-start-0"
+                                            className="form-select"
                                             value={selectedCategoryId}
                                             onChange={(e) => setSelectedCategoryId(Number(e.target.value))}
                                             disabled={!selectedNewbie}
                                         >
-                                            <option value={0}>All</option>
+                                            <option value={0}>All Categories</option>
                                             {categories.map((category) => (
                                                 <option key={category.id} value={category.id}>
                                                     {category.name}
                                                 </option>
                                             ))}
                                         </select>
+                                    </div>
+
+                                    <div className="date-range-group">
+                                        <label className="form-label">From</label>
+                                        <div className="input-group">
+                                            <input
+                                                type="datetime-local"
+                                                className="form-control"
+                                                value={dateRange.start}
+                                                onChange={(e) => setDateRange(prev => ({
+                                                    ...prev,
+                                                    start: e.target.value
+                                                }))}
+                                                disabled={!selectedNewbie}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="date-range-group">
+                                        <label className="form-label">To</label>
+                                        <div className="input-group">
+                                            <input
+                                                type="datetime-local"
+                                                className="form-control"
+                                                value={dateRange.end}
+                                                onChange={(e) => setDateRange(prev => ({
+                                                    ...prev,
+                                                    end: e.target.value
+                                                }))}
+                                                disabled={!selectedNewbie}
+                                                min={dateRange.start}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -287,6 +336,7 @@ function TaskManager() {
                             role={userRole || ""}
                             loading={loading}
                             loadingTaskIds={loadingTaskIds}
+                            selectedNewbie={selectedNewbie}
                         />
                     </div>
 

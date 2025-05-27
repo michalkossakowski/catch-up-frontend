@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "allowJs": true,
+    "types": ["jest", "@testing-library/jest-dom"]
+  },
+  "include": ["src/**/*", "src/**/*.test.tsx"]
+}

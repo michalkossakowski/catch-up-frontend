@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useDrop } from 'react-dnd';
 import { FullTaskDto } from '../../dtos/FullTaskDto';
 import { StatusEnum } from "../../Enums/StatusEnum";
@@ -43,43 +43,42 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
                                                }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedTask, setSelectedTask] = useState<FullTaskDto | null>(null);
-
     const [visibleTasks, setVisibleTasks] = useState<FullTaskDto[]>([]);
-    const CHUNK_SIZE = 50;
-    const CHUNK_INTERVAL = 50;
+    const previousTasksRef = useRef<FullTaskDto[]>([]);
 
     useEffect(() => {
-        let currentIndex = 0;
-        let isCancelled = false;
+        const prevTasks = previousTasksRef.current;
 
-        if (tasks.length <= CHUNK_SIZE) {
+        if (prevTasks.length === 0 && tasks.length > 0) {
             setVisibleTasks(tasks);
-            return;
+        }
+        else if (tasks.length === 0 && prevTasks.length > 0) {
+            setVisibleTasks([]);
+        }
+        // drag and drop
+        else if (Math.abs(tasks.length - prevTasks.length) === 1) {
+            // added or removed task check
+            if (tasks.length > prevTasks.length) {
+                // added
+                const newTask = tasks.find(t => !prevTasks.some(pt => pt.id === t.id));
+                if (newTask) {
+                    setVisibleTasks(prev => [...prev, newTask]);
+                }
+            } else {
+                // removed
+                const removedTask = prevTasks.find(pt => !tasks.some(t => t.id === pt.id));
+                if (removedTask) {
+                    setVisibleTasks(prev => prev.filter(t => t.id !== removedTask.id));
+                }
+            }
         }
 
-        const newVisibleTasks: FullTaskDto[] = [];
+        else if (JSON.stringify(prevTasks) !== JSON.stringify(tasks)) {
+            setVisibleTasks(tasks);
+        }
 
-        const loadChunk = () => {
-            if (isCancelled) return;
-
-            newVisibleTasks.push(...tasks.slice(currentIndex, currentIndex + CHUNK_SIZE));
-            setVisibleTasks([...newVisibleTasks]);
-
-            currentIndex += CHUNK_SIZE;
-
-            if (currentIndex < tasks.length) {
-                setTimeout(loadChunk, CHUNK_INTERVAL);
-            }
-        };
-
-        loadChunk();
-
-        return () => {
-            isCancelled = true;
-        };
+        previousTasksRef.current = tasks;
     }, [tasks]);
-
-
 
     const [{ isOver }, drop] = useDrop({
         accept: 'TASK',

@@ -22,15 +22,25 @@ const TaskPool: React.FC<TaskPoolProps> = ({
     const [totalCount, setTotalCount] = useState<number>(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [taskCache, setTaskCache] = useState<Record<number, TaskContentDto[]>>({});
     const tasksPerPage = 5;
 
     useEffect(() => {
         const fetchTaskContents = async () => {
+            if (taskCache[currentPage]) {
+                setTaskContents(taskCache[currentPage]);
+                return;
+            }
+
             try {
                 setLoading(true);
                 const result = await getTaskContents(currentPage, tasksPerPage);
                 setTaskContents(result.taskContents);
                 setTotalCount(result.totalCount);
+                setTaskCache(prev => ({
+                    ...prev,
+                    [currentPage]: result.taskContents
+                }));
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching task contents:", error);

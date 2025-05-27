@@ -1,142 +1,79 @@
 import axios from '../../axiosConfig';
 import { UserAssignCountDto } from '../dtos/UserAssignCountDto';
+import { TypeEnum } from '../Enums/TypeEnum';
 
 
 const NewbieMentorService = {
-    getAllMentors: async (): Promise<UserAssignCountDto[]> => {
-        try 
-        {
-            //console.log("Trying to getAllMentors");
-            const response = await axios.get< UserAssignCountDto[] >(`/NewbieMentor/GetAllMentors`);
-            //console.log("Mentors got successfully:", response.data);
-            return response.data;
-        } 
-        catch (error) 
-        {
-            console.error("Error while getting mentors", error);
+  // Fetch all users (mentors or newbies, assigned or not)
+  getUsers: async (
+    role: TypeEnum,
+    assigned?: boolean,
+    relatedId?: string
+  ): Promise<UserAssignCountDto[]> => {
+    try {
+      const params: Record<string, string> = { role };
+      if (assigned !== undefined) {
+        params.assigned = assigned.toString();
+      }
+      if (relatedId) {
+        params.relatedId = relatedId;
+      }
 
-            throw error;
-        }
-    },
-    getAllNewbies: async (): Promise<UserAssignCountDto[]> => {
-      try 
-      {
-          //console.log("Trying to getAllNewbies");
-          const response = await axios.get< UserAssignCountDto[] >(`/NewbieMentor/GetAllNewbies`);
-          //console.log("Newbies got successfully:", response.data);
-          return response.data;
-      } 
-      catch (error) 
-      {
-          console.error("Error while getting newbies", error);
+      const response = await axios.get<UserAssignCountDto[]>('/NewbieMentor/GetUsers', {
+        params,
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Error while fetching ${role === TypeEnum.Mentor ? 'mentors' : 'newbies'}:`, error);
+      throw error;
+    }
+  },
 
-          throw error;
-      }
+  // Fetch assignments for a mentor or newbie
+  getAssignments: async (id: string, role: TypeEnum): Promise<UserAssignCountDto[]> => {
+    try {
+      const response = await axios.get<UserAssignCountDto[]>(
+        `/NewbieMentor/GetAssignments/${id}`,
+        {
+          params: { role },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        `Error while fetching assignments for ${role === TypeEnum.Mentor ? 'mentor' : 'newbie'}:`,
+        error
+      );
+      throw error;
+    }
   },
-    getNewbieCountByMentor: async (mentorId: string): Promise<number> => {
-        try 
-        {
-          const response = await axios.get< number >(`/NewbieMentor/GetNewbieCountByMentor/${mentorId}`);
-          return response.data;
-        }
-        catch (error) 
-        {
-          console.error("Error while getting newbie count for mentor", error);
-          throw error;
-        }
-      },
-      getMentorCountByNewbie: async (newbieId: string): Promise<number> => {
-        try 
-        {
-          const response = await axios.get< number >(`/NewbieMentor/GetMentorCountByNewbie/${newbieId}`);
-          return response.data;
-        }
-        catch (error) 
-        {
-          console.error("Error while getting mentor count for newbie", error);
-          throw error;
-        }
-      },
-    getAssignmentsByMentor: async (mentorId: string): Promise<UserAssignCountDto[]> => {
-        try 
-        {
-            const response = await axios.get<UserAssignCountDto[]>(`/NewbieMentor/GetAssignmentsByMentor/${mentorId}`);
-            return response.data;
-        } 
-        catch (error) 
-        {
-            console.error("Error fetching assigned newbies:", error);
-            throw error;
-        }
-    },
-    getAssignmentsByNewbie: async (newbieId: string): Promise<UserAssignCountDto[]> => {
-      try 
-      {
-          const response = await axios.get<UserAssignCountDto[]>(`/NewbieMentor/GetAssignmentsByNewbie/${newbieId}`);
-          return response.data;
-      } 
-      catch (error) 
-      {
-          console.error("Error fetching assigned newbies:", error);
-          throw error;
-      }
+
+  // Delete or archive an assignment
+  setAssignmentState: async (newbieId: string, mentorId: string, state: 'Archived' | 'Deleted'): Promise<void> => {
+    try {
+      await axios.patch(`/NewbieMentor/SetState/${newbieId}/${mentorId}`, null, {
+        params: { state },
+      });
+    } catch (error) {
+      console.error(
+        `Error during ${state === 'Archived' ? 'archiving' : 'deleting'} assignment:`,
+        error
+      );
+      throw new Error(
+        `Failed to ${state === 'Archived' ? 'archive' : 'delete'} the assignment`
+      );
+    }
   },
-    getAllUnassignedNewbies: async (mentorId: string): Promise<UserAssignCountDto[]> => {
-        try 
-        {
-            const response = await axios.get<UserAssignCountDto[]>(`/NewbieMentor/GetAllUnassignedNewbies/${mentorId}`);
-            return response.data;
-        } 
-        catch (error) 
-        {
-            console.error("Error fetching unassigned newbies:", error);
-            throw error;
-        }
-    },
-    getAllUnassignedMentors: async (newbieId: string): Promise<UserAssignCountDto[]> => {
-      try 
-      {
-          const response = await axios.get<UserAssignCountDto[]>(`/NewbieMentor/GetAllUnassignedMentors/${newbieId}`);
-          return response.data;
-      } 
-      catch (error) 
-      {
-          console.error("Error fetching unassigned newbies:", error);
-          throw error;
-      }
-   },
-    deleteAssignment: async (newbieId: string, mentorId: string) => {
-        try 
-        {
-          await axios.delete(`/NewbieMentor/Delete/${newbieId}/${mentorId}`);
-        } 
-        catch (error) 
-        {
-          throw new Error('Failed to delete the assignment');
-        }
-      },
-    Unassign: async (newbieId: string, mentorId: string) => {
-        try 
-        {
-          await axios.delete(`/NewbieMentor/Archive/${newbieId}/${mentorId}`);
-        } 
-        catch (error) 
-        {
-          throw new Error('Failed to unassign the assignment');
-        }
-      },
-     assignNewbieToMentor: async (newbieId: string, mentorId: string) => 
-        {
-        try 
-        {
-          const response = await axios.post(`/NewbieMentor/Assign/${newbieId}/${mentorId}`);
-          return response.data; 
-        } 
-        catch (error) 
-        {
-          throw new Error('An error occurred while assigning the newbie to the mentor');
-        }
-      },
+
+  // Assign a newbie to a mentor
+  assignNewbieToMentor: async (newbieId: string, mentorId: string): Promise<void> => {
+    try {
+      await axios.post(`/NewbieMentor/Assign/${newbieId}/${mentorId}`);
+    } catch (error) {
+      console.error('Error while assigning newbie to mentor:', error);
+      throw new Error('An error occurred while assigning the newbie to the mentor');
+    }
+  },
 };
 
 export default NewbieMentorService;
