@@ -418,22 +418,3 @@
     }
 }
 
-.to-do-status{
-    background-color: #CB0404; /* Your original teal */
-}
-
-.in-progress-status{
-    background-color: #F4631E; /* Deeper teal */
-}
-
-.review-status{
-    background-color: #FF9F00; /* Lighter teal */
-}
-
-.reopened-status{
-    background-color: #31ae91; /* Dark teal */
-}
-
-.done-status{
-    background-color: #309898; /* Pale teal */
-}

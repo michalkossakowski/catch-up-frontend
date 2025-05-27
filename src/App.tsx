@@ -34,12 +34,17 @@ import { getNotifications, readNotification } from './services/notificationServi
 import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
 import { useTranslation } from "react-i18next";
+import "./i18n.ts";
+
+
+import TaskPage from './components/TaskDetails/TaskPage.tsx';
 import {availableLanguages, changeLanguage, normalizeLanguage} from "./i18n.ts";
-import EventCreator from './components/Events/EventCreator.tsx';
+
 import RoadMapExplore from './components/RoadMap/RoadMapExplore.tsx';
 import RoadMapDetails from './components/RoadMap/RoadMapDetails.tsx';
 import Schooling from './components/Schooling/Schooling.tsx';
 import SettingsComponent from './components/Settings/Settings.tsx';
+import EventCreator from './components/Events/EventCreator.tsx';
 import SchoolingList from './components/Schooling/SchoolingList/SchoolingList.tsx';
 import SchoolingManager from './components/Schooling/SchoolingManager.tsx';
 
@@ -360,6 +365,7 @@ function App() {
                                 <Route path="/notifications" element={<><NotificationPage /></>} />
                                 <Route path="/eventCreator" element={<EventCreator/>} />
                                 <Route path="/material" element={<MaterialTest />} />
+                                <Route path="/task/:id" element={<TaskPage />} />
 
                                 <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
                                 <Route path="/schooling/:schoolingId/part/:partId" element={<Schooling />} />

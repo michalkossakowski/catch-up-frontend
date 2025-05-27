@@ -4,6 +4,7 @@ import { Dropdown } from 'react-bootstrap';
 import { FullTaskDto } from '../../dtos/FullTaskDto';
 import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 import {AddFeedbackDialog} from "../Feedback/AddFeedbackDialog.tsx";
+import { useNavigate } from 'react-router-dom';
 import {StatusEnum} from "../../Enums/StatusEnum.ts";
 
 interface TaskCardProps {
@@ -26,6 +27,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
                                                isLoading = false
                                            }) => {
     const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
+    const navigate = useNavigate();
     const [{ isDragging }, drag] = useDrag({
         type: 'TASK',
         item: { id: task.id, type: 'existingTask' },
@@ -63,6 +65,9 @@ const TaskCard: React.FC<TaskCardProps> = ({
             style={{
                 cursor: isDisabled && task.status !== StatusEnum.ReOpen ? 'not-allowed' : 'grab',
                 pointerEvents: isDisabled && task.status !== StatusEnum.ReOpen ? 'none' : 'auto',
+            }}
+            onClick={() => {
+                navigate(`/task/${task.id}`);
             }}
         >
             <div className="card-body p-2">
