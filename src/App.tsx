@@ -16,14 +16,8 @@ import PresetManage from "./components/Preset/PresetManage.tsx";
 import TaskContentManage from './components/Task/TaskContentManage';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
-import SchoolingDetails from "./components/Schooling/SchoolingDetails.tsx";
-import SchoolingListNewbie from "./components/Schooling/SchoolingListNewbie.tsx";
-import SchoolingEdit from "./components/Schooling/SchoolingEdit.tsx";
-import SchoolingListMentor from "./components/Schooling/SchoolingListMentor.tsx";
-import SchoolingListParts from "./components/Schooling/SchoolingListParts.tsx";
 import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
 import TaskManager from "./components/TaskDashboard/TaskManager.tsx";
-import SchoolingPartEdit from './components/Schooling/SchoolingPartEdit.tsx';
 import SchoolingAssignment from './components/Schooling/SchoolingAssignment.tsx';
 import PresetAssign from './components/Preset/PresetAssign';
 import FeedbackList from './components/Feedback/FeedbackListPage.tsx';
@@ -46,6 +40,8 @@ import RoadMapExplore from './components/RoadMap/RoadMapExplore.tsx';
 import RoadMapDetails from './components/RoadMap/RoadMapDetails.tsx';
 import Schooling from './components/Schooling/Schooling.tsx';
 import SettingsComponent from './components/Settings/Settings.tsx';
+import SchoolingList from './components/Schooling/SchoolingList/SchoolingList.tsx';
+import SchoolingManager from './components/Schooling/SchoolingManager.tsx';
 
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
@@ -358,23 +354,18 @@ function App() {
                                 <Route path="/feedbacks" element={<FeedbackList />} />
                                 <Route path="/badges" element={<Badge />} />
                                 <Route path="/presetmanage" element={<PresetManage />} />
-                                <Route path="/schoolingedit" element={<SchoolingEdit />} />
-                                <Route
-                                    path="/schoolinglist"
-                                    element={role === 'Admin' || role === 'Mentor' ? <SchoolingListMentor /> : <SchoolingListNewbie />}
-                                />
-                                <Route path="/schooling/:schoolingId/part/:partId" element={<Schooling />} />
-                                <Route path="/schooling/:schoolingId/" element={<Schooling />} />
-                                <Route path="/schoolingpartedit/:id?" element={<SchoolingPartEdit />} />
-                                <Route path="/schoolinglistparts" element={<SchoolingListParts />} />
                                 <Route path="/preset/assign/:presetId" element={<PresetAssign />} />
-                                <Route path="/schoolingdetails" element={<SchoolingDetails />} />
-                                <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
                                 <Route path="/profile/:userId" element={<UserProfile />} />
                                 <Route path="/settings" element={<SettingsComponent/>} />
                                 <Route path="/notifications" element={<><NotificationPage /></>} />
                                 <Route path="/eventCreator" element={<EventCreator/>} />
                                 <Route path="/material" element={<MaterialTest />} />
+
+                                <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
+                                <Route path="/schooling/:schoolingId/part/:partId" element={<Schooling />} />
+                                <Route path="/schooling/:schoolingId/" element={<Schooling />} />
+                                <Route path="/schoolinglist" element={<SchoolingList />} />
+                                <Route path="/schoolingmanager" element={<SchoolingManager />} />
                             </Routes>
                         </Container>
                         <NotificationToast

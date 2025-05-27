@@ -1,0 +1,34 @@
+.schooling-list-item {
+    cursor: pointer !important;
+    .card:hover {
+        box-shadow: 0 2px 8px #DB91D1;
+        transform: translateY(-2px);
+    }
+}
+.schooling-list{
+    .right-sidebar {
+        width: 400px;
+        min-height: 450px;
+        max-height: 550px;
+        transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+        overflow-y: auto;
+        &.hide {
+            transform: translateX(100%);
+            width: 0;
+            overflow: hidden;
+            visibility: hidden;
+        }
+
+        &.show {
+            transform: translateX(0);
+            width: 400px;
+            margin-left: 20px;      
+        }
+    }    
+    .text-bg-primary{
+        background-color: #DB91D1 !important;
+    }
+    .badge{
+        background-color: #DB91D1 !important;
+    }
+}

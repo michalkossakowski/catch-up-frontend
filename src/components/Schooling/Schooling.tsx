@@ -6,6 +6,8 @@ import { getUserSchooling } from "../../services/schoolingService";
 import { SchoolingDto } from "../../dtos/SchoolingDto";
 import { useParams } from "react-router-dom";
 import SchoolingPart from "./SchoolingPart";
+import "./Schooling.scss";
+import { OnActionEnum } from "../../Enums/OnActionEnum";
 
 const Schooling: React.FC = () => {
 
@@ -13,8 +15,10 @@ const Schooling: React.FC = () => {
 
     const [isOpen, setIsOpen] = useState(true);
     const [schooling, setSchooling] = useState<SchoolingDto | null>(null);
-    const [noPlace, setNoPlace] = useState(window.innerWidth < 1050);
-    
+    const [noPlace, setNoPlace] = useState(window.innerWidth < 1250);
+    const [editMode, setEditMode] = useState(false);
+    const [actionTrigger, setActionTrigger] = useState<OnActionEnum>(-1);
+
     useEffect(() => {
         fetchSchooling();
     },[])
@@ -23,7 +27,6 @@ const Schooling: React.FC = () => {
         if (!schoolingId) return;
             getUserSchooling(Number(schoolingId)).then((res) => {
                 setSchooling(res);
-                console.log(res);
             })
             .catch((err) => {
                 console.error(err);
@@ -46,32 +49,64 @@ const Schooling: React.FC = () => {
     }   
     const resize = (isToSmall: boolean) => {
         setNoPlace(isToSmall);
-        console.log(isToSmall);
+    }
+
+    const handleSaveButtonClick = () => {
+      setActionTrigger(OnActionEnum.Saved);
+      setEditMode(false)
+      setTimeout(() => setActionTrigger(OnActionEnum.None), 100);
+    }
+
+    const handleCancelButtonClick = () => {
+      setActionTrigger(OnActionEnum.CancelSave);
+      setEditMode(false)
+      setTimeout(() => setActionTrigger(OnActionEnum.None), 100);
     }
 
     return (
-        <Row className={`position-relative p-0 m-0 mt-3 ${noPlace ? "flex-column" : ""}`}>
-            <Col sm={noPlace ? 12 : isOpen ? 4 : 2} className="p-0 m-0 ps-3">      
+      <>
+        <div className="utility-menu d-flex justify-content-end border-2 border-bottom">
+          {editMode
+            ?
+              <>
+                <a className="me-2" onClick={() => handleSaveButtonClick()}>Save</a>
+                <a className="me-2" onClick={() => handleCancelButtonClick()}>Cancel</a>
+              </>
+            :
+              <a className="me-2" onClick={() => setEditMode(true)}>Start Editing</a>    
+          }
+          <div className="vr"></div>
+          <a className="me-2" onClick={() => {}}>Feedback</a>
+        </div>
+        <Row className={`position-relative p-0 m-0 ${noPlace ? "flex-column" : ""}`}>
+            <Col sm={noPlace ? 12 : isOpen ? 2 : 1} className={`p-0 m-0 pt-3 border-2 ${!noPlace? "border-end" :""}`}>      
                 <SchoolingProgressBar 
                     schooling={schooling ?? undefined}
                     onOpen={onOpen}
                     resize={resize}
                 />
             </Col>
-            <Col sm={noPlace ? 12 : isOpen ? 8 : 10} className={`p-0 m-0 d-flex flex-column align-items-center ${noPlace ? "p-4" : "pe-4"}`}>
+            <Col sm={noPlace ? 12 : isOpen ? 10 : 11} className={`p-0 ps-3 pt-3 m-0 d-flex flex-column align-items-center ${noPlace ? "p-4" : "pe-5"}`}>
                 {partId ? 
                 <SchoolingPart
-                    partId={Number(partId)}
-                    isDone={schooling?.schoolingPartProgressBar.find((part) => part.id === Number(partId))?.isDone}
-                    changePartState={changePartState}
+              
+                  order={schooling?.schoolingPartProgressBar.find((part) => part.id === Number(partId))?.order ?? 0}
+                  editMode={editMode}
+                  partId={Number(partId)}
+                  isDone={schooling?.schoolingPartProgressBar.find((part) => part.id === Number(partId))?.isDone}
+                  changePartState={changePartState}
+                  actionTrigger={actionTrigger}
                 />
                 :
                 <SchoolingItem
+                    editMode={editMode}
                     schooling={schooling ?? undefined}
+                    actionTrigger={actionTrigger}
                 />
                 }
             </Col>
         </Row>
+      </>
     );
 };
 export default Schooling;

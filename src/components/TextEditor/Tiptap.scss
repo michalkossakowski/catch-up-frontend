@@ -1,0 +1,32 @@
+.custom-editor.ProseMirror,
+.custom-editor.ProseMirror-focused {
+  all: revert;
+  text-align: left ;
+}
+.custom-editor.tiptap {
+  padding: 0 !important;
+}
+.start-editing {
+  display: grid;
+  background-color: var(--bs-light-bg-subtle);
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0.5rem var(--bs-light-bg-subtle);
+}
+.custom-editor.tiptap{
+  :last-child{
+    margin-bottom: 0;
+  }
+  padding: 0.5rem;
+
+  blockquote {
+    border-left: 3px solid var(--bs-primary-text-emphasis);
+    margin: 1.5rem 0;
+    padding-left: 1rem;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--bs-primary-text-emphasis);
+    margin: 2rem 0;
+  }
+}

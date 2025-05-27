@@ -21,6 +21,10 @@
     "@mui/material": "^6.4.5",
     "@reduxjs/toolkit": "^2.5.1",
     "@thomasafg/react-awesome-calendar": "^1.1.6",
+    "@tiptap/extension-color": "^2.11.7",
+    "@tiptap/extension-highlight": "^2.11.7",
+    "@tiptap/extension-text-align": "^2.11.7",
+    "@tiptap/extension-typography": "^2.11.7",
     "@tiptap/pm": "^2.11.7",
     "@tiptap/react": "^2.11.7",
     "@tiptap/starter-kit": "^2.11.7",
@@ -53,6 +57,7 @@
     "react-use": "^17.6.0",
     "reactour": "^1.19.4",
     "redux-persist": "^6.0.0",
+    "sass": "^1.87.0",
     "yup": "^1.6.1"
   },
   "devDependencies": {

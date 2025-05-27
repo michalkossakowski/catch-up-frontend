@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './UpcomingEvents.css';
+import './UpcomingEvents.scss';
 import CalendarModal from '../CalendarModal';
 import { useAuth } from '../../../Provider/authProvider';
 import axiosInstance from '../../../../axiosConfig';

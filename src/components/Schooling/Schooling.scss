@@ -1,0 +1,19 @@
+.utility-menu {
+    a {
+      display: block;
+      padding: 0.5rem 1rem;
+      color:  var(--bs-link-color);;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-radius: 0.375rem;
+      &:hover {
+        color: var(--bs-link-hover-color);
+        background-color: rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+        text-decoration: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+      }
+    }
+  }
+  

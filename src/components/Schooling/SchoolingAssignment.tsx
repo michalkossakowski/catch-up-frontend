@@ -1,5 +1,3 @@
-// import { useSelector } from "react-redux";
-// import { RootState } from "../../store/store";
 import { Col, Row } from "react-bootstrap";
 
 const SchoolingAssignment: React.FC = () => {
