@@ -13,3 +13,22 @@
 .deleteIcon {
   color: #ff0000;
 }
+.to-do-status{
+    background-color: #CB0404 !important; /* Your original teal */
+}
+
+.in-progress-status{
+    background-color: #F4631E !important; /* Deeper teal */
+}
+
+.review-status{
+    background-color: #FF9F00 !important; /* Lighter teal */
+}
+
+.reopened-status{
+    background-color: #31ae91 !important; /* Dark teal */
+}
+
+.done-status{
+    background-color: #309898 !important; /* Pale teal */
+}

@@ -1,9 +1,9 @@
 export interface TaskTimeLogDto {
-    Id: number;
-    TaskId: number;
-    Hours: number;
-    Minutes: number;
-    Description: string;
-    CreationDate: Date;
-    ModificationDate: Date;
+    id?: number;
+    taskId?: number;
+    hours?: number;
+    minutes?: number;
+    description?: string;
+    creationDate?: Date;
+    modificationDate?: Date;
 }

@@ -4,12 +4,9 @@ import { Dropdown } from 'react-bootstrap';
 import { FullTaskDto } from '../../dtos/FullTaskDto';
 import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 import {AddFeedbackDialog} from "../Feedback/AddFeedbackDialog.tsx";
-<<<<<<< HEAD
 import { useNavigate } from 'react-router-dom';
-=======
 import {StatusEnum} from "../../Enums/StatusEnum.ts";
 
->>>>>>> main
 interface TaskCardProps {
     task: FullTaskDto;
     onEditClick: (task: FullTaskDto) => void;

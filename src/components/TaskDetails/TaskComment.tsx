@@ -10,14 +10,16 @@ import { useAuth } from '../../Provider/authProvider';
 
 interface TaskCommentProps {
     taskComment: TaskCommentDto;
+    deleteClick: (id: number) => void;
+    editClick: (data: TaskCommentDto) => void;
 }
 
-const TaskComment: React.FC<TaskCommentProps> = ({taskComment}) => {
+const TaskComment: React.FC<TaskCommentProps> = ({ taskComment, deleteClick, editClick }) => {
     const [showAlert, setShowAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     
     useEffect(() => {
-        
+
     });
     const formatDate = (date?: Date | null) => {
         if (date == null) {
@@ -42,13 +44,14 @@ const TaskComment: React.FC<TaskCommentProps> = ({taskComment}) => {
                 </Card.Header>
                 <Card.Body>
                     <Card.Text>
-                        {taskComment.content}
-                    </Card.Text>
-                    {taskComment.modificationDate && (
-                            <div className='additional-text '>
+                        {taskComment.content} <br/>
+                        {taskComment.modificationDate && (
+                            <span className='additional-text '>
                                 (edited)
-                            </div>
+                            </span>
                         )}
+                    </Card.Text>
+                    
                     {taskComment.materialId && (
                         <MaterialItem
                                         materialId={taskComment.materialId}
@@ -62,8 +65,8 @@ const TaskComment: React.FC<TaskCommentProps> = ({taskComment}) => {
                     )}
                     {useAuth().user?.id === taskComment.creatorId && (
                         <>
-                            <Button variant="primary" size="sm">Edit</Button>
-                            <Button variant="danger" className='ms-2' size="sm">Delete</Button> 
+                            <Button variant="primary" size="sm" onClick={() => { if (taskComment.id !== undefined) editClick(taskComment); }} >Edit</Button>
+                            <Button variant="danger" className='ms-2' size="sm" onClick={() => { if (taskComment.id !== undefined) deleteClick(taskComment.id); }}>Delete</Button> 
                         </> 
                     )}
                     

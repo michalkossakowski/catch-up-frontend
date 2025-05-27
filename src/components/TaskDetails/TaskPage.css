@@ -58,3 +58,12 @@
       min-width: 100%; /* Kolumny zajmują pełną szerokość na małych ekranach */
     }
   }
+.taskDetailsHeaderButtons{
+    display: flex;
+    
+    align-items: left;
+    justify-content: left;
+    flex-wrap: wrap; /* Pozwala na zawijanie przy mniejszych ekranach */    
+    gap: 10px; /* Odstęp między przyciskami */
+    margin-bottom: 20px;
+}

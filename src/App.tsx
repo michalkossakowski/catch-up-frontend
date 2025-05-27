@@ -40,23 +40,18 @@ import { getNotifications, readNotification } from './services/notificationServi
 import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
 import { useTranslation } from "react-i18next";
-<<<<<<< HEAD
 import "./i18n.ts";
-import HRHomePage from './components/HR/HRHomePage.tsx';
-import NewbieHomePage from './components/Newbie/NewbieHomePage.tsx';
-import MentorHomePage from './components/Mentor/MentorHomePage.tsx';
-import AdminHomePage from './components/Admin/AdminHomePage.tsx';
-import EventCreator from './components/HR/EventCreator.tsx';
+
+
 import TaskPage from './components/TaskDetails/TaskPage.tsx';
-=======
 import {availableLanguages, changeLanguage, normalizeLanguage} from "./i18n.ts";
-import EventCreator from './components/Events/EventCreator.tsx';
+
 import RoadMapExplore from './components/RoadMap/RoadMapExplore.tsx';
 import RoadMapDetails from './components/RoadMap/RoadMapDetails.tsx';
 import Schooling from './components/Schooling/Schooling.tsx';
 import SettingsComponent from './components/Settings/Settings.tsx';
+import EventCreator from './components/Events/EventCreator.tsx';
 
->>>>>>> main
 function App() {
     const { user, getRole, avatar, logout } = useAuth();
     const [role, setRole] = useState<string | null>(null);
