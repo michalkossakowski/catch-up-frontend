@@ -4,7 +4,7 @@ import { getFeedbacks, deleteFeedback, getTitleFeedbacks } from '../../services/
 import { FeedbackDto } from '../../dtos/FeedbackDto';
 import NotificationToast from '../Toast/NotificationToast';
 import Loading from '../Loading/Loading';
-import { getAll, getRole } from '../../services/userService';
+import { getAll } from '../../services/userService';
 import FeedbackItem from './FeedbackItem';
 import ConfirmModal from '../Modal/ConfirmModal';
 import { Button, Form, InputGroup, Row } from 'react-bootstrap';
@@ -18,7 +18,7 @@ import FeedbackDetailsDialog from './FeedbackDetailsDialog';
 
 const FeedbackListPage: React.FC = () => {
     const animatedComponents = makeAnimated();
-    const { user } = useAuth();
+    const { user, getRole } = useAuth();
     const [feedbacks, setFeedbacks] = useState<FeedbackDto[]>([]);
     const [feedbackToDelete, setFeedbackToDelete] = useState<FeedbackDto | null>(null);
     const [feedbackToDialog, setFeedbackToDialog] = useState<FeedbackDto | null>(null);
@@ -47,7 +47,7 @@ const FeedbackListPage: React.FC = () => {
         const loadFeedbacks = async () => {
             if (!user) return;
             try {
-                const userRoleResponse = await getRole(user.id ?? 'defaultId');
+                const userRoleResponse = await getRole();
                 setIsNewbie(userRoleResponse === 'Newbie');
                 setUsers(await getAll());
                 const feedbackList = await getFeedbacks();
@@ -138,7 +138,7 @@ const FeedbackListPage: React.FC = () => {
     
         setIsSearching(true);
     
-        const userRoleResponse = await getRole(user.id ?? 'defaultId');
+        const userRoleResponse = await getRole();
         setIsNewbie(userRoleResponse === 'Newbie');
 
         if (searchTitle.length === 0) {

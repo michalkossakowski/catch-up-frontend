@@ -1,12 +1,12 @@
-import axiosInstance from "../../axiosConfig";
-import { createContext, useContext, useMemo, useState, ReactNode } from "react";
+import {createContext, ReactNode, useContext, useMemo, useState} from "react";
 import Cookies from "js-cookie";
 import fileService from "../services/fileService.ts";
-import { UserDto as User } from "../dtos/UserDto.ts"
+import {UserDto as User} from "../dtos/UserDto.ts"
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../store/store.ts";
-import { clearTasks } from "../store/taskSlice";
-import { stopConnection } from "../services/signalRService";
+import {clearTasks} from "../store/taskSlice";
+import {stopConnection} from "../services/signalRService";
+import {jwtDecode} from "jwt-decode";
 
 interface AuthContextType {
     accessToken: string | null;
@@ -18,7 +18,7 @@ interface AuthContextType {
     setUser: (newUser: User | null) => void;
     updateAvatar: (avatarBlob: Blob) => Promise<void>;
     logout: () => void;
-    getRole: (userId: string) => Promise<string>;
+    getRole: () => Promise<string>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -53,8 +53,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         const storedUser = Cookies.get('user');
         return storedUser ? JSON.parse(storedUser) : null;
     });
-
-    const [roleCache, setRoleCache] = useState<string>("");
 
     const setAccessToken = (newToken: string | null) => {
         setAccessToken_(newToken);
@@ -125,31 +123,24 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         setAccessToken(null);
         setRefreshToken(null);
         setUser(null);
-        setRoleCache("");
         localStorage.removeItem('userAvatar');
         dispatch(clearTasks());
         setAvatar(null);
     };
 
-    const getRole = async (userId: string): Promise<string> => {
-        if (!userId) {
-            throw new Error("Invalid userId");
-        }
-
-        if (roleCache) {
-            return roleCache;
-        }
+    const getRole = async (): Promise<string> => {
+        const token = Cookies.get("accessToken");
 
         try {
-            const response = await axiosInstance.get(`User/GetRole/${userId}`);
-            const role = response.data || "User";
-
-            setRoleCache(role);
-
-            return role;
-        } catch (error) {
-            throw new Error("Failed to fetch user role");
+            if(token != null){
+                const decodedToken: any = jwtDecode(token);
+                return decodedToken.role || "Newbie"
+            }
+        } catch (error : any) {
+            throw new Error("Failed to fetch user role" + error);
         }
+
+        return "Newbie";
     };
 
     const contextValue = useMemo(
@@ -165,7 +156,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
             logout,
             getRole
         }),
-        [user, avatar, roleCache]
+        [user, avatar]
     );
 
     return (

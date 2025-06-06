@@ -6,12 +6,11 @@ import BadgeForm from './BadgeForm';
 import { BadgeDto } from '../../dtos/BadgeDto';
 import Loading from '../Loading/Loading';
 import { BadgeTypeCountEnum } from '../../Enums/BadgeTypeCountEnum';
-import { getRole } from '../../services/userService';
 import { useAuth } from '../../Provider/authProvider';
 import defaultBadgeIcon from '../../assets/defaultBadgeIcon.png';
 
 const Badge: React.FC = () => {
-    const { user } = useAuth();
+    const { user, getRole } = useAuth();
     const [badges, setBadges] = useState<BadgeDto[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -30,7 +29,7 @@ const Badge: React.FC = () => {
     const fetchBadges = async () => {
         if (!user) return;
         try {
-            const userRoleResponse = await getRole(user.id ?? 'defaultId');
+            const userRoleResponse = await getRole();
             setUserRole(userRoleResponse);
             const data = userRoleResponse === 'Mentor' ? await getByMentorId() : await getAllBadges();
             if (!data || data.length === 0) {
