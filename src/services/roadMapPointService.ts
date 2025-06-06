@@ -33,9 +33,9 @@ export const setRoadMapPointStatus = async (roadMapPointId: number, status :Stat
     }
 };
 
-export const deleteRoadMapPoint = async (roadMapPointId: number): Promise<any> => {
+export const deleteRoadMapPoint = async (roadMapPointId: number, deleteTasksInside: boolean = false): Promise<any> => {
     try {
-        const response = await axiosInstance.delete('/RoadMapPoint/Delete/' + roadMapPointId);
+        const response = await axiosInstance.delete(`/RoadMapPoint/Delete/${roadMapPointId}/${deleteTasksInside}`);
         return response.data;
     } catch (error: any) {
         handleError('deleteRoadMap', error);
