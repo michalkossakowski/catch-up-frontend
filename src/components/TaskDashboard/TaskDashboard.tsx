@@ -49,7 +49,7 @@ const TaskDashboard: React.FC = () => {
         const fetchData = async () => {
             if (user?.id) {
                 try {
-                    const role = await getRole(user.id);
+                    const role = await getRole();
                     setUserRole(role);
                     setAllowedStatuses(allowedStatusChanges[role] || []);
 

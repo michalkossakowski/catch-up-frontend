@@ -76,7 +76,7 @@ function TaskManager() {
         setLocalError(null);
         const fetchData = async () => {
             try {
-                const role = await getRole(user?.id as string);
+                const role = await getRole();
                 setUserRole(role);
 
                 const [categoriesData] = await Promise.all([

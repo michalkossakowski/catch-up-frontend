@@ -69,7 +69,7 @@ function App() {
 
     const fetchRole = async () => {
         if (user?.id) {
-            const userRole = await getRole(user.id);
+            const userRole = await getRole();
             setRole(userRole);
             startConnection();
             handleNotifications();

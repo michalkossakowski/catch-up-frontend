@@ -106,7 +106,7 @@ const EventCreatorModal: React.FC<{ show: boolean; onClose: () => void }> = ({ s
       setToastColor('green');
       setShowToast(true);
 
-      const userRole = await getRole(user?.id ?? '');
+      const userRole = await getRole();
       setRole(userRole);
 
       setTimeout(() => {

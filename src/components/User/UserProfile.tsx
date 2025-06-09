@@ -95,13 +95,11 @@ const UserProfile = () => {
         };
 
         const fetchUserRole = async () => {
-            if (userId) {
-                try {
-                    const role = await getRole(userId);
-                    setRole(role);
-                } catch (err) {
-                    console.error("Failed to fetch user role:", err);
-                }
+            try {
+                const role = await getRole();
+                setRole(role);
+            } catch (err) {
+                console.error("Failed to fetch user role:", err);
             }
         };
 

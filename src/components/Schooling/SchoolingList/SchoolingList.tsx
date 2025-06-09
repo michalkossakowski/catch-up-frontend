@@ -77,7 +77,7 @@ const SchoolingList: React.FC = () => {
     
     const fetchRole = async () => {
         try {
-            var role = await getRole(user?.id as string)
+            var role = await getRole()
             setRole(role);
             const mode = [TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) ? 'owned' : 'all';
             setParamMode(mode);

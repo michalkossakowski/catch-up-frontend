@@ -3,7 +3,6 @@ import { useAuth } from '../../Provider/authProvider';
 import fileService from '../../services/fileService';
 import UserListItem from './UserListItem.tsx';
 import NewbieMentorService from '../../services/newbieMentorService';
-import { UserDto } from '../../dtos/UserDto';
 import { useTranslation } from "react-i18next";
 import { TypeEnum } from '../../Enums/TypeEnum.ts';
 import { UserAssignCountDto } from '../../dtos/UserAssignCountDto.ts';
@@ -24,7 +23,7 @@ const UserList = ({ userId }: UserListProps) => {
         const fetchUserRole = async () => {
             if (userId) {
                 try {
-                    const role = await getRole(userId);
+                    const role = await getRole();
                     setUserRole(role);
                 } catch (err) {
                     console.error("Failed to fetch user role:", err);
