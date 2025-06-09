@@ -74,7 +74,6 @@
   "search-file-by-names": "Search file by names",
   "cancel-search": "Cancel Search",
   "roadmaps": "Road Maps",
-  
   "user-not-found": "User not found",
   "my-mentors": "My Mentors",
   "my-newbies": "My Newbies",
@@ -90,7 +89,6 @@
   "languages": "Languages",
   "about": "About",
   "no-users-found": "No users found",
-  
   "edit": "Edit",
   "no-bio-available": "No bio available",
   "no-interests-available": "No interests listed",
@@ -107,5 +105,9 @@
   "enter-interests": "E.g., Programming, UI Design, Project Management",
   "enter-languages": "E.g., English (Fluent), Polish (Native)",
   "save": "Save",
-  "comma-separated": "comma separated"
+  "comma-separated": "comma separated",
+  "unassigned-newbies": "Unassigned Newbies:",
+  "no-unassigned-newbies-found": "No unassigned newbies found.",
+  "surname": "Surname",
+  "position": "Position"
 }

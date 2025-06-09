@@ -71,7 +71,6 @@
   "search-file-by-names": "Suchdatei mit Namen",
   "cancel-search": "Suche nach der Suche",
   "roadmaps": "Straßenkarte",
-
   "user-not-found": "Benutzer nicht gefunden",
   "my-mentors": "Meine Mentoren",
   "my-newbies": "Meine Neulinge",
@@ -87,7 +86,6 @@
   "languages": "Sprachen",
   "about": "Über mich",
   "no-users-found": "Keine Benutzer gefunden",
-  
   "edit": "Bearbeiten",
   "no-bio-available": "Keine Bio verfügbar",
   "no-interests-available": "Keine Interessen aufgeführt",
@@ -104,5 +102,9 @@
   "enter-interests": "z.B. Programmierung, UI-Design, Projektmanagement",
   "enter-languages": "z.B. Englisch (fließend), Deutsch (Muttersprache)",
   "save": "Speichern",
-  "comma-separated": "kommagetrennt"
+  "comma-separated": "kommagetrennt",
+  "unassigned-newbies": "Nicht zugewiesene Neulinge:",
+  "no-unassigned-newbies-found": "Keine nicht zugewiesenen Neulinge gefunden.",
+  "surname": "Nachname",
+  "position": "Position"
 }

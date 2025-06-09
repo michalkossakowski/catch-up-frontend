@@ -5,6 +5,7 @@ import { Alert } from 'react-bootstrap';
 import './UnassignedNewbiesList.css';
 import NewbieMentorService from '../../services/newbieMentorService';
 import { TypeEnum } from '../../Enums/TypeEnum';
+import { t } from 'i18next';
 
 interface Newbie {
   id: string;
@@ -52,19 +53,19 @@ const UnassignedNewbiesList: React.FC = () => {
 
   return (
     <div className='mt-3'>
-      <h5><i className='bi bi-people'/> Unassigned Newbies: {newbies.length}</h5>
+      <h5><i className='bi bi-people'/> {t('unassigned-newbies')} {newbies.length}</h5>
         <div className="mt-3">
           {newbies.length === 0 ? (
             <Alert className="alert-no-newbies" variant="info">
-              No unassigned newbies found.
+              {t('no-unassigned-newbies-found')}
             </Alert>
           ) : (
             <table className="table-unassigned-newbies table table-striped ">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Surname</th>
-                  <th>Position</th>
+                  <th>{t('name')}</th>
+                  <th>{t('surname')}</th>
+                  <th>{t('position')}</th>
                 </tr>
               </thead>
               <tbody>
