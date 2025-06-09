@@ -4,8 +4,8 @@ export const customSelectStyles = {
       return {
         ...provided,
         minWidth: '15rem',
-        maxWidth: '15rem',
-        width: '15rem',
+        maxWidth: '100%',
+        width: '100%',
         backgroundColor: savedTheme === 'night' ? '#000000' : '#ffffff',
         borderColor: savedTheme === 'night' ? '#ffffff' : '#000000',
         color: savedTheme === 'night' ? '#ffffff' : '#000000',

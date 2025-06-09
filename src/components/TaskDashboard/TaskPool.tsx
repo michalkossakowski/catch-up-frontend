@@ -23,7 +23,7 @@ const TaskPool: React.FC<TaskPoolProps> = ({
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [taskCache, setTaskCache] = useState<Record<number, TaskContentDto[]>>({});
-    const tasksPerPage = 5;
+    const tasksPerPage = 6;
 
     useEffect(() => {
         const fetchTaskContents = async () => {

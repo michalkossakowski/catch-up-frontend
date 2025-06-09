@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
-import { TaskContentDto } from "../../dtos/TaskContentDto";
+import { TaskContentDto } from "../../dtos/TaskContentDto.ts";
 import { assignTask, editTask } from "../../services/taskService.ts";
 import { useAuth } from "../../Provider/authProvider.tsx";
 import { FullTaskDto } from "../../dtos/FullTaskDto.ts";

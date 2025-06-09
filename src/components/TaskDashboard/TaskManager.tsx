@@ -14,7 +14,7 @@ import {setTaskStatus, deleteTask, editTask, assignTask} from "../../services/ta
 import { StatusEnum } from "../../Enums/StatusEnum";
 import TaskColumns from "./TaskColumns";
 import TaskPool from "./TaskPool";
-import AssignTask from "../TaskAssigment/AssignTask.tsx";
+import AssignTask from "./AssignTask.tsx";
 import "./TaskManager.css";
 import {TaskDto} from "../../dtos/TaskDto.ts";
 import { useLocation } from "react-router-dom";

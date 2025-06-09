@@ -37,7 +37,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
         canDrag: !isDisabled || task.status === StatusEnum.ReOpen
     });
 
-    const formatDate = (dateString?: string) => {
+    const formatDate = (dateString?: Date | null | undefined) => {
         if (!dateString || new Date(dateString).getFullYear() === 1970) {
             return "No deadline";
         }
@@ -82,34 +82,38 @@ const TaskCard: React.FC<TaskCardProps> = ({
                             {task.title}
                         </h6>
                     )}
-                    <Dropdown align="end">
-                        <Dropdown.Toggle
-                            variant="link"
-                            size="sm"
-                            id={`dropdown-${task.id}`}
-                            className="btn-sm p-0"
-                            disabled={isDisabled}
-                        >
-                            <i className="bi bi-three-dots-vertical"></i>
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu style={{zIndex: 9999}}>
-                            {role == "Admin" && (
-                                <>
-                                    <Dropdown.Item onClick={() => onEditClick(task)}>
-                                        <i className="bi bi-pencil me-2"></i>Edit
-                                    </Dropdown.Item><Dropdown.Item onClick={onDeleteClick}>
-                                    <i className="bi bi-trash me-2"></i>Delete
+                    <div onClick={(e) => e.stopPropagation()}>
+                        <Dropdown align="end">
+                            <Dropdown.Toggle
+                                variant="link"
+                                size="sm"
+                                id={`dropdown-${task.id}`}
+                                className="btn-sm p-0"
+                                disabled={isDisabled}
+                            >
+                                <i className="bi bi-three-dots-vertical"></i>
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu style={{zIndex: 9999}}>
+                                {role == "Admin" && (
+                                    <>
+                                        <Dropdown.Item onClick={() => onEditClick(task)}>
+                                            <i className="bi bi-pencil me-2"></i>Edit
+                                        </Dropdown.Item>
+                                        <Dropdown.Item onClick={onDeleteClick}>
+                                            <i className="bi bi-trash me-2"></i>Delete
+                                        </Dropdown.Item>
+                                    </>
+                                )}
+                                <Dropdown.Item
+                                    onClick={() => {
+                                        setShowFeedbackDialog(true);
+                                    }}
+                                >
+                                    <i className="bi bi-chat-square-text me-2"></i>Feedback
                                 </Dropdown.Item>
-                                </>
-                            )}
-                            <Dropdown.Item
-                                onClick={() => {
-                                    setShowFeedbackDialog(true);
-                                }}
-                            > <i className="bi bi-chat-square-text me-2"></i>Feedback
-                            </Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown>
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    </div>
                 </div>
                 <div className="d-flex justify-content-between align-items-center">
                     <small className="text-muted">Due: {formatDate(task.deadline)}</small>
@@ -132,7 +136,6 @@ const TaskCard: React.FC<TaskCardProps> = ({
                     onClose={() => setShowFeedbackDialog(false)}
                 />
             )}
-
         </div>
     );
 };
