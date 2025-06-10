@@ -104,8 +104,8 @@ const TaskPage = () => {
         TaskTimeLogService.getTaskTimeLogsByTaskId(Number(id), currentTimeLogPage, itemsPerTimeLogPage)
             .then((response) => {
                 setTaskTimeLogs(response.timeLogs);
-                setHours(response.hours);
-                setMinutes(response.minutes);
+                setHours(Number(response.hours));
+                setMinutes(Number(response.minutes));
                 setTimeLogTotalCount(response.totalCount);
             })
             .catch((error) => {
@@ -440,7 +440,10 @@ return (
                             </Dropdown.Menu>
                         </Dropdown>
                         <Button variant="primary" onClick={()=>handleShowCommentModal()}>Add comment</Button>
-                        <Button variant="secondary" onClick={()=>handleShowTimeLogModal()}>Log time</Button>
+                        { isTimeLogEnabled &&(
+                            <Button variant="secondary" onClick={()=>handleShowTimeLogModal()}>Log time</Button>
+                        )}
+                        
                     </div>
                 </div>
                 <div className='taskDetailsContent'>
@@ -482,10 +485,13 @@ return (
                             <div className="label">Deadline:</div>
                             <div className="value">{formatDate(fullTask.deadline)}</div>
                         </div>
-                        <div className='data-row '>
-                            <div className="label">Spend Time:</div>
-                            <div className="value">{hours} h {minutes} m</div>
-                        </div>
+                        { isTimeLogEnabled && (
+                            <div className='data-row '>
+                                <div className="label">Spend Time:</div>
+                                <div className="value">{hours} h {minutes} m</div>
+                            </div>
+                        )}
+                        
                     </div>
                 </div>
                 <Tabs
