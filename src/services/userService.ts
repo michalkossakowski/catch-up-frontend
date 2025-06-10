@@ -62,6 +62,16 @@ export const getAll = async (): Promise<UserDto[]> => {
     }
 };
 
+export const getMyNewbies = async (): Promise<UserDto[]> => {
+    try {
+        const response = await axiosInstance.get<UserDto[]>('/User/GetMyNewbies');
+        return response.data;
+    } catch (error: any) {
+        handleError('getMyNewbies', error);
+        throw error;
+    }
+};
+
 const handleError = (operation: string, error: any): void => {
     console.error(`${operation} failed:`, error);
     if (!error.response) {

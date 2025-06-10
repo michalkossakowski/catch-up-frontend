@@ -13,9 +13,9 @@
 }
 
 .roadmappoint-task-item {
-    display: flex; /* Flexbox for horizontal layout */
-    justify-content: space-between; /* Pushes content left and icon right */
-    align-items: flex-start; /* Align items at the top */
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-start; 
     padding: 1rem;
     border: 0.01rem solid #3b3b3b;
     border-radius: 4px;
@@ -40,14 +40,14 @@
 }
 
 .roadmappoint-task-content {
-    flex-grow: 1; /* Takes available space on the left */
-    margin-right: 1rem; /* Adds spacing between content and icon */
+    flex-grow: 1;
+    margin-right: 1rem; 
 }
 
 .roadmappoint-task-icon {
     font-size: 1.5rem;
     color: #5CD3B4;
-    flex-shrink: 0; /* Prevents icon from shrinking */
+    flex-shrink: 0;
 }
 
 .roadmappoint-task-icon .bi-hourglass-split {

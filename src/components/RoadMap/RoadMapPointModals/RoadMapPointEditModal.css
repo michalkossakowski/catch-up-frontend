@@ -1,0 +1,8 @@
+.edit-roadmap-point-form label{
+    text-align: left !important;
+    display: flex;
+}
+
+.edit-roadmap-point-form .invalid-feedback{
+    text-align: left !important;
+}

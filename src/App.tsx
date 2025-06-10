@@ -354,8 +354,8 @@ function App() {
                                 <Route path="/taskcontent" element={<TaskContentManage />} />
                                 <Route path="/taskcontent/details/:id" element={<TaskContentDetails />} />
                                 <Route path="/roadmapmanage" element={<RoadMapManage />} />
-                                <Route path="/roadmapexplore" element={<RoadMapExplore />} />
-                                <Route path="/roadmap/:roadMapId/:title" element={<RoadMapDetails />} />
+                                <Route path="/roadmapexplore" element={<RoadMapExplore manageMode={role == "Admin"||role == "Mentor"} />} />
+                                <Route path="/roadmap/:roadMapId/:title" element={<RoadMapDetails manageMode={role == "Admin"||role == "Mentor"}/>} />
                                 <Route path="/feedbacks" element={<FeedbackList />} />
                                 <Route path="/badges" element={<Badge />} />
                                 <Route path="/presetmanage" element={<PresetManage />} />
