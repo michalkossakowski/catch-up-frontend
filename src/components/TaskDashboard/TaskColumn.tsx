@@ -6,7 +6,7 @@ import { CategoryDto } from "../../dtos/CategoryDto.ts";
 import { MaterialDto } from "../../dtos/MaterialDto.ts";
 import { TaskContentDto } from "../../dtos/TaskContentDto.ts";
 import TaskCard from './TaskCard';
-import AssignTask from "../TaskAssigment/AssignTask.tsx";
+import AssignTask from "./AssignTask.tsx";
 
 interface TaskColumnProps {
     status: StatusEnum;
@@ -120,7 +120,7 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
         <div
             ref={dropRef}
             className={`task-column card ${isOver ? 'column-highlight' : ''} ${isDisabled ? 'disabled-column' : ''}`}
-            style={{ height: '600px' }}
+            style={{ height: '730px' }}
         >
             <div className={`column-header ${colorClass} text-white p-2 rounded-top`}>
                 <h5 className="m-0">{title}</h5>
@@ -133,10 +133,6 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
             </div>
             <div
                 className={`column-body p-2 rounded-bottom ${isDisabled ? 'bg-secondary' : ''}`}
-                style={{
-                    height: 'calc(100% - 50px)',
-                    overflowY: 'auto',
-                }}
             >
                 {tasks.length === 0 ? (
                     <div className="empty-column text-center text-muted py-3">

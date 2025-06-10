@@ -45,11 +45,11 @@ const PoolTaskCard: React.FC<PoolTaskCardProps> = ({ task, categoryName, isDisab
                 <h6 className="card-title mb-1">{task.title}</h6>
                 <div className="d-flex justify-content-between align-items-center">
                     <small
-                        className="badge bg-info text-white text-truncate"
+                        className="badge pool-task-card-catergory text-white text-truncate"
                         style={{ maxWidth: '100%' }}
                         title={categoryName}
                     >
-                        {truncateText(categoryName, 15)}
+                        {truncateText(categoryName, 40)}
                     </small>
                 </div>
             </div>

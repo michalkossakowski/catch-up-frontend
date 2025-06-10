@@ -5,7 +5,7 @@ import {CategoryDto} from "../../dtos/CategoryDto.ts";
 import {MaterialDto} from "../../dtos/MaterialDto.ts";
 import Loading from "../Loading/Loading.tsx";
 import {useState} from "react";
-import AssignTask from "../TaskAssigment/AssignTask.tsx";
+import AssignTask from "./AssignTask.tsx";
 import {TaskContentDto} from "../../dtos/TaskContentDto.ts";
 import { deleteTask } from '../../services/taskService';
 
