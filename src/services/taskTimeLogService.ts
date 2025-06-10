@@ -3,7 +3,7 @@ import { TaskTimeLogDto } from '../dtos/TaskTimeLogDto.ts';
 import { editTask } from './taskService.ts';
 
 const TaskTimeLogService = {
-    getTaskTimeLogsByTaskId: async (taskId: number, page: number, pageSize: number,): Promise<{ timeLogs: TaskTimeLogDto[], totalCount: number }> => {
+    getTaskTimeLogsByTaskId: async (taskId: number, page: number, pageSize: number,): Promise<{ timeLogs: TaskTimeLogDto[], totalCount: number, hours: Number, minutes: Number}> => {
         try {
             const response = await axiosInstance.get<{ timeLogs: TaskTimeLogDto[], totalCount: number, hours: Number, minutes: Number }>(`/TaskTimeLog/GetTaskTimeLogByTaskId/${taskId}/${page}/${pageSize}`);
             return response.data;
