@@ -1,5 +1,7 @@
 import axiosInstance from '../../axiosConfig';
 import { TaskContentDto } from '../dtos/TaskContentDto';
+import { TaskContentQueryParameters } from '../dtos/TaskContentQueryParametersDto';
+import { PagedResponse } from '../interfaces/PagedResponse';
 
 // to jest stary getContents [deprecated]
 export const getAllTaskContents = async (): Promise<TaskContentDto[]> => {
@@ -25,6 +27,44 @@ export const getTaskContents = async (page: number = 1, pageSize: number = 5): P
     } catch (error: any) {
         console.error('Błąd API:', error.response);
         handleError('getTaskContents', error);
+        throw error;
+    }
+};
+
+export const getTaskContentsWithPagination = async (params: TaskContentQueryParameters): Promise<PagedResponse<TaskContentDto>> => {
+    try {
+        const queryParams = new URLSearchParams();
+        
+        queryParams.append('pageNumber', params.pageNumber.toString());
+        queryParams.append('pageSize', params.pageSize.toString());
+        
+        if (params.titleFilter) {
+            queryParams.append('titleFilter', params.titleFilter);
+        }
+        
+        if (params.categoryFilter) {
+            queryParams.append('categoryFilter', params.categoryFilter.toString());
+        }
+        
+        if (params.creatorFilter) {
+            queryParams.append('creatorFilter', params.creatorFilter);
+        }
+        
+        if (params.sortBy) {
+            queryParams.append('sortBy', params.sortBy);
+        }
+        
+        if (params.sortOrder) {
+            queryParams.append('sortOrder', params.sortOrder);
+        }
+
+        const response = await axiosInstance.get<PagedResponse<TaskContentDto>>(
+            `/TaskContent/Get?${queryParams.toString()}`
+        );
+        return response.data;
+    } catch (error: any) {
+        console.error('Błąd API:', error.response);
+        handleError('getTaskContentsWithPagination', error);
         throw error;
     }
 };

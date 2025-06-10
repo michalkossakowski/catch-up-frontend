@@ -1,39 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import './TaskContentComponent.scss';
-import { Accordion, Alert, Button, Form, InputGroup, Row, Col, Modal } from 'react-bootstrap';
+import { Alert, Button, Form, InputGroup, Row, Col, Modal, Accordion, Pagination } from 'react-bootstrap';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
-import {getTaskContents, deleteTaskContent, getAllTaskContents} from '../../services/taskContentService';
+import { getTaskContentsWithPagination } from '../../services/taskContentService';
+import { deleteTaskContent } from '../../services/taskContentService';
 import TaskContentEdit from './TaskContentEdit';
 import { CategoryDto } from '../../dtos/CategoryDto';
 import { getCategories } from '../../services/categoryService';
 import { removeTaskFromAllPresets } from '../../services/taskPresetService';
 import Loading from '../Loading/Loading';
 import { useNavigate } from 'react-router-dom';
-import { MaterialDto } from '../../dtos/MaterialDto';
-import materialService from '../../services/materialService';
 import NotificationToast from '../Toast/NotificationToast';
 import ConfirmModal from '../Modal/ConfirmModal';
 import MaterialItem from '../MaterialManager/MaterialItem';
+import { TaskContentQueryParameters } from '../../dtos/TaskContentQueryParametersDto';
+import { PagedResponse } from '../../interfaces/PagedResponse';
 
 interface TaskContentComponentProps {
     isAdmin: boolean;
 }
 
 const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) => {
-    const [taskContents, setTaskContents] = useState<TaskContentDto[]>([]);
-    const [filteredTaskContents, setFilteredTaskContents] = useState<TaskContentDto[]>([]);
+    const [taskContentsData, setTaskContentsData] = useState<PagedResponse<TaskContentDto> | null>(null);
     const [loading, setLoading] = useState(true);
     const [showError, setShowError] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
-    const [showSearchMessage, setShowSearchMessage] = useState(false);
-    const [searchMessage, setSearchMessage] = useState('alert');
-    const [searchTitle, setSearchTitle] = useState('');
-    let i = 1;
     const [categories, setCategories] = useState<CategoryDto[]>([]);
-    const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
+    
+    const [pageNumber, setPageNumber] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(10);
+    const [totalPages, setTotalPages] = useState<number>(1);
+    const [searchTitle, setSearchTitle] = useState<string>('');
+    const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>(undefined);
     const [sortOption, setSortOption] = useState<string>('title');
     const [sortDirection, setSortDirection] = useState<string>('asc');
-    const [expandedMaterials, setExpandedMaterials] = useState<{[key: number]: MaterialDto}>({});
+    
+
+    
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [toastColor, setToastColor] = useState('');
@@ -47,89 +50,71 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     
     const navigate = useNavigate();
 
+    const queryParams: TaskContentQueryParameters = {
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+        titleFilter: searchTitle || undefined,
+        categoryFilter: selectedCategoryId,
+        sortBy: sortOption,
+        sortOrder: sortDirection,
+    };
+
     useEffect(() => {
-        getTaskContents();
         getCategories()
             .then((data) => setCategories(data))
             .catch((error) => console.error('Error loading categories:', error));
     }, []);
 
     useEffect(() => {
-        filterTaskContents();
-    }, [taskContents, searchTitle, selectedCategoryId, sortOption, sortDirection]);
+        fetchTaskContents();
+    }, [pageNumber, pageSize, searchTitle, selectedCategoryId, sortOption, sortDirection]);
 
-    const getTaskContents = () => {
+    const fetchTaskContents = async () => {
         setLoading(true);
-        getAllTaskContents()
-            .then((data) => {
-                setTaskContents(data);
-                setFilteredTaskContents(data);
-                setShowSearchMessage(false);
-                
-                data.forEach(content => {
-                    if (content.materialsId) {
-                        loadMaterial(content.materialsId);
-                    }
-                });
-            })
-            .catch((error) => {
-                setShowError(true);
-                setAlertMessage(error.message);
-            })
-            .finally(() => setLoading(false));
-    }
-    
-    const loadMaterial = async (materialId: number) => {
         try {
-            const material = await materialService.getMaterialWithFiles(materialId);
-            setExpandedMaterials(prev => ({
-                ...prev,
-                [materialId]: material
-            }));
-        } catch (error) {
-            console.error('Error loading material:', error);
+            const data = await getTaskContentsWithPagination(queryParams);
+            setTaskContentsData(data);
+            setTotalPages(data.totalPages);
+        } catch (error: any) {
+            setShowError(true);
+            setAlertMessage(error.message);
+        } finally {
+            setLoading(false);
         }
-    }
+    };
+    
 
-    const filterTaskContents = () => {
-        let filtered = taskContents;
-        
-        // Filter by title
-        if (searchTitle) {
-            filtered = filtered.filter(content => 
-                content.title.toLowerCase().includes(searchTitle.toLowerCase())
-            );
-        }
-        
-        // Filter by category
-        if (selectedCategoryId && Number(selectedCategoryId)) {
-            filtered = filtered.filter(content => 
-                content.categoryId === Number(selectedCategoryId)
-            );
-        }
-        
-        // Sort
-        if (sortOption) {
-            filtered = [...filtered].sort((a, b) => {
-                const direction = sortDirection === 'asc' ? 1 : -1;
-                switch (sortOption) {
-                    case 'title':
-                        return direction * (a.title || '').localeCompare(b.title || '');
-                    case 'category':
-                        const catA = categories.find(cat => cat.id === a.categoryId)?.name || '';
-                        const catB = categories.find(cat => cat.id === b.categoryId)?.name || '';
-                        return direction * catA.localeCompare(catB);
-                    default:
-                        return 0;
-                }
-            });
-        }
-        
-        setFilteredTaskContents(filtered);
-    }
 
-    const searchTaskContents = () => {
-        filterTaskContents();
+    const handleSearch = () => {
+        setPageNumber(1);
+        fetchTaskContents();
+    };
+
+    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        setSelectedCategoryId(value ? Number(value) : undefined);
+        setPageNumber(1);
+    };
+
+    const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSortOption(e.target.value);
+        setPageNumber(1);
+    };
+
+    const toggleSortDirection = () => {
+        setSortDirection(prevDirection => prevDirection === 'asc' ? 'desc' : 'asc');
+        setPageNumber(1);
+    };
+
+    const handlePageChange = (newPage: number) => {
+        setPageNumber(newPage);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setPageSize(Number(e.target.value));
+        setPageNumber(1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const initDelete = (taskContentId: number) => {
@@ -143,7 +128,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
             try {
                 await removeTaskFromAllPresets(taskContentIdToDelete);
                 await deleteTaskContent(taskContentIdToDelete);
-                getTaskContents();
+                fetchTaskContents();
                 setToastMessage("Task content deleted successfully");
                 setToastColor("green");
                 setShowToast(true);
@@ -161,7 +146,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     };
 
     const initEdit = (taskContentId: number) => {
-        const foundTaskContent = filteredTaskContents.find(content => content.id === taskContentId);
+        const foundTaskContent = taskContentsData?.items.find(content => content.id === taskContentId);
         setEditedTaskContent(foundTaskContent || null);
         setShowEditModal(true);
     };
@@ -171,35 +156,78 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
         setToastColor("green");
         setShowToast(true);
         
-        getTaskContents();
+        fetchTaskContents();
         setShowEditModal(false);
         setEditedTaskContent(null);
     };
 
     const getCategoryName = (categoryId: number) => {
         const category = categories.find(cat => cat.id === categoryId);
-        return category?.name || categoryId;
+        return category?.name || `Category ${categoryId}`;
     };
 
     const viewDetails = (taskContentId: number) => {
         navigate(`/taskcontent/details/${taskContentId}`);
     };
 
-    const toggleSortDirection = () => {
-        setSortDirection(prevDirection => prevDirection === 'asc' ? 'desc' : 'asc');
+
+
+    const renderPaginationItems = () => {
+        const items = [];
+        const maxVisiblePages = 5;
+
+        let startPage = Math.max(1, pageNumber - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        if (startPage > 1) {
+            items.push(
+                <Pagination.Item key={1} onClick={() => handlePageChange(1)}>
+                    1
+                </Pagination.Item>
+            );
+            if (startPage > 2) {
+                items.push(<Pagination.Ellipsis key="start-ellipsis" disabled />);
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            items.push(
+                <Pagination.Item
+                    key={i}
+                    active={i === pageNumber}
+                    onClick={() => handlePageChange(i)}
+                >
+                    {i}
+                </Pagination.Item>
+            );
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                items.push(<Pagination.Ellipsis key="end-ellipsis" disabled />);
+            }
+            items.push(
+                <Pagination.Item key={totalPages} onClick={() => handlePageChange(totalPages)}>
+                    {totalPages}
+                </Pagination.Item>
+            );
+        }
+
+        return items;
     };
-    
-    const handleMaterialSelect = () => {};
-    const handleDeleteItem = () => {};
 
     return (
         <section className='container task-content'>
             <h2 className='title'>Task Contents</h2>
 
             {/* Filters and Search */}
-            <div className="filter-container">
+            <div className="filter-container mb-4">
                 <Row className="mb-3">
-                    <Col sm={12} md={6} lg={4}>
+                    <Col sm={12} md={6} lg={3}>
                         <Form.Group>
                             <Form.Label>Search by title:</Form.Label>
                             <InputGroup>
@@ -209,19 +237,19 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                                     value={searchTitle}
                                     onChange={(e) => setSearchTitle(e.target.value)}
                                 />
-                                <Button variant="primary" onClick={searchTaskContents}>
+                                <Button variant="primary" onClick={handleSearch}>
                                     Search
                                 </Button>
                             </InputGroup>
                         </Form.Group>
                     </Col>
                     
-                    <Col sm={12} md={6} lg={4}>
+                    <Col sm={12} md={6} lg={3}>
                         <Form.Group>
                             <Form.Label>Filter by category:</Form.Label>
                             <Form.Select
-                                value={selectedCategoryId}
-                                onChange={(e) => setSelectedCategoryId(e.target.value)}
+                                value={selectedCategoryId || ''}
+                                onChange={handleCategoryChange}
                             >
                                 <option value="">All Categories</option>
                                 {categories.map(category => (
@@ -233,14 +261,14 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                         </Form.Group>
                     </Col>
                     
-                    <Col sm={12} md={6} lg={4}>
+                    <Col sm={12} md={6} lg={3}>
                         <Form.Group>
                             <Form.Label>Sort by:</Form.Label>
                             <Row>
                                 <Col sm={8}>
                                     <Form.Select
                                         value={sortOption}
-                                        onChange={(e) => setSortOption(e.target.value)}
+                                        onChange={handleSortChange}
                                     >
                                         <option value="title">Title</option>
                                         <option value="category">Category</option>
@@ -257,6 +285,21 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                             </Row>
                         </Form.Group>
                     </Col>
+
+                    <Col sm={12} md={6} lg={3}>
+                        <Form.Group>
+                            <Form.Label>Items per page:</Form.Label>
+                            <Form.Select
+                                value={pageSize}
+                                onChange={handleItemsPerPageChange}
+                            >
+                                <option value={5}>5</option>
+                                <option value={10}>10</option>
+                                <option value={20}>20</option>
+                                <option value={50}>50</option>
+                            </Form.Select>
+                        </Form.Group>
+                    </Col>
                 </Row>
             </div>
 
@@ -266,89 +309,116 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                 </div>
             )}
 
-            {showSearchMessage && !loading && (
-                <Alert variant='warning'>
-                    {searchMessage}
-                </Alert>
-            )}
-
             {showError && !loading && (
                 <Alert variant='danger'>
                     {alertMessage}
                 </Alert>
             )}
 
-            {!showSearchMessage && !showError && !loading && (
+            {!showError && !loading && taskContentsData && (
                 <div>
-                    <Accordion className='AccordionItem text-start mt-3 mb-3'>
-                        {filteredTaskContents.length === 0 ? (
-                            <div className="text-center p-3">
-                                <p>No task contents found</p>
-                            </div>
-                        ) : (
-                            filteredTaskContents.map((taskContent) => (
-                                <Accordion.Item eventKey={taskContent.id.toString()} key={taskContent.id}>
-                                    <Accordion.Header>
-                                        <strong>{i++}. {taskContent.title}</strong>
-                                    </Accordion.Header>
-                                    <Accordion.Body>
-                                        {taskContent.categoryId && (
-                                            <p className="fs-5 mb-3 task-category">
-                                                <span className="badge bg-info">
-                                                    {getCategoryName(taskContent.categoryId)}
-                                                </span>
-                                            </p>
-                                        )}
-
-                                        <p className="task-description">{taskContent.description}</p>
-
-                                        {taskContent.materialsId && expandedMaterials[taskContent.materialsId] && (
-                                            <div className="material-container mt-4 mb-4">
-                                                <h5>Additional Materials:</h5>
-                                                <div className="material-content">
-                                                    <Accordion defaultActiveKey={`item${taskContent.materialsId}`} className="read-only-material">
-                                                        <MaterialItem
-                                                            materialDto={expandedMaterials[taskContent.materialsId]}
-                                                            onDeleteItem={handleDeleteItem}
-                                                            onMaterialSelect={handleMaterialSelect}
-                                                            readOnly={true}
-                                                        />
-                                                    </Accordion>
+                    {taskContentsData.items.length === 0 ? (
+                        <div className="text-center p-3">
+                            <Alert variant="info">No task contents found</Alert>
+                        </div>
+                    ) : (
+                        <>
+                            <Accordion className="task-contents-accordion">
+                                {taskContentsData.items.map((taskContent, index) => (
+                                    <Accordion.Item 
+                                        eventKey={taskContent.id.toString()} 
+                                        key={taskContent.id}
+                                        className="task-content-item"
+                                    >
+                                        <Accordion.Header className="task-content-header">
+                                            <div className="d-flex justify-content-between align-items-center w-100">
+                                                <div className="d-flex align-items-center flex-grow-1">
+                                                    <h5 className="mb-0 me-3">
+                                                        {((pageNumber - 1) * pageSize) + index + 1}. {taskContent.title}
+                                                    </h5>
+                                                    {taskContent.categoryId && (
+                                                        <span className="badge bg-info">
+                                                            {getCategoryName(taskContent.categoryId)}
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
-                                        )}
+                                        </Accordion.Header>
+                                        
+                                        <Accordion.Body className="task-content-body">
+                                            <div className="task-description mb-3">
+                                                <p>{taskContent.description}</p>
+                                            </div>
 
-                                        <div className='buttonBox d-flex justify-content-between mt-4'>
-                                            <Button
-                                                variant="success"
-                                                onClick={() => viewDetails(taskContent.id)}>
-                                                View Details
-                                            </Button>
-                                            
-                                            {isAdmin && (
-                                                <div className="admin-buttons">
-                                                    <Button
-                                                        variant="outline-success"
-                                                        onClick={() => initEdit(taskContent.id)}
-                                                        className="me-2">
-                                                        Edit
-                                                    </Button>
-                                                    <Button
-                                                        variant="danger"
-                                                        onClick={() => initDelete(taskContent.id)}>
-                                                        Delete
-                                                    </Button>
+                                            {taskContent.materialsId && (
+                                                <div className="material-container task-content-materials">
+                                                    <h6>Additional Materials:</h6>
+                                                    <MaterialItem
+                                                        materialId={taskContent.materialsId}
+                                                        enableDownloadFile={true}
+                                                        showMaterialName={true}
+                                                        enableEdittingMaterialName={false}
+                                                        enableAddingFile={false}
+                                                        enableRemoveFile={false}
+                                                        enableEdittingFile={false}
+                                                        nameTitle=""
+                                                    />
                                                 </div>
                                             )}
-                                        </div>
-                                    </Accordion.Body>
-                                </Accordion.Item>
-                            ))
-                        )}
-                    </Accordion>
+
+                                            <div className="buttonBox">
+                                                <Button
+                                                    variant="success"
+                                                    onClick={() => viewDetails(taskContent.id)}
+                                                    className="me-2">
+                                                    View Details
+                                                </Button>
+                                                
+                                                {isAdmin && (
+                                                    <>
+                                                        <Button
+                                                            variant="outline-success"
+                                                            onClick={() => initEdit(taskContent.id)}
+                                                            className="me-2">
+                                                            Edit
+                                                        </Button>
+                                                        <Button
+                                                            variant="danger"
+                                                            onClick={() => initDelete(taskContent.id)}>
+                                                            Delete
+                                                        </Button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </Accordion.Body>
+                                    </Accordion.Item>
+                                ))}
+                            </Accordion>
+
+                            {totalPages > 1 && (
+                                <div className="d-flex justify-content-center mt-4">
+                                    <Pagination>
+                                        <Pagination.Prev
+                                            disabled={pageNumber === 1}
+                                            onClick={() => handlePageChange(pageNumber - 1)}
+                                        />
+                                        {renderPaginationItems()}
+                                        <Pagination.Next
+                                            disabled={pageNumber === totalPages}
+                                            onClick={() => handlePageChange(pageNumber + 1)}
+                                        />
+                                    </Pagination>
+                                </div>
+                            )}
+
+                            <div className="text-center mt-3 text-muted">
+                                Showing {((pageNumber - 1) * pageSize) + 1} to {Math.min(pageNumber * pageSize, taskContentsData.totalCount)} of {taskContentsData.totalCount} task contents
+                            </div>
+                        </>
+                    )}
                     
                     {isAdmin && (
-                        <div className="d-grid gap-2 col-6 mx-auto">
+                        <div className="d-grid gap-2 col-6 mx-auto mt-4">
                             <Button variant="success" onClick={() => {setShowEditModal(true); setEditedTaskContent(null)}}>
                                 Create new task content
                             </Button>
