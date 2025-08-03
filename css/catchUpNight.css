@@ -181,7 +181,7 @@
     filter: brightness(0) saturate(100%) invert(81%) sepia(78%) saturate(737%) hue-rotate(227deg) brightness(121%) contrast(118%);
 }
 .form-check-input:checked {
-    background-color: #6e6e6e;
+    background-color: #db52c9;
     border-color: #fff;
 }
 
