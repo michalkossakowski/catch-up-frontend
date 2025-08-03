@@ -418,7 +418,7 @@ return (
                 <div className='taskDetailsHeader'>
                     <h1>{fullTask.title}</h1>
                     <div className='taskDetailsHeaderButtons'>
-                        <Dropdown className='dropdown'>
+                        <Dropdown className='dropdown dropdown-task-status'>
                             <Dropdown.Toggle variant="success" id="dropdown-basic" className={`custom-dropdown-toggle ${statusLabels[fullTask.status as StatusEnum]?.color}`}>
                                 {statusLabels[fullTask.status as StatusEnum]?.label || 'Select Status'}
                             </Dropdown.Toggle>

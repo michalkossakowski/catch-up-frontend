@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Alert } from 'react-bootstrap';
 import { getAllBadges, deleteBadge, getByMentorId } from '../../services/badgeService';
 import fileService from '../../services/fileService';
 import BadgeForm from './BadgeForm';
@@ -32,7 +32,7 @@ const Badge: React.FC = () => {
             const userRoleResponse = await getRole();
             setUserRole(userRoleResponse);
             const data = userRoleResponse === 'Mentor' ? await getByMentorId() : await getAllBadges();
-            if (!data || data.length === 0) {
+            if (!data) {
                 setError('No badges found');
             } else {
                 setBadges(data);
@@ -108,7 +108,7 @@ const Badge: React.FC = () => {
                 </div>
             )}
             <Row xs={1} md={3} className="g-4">
-                {badges &&
+                {badges != null && badges.length > 0 ? (
                     badges.map((badge) => (
                         <Col key={badge.id}>
                             <Card className="h-100">
@@ -139,7 +139,12 @@ const Badge: React.FC = () => {
                                 </Card.Body>
                             </Card>
                         </Col>
-                    ))}
+                    ))):(
+                        <div style={{width: '100%', textAlign: 'center'}}>
+                            <Alert>Badges list is empty</Alert>
+                        </div>
+
+                    )}
             </Row>
 
             {showForm && (

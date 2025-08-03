@@ -14,7 +14,7 @@ import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
 import { UserDto } from '../../dtos/UserDto';
 import FeedbackDetailsDialog from './FeedbackDetailsDialog';
-
+import { customSelectStyles } from '../../componentStyles/selectStyles';
 
 const FeedbackListPage: React.FC = () => {
     const animatedComponents = makeAnimated();
@@ -314,20 +314,7 @@ const FeedbackListPage: React.FC = () => {
                                     options={resourceTypeOptions}
                                     value={resourceTypeOptions.filter(option => selectedResourceTypes.includes(option.value))}
                                     onChange={handleResourceTypeChange}
-                                    styles={{
-                                        option: (provided) => ({
-                                        ...provided,
-                                        color: 'black',
-                                        }),
-                                        multiValueLabel: (provided) => ({
-                                        ...provided,
-                                        color: 'black',
-                                        }),
-                                        singleValue: (provided) => ({
-                                        ...provided,
-                                        color: 'black',
-                                        }),
-                                    }}
+                                    styles={customSelectStyles}
                                 />
                             </Form.Label>
                         </Form.Group>
@@ -360,20 +347,7 @@ const FeedbackListPage: React.FC = () => {
                                 isMulti={false}
                                 value={groupedOptions.flatMap(group => group.options).find(option => option.value === selectedSender)}
                                 onChange={(selectedOption) => setSelectedSender(selectedOption?.value || '')}
-                                styles={{
-                                    option: (provided) => ({
-                                        ...provided,
-                                        color: 'black',
-                                    }),
-                                    multiValueLabel: (provided) => ({
-                                        ...provided,
-                                        color: 'black',
-                                    }),
-                                    singleValue: (provided) => ({
-                                        ...provided,
-                                        color: 'black',
-                                    }),
-                                }}
+                                styles={customSelectStyles}
                             />
                             </Form.Label>
                         )}
@@ -386,20 +360,7 @@ const FeedbackListPage: React.FC = () => {
                             isMulti={false}
                             value={groupedOptions.flatMap(group => group.options).find(option => option.value === selectedReceiver)}
                             onChange={(selectedOption) => setSelectedReceiver(selectedOption?.value || '')}
-                            styles={{
-                                option: (provided) => ({
-                                    ...provided,
-                                    color: 'black',
-                                }),
-                                multiValueLabel: (provided) => ({
-                                    ...provided,
-                                    color: 'black',
-                                }),
-                                singleValue: (provided) => ({
-                                    ...provided,
-                                    color: 'black',
-                                }),
-                            }}
+                            styles={customSelectStyles}
                         />
                         </Form.Label>
                         </Form.Group>

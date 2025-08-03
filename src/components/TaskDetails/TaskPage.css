@@ -48,10 +48,30 @@
 }
 .custom-dropdown-toggle {
     width: 120px;
-    color: black;
+    color: white;
+    border-color: #00000000;
 }
+
+.btn.show, .btn:first-child:active {
+    border-color: #3131312f;
+}
+
+.custom-dropdown-toggle:hover {
+ border-color: #3131312f;;
+}
+
 .custom-dropdown-item {
-    color: black;
+    color: white ;
+}
+
+.custom-dropdown-item:hover {
+    font-weight: bold;
+    color: white ;
+}
+
+
+.dropdown-item {
+    border-radius: 0.3rem;
 }
 @media (max-width: 768px) {
     .column {

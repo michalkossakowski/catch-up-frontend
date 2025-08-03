@@ -18,21 +18,21 @@ html {
   color: #ff0000;
 }
 .to-do-status{
-    background-color: #CB0404 !important; /* Your original teal */
+    background-color: #db91d1f3 !important; /* Your original teal */
 }
 
 .in-progress-status{
-    background-color: #F4631E !important; /* Deeper teal */
+    background-color: #fd22e0e0 !important; /* Deeper teal */
 }
 
 .review-status{
-    background-color: #FF9F00 !important; /* Lighter teal */
+    background-color: #740d66fa  !important; /* Lighter teal */
 }
 
 .reopened-status{
-    background-color: #31ae91 !important; /* Dark teal */
+    background-color: #837a37f6 !important; /* Dark teal */
 }
 
 .done-status{
-    background-color: #309898 !important; /* Pale teal */
+    background-color: #5cd3b3ef !important; /* Pale teal */
 }

@@ -140,7 +140,7 @@ export default function AIAssistant({ show, onHide }: AIAssistantProps): React.R
       <Card.Body className="chat-body">
         {messages.length === 0 && !loading && !error && (
           <div className="empty-chat-prompt">
-            Ask AI about anything...
+            <i className="bi bi-question-circle"/> You can ask our AI assistant about anything ...
           </div>
         )}
         {messages.map((msg, index) => (
@@ -181,7 +181,7 @@ export default function AIAssistant({ show, onHide }: AIAssistantProps): React.R
                 type="text"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Enter your question..."
+                placeholder="Enter your question here..."
                 disabled={loading}
                 size="sm"
               />
@@ -194,7 +194,7 @@ export default function AIAssistant({ show, onHide }: AIAssistantProps): React.R
                 className="w-100"
                 size="sm"
               >
-                Ask AI
+                <i className="bi bi-send"/> Send 
               </Button>
             </Col>
           </Row>
