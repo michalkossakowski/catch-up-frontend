@@ -7,7 +7,7 @@ import './NewbieMentor.css';
 import Loading from '../Loading/Loading';
 import { TypeEnum } from '../../Enums/TypeEnum';
 
-const AssignMentorToNewbieComponent: React.FC = () => {
+const ManageNewbies: React.FC = () => {
   const [newbies, setNewbies] = useState<UserAssignCountDto[]>([]);
   const [selectedNewbieId, setSelectedNewbieId] = useState<string | null>(null);
   const [selectedNewbieName, setSelectedNewbieName] = useState<string | null>(null);
@@ -212,17 +212,15 @@ const AssignMentorToNewbieComponent: React.FC = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h2>List of Newbies</h2>
-
+    <div className="m-4">
       {loading ? (
         <Loading />
       ) : (
         <div className="row">
           <div className="col-md-6">
+            <h3><i className='bi bi-mortarboard'/> Newbies</h3>
             <div className="mt-4">
               <div className="mb-3">
-                <h3>Newbies</h3>
                 <div className="input-group">
                   <input
                     type="text"
@@ -256,7 +254,7 @@ const AssignMentorToNewbieComponent: React.FC = () => {
                       key={newbie.id}
                       onClick={() => handleNewbieClick(newbie.id ?? '', newbie.name ?? '', newbie.surname ?? '')}
                       style={{ cursor: 'pointer' }}
-                      className={newbie.id === selectedNewbieId ? 'table-active' : ''}
+                      className={newbie.id === selectedNewbieId ? 'selected-row' : ''}
                     >
                       <td>{newbie.name}</td>
                       <td>{newbie.surname}</td>
@@ -269,101 +267,115 @@ const AssignMentorToNewbieComponent: React.FC = () => {
           </div>
           <div className="col-md-6">
             {selectedNewbieId && (
-              <div className="mt-4">
-                <h3>Assigned Mentors for {selectedNewbieName} {selectedNewbieSurname}</h3>
-                <div className="mb-3">
-                  <div className="input-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Search assigned mentor by name or surname..."
-                      value={searchTermAssigned}
-                      onChange={(e) => setSearchTermAssigned(e.target.value)}
-                    />
-                    <span className="input-group-text">
-                      <i className="bi bi-search"></i>
-                    </span>
-                  </div>
+              <>
+                <h3><i className='bi bi-vector-pen'/> Assigned Mentors for {selectedNewbieName} {selectedNewbieSurname}</h3>
+                <div className="mt-4"> 
+                    {sortedAssignedMentors.length == 0 ? (
+                      <Alert>This list is empty</Alert>
+                    ):(
+                      <>
+                        <div className="mb-3">
+                          <div className="input-group">
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Search assigned mentor by name or surname..."
+                              value={searchTermAssigned}
+                              onChange={(e) => setSearchTermAssigned(e.target.value)}
+                            />
+                            <span className="input-group-text">
+                              <i className="bi bi-search"></i>
+                            </span>
+                          </div>
+                        </div>
+                        <Table id="assigned" striped bordered hover responsive>
+                          <thead>
+                            <tr>
+                              <th onClick={() => handleSort('name', 'assigned')} style={{ cursor: 'pointer' }}>
+                                Name <i className="bi bi-arrow-down-up"></i>
+                              </th>
+                              <th onClick={() => handleSort('surname', 'assigned')} style={{ cursor: 'pointer' }}>
+                                Surname <i className="bi bi-arrow-down-up"></i>
+                              </th>
+                              <th onClick={() => handleSort('position', 'assigned')} style={{ cursor: 'pointer' }}>
+                                Position <i className="bi bi-arrow-down-up"></i>
+                              </th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {sortedAssignedMentors.map((mentor) => (
+                              <tr key={mentor.id}>
+                                <td>{mentor.name}</td>
+                                <td>{mentor.surname}</td>
+                                <td>{mentor.position}</td>
+                                <td>
+                                  <Button variant="danger" onClick={() => handleDeleteClick(mentor.id ?? '')}>
+                                    Unassign
+                                  </Button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </Table>
+                      </>
+                    )}
                 </div>
-                <Table id="assigned" striped bordered hover responsive>
-                  <thead>
-                    <tr>
-                      <th onClick={() => handleSort('name', 'assigned')} style={{ cursor: 'pointer' }}>
-                        Name <i className="bi bi-arrow-down-up"></i>
-                      </th>
-                      <th onClick={() => handleSort('surname', 'assigned')} style={{ cursor: 'pointer' }}>
-                        Surname <i className="bi bi-arrow-down-up"></i>
-                      </th>
-                      <th onClick={() => handleSort('position', 'assigned')} style={{ cursor: 'pointer' }}>
-                        Position <i className="bi bi-arrow-down-up"></i>
-                      </th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sortedAssignedMentors.map((mentor) => (
-                      <tr key={mentor.id}>
-                        <td>{mentor.name}</td>
-                        <td>{mentor.surname}</td>
-                        <td>{mentor.position}</td>
-                        <td>
-                          <Button variant="danger" onClick={() => handleDeleteClick(mentor.id ?? '')}>
-                            Unassign
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </div>
+              </>
             )}
             {selectedNewbieId && (
               <div className="mt-4">
-                <h3>Unassigned Mentors for {selectedNewbieName} {selectedNewbieSurname}</h3>
-                <div className="mb-3">
-                  <div className="input-group">
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Search unassigned mentor by name or surname..."
-                      value={searchTermUnassigned}
-                      onChange={(e) => setSearchTermUnassigned(e.target.value)}
-                    />
-                    <span className="input-group-text">
-                      <i className="bi bi-search"></i>
-                    </span>
-                  </div>
-                </div>
-                <Table id="unassigned" striped bordered hover responsive>
-                  <thead>
-                    <tr>
-                      <th onClick={() => handleSort('name', 'unassigned')} style={{ cursor: 'pointer' }}>
-                        Name <i className="bi bi-arrow-down-up"></i>
-                      </th>
-                      <th onClick={() => handleSort('surname', 'unassigned')} style={{ cursor: 'pointer' }}>
-                        Surname <i className="bi bi-arrow-down-up"></i>
-                      </th>
-                      <th onClick={() => handleSort('position', 'unassigned')} style={{ cursor: 'pointer' }}>
-                        Position <i className="bi bi-arrow-down-up"></i>
-                      </th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sortedUnassignedMentors.map((mentor) => (
-                      <tr key={mentor.id}>
-                        <td>{mentor.name}</td>
-                        <td>{mentor.surname}</td>
-                        <td>{mentor.position}</td>
-                        <td>
-                          <Button variant="primary" onClick={() => handleAssignMentor(mentor.id ?? '')}>
-                            Assign
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
+                <h3 className="mb-4"><i className='bi bi-incognito'/> Unassigned Mentors for {selectedNewbieName} {selectedNewbieSurname}</h3>
+                 {sortedUnassignedMentors.length == 0 ? (
+                    <Alert>This list is empty</Alert>
+                  ):(
+                    <>
+                      <div className="mb-3">
+                        <div className="input-group">
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Search unassigned mentor by name or surname..."
+                            value={searchTermUnassigned}
+                            onChange={(e) => setSearchTermUnassigned(e.target.value)}
+                          />
+                          <span className="input-group-text">
+                            <i className="bi bi-search"></i>
+                          </span>
+                        </div>
+                      </div>
+                      <Table id="unassigned" striped bordered hover responsive>
+                        <thead>
+                          <tr>
+                            <th onClick={() => handleSort('name', 'unassigned')} style={{ cursor: 'pointer' }}>
+                              Name <i className="bi bi-arrow-down-up"></i>
+                            </th>
+                            <th onClick={() => handleSort('surname', 'unassigned')} style={{ cursor: 'pointer' }}>
+                              Surname <i className="bi bi-arrow-down-up"></i>
+                            </th>
+                            <th onClick={() => handleSort('position', 'unassigned')} style={{ cursor: 'pointer' }}>
+                              Position <i className="bi bi-arrow-down-up"></i>
+                            </th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sortedUnassignedMentors.map((mentor) => (
+                            <tr key={mentor.id}>
+                              <td>{mentor.name}</td>
+                              <td>{mentor.surname}</td>
+                              <td>{mentor.position}</td>
+                              <td>
+                                <Button variant="primary" onClick={() => handleAssignMentor(mentor.id ?? '')}>
+                                  Assign
+                                </Button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </Table>
+                    </>
+                  )}
               </div>
             )}
           </div>
@@ -388,4 +400,4 @@ const AssignMentorToNewbieComponent: React.FC = () => {
   );
 };
 
-export default AssignMentorToNewbieComponent;
+export default ManageNewbies;

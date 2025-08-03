@@ -56,7 +56,7 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                                 title="Assignments" 
                                                 description="Assign newbies to mentors." 
                                                 iconName="bi-people" 
-                                                path="/employesassignment"
+                                                path="/employeesassignment"
                                             />
                             
                                             <HomeCard
@@ -104,7 +104,7 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                                 title="Assignments" 
                                                 description="Assign newbies to mentors." 
                                                 iconName="bi-people" 
-                                                path="/employesassignment"
+                                                path="/employeesassignment"
                                             />
 
                                             <HomeCard
@@ -120,6 +120,13 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                                 description="Explore and manage feedbacks from application users." 
                                                 iconName="bi-arrow-clockwise" 
                                                 path="/feedbacks"
+                                            />
+
+                                            <HomeCard
+                                                title="FAQ" 
+                                                description="Find answear for frequently asked questions." 
+                                                iconName="bi-question-circle" 
+                                                path="/faq"
                                             />
                                         </div>
 

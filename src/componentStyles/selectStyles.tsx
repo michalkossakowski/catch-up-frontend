@@ -3,10 +3,7 @@ export const customSelectStyles = {
       const savedTheme = localStorage.getItem('theme') as 'night' | 'day' | null;
       return {
         ...provided,
-        minWidth: '15rem',
-        maxWidth: '100%',
-        width: '100%',
-        backgroundColor: savedTheme === 'night' ? '#000000' : '#ffffff',
+        backgroundColor: '#ffffff00',
         borderColor: savedTheme === 'night' ? '#ffffff' : '#000000',
         color: savedTheme === 'night' ? '#ffffff' : '#000000',
         '&:hover': {
@@ -18,11 +15,8 @@ export const customSelectStyles = {
       const savedTheme = localStorage.getItem('theme') as 'night' | 'day' | null;
       return {
         ...provided,
-        minWidth: '15rem',
-        maxWidth: '15rem',
-        width: '15rem',
         backgroundColor: savedTheme === 'night' ? '#000000' : '#ffffff',
-        color: savedTheme === 'night' ? '#ffffff' : '#000000',
+        color: savedTheme === 'night' ? '#ffffffff' : '#000000',
       };
     },
     singleValue: (provided: any) => {
@@ -89,5 +83,31 @@ export const customSelectStyles = {
           color: savedTheme === 'night' ? '#ff5555' : '#ff0000',
         },
       };
+    },multiValue: (provided: any) => {
+      const savedTheme = localStorage.getItem('theme') as 'night' | 'day' | null;
+      return {
+        ...provided,
+        backgroundColor: savedTheme === 'night' ? '#333333' : '#e6e6e6',
+
+      };
     },
-  };
+    multiValueLabel: (provided: any) => {
+      const savedTheme = localStorage.getItem('theme') as 'night' | 'day' | null;
+      return {
+        ...provided,
+        color: savedTheme === 'night' ? '#ffffff' : '#000000',
+      };
+    },
+    multiValueRemove: (provided: any) => {
+      const savedTheme = localStorage.getItem('theme') as 'night' | 'day' | null;
+      return {
+        ...provided,
+        color: savedTheme === 'night' ? '#888888ff' : '#000000ff',
+        cursor: 'pointer',
+        ':hover': {
+          backgroundColor: savedTheme === 'night' ? '#660000' : '#ffe6e6',
+          color: '#ff0000',
+        },
+      };
+    },
+};

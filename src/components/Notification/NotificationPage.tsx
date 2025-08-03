@@ -206,9 +206,9 @@ const NotificationPage: React.FC = () => {
                             <div className="alertBox">
                                 <Alert className='info m-3' variant='secondary'>
                                     <i className="bi-bell"></i> 
-                                     {' '};
-                                    You don't have any more old notifications
-                                     {' '};
+                                    {' '}
+                                    You don't have any more older notifications
+                                    {' '}
                                     <i className="bi-bell"></i>
                                 </Alert>
                             </div>
