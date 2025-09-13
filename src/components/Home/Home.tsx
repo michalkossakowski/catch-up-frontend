@@ -278,5 +278,4 @@ export default function Home({ role }: HomeProps): React.ReactElement {
             )}
         </>
     );
-}  
-
+}
