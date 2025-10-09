@@ -87,3 +87,17 @@
     gap: 10px; /* Odstęp między przyciskami */
     margin-bottom: 20px;
 }
+
+.nav-tabs{
+
+    padding-bottom: 0.5rem;
+}
+
+.nav-item button{
+    border: 0.1rem solid #83838377 !important;
+    border-radius: 10px !important;
+}
+
+.nav-item .nav-link.active{
+    border-color: #db52c9 !important;
+}

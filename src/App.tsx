@@ -122,8 +122,7 @@ function App() {
         "/taskmanage",
         "/taskcontentmanage",
         "/presetmanage",
-        "/roadmapmanage",
-        "/editMatList"
+        "/roadmapmanage"
     ].some(path => location.pathname.startsWith(path));
 
     const isHRToolsActive = [

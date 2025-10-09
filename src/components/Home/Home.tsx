@@ -187,13 +187,6 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                             iconName="bi-book" 
                                             path="/schoolinglist"
                                             />
-                                            
-                                            <HomeCard
-                                            title="Materials" 
-                                            description="Edit and manage materials like pdfs photos videos and other files." 
-                                            iconName="bi-tools" 
-                                            path="/editMatList"
-                                            />
                                         </div>
                                     </>
                                 )
