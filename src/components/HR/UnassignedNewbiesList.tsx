@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from '../../../axiosConfig';
 import Loading from '../Loading/Loading';
 import { Alert } from 'react-bootstrap';
 import './UnassignedNewbiesList.css';
@@ -53,7 +52,7 @@ const UnassignedNewbiesList: React.FC = () => {
 
   return (
     <div className='mt-3'>
-      <h5><i className='bi bi-people'/> {t('unassigned-newbies')} {newbies.length}</h5>
+      <h2><i className='bi bi-people'/> {t('unassigned-newbies')} {newbies.length}</h2>
         <div className="mt-3">
           {newbies.length === 0 ? (
             <Alert className="alert-no-newbies" variant="info">
