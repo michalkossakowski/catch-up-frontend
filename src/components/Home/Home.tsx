@@ -7,13 +7,21 @@ import { useAuth } from '../../Provider/authProvider';
 import UnassignedNewbiesList from '../HR/UnassignedNewbiesList';
 import TutorialComponent from '../Tutorial/Tutorial';
 import EventCreatorModal from '../Events/EventCreatorModal';
+import NotificationToast from '../Toast/NotificationToast';
+import { EventDto } from '../../dtos/EventDto';
 
 interface HomeProps {
     role: string | null;
 }
+
 export default function Home({ role }: HomeProps): React.ReactElement {
-      const { user } = useAuth();
-      const [showEventModal, setShowEventModal] = useState(false);
+    const { user } = useAuth();
+    const [showEventModal, setShowEventModal] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastColor, setToastColor] = useState('');
+    const [upcomingEvents, setUpcomingEvents] = useState<EventDto[]>([]);
+
     return(
         <>
             {role == null ? (
@@ -257,14 +265,34 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                 }
                             })()}
                         <div className="home-events-container" data-tour="home-events">
-                            <UpcomingEvents />
+                            <UpcomingEvents
+                                events={upcomingEvents}
+                                setEvents={setUpcomingEvents}
+                            />
                         </div>
                     </div>  
 
                     <EventCreatorModal
                         show={showEventModal}
                         onClose={() => setShowEventModal(false)}
-                    />   
+                        onEventAdded={(message: string, color: string, newEvent?: EventDto) => {
+                            setToastMessage(message);
+                            setToastColor(color);
+                            setShowToast(true);
+                            if (newEvent) {
+                                setUpcomingEvents(prev => [newEvent, ...prev]);
+                            }
+                        }}
+                    />
+
+                    <NotificationToast
+                        show={showToast}
+                        title="Event Info"
+                        message={toastMessage}
+                        color={toastColor}
+                        onClose={() => setShowToast(false)}
+                        time={2000}
+                    />
 
                     <TutorialComponent />     
                 </>  

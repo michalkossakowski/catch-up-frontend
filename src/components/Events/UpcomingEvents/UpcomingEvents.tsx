@@ -2,132 +2,119 @@ import React, { useState, useEffect } from 'react';
 import './UpcomingEvents.scss';
 import CalendarModal from '../CalendarModal';
 import { useAuth } from '../../../Provider/authProvider';
-import axiosInstance from '../../../../axiosConfig';
+import { getUserEvents } from '../../../services/eventService';
+import EventDetailsModal from '../EventDetailsModal';
+import { EventDto } from '../../../dtos/EventDto';
 
-interface Event {
-  id: string;
-  title: string;
-  description: string;
-  startDate: string;
-  endDate: string;
+interface UpcomingEventsProps {
+  events: EventDto[];
+  setEvents: React.Dispatch<React.SetStateAction<EventDto[]>>;
 }
 
-const UpcomingEvents: React.FC = () => {
+const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, setEvents }) => {
   const { user } = useAuth();
-  const userId = user?.id;
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null); 
+  const [selectedEvent, setSelectedEvent] = useState<EventDto | null>(null);
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      try {
+        const fetchedEvents = await getUserEvents();
+        setEvents(fetchedEvents);
+      } catch (err: any) {
+        console.error(err.message);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch events');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      if (!userId) return;
-
-      try {
-        setLoading(true);
-        const response = await axiosInstance.get(`/Event/GetUserEvents/${userId}`);
-        setEvents(response.data);
-        setLoading(false);
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Failed to fetch events');
-        setLoading(false);
-      }
-    };
-
     fetchEvents();
-  }, [userId]);
+  }, [setEvents]);
 
   return (
-    <div className="upcoming-events-container">
-      <h2>Upcoming Events</h2>
+    <>
+      <h2><i className="bi bi-calendar-week"></i> Upcoming Events</h2>
+      <div className="upcoming-events-container">
 
-      {loading && <p>Loading events...</p>}
-      {error && <p className="text-danger">{error}</p>}
+        {loading && <p>Loading events...</p>}
+        {error && <p className="text-danger">{error}</p>}
 
-      {!loading && !error && events.length === 0 && (
-        <p>No upcoming events found.</p>
-      )}
+        {!loading && !error && events.length === 0 && (
+          <p>No upcoming events found.</p>
+        )}
 
-      {!loading && !error && events.length > 0 && (
-        <ul className="ul">
-          {events.map((event) => (
-            <li
-              key={event.id}
-              className="event-item"
-              onClick={() => setSelectedEvent(event)} 
-            >
-              <hr className="event-divider" />
-              <h3>{event.title}</h3>
-              <p>{event.description}</p>
-              <p>
-                <strong>Start:</strong>{' '}
-                {new Date(event.startDate).toLocaleString(undefined, {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  year: 'numeric',
-                  month: '2-digit',
-                  day: '2-digit',
-                })}
-              </p>
-              <p>
-                <strong>End:</strong>{' '}
-                {new Date(event.endDate).toLocaleString(undefined, {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  year: 'numeric',
-                  month: '2-digit',
-                  day: '2-digit',
-                })}
-              </p>
-            </li>
-          ))}
-        </ul>
-      )}
+        {!loading && !error && events.length > 0 && (
+          <ul className="ul">
+            {events.map((event) => (
+              <li
+                key={event.id}
+                className="event-item"
+                onClick={() => setSelectedEvent(event)}
+              >
+                <hr className="event-divider" />
+                <h4>{event.title}</h4>
+                <small className="text-center">
+                  {new Date(event.startDate).toLocaleString(undefined, {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                  })}
+                  {' '}-{' '}
+                  {new Date(event.endDate).toLocaleString(undefined, {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                  })}
+                </small>
+                <p>{event.description}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <CalendarModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          userId={user?.id}
+        />
+
+        {selectedEvent && (
+          <EventDetailsModal
+            event={selectedEvent ? {
+              id: selectedEvent.id,
+              title: selectedEvent.title,
+              description: selectedEvent.description,
+              start: selectedEvent.startDate,
+              end: selectedEvent.endDate,
+              ownerId: selectedEvent.ownerId,
+            } : null}
+            onClose={() => setSelectedEvent(null)}
+            onDeleteSuccess={(deletedId) => {
+              setEvents(events.filter(e => e.id !== deletedId));
+            }}
+          />
+
+        )}
+      </div>
 
       <button className="btn btn-primary calendar-button" onClick={openModal}>
         <i className="bi-calendar-event" /> Open Calendar
       </button>
-
-      <CalendarModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        userId={userId}
-      />
-
-      {selectedEvent && (
-        <div className="modal" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title w-100 text-center fw-bold">{selectedEvent.title}</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setSelectedEvent(null)}
-                ></button>
-              </div>
-              <div className="modal-body" style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}>
-                <p className="fw-bold">
-                  {new Date(selectedEvent.startDate).toLocaleString()} -{' '}
-                  {new Date(selectedEvent.endDate).toLocaleString()}
-                </p>
-                <p>{selectedEvent.description}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 

@@ -69,6 +69,7 @@ function App() {
             setRole(userRole);
             startConnection();
             handleNotifications();
+            window.userId = user.id;
         }
     };
 
@@ -335,6 +336,7 @@ function App() {
                             )}
                             <Routes>
                                 <Route path="/" element={<Home role={role}/>} /> 
+                                <Route path="/home" element={<Home role={role}/>} /> 
                                 <Route path="/tasks" element={<TaskDashboard />} />
                                 <Route path="/adduser" element={<AddUser/>}/>
                                 <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />

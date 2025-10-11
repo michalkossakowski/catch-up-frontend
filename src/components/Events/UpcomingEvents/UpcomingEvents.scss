@@ -5,12 +5,9 @@
     max-height: 400px; 
     overflow-y: auto; 
     position: relative;
+    margin-top: 1.2rem;
 
-    .calendar-button {
-        position: sticky; 
-        bottom: 0.75rem;
-        right: 0.75rem;
-    }
+
 
     .ul {
         list-style-type: none; 
@@ -32,7 +29,14 @@
         overflow-wrap: break-word; 
     }
 
-    .calendar-button i {
-        color: #FFFFFF;
-    }
+}
+
+.calendar-button {
+    position: absolute; 
+    bottom: 0.75rem;
+    right: 0.75rem;
+}
+
+.calendar-button i {
+    color: #FFFFFF;
 }
