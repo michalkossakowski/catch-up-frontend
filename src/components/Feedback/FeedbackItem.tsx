@@ -5,13 +5,11 @@ import { Link } from 'react-router-dom';
 
 type FeedbackItemProps = {
     feedback: FeedbackDto;
-    isNewbie: boolean;
     onInfoClick: (feedback: FeedbackDto) => void;
 };
 
 const FeedbackItem: React.FC<FeedbackItemProps> = ({ 
-    feedback, 
-    isNewbie,
+    feedback,
     onInfoClick
 }) => {
     return (
@@ -32,18 +30,16 @@ const FeedbackItem: React.FC<FeedbackItemProps> = ({
                 )}
 
                 {ResourceTypeEnum[feedback.resourceType] === "Task" && (
-                    //zmodyfikować po reworku tasków
                     <Link
-                    to={isNewbie ? "/tasks" : "/taskmanage"}
+                    to={'/task/'+feedback.resourceId}
                     state={{ selectedNewbie: feedback.senderId }}>
                     {ResourceTypeEnum[feedback.resourceType]}
                     </Link>
                 )}
 
                 {ResourceTypeEnum[feedback.resourceType] === "Schooling" && (
-                    //zmodyfikować po reworku schoolingsów
                     <Link
-                    to="/schooling/schoolingdetails">
+                      to={'/schooling/'+feedback.resourceId}>
                     {ResourceTypeEnum[feedback.resourceType]}
                     </Link>
                 )}

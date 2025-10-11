@@ -104,6 +104,8 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
     };
 
     const resetSearch = () => {
+        location.state.searchPhrase = null
+        setsearchPhrase('')
         getAllFaqs();
     };
 
@@ -253,7 +255,7 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
                 )}
                 {isSearching && (
                     <Button variant="secondary" id="cancel-search" onClick={resetSearch} className="mb-3">
-                        <i className="bi bi-x-circle"> {' '};</i>Cancel search
+                        <i className="bi bi-x-circle"> {' '}</i>Cancel search
                     </Button>
                 )}
                 {!isSearching && !loading && !showAlert && (

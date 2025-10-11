@@ -406,7 +406,6 @@ const FeedbackListPage: React.FC = () => {
                                         <FeedbackItem 
                                             key={feedback.id} 
                                             feedback={feedback}
-                                            isNewbie={isNewbie}
                                             onInfoClick={handleInfoClick}
                                         />
                                     ))}
