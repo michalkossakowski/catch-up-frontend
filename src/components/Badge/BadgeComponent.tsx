@@ -93,69 +93,76 @@ const Badge: React.FC = () => {
     }
 
     return (
-        <Container>
-            <div className="d-flex justify-content-between align-items-center my-4">
-                <h2>Badges</h2>
-                {userRole !== 'Mentor' && (
-                    <Button variant="primary" onClick={() => handleAddEdit()}>
-                        Add Badge
-                    </Button>
-                )}
-            </div>
-            {error && (
-                <div className="mb-3">
-                    <div className="alert alert-danger text-center">{error}</div>
-                </div>
-            )}
-            <Row xs={1} md={3} className="g-4">
-                {badges != null && badges.length > 0 ? (
-                    badges.map((badge) => (
-                        <Col key={badge.id}>
-                            <Card className="h-100">
-                                <Card.Img
-                                    variant="top"
-                                    src={badge.iconId ? imageUrls.get(badge.iconId) || defaultBadgeIcon : defaultBadgeIcon}
-                                    className="p-3"
-                                    style={{
-                                        maxHeight: '200px',
-                                        objectFit: 'contain',
-                                    }}
-                                />
-                                <Card.Body>
-                                    <Card.Title>{badge.name}</Card.Title>
-                                    <Card.Text>{badge.description}</Card.Text>
-                                    <Card.Text>
-                                        {getBadgeTypeName(badge.countType)}
-                                        {badge.count}
-                                    </Card.Text>
-                                    <div className="d-flex justify-content-between">
-                                        <Button variant="info" onClick={() => handleAddEdit(badge)}>
-                                            Edit
-                                        </Button>
-                                        <Button variant="danger" onClick={() => handleDelete(badge.id)}>
-                                            Delete
-                                        </Button>
-                                    </div>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    ))):(
-                        <div style={{width: '100%', textAlign: 'center'}}>
-                            <Alert>Badges list is empty</Alert>
-                        </div>
-
+        <>
+            <h1 className='title'><i className='bi bi-shield'/> Badges</h1>
+            <Container>
+                <div className="d-flex justify-content-between align-items-center m-1">
+                    {userRole !== 'Mentor' ? (
+                        <>
+                            <h2>Manage Badges:</h2>
+                            <Button variant="primary" onClick={() => handleAddEdit()}>
+                                Add Badge
+                            </Button>
+                        </>
+                    ) : (
+                        <h2>My Badges:</h2>
                     )}
-            </Row>
+                </div>
+                {error && (
+                    <div className="mb-3">
+                        <div className="alert alert-danger text-center">{error}</div>
+                    </div>
+                )}
+                <Row xs={1} md={3} className="g-4">
+                    {badges != null && badges.length > 0 ? (
+                        badges.map((badge) => (
+                            <Col key={badge.id}>
+                                <Card className="h-100">
+                                    <Card.Img
+                                        variant="top"
+                                        src={badge.iconId ? imageUrls.get(badge.iconId) || defaultBadgeIcon : defaultBadgeIcon}
+                                        className="p-3"
+                                        style={{
+                                            maxHeight: '200px',
+                                            objectFit: 'contain',
+                                        }}
+                                    />
+                                    <Card.Body>
+                                        <Card.Title>{badge.name}</Card.Title>
+                                        <Card.Text>{badge.description}</Card.Text>
+                                        <Card.Text>
+                                            {getBadgeTypeName(badge.countType)}
+                                            {badge.count}
+                                        </Card.Text>
+                                        <div className="d-flex justify-content-between">
+                                            <Button variant="info" onClick={() => handleAddEdit(badge)}>
+                                                Edit
+                                            </Button>
+                                            <Button variant="danger" onClick={() => handleDelete(badge.id)}>
+                                                Delete
+                                            </Button>
+                                        </div>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        ))):(
+                            <div style={{width: '100%', textAlign: 'center'}}>
+                                <Alert>Badges list is empty</Alert>
+                            </div>
 
-            {showForm && (
-                <BadgeForm
-                    show={showForm}
-                    onHide={handleCloseForm}
-                    onSuccess={fetchBadges}
-                    badge={editingBadge || undefined}
-                />
-            )}
-        </Container>
+                        )}
+                </Row>
+
+                {showForm && (
+                    <BadgeForm
+                        show={showForm}
+                        onHide={handleCloseForm}
+                        onSuccess={fetchBadges}
+                        badge={editingBadge || undefined}
+                    />
+                )}
+            </Container>
+        </>
     );
 };
 

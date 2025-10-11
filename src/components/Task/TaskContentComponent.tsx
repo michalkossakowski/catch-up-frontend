@@ -221,9 +221,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     };
 
     return (
-        <section className='container task-content'>
-            <h2 className='title'>Task Contents</h2>
-
+        <section>
             {/* Filters and Search */}
             <div className="filter-container mb-4">
                 <Row className="mb-3">

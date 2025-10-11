@@ -233,10 +233,8 @@ function TaskManager() {
 
     return (
         <DndProvider backend={HTML5Backend}>
+            <h1 className='title'><i className='bi bi-list-check'/> Task Manager</h1>
             <div className="container-fluid task-manager-container">
-                <h2>Task Manager</h2>
-
-
                 {(error || localError) && (
                     <div className="alert alert-danger mt-3">{error || localError}</div>
                 )}
@@ -293,7 +291,7 @@ function TaskManager() {
                                     </div>
 
                                     <div className="date-range-group">
-                                        <label className="form-label">From</label>
+                                        <label className="form-label">From:</label>
                                         <div className="input-group">
                                             <input
                                                 type="datetime-local"
@@ -308,7 +306,7 @@ function TaskManager() {
                                         </div>
                                     </div>
                                     <div className="date-range-group">
-                                        <label className="form-label">To</label>
+                                        <label className="form-label">To:</label>
                                         <div className="input-group">
                                             <input
                                                 type="datetime-local"

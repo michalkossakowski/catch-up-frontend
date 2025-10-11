@@ -30,7 +30,7 @@ const EventCreatorModal: React.FC<EventCreatorModalProps> = ({ show, onClose, on
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateTitle = (value: string) => {
-    setIsTitleValid(value.trim().length >= 3);
+    setIsTitleValid(value.trim().length >= 3 && value.trim().length <= 16 );
     setTitle(value);
   };
 
@@ -90,8 +90,9 @@ const EventCreatorModal: React.FC<EventCreatorModalProps> = ({ show, onClose, on
               startDate: new Date(startDate).toISOString(),
               endDate: new Date(endDate).toISOString(),
               ownerId,
-              targetUserType: type || '',
+              targetUserType: type || ''
           });
+          
 
           onEventAdded('Event successfully added.', 'green', createdEvent);
           
@@ -125,7 +126,7 @@ const EventCreatorModal: React.FC<EventCreatorModalProps> = ({ show, onClose, on
               required
             />
             {!isTitleValid && (
-              <div className="invalid-feedback">Title must be at least 3 characters long.</div>
+              <div className="invalid-feedback">Title long must be between 3 and 16 characters.</div>
             )}
           </div>
 

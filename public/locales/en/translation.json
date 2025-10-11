@@ -107,7 +107,7 @@
   "save": "Save",
   "comma-separated": "comma separated",
   "unassigned-newbies": "Unassigned Newbies:",
-  "no-unassigned-newbies-found": "No unassigned newbies found.",
+  "no-unassigned-newbies-found": "There is no any unassigned newbies.",
   "surname": "Surname",
   "position": "Position"
 }

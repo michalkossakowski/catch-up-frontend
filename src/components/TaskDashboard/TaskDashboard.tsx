@@ -164,9 +164,8 @@ const TaskDashboard: React.FC = () => {
 
     return (
         <DndProvider backend={HTML5Backend}>
+            <h1 className='title'><i className='bi bi-list-check'/> My Tasks</h1>
             <div className="container-fluid task-dashboard-container">
-                <h1 className="text-center mb-4">My Tasks</h1>
-
                 {(error || localError) && (
                     <div className="alert alert-danger mt-3">
                         <i className="bi bi-exclamation-triangle me-2"></i>
