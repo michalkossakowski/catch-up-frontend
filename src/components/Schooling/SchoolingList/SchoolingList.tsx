@@ -105,7 +105,7 @@ const SchoolingList: React.FC = () => {
     })) || [];
     
     
-    if (loading) return <div><Loading/></div>;
+    if (loading) return <div style={{margin: '2rem'}}><Loading/></div>;
     if (!schoolings) return <div>No data</div>;
 
     const handleSearchBar = () => {
@@ -247,161 +247,164 @@ const SchoolingList: React.FC = () => {
         navigate(`/Schooling/${selectedSchooling?.id}`);
     }
     return (
-        <div className="container schooling-list">
-            <div className="d-flex flex-wrap gap-3 mb-3 align-items-center justify-content-between">
-                <Form.Group controlId="itemsPerPage" className="d-flex align-items-center order-1">
-                    <Form.Label className="me-2 mb-0">Schooling per page:</Form.Label>
-                    <Form.Select 
-                        value={pageSize}
-                        onChange={handleItemsPerPageChange}
-                        style={{ width: 'auto' }}
-                    >
-                        <option value={10}>10</option>
-                        <option value={25}>25</option>
-                        <option value={50}>50</option>
-                        <option value={100}>100</option>
-                    </Form.Select>
-                </Form.Group>
-                <Form.Group controlId="pageSelect" className="d-flex align-items-center order-2 order-lg-3">
-                    <Form.Label className="me-2 mb-0">Page:</Form.Label>
-                    <Form.Select
-                        value={pageNumber}
-                        onChange={handlePageSelectChange}
-                        style={{ width: 'auto' }}
-                    >
-                        {Array.from({ length: totalPages }, (_, i) => (
-                            <option key={i + 1} value={i + 1}>
-                                {i + 1}
-                            </option>
-                        ))}
-                    </Form.Select>
-                </Form.Group>
-                <div className='flex-grow-1 order-3 order-lg-2 w-50'>
-                    <InputGroup>
-                        <Form.Control
-                            placeholder="Enter searching title..."
-                            value={searchTitle} 
-                            onChange={(e) => setSearchTitle(e.target.value)} 
-                            onKeyDown={(e) => e.key === 'Enter' && handleSearchBar()}
-                        />
-                        <Button variant="primary" id="searchButton" onClick={handleSearchBar}> 
-                            <i className="bi bi-search">&nbsp;</i>Search 
-                        </Button>
-                    </InputGroup>
-                </div>
-            </div>
-            <hr className="border-2"/>
-            <div className="mb-3 row">
-                <div className="col-12 col-lg-2 text-start mb-3">
-                    <h4>Filters</h4>    
-                    <hr/>
-                    
-                    <Form.Group className="text-start m-0 mb-3 fs-6">
-                        <Form.Check
-                            type="switch"
-                            label="Subscribed"
-                            checked={subscribedSchooling}
-                            onChange={() => handleSwitchSubscribedSchoolings()}
-                        />
+        <>
+            <h1 className='title'><i className='bi bi-book'/> Schoolings</h1>
+            <div className="container schooling-list">
+                <div className="d-flex flex-wrap gap-3 mb-3 align-items-center justify-content-between">
+                    <Form.Group controlId="itemsPerPage" className="d-flex align-items-center order-1">
+                        <Form.Label className="me-2 mb-0">Schooling per page:</Form.Label>
+                        <Form.Select 
+                            value={pageSize}
+                            onChange={handleItemsPerPageChange}
+                            style={{ width: 'auto' }}
+                        >
+                            <option value={10}>10</option>
+                            <option value={25}>25</option>
+                            <option value={50}>50</option>
+                            <option value={100}>100</option>
+                        </Form.Select>
                     </Form.Group>
-                    {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
+                    <Form.Group controlId="pageSelect" className="d-flex align-items-center order-2 order-lg-3">
+                        <Form.Label className="me-2 mb-0">Page:</Form.Label>
+                        <Form.Select
+                            value={pageNumber}
+                            onChange={handlePageSelectChange}
+                            style={{ width: 'auto' }}
+                        >
+                            {Array.from({ length: totalPages }, (_, i) => (
+                                <option key={i + 1} value={i + 1}>
+                                    {i + 1}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+                    <div className='flex-grow-1 order-3 order-lg-2 w-50'>
+                        <InputGroup>
+                            <Form.Control
+                                placeholder="Enter searching title..."
+                                value={searchTitle} 
+                                onChange={(e) => setSearchTitle(e.target.value)} 
+                                onKeyDown={(e) => e.key === 'Enter' && handleSearchBar()}
+                            />
+                            <Button variant="primary" id="searchButton" onClick={handleSearchBar}> 
+                                <i className="bi bi-search">&nbsp;</i>Search 
+                            </Button>
+                        </InputGroup>
+                    </div>
+                </div>
+                <hr className="border-2"/>
+                <div className="mb-3 row">
+                    <div className="col-12 col-lg-2 text-start mb-3">
+                        <h4>Filters</h4>    
+                        <hr/>
+                        
                         <Form.Group className="text-start m-0 mb-3 fs-6">
                             <Form.Check
                                 type="switch"
-                                label="Created Schoolings"
-                                checked={myCreatedSchoolings}
-                                onChange={() => handleSwitchSchoolingOwner()}
+                                label="Subscribed"
+                                checked={subscribedSchooling}
+                                onChange={() => handleSwitchSubscribedSchoolings()}
                             />
                         </Form.Group>
-                    )}
-                    <hr/>
-                    <label className="mb-2 fs-6">Filtr by Category:</label>
-                    <Select
-                        components={animatedComponents}
-                        options={options}
-                        isClearable={true}
-                        isMulti={false}
-                        value={selectedCategory}
-                        onChange={handleCategoryChange}
-                        styles={{
-                                option: (provided) => ({
-                                    ...provided,
-                                    color: 'black',
-                                }),
-                                multiValueLabel: (provided) => ({
-                                    ...provided,
-                                    color: 'black',
-                                }),
-                                singleValue: (provided) => ({
-                                    ...provided,
-                                    color: 'black',
-                                }),
-                            }}
-                    />
-                </div>
-                <div className="col-12 col-lg-10 d-flex">
-                    <div className="w-100">
-                        {schoolings.items.map((schooling) => (
-                            <span key={schooling.id} onClick={() => handleSelectSchooling(schooling.id || null)} >
-                                <SchoolingListItem 
-                                    schooling={schooling} 
-                                    mapCategory={mapCategory}
+                        {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
+                            <Form.Group className="text-start m-0 mb-3 fs-6">
+                                <Form.Check
+                                    type="switch"
+                                    label="Created Schoolings"
+                                    checked={myCreatedSchoolings}
+                                    onChange={() => handleSwitchSchoolingOwner()}
                                 />
-                            </span>
-                        ))}
-                        <div className="d-flex justify-content-center align-items-center mt-3">
-                            <Pagination className="mb-0">
-                                <Pagination.Prev
-                                    onClick={() => handlePageChange(pageNumber - 1)}
-                                    disabled={pageNumber === 1}
-                                />
-                                {renderPaginationItems()}
-                                <Pagination.Next
-                                    onClick={() => handlePageChange(pageNumber + 1)}
-                                    disabled={pageNumber === totalPages}
-                                />
-                            </Pagination>
-                        </div>
+                            </Form.Group>
+                        )}
+                        <hr/>
+                        <label className="mb-2 fs-6">Filtr by Category:</label>
+                        <Select
+                            components={animatedComponents}
+                            options={options}
+                            isClearable={true}
+                            isMulti={false}
+                            value={selectedCategory}
+                            onChange={handleCategoryChange}
+                            styles={{
+                                    option: (provided) => ({
+                                        ...provided,
+                                        color: 'black',
+                                    }),
+                                    multiValueLabel: (provided) => ({
+                                        ...provided,
+                                        color: 'black',
+                                    }),
+                                    singleValue: (provided) => ({
+                                        ...provided,
+                                        color: 'black',
+                                    }),
+                                }}
+                        />
                     </div>
-                    <div className={`right-sidebar ${show ? "show" : "hide"} card`}>
-                        <div className="d-flex  align-items-center justify-content-between mt-2 me-2">
-                            <Button 
-                                variant="success" 
-                                className="btn-sm me-2 ms-2 ps-3 pe-3"
-                                onClick={() => navigateToSchooling()}
-                            >Visit</Button>
-                            <div className="d-flex">
-                                <Dropdown className="me-2">
-                                    <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic" size="sm">
-                                        Action
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item href="#/action-1">Subscribe</Dropdown.Item>
-                                        <Dropdown.Item href="#/action-2">Unsubscribe</Dropdown.Item>
-                                    {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
-                                        <>
-                                            <Dropdown.Divider />
-                                            <Dropdown.Item href="#/action-3">Edit</Dropdown.Item>
-                                            <Dropdown.Item href="#/action-3">Delete</Dropdown.Item>
-                                        </>)}
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                                <CloseButton onClick={handleClose} className="fs-5"/>
+                    <div className="col-12 col-lg-10 d-flex">
+                        <div className="w-100">
+                            {schoolings.items.map((schooling) => (
+                                <span key={schooling.id} onClick={() => handleSelectSchooling(schooling.id || null)} >
+                                    <SchoolingListItem 
+                                        schooling={schooling} 
+                                        mapCategory={mapCategory}
+                                    />
+                                </span>
+                            ))}
+                            <div className="d-flex justify-content-center align-items-center mt-3">
+                                <Pagination className="mb-0">
+                                    <Pagination.Prev
+                                        onClick={() => handlePageChange(pageNumber - 1)}
+                                        disabled={pageNumber === 1}
+                                    />
+                                    {renderPaginationItems()}
+                                    <Pagination.Next
+                                        onClick={() => handlePageChange(pageNumber + 1)}
+                                        disabled={pageNumber === totalPages}
+                                    />
+                                </Pagination>
                             </div>
                         </div>
-                        <div className="border-1 border-top mt-2">
-                            <div className="m-2">
-                                <h6 className="fw-medium">{selectedSchooling ? selectedSchooling.title : "Select a schooling to view details"}</h6>
-                                <div className="fw-light text-secondary-emphasis"><p>Priority: <span>{selectedSchooling?.priority}</span></p></div>
-                                <div className="card text-bg-primary">
-                                    <p className="p-2">{selectedSchooling?.shortDescription}</p>
+                        <div className={`right-sidebar ${show ? "show" : "hide"} card`}>
+                            <div className="d-flex  align-items-center justify-content-between mt-2 me-2">
+                                <Button 
+                                    variant="success" 
+                                    className="btn-sm me-2 ms-2 ps-3 pe-3"
+                                    onClick={() => navigateToSchooling()}
+                                >Visit</Button>
+                                <div className="d-flex">
+                                    <Dropdown className="me-2">
+                                        <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic" size="sm">
+                                            Action
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                            <Dropdown.Item href="#/action-1">Subscribe</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-2">Unsubscribe</Dropdown.Item>
+                                        {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
+                                            <>
+                                                <Dropdown.Divider />
+                                                <Dropdown.Item href="#/action-3">Edit</Dropdown.Item>
+                                                <Dropdown.Item href="#/action-3">Delete</Dropdown.Item>
+                                            </>)}
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                    <CloseButton onClick={handleClose} className="fs-5"/>
                                 </div>
                             </div>
-                        </div>                    
+                            <div className="border-1 border-top mt-2">
+                                <div className="m-2">
+                                    <h6 className="fw-medium">{selectedSchooling ? selectedSchooling.title : "Select a schooling to view details"}</h6>
+                                    <div className="fw-light text-secondary-emphasis"><p>Priority: <span>{selectedSchooling?.priority}</span></p></div>
+                                    <div className="card text-bg-primary">
+                                        <p className="p-2">{selectedSchooling?.shortDescription}</p>
+                                    </div>
+                                </div>
+                            </div>                    
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 export default SchoolingList;

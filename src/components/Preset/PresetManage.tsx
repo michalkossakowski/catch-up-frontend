@@ -10,7 +10,7 @@ const PresetManage: React.FC = () => {
     
     return (
         <>
-            <h1 className='title'>Manage Presets</h1>
+            <h1 className='title'><i className='bi bi-stack-overflow'/> Manage Task Presets</h1>
             <Container>
                 <PresetComponent isAdmin={true} />
             </Container>

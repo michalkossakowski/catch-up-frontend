@@ -6,4 +6,5 @@ export interface EventDto {
   endDate: string;
   ownerId: string | undefined;
   targetUserType: string;
+  isNew?: boolean;
 }

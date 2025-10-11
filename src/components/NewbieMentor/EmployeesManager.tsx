@@ -7,7 +7,7 @@ const EmployeesManagerComponent: React.FC = () => {
 
   return (
     <div >
-      <h2 className='title'><i className='bi bi-people'/> Assign Mentors and Newbies</h2>
+      <h1 className='title'><i className='bi bi-people'/> Assign Mentors and Newbies</h1>
       {selectedOption == undefined ? (
         <>
           <div className="d-flex justify-content-center align-items-center">

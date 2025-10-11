@@ -5,6 +5,8 @@ import { useAuth } from '../../../Provider/authProvider';
 import { getUserEvents } from '../../../services/eventService';
 import EventDetailsModal from '../EventDetailsModal';
 import { EventDto } from '../../../dtos/EventDto';
+import Loading from '../../Loading/Loading';
+import { Alert } from 'react-bootstrap';
 
 interface UpcomingEventsProps {
   events: EventDto[];
@@ -44,25 +46,39 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, setEvents }) =>
   return (
     <>
       <h2><i className="bi bi-calendar-week"></i> Upcoming Events</h2>
-      <div className="upcoming-events-container">
-
-        {loading && <p>Loading events...</p>}
-        {error && <p className="text-danger">{error}</p>}
+      <div className="upcoming-events-container mt-3">
+        {loading && (
+          <div
+            style={{margin: '2rem'}}
+          >
+            <Loading />
+          </div>
+        )}
+        {error && (
+          <div
+            style={{margin: '2rem'}}
+          >
+            <div className="alert alert-danger">{error}</div>
+          </div>
+        )}
 
         {!loading && !error && events.length === 0 && (
-          <p>No upcoming events found.</p>
+                    <div
+            style={{margin: '2rem'}}
+          >
+            <Alert>There is no any upcoming events.</Alert>
+            <i className="bi bi-calendar-x events-placeholder"></i>
+          </div>
         )}
 
         {!loading && !error && events.length > 0 && (
-          <ul className="ul">
+          <div className="event-list">
             {events.map((event) => (
-              <li
+              <div className="event-list-element"
                 key={event.id}
-                className="event-item"
                 onClick={() => setSelectedEvent(event)}
               >
-                <hr className="event-divider" />
-                <h4>{event.title}</h4>
+                <h5 className="event-title" >{event.title} {event.isNew && (<span style={{color: '#DB91D1'}}>(New)</span>)}</h5>
                 <small className="text-center">
                   {new Date(event.startDate).toLocaleString(undefined, {
                     hour: '2-digit',
@@ -80,10 +96,17 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, setEvents }) =>
                     day: '2-digit',
                   })}
                 </small>
-                <p>{event.description}</p>
-              </li>
+                <br/>
+                <small>Participants: {event.targetUserType || 'Everyone'}</small>
+                {event.ownerId == window.userId && (
+                  <>
+                    <br/>
+                    <small className='event-owner'>(You are the owner of this event)</small>
+                  </>
+                )}
+              </div>
             ))}
-          </ul>
+          </div>
         )}
 
         <CalendarModal
@@ -110,9 +133,8 @@ const UpcomingEvents: React.FC<UpcomingEventsProps> = ({ events, setEvents }) =>
 
         )}
       </div>
-
       <button className="btn btn-primary calendar-button" onClick={openModal}>
-        <i className="bi-calendar-event" /> Open Calendar
+        <i className="bi-calendar-event" /> Explore events in calendar
       </button>
     </>
   );

@@ -1,6 +1,6 @@
 .task-manager-container {
     max-width: 100%;
-    padding: 20px;
+    padding: 0 1rem 1rem 1rem;
 }
 
 .task-management-wrapper {
@@ -351,6 +351,7 @@
 .search-input {
     flex: 2;
     max-width: 400px;
+    margin-left: 0.5rem;
 }
 
 .filter-control {

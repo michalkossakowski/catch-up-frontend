@@ -55,6 +55,7 @@ const EventDetailsModal: React.FC<EventDetailsModalProps> = ({ event, onClose, o
             className="modal-body"
             style={{ wordWrap: 'break-word', wordBreak: 'break-word' }}
           >
+            <h5 style={{ margin: '1rem' }}>{event.description}</h5>
             <small className="text-center">
               {start.toLocaleString(undefined, {
                 hour: '2-digit',
@@ -72,18 +73,18 @@ const EventDetailsModal: React.FC<EventDetailsModalProps> = ({ event, onClose, o
                 day: '2-digit',
               })}
             </small>
-            <h5 style={{ margin: '1rem' }}>{event.description}</h5>
-
+            <br/><br/>
             {error && <p className="text-danger">{error}</p>}
-
             {event.ownerId === window.userId && (
-              <button
-                className="btn btn-danger"
-                onClick={handleDelete}
-                disabled={deleting}
-              >
-                {deleting ? 'Deleting...' : 'Delete Event'}
-              </button>
+              <>
+                <button
+                  className="btn btn-danger"
+                  onClick={handleDelete}
+                  disabled={deleting}
+                >
+                  {deleting ? 'Deleting...' : 'Delete Event'}
+                </button>
+              </>
             )}
           </div>
         </div>

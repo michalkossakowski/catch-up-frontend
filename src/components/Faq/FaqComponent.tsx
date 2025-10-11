@@ -234,7 +234,7 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
 
     return (
         <>
-            <h2 className='title'><i className='bi bi-question-circle'/> Frequently Asked Questions</h2>
+            <h1 className='title'><i className='bi bi-question-circle'/> Frequently Asked Questions</h1>
             <section className='container'>
                 {!showAlert && !loading && (
                     <div className='searchBox'>

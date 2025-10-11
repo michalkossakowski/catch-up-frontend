@@ -240,8 +240,8 @@ const FeedbackListPage: React.FC = () => {
 
     return (
         <>
+            <h1 className='title'><i className='bi bi-arrow-clockwise'/> Feedbacks</h1>
             <div className="container">
-                <h3 className="text-center mt-3">Feedbacks</h3>
                 <div className='searchBox'>
                     <InputGroup className="inputGroup mw-100">
                         <Form.Control

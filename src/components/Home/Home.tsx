@@ -9,6 +9,7 @@ import TutorialComponent from '../Tutorial/Tutorial';
 import EventCreatorModal from '../Events/EventCreatorModal';
 import NotificationToast from '../Toast/NotificationToast';
 import { EventDto } from '../../dtos/EventDto';
+import { useNavigate } from 'react-router-dom';
 
 interface HomeProps {
     role: string | null;
@@ -21,6 +22,12 @@ export default function Home({ role }: HomeProps): React.ReactElement {
     const [toastMessage, setToastMessage] = useState('');
     const [toastColor, setToastColor] = useState('');
     const [upcomingEvents, setUpcomingEvents] = useState<EventDto[]>([]);
+
+    const navigate = useNavigate();
+    
+    const handleNavigate = (path: string) => {
+        navigate(path);
+    };
 
     return(
         <>
@@ -94,6 +101,13 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                                 iconName="bi-arrow-clockwise" 
                                                 path="/feedbacks"
                                             />
+                                            
+                                            <HomeCard
+                                                title="Badges" 
+                                                description="Manage, create, edit or remove bages for Mentors." 
+                                                iconName="bi-shield" 
+                                                path="/badges"
+                                            />
                                         </div>
                                     </>
                                 );
@@ -136,10 +150,21 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                                 iconName="bi-question-circle" 
                                                 path="/faq"
                                             />
+
+                                            <HomeCard
+                                                title="Badges" 
+                                                description="Manage, create, edit or remove bages for Mentors." 
+                                                iconName="bi-shield" 
+                                                path="/badges"
+                                            />
                                         </div>
 
                                         <div className="home-extra-container">
                                             <UnassignedNewbiesList />
+                                            <button className="btn btn-primary unassigned-newbies-button" 
+                                                onClick={() => handleNavigate('/employeesassignment')}>
+                                                <i className="bi-person-gear" /> Go to assigment panel
+                                            </button>
                                         </div>
                                     </>
                                 );
@@ -189,6 +214,13 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                             path="/feedbacks"
                                             />
                                             
+                                            <HomeCard
+                                                title="Badges" 
+                                                description="Explore your badges and achievements." 
+                                                iconName="bi-shield" 
+                                                path="/badges"
+                                            />
+
                                             <HomeCard
                                             title="Schoolings" 
                                             description="Create and manage schoolings for your newbies." 
@@ -280,6 +312,7 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                             setToastColor(color);
                             setShowToast(true);
                             if (newEvent) {
+                                newEvent.isNew = true;
                                 setUpcomingEvents(prev => [newEvent, ...prev]);
                             }
                         }}
