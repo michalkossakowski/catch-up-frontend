@@ -565,13 +565,13 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
             </div>
         ): (<>
           {show && (
-            <div> 
-                <span>Files:</span>
+            <div style={{textAlign:'left'}}> 
+                <span >Files:</span>
                     <div className='content-inner'>
                         {enableEdittingMaterialName && material?.id === undefined ? (
                             <>
                                 <InputGroup className="mb-3">
-                                    <InputGroup.Text >New materials group name:</InputGroup.Text>
+                                    <InputGroup.Text >New material:</InputGroup.Text>
                                     <Form.Control
                                         value={materialName}
                                         onChange={(e) => setMaterialName(e.target.value)}

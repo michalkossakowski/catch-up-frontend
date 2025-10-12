@@ -129,13 +129,12 @@ export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId
                     )}
 
                     <MaterialItem
-                        materialId={materialId ?? 0}
+                        materialId={materialId ?? undefined}
                         materialCreated={materialCreated}
                         enableAddingFile
                         enableDownloadFile
                         enableRemoveFile
                         enableEdittingMaterialName
-                        enableEdittingFile
                     />
 
                     <div className="d-flex justify-content-end gap-2">

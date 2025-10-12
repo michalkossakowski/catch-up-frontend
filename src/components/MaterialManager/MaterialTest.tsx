@@ -9,13 +9,12 @@ const MaterialTest: React.FC = () => {
     return (
         <>
             <MaterialItem 
-                materialId={materialId ?? 0} 
+                materialId={materialId ?? undefined} 
                 materialCreated={materialCreated} 
                 enableRemoveFile={true}
                 enableDownloadFile={true}
                 enableEdittingMaterialName={true}
                 enableAddingFile={true}
-                enableEdittingFile={true}
                 />
         </>
     );
