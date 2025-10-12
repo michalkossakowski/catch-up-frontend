@@ -127,7 +127,7 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
                     <Button variant="secondary" onClick={() => onCancel()}>
                         Cancel 
                     </Button >
-                    <Button type="submit" variant="success" disabled={!isQuestionValid || !isAnswerValid}>
+                    <Button type="submit" variant="primary" disabled={!isQuestionValid || !isAnswerValid}>
                         {isEditMode ? 'Save Changes' : 'Add new FAQ'}
                     </Button >
                 </div>

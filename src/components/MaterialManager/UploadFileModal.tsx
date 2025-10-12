@@ -262,8 +262,8 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                 ): (<>
                 {activeTab === "yourFiles" ? (
                     <>
-                        <Row className="mt-2 mb-2">
-                            <Col xs={9} className="d-flex align-items-center mb-3">
+                        <Row >
+                            <Col xs={8} className="d-flex align-items-center mb-3">
                                 <InputGroup onKeyDown={(e) => {if (e.key === 'Enter') search()}}>
                                     <InputGroup.Text><i className="bi bi-search"></i></InputGroup.Text>
                                     <Form.Control placeholder={t('search-file-by-names')} value={searchText} onChange={(e) => setSearchText(e.target.value)}/>

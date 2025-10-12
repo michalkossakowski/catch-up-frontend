@@ -537,9 +537,9 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                     <Col xs={12} md={8} className='d-flex justify-content-start gap-2'>
                                         {enableAddingFile && (
                                             <TooltipButton 
-                                                tooltipText='Select from existing files'
+                                                tooltipText='Import from existing files'
                                                 onClick={() => onClickUploadModal()}>
-                                                <i className="bi bi-folder2-open"></i> Select from existing files
+                                                <i className="bi bi-folder2-open"></i> Import from existing files
                                             </TooltipButton>
                                         )}
                                         {enableDownloadFile && ( 

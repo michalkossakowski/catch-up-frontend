@@ -362,7 +362,7 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
             {isAdmin && !showAlert && !loading && (
                 <div>
                     <Button variant="primary mb-3" onClick={() => {setShowEditModal(true); setEditedFaq(null)}}>
-                        Add new FAQ
+                        <i className='bi-plus-lg' style={{color: 'white'}}></i> Add new FAQ
                     </Button>
                 </div>
             )}
