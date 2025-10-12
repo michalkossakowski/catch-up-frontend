@@ -1,3 +1,11 @@
-.editBox{
+.editBoxFaq{
     text-align: left;
+}
+
+.buttonBoxFaq{
+    text-align: right !important;
+}
+
+.buttonBoxFaq button{
+    margin-left: 0.5rem;
 }

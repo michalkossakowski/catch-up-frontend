@@ -76,10 +76,8 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
     };
 
     return (
-        <section className='editBox'>
+        <section className='editBoxFaq'>
             <form onSubmit={handleSubmit} className="container-lg">
-                <h2>{isEditMode ? 'Edit FAQ' : 'Add new FAQ'}</h2>
-                <br />
                 <div className="form-group">
                     <label htmlFor="question">Question:</label>
                     <input
@@ -122,22 +120,16 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
                         enableDownloadFile={true}
                         enableRemoveFile={true}
                         enableEdittingMaterialName={true}
-                        enableEdittingFile={true}
                         >
                     </MaterialItem>
                 </div>
-                <div className='buttonBox'>
-                    <Button type="submit" variant="primary" disabled={!isQuestionValid || !isAnswerValid}>
-                        {isEditMode ? 'Save Changes' : 'Add new FAQ'}
-                    </Button >
-                    <Button variant="danger" onClick={() => onCancel()}>
+                <div className='buttonBoxFaq'>
+                    <Button variant="secondary" onClick={() => onCancel()}>
                         Cancel 
                     </Button >
-                    {materialId &&(
-                        <Button variant="secondary" onClick={() => setMaterialId(null)}>
-                            Remove materials
-                        </Button>
-                    )}
+                    <Button type="submit" variant="success" disabled={!isQuestionValid || !isAnswerValid}>
+                        {isEditMode ? 'Save Changes' : 'Add new FAQ'}
+                    </Button >
                 </div>
             </form>
         </section>

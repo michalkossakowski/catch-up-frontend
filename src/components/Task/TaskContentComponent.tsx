@@ -354,12 +354,9 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                                                     <MaterialItem
                                                         materialId={taskContent.materialsId}
                                                         enableDownloadFile={true}
-                                                        showMaterialName={true}
                                                         enableEdittingMaterialName={false}
                                                         enableAddingFile={false}
                                                         enableRemoveFile={false}
-                                                        enableEdittingFile={false}
-                                                        nameTitle=""
                                                     />
                                                 </div>
                                             )}

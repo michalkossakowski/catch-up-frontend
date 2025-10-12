@@ -269,9 +269,6 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({
                         enableDownloadFile={true}
                         enableRemoveFile={true}
                         enableEdittingMaterialName={true}
-                        enableEdittingFile={true}
-                        nameTitle="Task Materials"
-                        showMaterialName={true}
                     />
                 </div>
 

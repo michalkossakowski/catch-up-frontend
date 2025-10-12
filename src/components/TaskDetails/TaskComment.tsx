@@ -58,10 +58,7 @@ const TaskComment: React.FC<TaskCommentProps> = ({ taskComment, deleteClick, edi
                                         enableDownloadFile={true}
                                         enableAddingFile={false}
                                         enableRemoveFile={false}
-                                        enableEdittingMaterialName={false}
-                                        enableEdittingFile={false}
-                                        showMaterialName={true}
-                                        nameTitle='See Materials' />
+                                        enableEdittingMaterialName={false}/>
                     )}
                     {useAuth().user?.id === taskComment.creatorId && (
                         <>

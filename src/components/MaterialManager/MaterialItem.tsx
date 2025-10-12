@@ -25,10 +25,7 @@ interface MaterialItemProps {
     enableDownloadFile?: boolean;
     enableAddingFile?: boolean;
     enableEdittingMaterialName?: boolean;
-    showMaterialName?: boolean;
-    enableEdittingFile?: boolean;
     materialCreated?: (materialId: number) => void;
-    nameTitle?: string;
     showComponent?: boolean;
 }
 
@@ -36,12 +33,9 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     materialId,
     enableRemoveFile = false,
     enableDownloadFile = false,
-    showMaterialName = true,
     enableEdittingMaterialName = false,
     enableAddingFile = false,
-    enableEdittingFile = false,
     materialCreated = () => { },
-    nameTitle = 'Add Content',
     showComponent = true,
 }) => {
     const { t, i18n } = useTranslation();
@@ -54,7 +48,6 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 
     const [show, setShow] = useState(true);
     const [showDropPlace, setShowDropPlace] = useState(true);
-    const [open, setOpen] = useState(true);
     const [isDragActive, setIsDragActive] = useState(false)
     
     const [files, setFiles] = useState<FilePair[]>([]);
@@ -215,7 +208,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         const zip = new JSZip();      
         files.forEach((fileItem, index) => {
           const uniqueName = `${index}-${fileItem.fileDto.name ?? fileItem.file?.name ?? 'unknown'}`;
-          zip.file(uniqueName, fileItem.file);
+          zip.file(uniqueName, fileItem.file!);
         });
       
         filesToSend.forEach((fileItem, index) => {
@@ -247,7 +240,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         else{
             var tempName = materialName;
             if(materialName.length === 0){
-                tempName = t('new-material') + new Date().toLocaleDateString();
+                tempName = `files-${formatNow()}`;
                 setMaterialName(tempName)
             }
             materialService.createMaterial({ name: tempName })
@@ -265,6 +258,19 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         }
     }
     
+    const pad = (n: number) => n.toString().padStart(2, '0');
+
+    const formatNow = () => {
+        const now = new Date();
+        const day = pad(now.getDate());
+        const month = pad(now.getMonth() + 1);
+        const year = now.getFullYear();
+        const hours = pad(now.getHours());
+        const minutes = pad(now.getMinutes());
+        const seconds = pad(now.getSeconds());
+        return `${day}-${month}-${year}_${hours}-${minutes}-${seconds}`;
+    };
+
     const onLeftClickFilePair = (filePair: FilePair) => {
         setIsFileInMaterial(true);
         setSelectedFilePair(filePair);
@@ -430,7 +436,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     }
 
     const renderFileItem = (item: typeof filesToSend[0], index: number) => (
-        <li className="list-group-item striped" key={index + files.length}>
+        <li className="list-group-item" key={index + files.length}>
             <Row>
                 <Col className='text-start d-flex align-items-center' xs={8}>
                     {enableRemoveFile && (
@@ -507,164 +513,157 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         ): (<>
           {show && (
             <div> 
-                <div className='d-flex align-items-center'>
-                    <a onClick={() => setOpen(!open)} className='fs-3 rounded-circle me-3'>
-                        <i className={`bi bi-chevron-right ${styles.chevron} ${open ? styles.open : ''}`}></i>
-                    </a>
-                    <h4 className='mb-0'>{nameTitle}</h4>
-                </div>
-                <div className={`${styles.content_collapse} ${open ? styles.open : ''}`}>
-                    <div className='mt-3 content-inner'>
-                        {enableEdittingMaterialName ? (
+                <span>Files:</span>
+                    <div className='content-inner'>
+                        {enableEdittingMaterialName && material?.id === undefined ? (
                             <>
                                 <InputGroup className="mb-3">
-                                    <InputGroup.Text >{t('content-name')}</InputGroup.Text>
+                                    <InputGroup.Text >New materials group name:</InputGroup.Text>
                                     <Form.Control
                                         value={materialName}
                                         onChange={(e) => setMaterialName(e.target.value)}
                                         aria-label={t('content-name')}
+                                        placeholder='files-DD-MM-RRRR_HH-MM-SS ...'
                                     />
+                                    <Button variant="success" type="button" onClick={() => onClickSave()}>
+                                        Create
+                                    </Button>
                                 </InputGroup>
 
                             </>
                         ) : (
                             <>
-                                {showMaterialName && (
-                                    <>
-                                        <h4>{materialName}</h4>
-                                        <hr className='mb-4'/>
-                                    </>
+                                <Row className='mb-3'>
+                                    <Col xs={12} md={8} className='d-flex justify-content-start gap-2'>
+                                        {enableAddingFile && (
+                                            <TooltipButton 
+                                                tooltipText='Select from existing files'
+                                                onClick={() => onClickUploadModal()}>
+                                                <i className="bi bi-folder2-open"></i> Select from existing files
+                                            </TooltipButton>
+                                        )}
+                                        {enableDownloadFile && ( 
+                                            <TooltipButton 
+                                                tooltipText='Download all'
+                                                onClick={() => onClickDownloadAll()}>
+                                                <i className="bi bi-download"></i> Download all
+                                            </TooltipButton>
+                                        )}
+                                        {enableRemoveFile && (
+                                            <TooltipButton 
+                                                tooltipText='Delete selected'
+                                                onClick={() => onClickDelete()}>
+                                                <i className="bi bi-trash" ></i> Delete selected
+                                            </TooltipButton>
+                                        )}
+                                    </Col>
+                                    <Col xs={12} md={4} className='d-flex justify-content-end'>
+                                        <ToggleButtonGroup 
+                                            type="radio" 
+                                            name={`fileDisplayOptions-${Math.random()}}`}
+                                            defaultValue={1} 
+                                            className='gap-0 mt-0' 
+                                            style={{display: 'inline'}}
+                                            onChange={handleFileDisplayChange}
+                                        >
+                                            
+                                            <ToggleButton variant="outline-secondary" id={`tbg-radio-1-${Math.random()}`} value={1}>
+                                                <i className="bi bi-list-ul"></i>                                        
+                                            </ToggleButton>
+                                            <ToggleButton variant="outline-secondary" id={`tbg-radio-2-${Math.random()}`} value={2}>
+                                                <i className="bi bi-grid-3x3"></i>                                        
+                                            </ToggleButton>
+                                        </ToggleButtonGroup>
+                                    </Col>
+                                </Row>
+                                {(showDropPlace && enableAddingFile)?  (
+                                    <div>
+                                        <div className={`p-3 ${styles.dropzone} text-center mb-4 ${isDragActive ? `border-warning` : ''}`}
+                                                onDragOver={(e) => onDragOver(e)}
+                                                onDragLeave={(e) => onDragLeave(e)}
+                                                onDrop={(e) => onDrop(e)}>
+
+                                            <div className='d-flex flex-column align-items-center'>
+                                                <i className={`bi bi-box-arrow-in-down ${styles.uploadIcon} ${isDragActive ? `text-warning ${styles.uploadIconOnDrop}` : ''}`}></i>
+                                                <p className="mt-2 text-body-tertiary opacity-90">{t('drag-and-drop-file-here')}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ):
+                                <>
+                                {fileDisplayMode === 1 ? (
+                                    <div                                             
+                                        onDragOver={(e) => onDragOver(e)}>
+                                        <ul className="list-group">
+                                            {files.map((item, index) => (
+                                                <li className="list-group-item" key={index}>
+                                                    <Row>
+                                                        <Col className='text-start d-flex align-items-center' xs={8} >
+                                                            {enableRemoveFile &&  (
+                                                                <input 
+                                                                    type="checkbox" 
+                                                                    className="form-check-input me-2" 
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                    onChange={() => {
+                                                                        handleCheckboxChangeFileInMaterial(item.fileDto.id);
+                                                                    }}
+                                                                    checked={selectedFilesInMaterials.includes(item.fileDto.id)}>
+                                                                </input>
+                                                            )}
+                                                            <span onClick={() => onLeftClickFilePair(item)} style={{cursor: 'pointer'}} className='flex-grow-1'>
+                                                                {shortedFileName(item.fileDto.name ?? t('file-not-found'))}
+                                                            </span>
+                                                        </Col>
+                                                        <Col className="text-end" onClick={() => onLeftClickFilePair(item)} style={{cursor: 'pointer'}}>
+                                                        {item.fileDto.dateOfUpload
+                                                        ? new Date(item.fileDto.dateOfUpload).toLocaleString("pl-PL", {
+                                                            year: "numeric",
+                                                            month: "long",
+                                                            day: "numeric",
+                                                            hour: "2-digit",
+                                                            minute: "2-digit",
+                                                            })
+                                                            : t('brak-daty')}
+                                                        </Col>
+                                                    </Row>
+                                                </li>
+                                            ))}
+                                        {filesToSend.map((item, index) => renderFileItem(item, index))}
+                                        </ul>
+                                    </div>
+                                ) : (
+                                    <div className='d-flex flex-wrap gap-2' onDragOver={(e) => onDragOver(e)}>
+                                        {files.map((item, index) => (
+                                            <FileIcon 
+                                                onClick={() => {onLeftClickFilePair(item)}}
+                                                key={index} 
+                                                fileName={item.fileDto.name ?? t('file-not-found')}  
+                                                fileType={item.fileDto.type ?? t('undefined')}
+                                                fileDate={item.fileDto.dateOfUpload}
+                                                fileContent={item.file}
+                                                >
+                                            </FileIcon>
+                                        ))}
+                                        {filesToSend.map((item, index) => renderFileIcon(item, index))}
+                                    </div>
                                 )}
+                                </>
+                                }
                             </>
                         )}
-                        
-                        
 
-                        <Row className='mb-3'>
-                            <Col className='d-flex justify-content-start gap-2 '>
-                                {enableAddingFile && (materialId ?? 0) > 0 && (
-                                    <TooltipButton 
-                                        tooltipText={t('upload-file-s')} 
-                                        onClick={() => onClickUploadModal()}>
-                                        <i className="bi bi-file-earmark-arrow-up"></i>
-                                    </TooltipButton>
-                                )}
-                                {enableDownloadFile && ( 
-                                    <TooltipButton 
-                                        tooltipText={t('download-file-s')} 
-                                        onClick={() => onClickDownloadAll()}>
-                                        <i className="bi bi-file-earmark-arrow-down"></i>
-                                    </TooltipButton>
-                                )}
-                                {enableRemoveFile && (
-                                    <TooltipButton 
-                                        tooltipText={t('remove-file-s')} 
-                                        onClick={() => onClickDelete()}>
-                                        <i className="bi bi-file-earmark-x" ></i>
-                                    </TooltipButton>
-                                )}
-                            </Col>
-                            <Col className='d-flex justify-content-end'>
-                                <ToggleButtonGroup 
-                                    type="radio" 
-                                    name={`fileDisplayOptions-${Math.random()}}`}
-                                    defaultValue={1} 
-                                    className='gap-0 mt-0' 
-                                    style={{display: 'inline'}}
-                                    onChange={handleFileDisplayChange}
-                                >
-                                    
-                                    <ToggleButton variant="outline-secondary" id={`tbg-radio-1-${Math.random()}`} value={1}>
-                                        <i className="bi bi-list-ul"></i>                                        
-                                    </ToggleButton>
-                                    <ToggleButton variant="outline-secondary" id={`tbg-radio-2-${Math.random()}`} value={2}>
-                                        <i className="bi bi-grid-3x3"></i>                                        
-                                    </ToggleButton>
-                                </ToggleButtonGroup>
-                            </Col>
-                        </Row>
-                        {(showDropPlace && enableAddingFile)?  (
-                            <div>
-                                <div className={`p-3 ${styles.dropzone} text-center mb-4 ${isDragActive ? `border-warning` : ''}`}
-                                        onDragOver={(e) => onDragOver(e)}
-                                        onDragLeave={(e) => onDragLeave(e)}
-                                        onDrop={(e) => onDrop(e)}>
-
-                                    <div className='d-flex flex-column align-items-center'>
-                                        <i className={`bi bi-box-arrow-in-down ${styles.uploadIcon} ${isDragActive ? `text-warning ${styles.uploadIconOnDrop}` : ''}`}></i>
-                                        <p className="mt-2 text-body-tertiary fs-6 opacity-50 p-0 m-0">{t('drag-and-drop-file-here')}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ):
-                        <>
-                        {fileDisplayMode === 1 ? (
-                            <div                                             
-                                onDragOver={(e) => onDragOver(e)}>
-                                <ul className="list-group">
-                                    {files.map((item, index) => (
-                                        <li className="list-group-item" key={index}>
-                                            <Row>
-                                                <Col className='text-start d-flex align-items-center' xs={8} >
-                                                    {enableRemoveFile &&  (
-                                                        <input 
-                                                            type="checkbox" 
-                                                            className="form-check-input me-2" 
-                                                            onClick={(e) => e.stopPropagation()}
-                                                            onChange={() => {
-                                                                handleCheckboxChangeFileInMaterial(item.fileDto.id);
-                                                            }}
-                                                            checked={selectedFilesInMaterials.includes(item.fileDto.id)}>
-                                                        </input>
-                                                    )}
-                                                    <span onClick={() => onLeftClickFilePair(item)} style={{cursor: 'pointer'}} className='flex-grow-1'>
-                                                        {shortedFileName(item.fileDto.name ?? t('file-not-found'))}
-                                                    </span>
-                                                </Col>
-                                                <Col className="text-end" onClick={() => onLeftClickFilePair(item)} style={{cursor: 'pointer'}}>
-                                                {item.fileDto.dateOfUpload
-                                                ? new Date(item.fileDto.dateOfUpload).toLocaleString("pl-PL", {
-                                                    year: "numeric",
-                                                    month: "long",
-                                                    day: "numeric",
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    })
-                                                    : t('brak-daty')}
-                                                </Col>
-                                            </Row>
-                                        </li>
-                                    ))}
-                                   {filesToSend.map((item, index) => renderFileItem(item, index))}
-                                </ul>
-                            </div>
-                        ) : (
-                            <div className='d-flex flex-wrap gap-2' onDragOver={(e) => onDragOver(e)}>
-                                {files.map((item, index) => (
-                                    <FileIcon 
-                                        onClick={() => {onLeftClickFilePair(item)}}
-                                        key={index} 
-                                        fileName={item.fileDto.name ?? t('file-not-found')}  
-                                        fileType={item.fileDto.type ?? t('undefined')}
-                                        fileDate={item.fileDto.dateOfUpload}
-                                        fileContent={item.file}
-                                        >
-                                    </FileIcon>
-                                ))}
-                                {filesToSend.map((item, index) => renderFileIcon(item, index))}
+                        {(enableAddingFile && enableRemoveFile && enableEdittingMaterialName && material?.id != undefined) && (
+                            <div className="d-flex gap-2 justify-content-center">
+                                <Button variant="danger" type="reset" onClick={() => onClickCancel()} className='mt-3'>
+                                    Remove all files
+                                </Button>
+                                <Button variant="success" type="button" className='mt-3'  onClick={() => onClickSave()}>
+                                    Save changes in files
+                                </Button>
                             </div>
                         )}
-                        </>
-                        }
-                        {(enableAddingFile && enableRemoveFile && enableEdittingMaterialName) && (
-                            <div className="d-flex gap-2 mb-2">
-                                <Button variant="success" type="button" className='mt-3'  onClick={() => onClickSave()}>{material?.id === undefined ? t('create') : t('save-material')}</Button>
-                                <Button variant="secondary" type="reset" onClick={() => onClickCancel()} className='mt-3'>{t('cancel')}</Button>
-                            </div>
-                        )}
-                        <hr />
                     </div>
-                </div>
+
             </div>)}
         </>)}
             <ConfirmModal 
@@ -689,7 +688,6 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                 filePair={selectedFilePair}
                 enableAddToMaterial={false}
                 enableRemoveFromMaterial={enableRemoveFile}
-                enableEdit={enableEdittingFile}
                 onAction={onAction}
                 isFileInMaterial={isFileInMaterial}
             />
