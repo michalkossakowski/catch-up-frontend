@@ -2,3 +2,7 @@
     display: block !important;
     background-color: rgba(0, 0, 0, 0.483);
 }
+
+.feedback-modal button i{
+    color: white !important;
+}

@@ -19,10 +19,10 @@ export default function ConfirmModal({ show, title,  message, onCancel, onConfir
                 {message}
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="danger" onClick={onCancel}>
+                <Button variant="secondary" onClick={onCancel}>
                     Cancel
                 </Button>
-                <Button variant="primary" onClick={onConfirm}>
+                <Button variant="success" onClick={onConfirm}>
                     Confirm
                 </Button>
             </Modal.Footer>

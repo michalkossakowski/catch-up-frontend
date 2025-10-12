@@ -56,21 +56,8 @@ const FeedbackDetailsDialog: React.FC<FeedbackDetailsDialogProps> = ({
             <button type="button" className="btn-close" onClick={onClose}></button>
           </div>
           <div className="modal-body text-start">
-            <div className="row">
-              <div className="col text-start h5 m-0">
-                <p><strong>From:</strong> {feedback.userSend}</p>
-              </div>
-              <div className="col text-end">
-                <p><strong>Date:</strong> {new Date(feedback.createdDate).toLocaleDateString()}</p>
-              </div>
-            </div>
-            <p className="text-start h6 m-0"><strong>To:</strong> {feedback.userReceive}</p>
+            <h5>{feedback.description || "No description..."}</h5>
             <hr></hr>
-            <h5>Description</h5>
-            <p>{feedback.description || "No description..."}</p>
-            <hr></hr>
-            <h5>Resource Name</h5>
-            <p className='mb-0'>{feedback.resourceName || 'No title'} ({ResourceTypeEnum[feedback.resourceType]})</p>
             {feedback.materialId && (
               <>
                 <hr></hr>
@@ -86,25 +73,53 @@ const FeedbackDetailsDialog: React.FC<FeedbackDetailsDialogProps> = ({
                 />
               </>
             )}
-          </div>
-          <div className="modal-footer">
-            <div className="d-flex justify-content-end w-100">
-              <div>
-                {!isNewbie && (
-                  <button 
-                  className={`btn ${isResolved ? 'btn-success' : 'btn-secondary'} me-2`}
-                  onClick={handleResolve}
-                  >
-                    {isResolved ? 'Resolved' : 'Unresolved'}
-                  </button>
-                )}
-                <button 
-                  className="btn btn-danger" 
-                  onClick={handleDelete}
-                >
-                  Delete
-                </button>
+            <div className="row">
+              <div className="col text-start m-0">
+            <p><strong>From:</strong> {feedback.userSend}</p>
               </div>
+              <div className="col text-end">
+            <p><strong>To:</strong> {feedback.userReceive}</p>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col text-start m-0">
+                  <p><strong>Source:</strong> {feedback.resourceName || 'No title'} ({ResourceTypeEnum[feedback.resourceType]})</p>
+              </div>
+              <div className="col text-end">
+                <p><strong>Date:</strong> {new Date(feedback.createdDate).toLocaleDateString()}</p>
+              </div>
+            </div>
+          </div>
+          <div className="modal-footer row feedback-modal">
+                <div className="col text-start h5">
+                  <strong>
+                    Status:{' '} 
+                    {isResolved ? (
+                      <>
+                      Resolved <i className="bi bi-check-circle-fill"></i> 
+                      </>
+                    ) : (
+                      <>
+                      Unresolved <i className="bi bi-x-circle-fill text-danger"></i>
+                      </>
+                    )}
+                  </strong>
+                </div>
+                <div className="col text-end">
+                  {!isNewbie && (
+                    <button 
+                    className={`btn ${isResolved ? 'btn-danger': 'btn-success'} me-2`}
+                    onClick={handleResolve}
+                    >
+                      {isResolved ? 'Mark as Unresolved' : 'Mark as Resolved'}
+                    </button>
+                  )}
+                  <button 
+                    className="btn btn-danger" 
+                    onClick={handleDelete}
+                  >
+                    <i className='bi-trash'> </i>Delete
+                  </button>
             </div>
           </div>
         </div>
