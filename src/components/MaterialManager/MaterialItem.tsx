@@ -153,7 +153,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
    
         document.addEventListener('refreshMaterial', handleRefresh);
    
-        if (materialId !== prevMaterialId.current && materialId) {
+        if (materialId !== prevMaterialId.current && materialId !== undefined) {
             getMaterial(materialId);
             prevMaterialId.current = materialId;
         }
