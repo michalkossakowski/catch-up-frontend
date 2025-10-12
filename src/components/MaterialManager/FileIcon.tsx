@@ -7,6 +7,7 @@ interface FileIconProps {
     fileDate?: Date;
     fileContent?: File;
     onClick?: () => void;
+    isUnsaved?: boolean;
 }
 
 const FileIcon: React.FC<FileIconProps> = ({
@@ -14,7 +15,8 @@ const FileIcon: React.FC<FileIconProps> = ({
     fileType, 
     fileDate, 
     fileContent, 
-    onClick
+    onClick,
+    isUnsaved
     }) => 
 {
 
@@ -76,6 +78,9 @@ const FileIcon: React.FC<FileIconProps> = ({
                     })
                     : t('brak-daty')}
             </div>
+            {isUnsaved && (
+                <span className="text-warning">(unsaved)</span>
+            )}
         </div>
     )
 }

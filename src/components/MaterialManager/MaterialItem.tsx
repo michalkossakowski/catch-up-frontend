@@ -462,7 +462,10 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                 <span className="ms-2">{item.progress}%</span>
                             </>
                         ) : (
-                            shortedFileName(item.file.name ?? t('file-not-found'))
+                            <>
+                                {shortedFileName(item.file.name ?? t('file-not-found'))}
+                               <span className="text-warning ms-2">(unsaved)</span>
+                            </>
                         )}
                     </span>
                 </Col>
@@ -480,7 +483,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     );
 
     const renderFileIcon = (item: typeof filesToSend[0], index: number) => (
-        <span className="striped" key={index + files.length}>
+        <span  key={index + files.length}>
             <div className="d-flex flex-column align-items-center">
                 <FileIcon 
                     onClick={() => !item.isUploading && onLeftClickFile(item.file, item.uploadedAt, index)}
@@ -488,14 +491,8 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                     fileType={item.file.type}
                     fileDate={item.uploadedAt}
                     fileContent={item.file}
+                    isUnsaved={true}
                 />
-                {item.isUploading && (
-                    <progress 
-                        value={item.progress} 
-                        max="100" 
-                        style={{width: '80px', marginTop: '5px'}}
-                    />
-                )}
             </div>
         </span>
     );
