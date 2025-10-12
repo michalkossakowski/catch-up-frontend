@@ -114,14 +114,14 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
                 <br />
                 <div >
                     <MaterialItem
-                        materialId={materialId ?? 0} 
-                        materialCreated={materialCreated} 
+                        materialId={materialId ?? 0}
+                        materialCreated={materialCreated}
+                        materialCleared={() => setMaterialId(null)}
                         enableAddingFile={true}
                         enableDownloadFile={true}
                         enableRemoveFile={true}
                         enableEdittingMaterialName={true}
-                        >
-                    </MaterialItem>
+                    />
                 </div>
                 <div className='buttonBoxFaq'>
                     <Button variant="secondary" onClick={() => onCancel()}>

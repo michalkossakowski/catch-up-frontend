@@ -27,7 +27,9 @@ interface MaterialItemProps {
     enableEdittingMaterialName?: boolean;
     materialCreated?: (materialId: number) => void;
     showComponent?: boolean;
+    materialCleared?: () => void;
 }
+
 
 const MaterialItem: React.FC<MaterialItemProps> = ({
     materialId,
@@ -37,6 +39,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
     enableAddingFile = false,
     materialCreated = () => { },
     showComponent = true,
+    materialCleared = () => { }, 
 }) => {
     const { t, i18n } = useTranslation();
     
@@ -497,6 +500,59 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
         </span>
     );
 
+    const handleRemoveAll = async () => {
+        if (materialId) {
+            try {
+                await materialService.deleteMaterial(materialId); // zakładam, że masz endpoint do usuwania materiału
+            } catch (error) {
+                console.error('Error deleting material:', error);
+                setAlertMessage(t('error-deleting-material') + " " + error);
+                setShowAlert(true);
+            }
+        }
+
+        // Reset lokalnego stanu
+        setFiles([]);
+        setFilesToSend([]);
+        setMaterial(null);
+        setMaterialName('');
+        prevMaterialId.current = null;
+
+        // Pokaż sekcję tworzenia nowego materiału
+        setShowDropPlace(true);
+
+        // Powiadom komponent nadrzędny (FaqEdit)
+      
+        materialCleared();
+    };
+
+    const handleManualUpload = () => {
+        // Podkradnięty kod z UploadFileModal - ręczny upload plików
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.multiple = true;
+        input.accept = '*/*';
+        
+        input.onchange = (e: Event) => {
+            const target = e.target as HTMLInputElement;
+            const selectedFiles = Array.from(target.files ?? []);
+            
+            if (selectedFiles.length > 0) {
+                const uploadedFilesPairs = selectedFiles.map((file) => ({
+                    file,
+                    uploadedAt: new Date(),
+                    progress: 0,
+                    isUploading: false,
+                }));
+                
+                setFilesToSend((prevFiles) => [...prevFiles, ...uploadedFilesPairs]);
+                setShowDropPlace(false);
+            }
+        };
+        
+        input.click();
+    };
+
     return (
         <>
         {showAlert && (
@@ -534,13 +590,20 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                         ) : (
                             <>
                                 <Row className='mb-3'>
-                                    <Col xs={12} md={8} className='d-flex justify-content-start gap-2'>
+                                    <Col xs={12} md={10} className='d-flex justify-content-start gap-2'>
                                         {enableAddingFile && (
-                                            <TooltipButton 
-                                                tooltipText='Import from existing files'
-                                                onClick={() => onClickUploadModal()}>
-                                                <i className="bi bi-folder2-open"></i> Import from existing files
-                                            </TooltipButton>
+                                            <>
+                                                <TooltipButton 
+                                                    tooltipText='Import from existing files'
+                                                    onClick={() => onClickUploadModal()}>
+                                                    <i className="bi bi-folder2-open"></i> Import from existing files
+                                                </TooltipButton>
+                                                <TooltipButton 
+                                                    tooltipText=' Upload files   '
+                                                    onClick={() => handleManualUpload()}>
+                                                <i className="bi bi-upload"></i> Upload files                                       
+                                                </TooltipButton>
+                                            </>
                                         )}
                                         {enableDownloadFile && ( 
                                             <TooltipButton 
@@ -557,7 +620,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                             </TooltipButton>
                                         )}
                                     </Col>
-                                    <Col xs={12} md={4} className='d-flex justify-content-end'>
+                                    <Col xs={12} md={2} className='d-flex justify-content-end'>
                                         <ToggleButtonGroup 
                                             type="radio" 
                                             name={`fileDisplayOptions-${Math.random()}}`}
@@ -566,7 +629,6 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                             style={{display: 'inline'}}
                                             onChange={handleFileDisplayChange}
                                         >
-                                            
                                             <ToggleButton variant="outline-secondary" id={`tbg-radio-1-${Math.random()}`} value={1}>
                                                 <i className="bi bi-list-ul"></i>                                        
                                             </ToggleButton>
@@ -593,7 +655,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                                 <>
                                 {fileDisplayMode === 1 ? (
                                     <div                                             
-                                        onDragOver={(e) => onDragOver(e)}>
+                                        onDragOver={(e) => onDragOver(e)}>                   
                                         <ul className="list-group">
                                             {files.map((item, index) => (
                                                 <li className="list-group-item" key={index}>
@@ -654,7 +716,7 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
 
                         {(enableAddingFile && enableRemoveFile && enableEdittingMaterialName && material?.id != undefined) && (
                             <div className="d-flex gap-2 justify-content-center">
-                                <Button variant="danger" type="reset" onClick={() => onClickCancel()} className='mt-3'>
+                                <Button variant="danger" type="button" onClick={handleRemoveAll} className='mt-3'>
                                     Remove all files
                                 </Button>
                                 <Button variant="success" type="button" className='mt-3'  onClick={() => onClickSave()}>
