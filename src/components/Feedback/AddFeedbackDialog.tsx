@@ -75,7 +75,7 @@ export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId
     };
 
     return (
-        <Modal show={true} onHide={onClose}>
+        <Modal show={true} onHide={onClose} size='xl'>
             <Modal.Header closeButton>
                 <Modal.Title>Add Feedback</Modal.Title>
             </Modal.Header>
