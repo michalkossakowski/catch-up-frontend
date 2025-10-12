@@ -422,7 +422,6 @@ return (
                             <Dropdown.Toggle variant="success" id="dropdown-basic" className={`custom-dropdown-toggle ${statusLabels[fullTask.status as StatusEnum]?.color}`}>
                                 {statusLabels[fullTask.status as StatusEnum]?.label || 'Select Status'}
                             </Dropdown.Toggle>
-
                             <Dropdown.Menu>
                                 {Object.entries(statusLabels).map(([key, { label, color }], idx, arr) => (
                                     <>
@@ -439,11 +438,10 @@ return (
 
                             </Dropdown.Menu>
                         </Dropdown>
-                        <Button variant="primary" onClick={()=>handleShowCommentModal()}>Add comment</Button>
+                        <Button variant="info" onClick={()=>handleShowCommentModal()}><i className='bi-chat-left-text'></i> Add Comment</Button>
                         { isTimeLogEnabled &&(
-                            <Button variant="secondary" onClick={()=>handleShowTimeLogModal()}>Log time</Button>
+                            <Button variant="info" onClick={()=>handleShowTimeLogModal()}><i className='bi-clock-history'></i> Log Time</Button>
                         )}
-                        
                     </div>
                 </div>
                 <div className='taskDetailsContent'>

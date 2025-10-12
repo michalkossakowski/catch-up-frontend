@@ -43,7 +43,7 @@ const TaskTimeLogModal: React.FC<TaskTimeLogModalProps> = ({show, handleClose, h
         <>
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>{initialData ? 'Edit comment' : 'Add comment'}</Modal.Title>
+                <Modal.Title>{initialData ? 'Edit comment' : 'Log Time'}</Modal.Title>
             </Modal.Header>
             <ModalBody>
                 <Form onSubmit={handleSubmit}>

@@ -43,7 +43,7 @@ const TaskCommentModal: React.FC<TaskCommentModalProps> = ({show, handleClose, h
         <>
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>{initialData ? 'Edit comment' : 'Add comment'}</Modal.Title>
+                <Modal.Title>{initialData ? 'Edit Comment' : 'Add Comment'}</Modal.Title>
             </Modal.Header>
             <ModalBody>
                 <Form onSubmit={handleSubmit}>
