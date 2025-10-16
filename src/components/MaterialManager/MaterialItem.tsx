@@ -711,6 +711,12 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                             </>
                         )}
 
+                        {materialName.length > 0 && (                         
+                            <div className="d-flex justify-content-center mt-2">
+                                <small>({materialName})</small>
+                            </div>
+                        )}
+
                         {(enableAddingFile && enableRemoveFile && enableEdittingMaterialName && material?.id != undefined) && (
                             <div className="d-flex gap-2 justify-content-center">
                                 <Button variant="danger" type="button" onClick={handleRemoveAll} className='mt-3'>
