@@ -41,14 +41,14 @@ const TaskCommentModal: React.FC<TaskCommentModalProps> = ({show, handleClose, h
     };
     return(
         <>
-        <Modal show={show} onHide={handleClose}>
+        <Modal show={show} onHide={handleClose} size="lg">
             <Modal.Header closeButton>
                 <Modal.Title>{initialData ? 'Edit Comment' : 'Add Comment'}</Modal.Title>
             </Modal.Header>
             <ModalBody>
                 <Form onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3" controlId="formDescription">
-                        <Form.Label>Content</Form.Label>
+                    <Form.Group className="mb-3" controlId="formDescription" style={{textAlign:"left"}}>
+                        <label>Content:</label>
                         <Form.Control
                         type="text"
                         name="content"
@@ -58,18 +58,20 @@ const TaskCommentModal: React.FC<TaskCommentModalProps> = ({show, handleClose, h
                         />
                     </Form.Group>
                     <MaterialItem
-                        materialId={formData.materialId ?? 0} 
+                        materialId={formData.materialId ?? undefined} 
                         materialCreated={materialCreated} 
                         enableAddingFile={true}
                         enableDownloadFile={true}
                         enableRemoveFile={true}
                         enableEdittingMaterialName={true}
-                        enableEdittingFile={true}
                         >
                     </MaterialItem>
-                    <Button variant="primary" type="submit">
-                        Save
-                    </Button>
+                    <div className="d-flex justify-content-end">
+                        <Button variant="primary" type="submit">
+                            Save
+                        </Button>
+                    </div>
+
                 </Form>
             </ModalBody>
         </Modal>

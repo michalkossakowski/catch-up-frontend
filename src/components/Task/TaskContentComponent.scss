@@ -19,38 +19,9 @@
             .accordion-body {
                 .task-description {
                     p {
-                        color: var(--bs-secondary-color);
                         line-height: 1.6;
                         white-space: pre-line;
-                    }
-                }
-
-                .material-container {
-                    margin-top: 1rem;
-                    
-                    h6 {
-                        color: var(--bs-body-color);
-                        margin-bottom: 0.75rem;
-                        font-weight: 600;
-                    }
-
-                    &.task-content-materials {
-                        .fs-3.rounded-circle {
-                            display: none !important;
-                        }
-
-                        .content_collapse {
-                            max-height: none !important;
-                            opacity: 1 !important;
-                            overflow: visible !important;
-                            transform: none !important;
-                        }
-
-                        .d-flex.align-items-center {
-                            h4 {
-                                margin-left: 0 !important;
-                            }
-                        }
+                        font-size: 1.5rem !important;
                     }
                 }
             }
@@ -66,11 +37,7 @@
     .loaderBox.loading {
         min-height: 100px;
     }
-    
-    .buttonBox {
-        margin-top: 20px;
-    }
-    
+
     .task-category {
         margin-bottom: 15px;
     }
@@ -83,15 +50,7 @@
         position: relative;
     }
 
-    .task-description::after {
-        content: "...";
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        padding: 0 5px;
-        background-color: var(--bs-accordion-bg);
-        font-weight: bold;
-    }
+
     
     .admin-buttons {
         display: flex;
@@ -124,20 +83,7 @@
     .filter-container select {
         color: var(--bs-body-color);
     }
-    
-    /* Material display styles */
-    .material-container {
-        border: 1px solid var(--bs-border-color);
-        border-radius: 8px;
-        padding: 15px;
-        background-color: var(--bs-body-bg);
-    }
-    
-    .material-container h5 {
-        margin-bottom: 15px;
-        color: var(--bs-body-color);
-    }
-    
+
     .read-only-material .accordion-button {
         background-color: var(--bs-tertiary-bg);
         color: var(--bs-body-color);
@@ -158,4 +104,8 @@
         padding: 15px;
         border-top: none;
     }
+}
+
+.task-content-body{
+    text-align: left !important;
 }

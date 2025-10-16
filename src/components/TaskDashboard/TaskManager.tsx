@@ -21,6 +21,7 @@ import { useLocation } from "react-router-dom";
 import Select from "react-select";
 import {customSelectStyles} from "../../componentStyles/selectStyles.tsx";
 import { TypeEnum } from "../../Enums/TypeEnum.ts";
+import { Alert } from "react-bootstrap";
 
 function TaskManager() {
     const { user, getRole } = useAuth();
@@ -256,6 +257,9 @@ function TaskManager() {
                                     </div>
 
                                     <div className="filter-control newbie-select">
+                                        {selectedNewbie.length == 0 &&(
+                                            <b className="select-newbie-here">First select newbie here:</b>
+                                        )}
                                         <Select
                                             isClearable={true}
                                             isSearchable={true}
@@ -264,7 +268,7 @@ function TaskManager() {
                                                 value: newbie.id,
                                                 label: `${newbie.name} ${newbie.surname}`
                                             }))}
-                                            placeholder="Select a newbie"
+                                            placeholder="Select a newbie..."
                                             onChange={(selectedOption) => setSelectedNewbie(selectedOption?.value ?? '')}
                                             value={newbies.map(newbie => ({
                                                 value: newbie.id,
@@ -323,7 +327,12 @@ function TaskManager() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> 
+                        {selectedNewbie.length == 0 ? (
+                            <div className="select-newbie-first-alert-box">
+                                <Alert className="select-newbie-first-alert" >Select any newbie from panel above first !</Alert>
+                            </div>
+                        ) : (
 
                         <TaskColumns
                             tasksByStatus={tasksByStatus}
@@ -336,6 +345,8 @@ function TaskManager() {
                             loadingTaskIds={loadingTaskIds}
                             selectedNewbie={selectedNewbie}
                         />
+                        )}           
+
                     </div>
 
                     <div className={`task-pool-container ${!selectedNewbie ? "disabled-pool" : ""}`}>

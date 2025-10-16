@@ -5,7 +5,6 @@ import { UserDto } from '../../dtos/UserDto';
 import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 import { addFeedback } from '../../services/feedbackService';
 import { getAdmins } from '../../services/userService';
-import NotificationToast from '../Toast/NotificationToast';
 import { useAuth } from '../../Provider/authProvider';
 import MaterialItem from '../MaterialManager/MaterialItem';
 
@@ -75,14 +74,14 @@ export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId
     };
 
     return (
-        <Modal show={true} onHide={onClose}>
+        <Modal show={true} onHide={onClose} size='xl'>
             <Modal.Header closeButton>
                 <Modal.Title>Add Feedback</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Title</Form.Label>
+                    <Form.Group className="mb-3 text-start">
+                        <label>Title:</label>
                         <Form.Control
                             type="text"
                             required
@@ -97,8 +96,8 @@ export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId
                         )}
                     </Form.Group>
 
-                    <Form.Group className="mb-3">
-                        <Form.Label>Description</Form.Label>
+                    <Form.Group className="mb-3 text-start">
+                        <label>Description:</label>
                         <Form.Control
                             as="textarea"
                             value={feedback.description}
@@ -129,13 +128,12 @@ export const AddFeedbackDialog: React.FC<AddFeedbackDialogProps> = ({ resourceId
                     )}
 
                     <MaterialItem
-                        materialId={materialId ?? 0}
+                        materialId={materialId ?? undefined}
                         materialCreated={materialCreated}
                         enableAddingFile
                         enableDownloadFile
                         enableRemoveFile
                         enableEdittingMaterialName
-                        enableEdittingFile
                     />
 
                     <div className="d-flex justify-content-end gap-2">

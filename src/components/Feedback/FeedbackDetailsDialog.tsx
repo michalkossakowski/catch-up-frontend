@@ -67,9 +67,6 @@ const FeedbackDetailsDialog: React.FC<FeedbackDetailsDialogProps> = ({
                     enableAddingFile={false}
                     enableRemoveFile={false}
                     enableEdittingMaterialName ={false}
-                    enableEdittingFile={false}
-                    showMaterialName= {true}
-                    nameTitle='Attachments'
                 />
               </>
             )}

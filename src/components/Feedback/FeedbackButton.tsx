@@ -27,7 +27,7 @@ export const FeedbackButton: React.FC<FeedbackButtonProps> = ({ resourceId, reso
     return (
         <>
             <button type="button" className="btn btn-success" onClick={handleOpenDialog}>
-                Feedback
+                <i className='bi-arrow-counterclockwise' style={{color: 'white'}}></i> Feedback
             </button>
 
             {showDialog && (

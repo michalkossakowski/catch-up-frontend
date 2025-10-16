@@ -76,10 +76,8 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
     };
 
     return (
-        <section className='editBox'>
+        <section className='editBoxFaq'>
             <form onSubmit={handleSubmit} className="container-lg">
-                <h2>{isEditMode ? 'Edit FAQ' : 'Add new FAQ'}</h2>
-                <br />
                 <div className="form-group">
                     <label htmlFor="question">Question:</label>
                     <input
@@ -115,29 +113,23 @@ export default function FaqEdit({ faq, isEditMode, onCancel, onFaqEdited }: FaqE
                 </div>
                 <br />
                 <div >
-                    <MaterialItem
-                        materialId={materialId ?? 0} 
-                        materialCreated={materialCreated} 
-                        enableAddingFile={true}
-                        enableDownloadFile={true}
-                        enableRemoveFile={true}
-                        enableEdittingMaterialName={true}
-                        enableEdittingFile={true}
-                        >
-                    </MaterialItem>
+                <MaterialItem
+                    materialId={materialId ?? undefined}
+                    materialCreated={materialCreated}
+                    materialCleared={() => setMaterialId(null)}
+                    enableAddingFile={true}
+                    enableDownloadFile={true}
+                    enableRemoveFile={true}
+                    enableEdittingMaterialName={true}
+                />
                 </div>
-                <div className='buttonBox'>
+                <div className='buttonBoxFaq'>
+                    <Button variant="secondary" onClick={() => onCancel()}>
+                        Cancel 
+                    </Button >
                     <Button type="submit" variant="primary" disabled={!isQuestionValid || !isAnswerValid}>
                         {isEditMode ? 'Save Changes' : 'Add new FAQ'}
                     </Button >
-                    <Button variant="danger" onClick={() => onCancel()}>
-                        Cancel 
-                    </Button >
-                    {materialId &&(
-                        <Button variant="secondary" onClick={() => setMaterialId(null)}>
-                            Remove materials
-                        </Button>
-                    )}
                 </div>
             </form>
         </section>

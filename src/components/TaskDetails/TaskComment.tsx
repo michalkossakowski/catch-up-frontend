@@ -58,16 +58,21 @@ const TaskComment: React.FC<TaskCommentProps> = ({ taskComment, deleteClick, edi
                                         enableDownloadFile={true}
                                         enableAddingFile={false}
                                         enableRemoveFile={false}
-                                        enableEdittingMaterialName={false}
-                                        enableEdittingFile={false}
-                                        showMaterialName={true}
-                                        nameTitle='See Materials' />
+                                        enableEdittingMaterialName={false}/>
                     )}
                     {useAuth().user?.id === taskComment.creatorId && (
-                        <>
-                            <Button variant="primary" size="sm" onClick={() => { if (taskComment.id !== undefined) editClick(taskComment); }} >Edit</Button>
-                            <Button variant="danger" className='ms-2' size="sm" onClick={() => { if (taskComment.id !== undefined) deleteClick(taskComment.id); }}>Delete</Button> 
-                        </> 
+                        <div className='d-flex justify-content-end'>
+                            <Button 
+                                variant="danger"
+                                onClick={() => { if (taskComment.id !== undefined) deleteClick(taskComment.id); }}>
+                                <i className='bi-trash' style={{color: 'white'}}></i> Delete
+                            </Button>
+                            <Button className='ms-2'
+                                variant="primary"
+                                 onClick={() => { if (taskComment.id !== undefined) editClick(taskComment); }}>
+                                <i className='bi-pencil' style={{color: 'white'}}></i> Edit
+                            </Button> 
+                        </div> 
                     )}
                     
                 </Card.Body>

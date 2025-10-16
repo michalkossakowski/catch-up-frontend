@@ -378,6 +378,14 @@ const TaskPage = () => {
                     setShowAlert(true); // Show alert on error
                 });
         }
+        if (commentData.materialId) {
+            document.dispatchEvent(
+                new CustomEvent('refreshMaterial', {
+                    detail: { materialId: commentData.materialId },
+                })
+            );
+        }
+
         handleCloseCommentModal();
     };
     const handleShowTimeLogModal = (timeLogData?: TaskTimeLogDto) => {
@@ -455,10 +463,7 @@ return (
                                     enableDownloadFile={true}
                                     enableAddingFile={false}
                                     enableRemoveFile={false}
-                                    enableEdittingMaterialName={false}
-                                    enableEdittingFile={false}
-                                    showMaterialName={true}
-                                    nameTitle='See Materials' />
+                                    enableEdittingMaterialName={false}/>
                             </div>
                         )}
                     </div>

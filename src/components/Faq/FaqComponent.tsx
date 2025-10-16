@@ -141,21 +141,26 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
     const handleFaqUpdated = (response: FaqResponse) => {
         setToastMessage(`FAQ successfully ${editedFaq ? 'edited' : 'added'}!`);
         setShowToast(true);
+
         const updatedFaqs = editedFaq 
-        ? allFaqs.map((faq) => (faq.id == response.faq.id ? response.faq : faq))
-        : [...allFaqs, response.faq]
+            ? allFaqs.map((faq) => 
+                faq.id === response.faq.id 
+                ? { ...response.faq }  
+                : faq
+            )
+            : [...allFaqs, response.faq];
+
+        setAllFaqs(updatedFaqs);
+        setFaqs(updatedFaqs); 
 
         if (response.faq.materialId) {
             document.dispatchEvent(
                 new CustomEvent('refreshMaterial', {
-                detail: { materialId: response.faq.materialId },
+                    detail: { materialId: response.faq.materialId },
                 })
             );
         }
-        setAllFaqs(updatedFaqs);
-        if (currentPage === Math.ceil(totalItems/ itemsPerPage)) {
-            setFaqs(updatedFaqs);
-        }
+
         setShowEditModal(false); 
         setEditedFaq(null);
     };
@@ -362,7 +367,7 @@ export default function FaqComponent ({ isAdmin }: { isAdmin: boolean }): React.
             {isAdmin && !showAlert && !loading && (
                 <div>
                     <Button variant="primary mb-3" onClick={() => {setShowEditModal(true); setEditedFaq(null)}}>
-                        Add new FAQ
+                        <i className='bi-plus-lg' style={{color: 'white'}}></i> Add new FAQ
                     </Button>
                 </div>
             )}

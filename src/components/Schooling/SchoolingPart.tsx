@@ -98,11 +98,8 @@ const SchoolingPart: React.FC<SchoolingPartProps> = ({
                     materialId={id}
                     enableDownloadFile={true}
                     enableAddingFile={false}
-                    enableEdittingFile={false}
                     enableRemoveFile={false}
                     enableEdittingMaterialName={false}
-                    showMaterialName={false}
-                    nameTitle={index+1+". Attached Material"}
                 />
             ))}
             {isDone ? 
