@@ -123,7 +123,8 @@ function App() {
         "/taskmanage",
         "/taskcontentmanage",
         "/presetmanage",
-        "/roadmapmanage"
+        "/roadmapmanage",
+        "/schoolinglist"
     ].some(path => location.pathname.startsWith(path));
 
     const isHRToolsActive = [
@@ -176,11 +177,11 @@ function App() {
                                         <NavLink to="/roadmapexplore" className="nav-link left-sidebar">
                                             <i className="bi bi-compass" /> <span>{t('roadmaps')}</span>
                                         </NavLink>
+                                        {/* <NavLink to="/schoolinglist" className="nav-link">
+                                            <i className="bi bi-book" /> <span>{t('schoolings')}</span>
+                                        </NavLink> */}
                                         </>
                                     )}
-                                    <NavLink to="/schoolinglist" className="nav-link">
-                                        <i className="bi bi-book" /> <span>{t('schoolings')}</span>
-                                    </NavLink>
                                     <NavLink to="/feedbacks" className="nav-link">
                                         <i className="bi bi-arrow-clockwise" /> <span>{t('feedbacks')}</span>
                                     </NavLink>
@@ -211,6 +212,10 @@ function App() {
                                             <NavDropdown.Divider />
                                             <NavDropdown.Item as={NavLink} to="/roadmapmanage" className="nav-dropdown-item">
                                                 <i className="bi bi-compass" /> {t('road-maps')}
+                                            </NavDropdown.Item>
+                                            <NavDropdown.Divider />
+                                            <NavDropdown.Item as={NavLink} to="/schoolinglist" className="nav-dropdown-item">
+                                                <i className="bi bi-book" /> {t('schoolings')}
                                             </NavDropdown.Item>
                                             <NavDropdown.Divider />
                                         </NavDropdown>
