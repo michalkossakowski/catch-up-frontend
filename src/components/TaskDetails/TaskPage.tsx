@@ -378,6 +378,14 @@ const TaskPage = () => {
                     setShowAlert(true); // Show alert on error
                 });
         }
+        if (commentData.materialId) {
+            document.dispatchEvent(
+                new CustomEvent('refreshMaterial', {
+                    detail: { materialId: commentData.materialId },
+                })
+            );
+        }
+
         handleCloseCommentModal();
     };
     const handleShowTimeLogModal = (timeLogData?: TaskTimeLogDto) => {

@@ -720,10 +720,10 @@ const MaterialItem: React.FC<MaterialItemProps> = ({
                         {(enableAddingFile && enableRemoveFile && enableEdittingMaterialName && material?.id != undefined) && (
                             <div className="d-flex gap-2 justify-content-center">
                                 <Button variant="danger" type="button" onClick={handleRemoveAll} className='mt-3'>
-                                    Remove all files
+                                    <i className='bi-trash' style={{color: 'white'}}></i> Remove all files
                                 </Button>
                                 <Button variant="success" type="button" className='mt-3'  onClick={() => onClickSave()}>
-                                    Save changes in files
+                                    <i className='bi-upload' style={{color: 'white'}}></i> Upload unsaved files
                                 </Button>
                             </div>
                         )}

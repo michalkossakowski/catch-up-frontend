@@ -35,8 +35,7 @@
 
 .buttonBox {
     display: flex;
-    gap: 10px;
-    margin-top: 15px;
+    gap: 0.5rem;
 }
 
 .preset-tasks-list {
