@@ -106,5 +106,8 @@
   "unassigned-newbies": "Débutants non attribués:",
   "no-unassigned-newbies-found": "Aucun débutant non attribué trouvé.",
   "surname": "Nom de famille",
-  "position": "Position"
+  "position": "Position",
+  "AssignedTasksCount": "Nombre de tâches assignées",
+  "CreatedTasksCount": "Nombre de tâches créées",
+  "NewbiesCount": "Les débutants encadrés comptent"
 }

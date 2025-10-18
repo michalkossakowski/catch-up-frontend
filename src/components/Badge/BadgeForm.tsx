@@ -4,6 +4,7 @@ import { BadgeDto } from '../../dtos/BadgeDto';
 import { addBadge, editBadge } from '../../services/badgeService';
 import fileService from '../../services/fileService';
 import { BadgeTypeCountEnum } from '../../Enums/BadgeTypeCountEnum';
+import { t } from 'i18next';
 
 interface BadgeFormProps {
     show: boolean;
@@ -189,12 +190,11 @@ const BadgeForm: React.FC<BadgeFormProps> = ({ show, onHide, onSuccess, badge })
                                 setCountType(Number(e.target.value) as BadgeTypeCountEnum || null)
                             }
                         >
-                            <option value="">Select Count Type</option>
                             {Object.entries(BadgeTypeCountEnum)
                                 .filter(([key]) => isNaN(Number(key)))
                                 .map(([key, value]) => (
                                     <option key={value} value={value}>
-                                        {key}
+                                        {t(`${key}`)}
                                     </option>
                                 ))}
                         </Form.Select>

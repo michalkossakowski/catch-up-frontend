@@ -109,5 +109,8 @@
   "unassigned-newbies": "Unassigned Newbies:",
   "no-unassigned-newbies-found": "There is no any unassigned newbies.",
   "surname": "Surname",
-  "position": "Position"
+  "position": "Position",
+  "NewbiesCount": "Mentored newbies count",
+  "AssignedTasksCount": "Assigned tasks count",
+  "CreatedTasksCount": "Created tasks count"
 }
