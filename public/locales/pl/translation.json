@@ -105,5 +105,8 @@
   "unassigned-newbies": "Nieprzypisani nowicjusze:",
   "no-unassigned-newbies-found": "Nie znaleziono nieprzypisanych początkujących.",
   "surname": "Nazwisko",
-  "position": "Pozycja"
+  "position": "Pozycja",
+  "AssignedTasksCount": "Licznik przydzielonych zadań",
+  "CreatedTasksCount": "Licznik utworzonych zadań",
+  "NewbiesCount": "Licznik mentorowanych nowicjuszy"
 }

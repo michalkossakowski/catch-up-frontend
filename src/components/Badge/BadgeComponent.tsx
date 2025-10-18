@@ -8,6 +8,7 @@ import Loading from '../Loading/Loading';
 import { BadgeTypeCountEnum } from '../../Enums/BadgeTypeCountEnum';
 import { useAuth } from '../../Provider/authProvider';
 import defaultBadgeIcon from '../../assets/defaultBadgeIcon.png';
+import { t } from 'i18next';
 
 const Badge: React.FC = () => {
     const { user, getRole } = useAuth();
@@ -80,7 +81,7 @@ const Badge: React.FC = () => {
 
     const getBadgeTypeName = (countType: BadgeTypeCountEnum | null | undefined): string => {
         if (countType === null || countType === undefined) return 'Custom';
-        return (BadgeTypeCountEnum[countType] + ': ') || 'Unknown';
+        return (t(`${BadgeTypeCountEnum[countType]}`) + ': ') || 'Unknown';
     };
 
     const handleCloseForm = () => {
@@ -89,7 +90,11 @@ const Badge: React.FC = () => {
     };
 
     if (loading) {
-        return <Loading />;
+        return (
+            <div className='mt-4'>
+                <Loading />
+            </div>
+        )
     }
 
     return (
@@ -101,7 +106,7 @@ const Badge: React.FC = () => {
                         <>
                             <h2>Manage Badges:</h2>
                             <Button variant="primary" onClick={() => handleAddEdit()}>
-                                Add Badge
+                                <i className='bi-plus-lg' style={{color: 'white'}}></i> Add Badge
                             </Button>
                         </>
                     ) : (
@@ -113,7 +118,7 @@ const Badge: React.FC = () => {
                         <div className="alert alert-danger text-center">{error}</div>
                     </div>
                 )}
-                <Row xs={1} md={3} className="g-4">
+                <Row xs={1} md={3} className="g-4 justify-content-center">
                     {badges != null && badges.length > 0 ? (
                         badges.map((badge) => (
                             <Col key={badge.id}>
@@ -123,25 +128,36 @@ const Badge: React.FC = () => {
                                         src={badge.iconId ? imageUrls.get(badge.iconId) || defaultBadgeIcon : defaultBadgeIcon}
                                         className="p-3"
                                         style={{
-                                            maxHeight: '200px',
+                                            maxHeight: '12.5rem',
                                             objectFit: 'contain',
                                         }}
                                     />
                                     <Card.Body>
                                         <Card.Title>{badge.name}</Card.Title>
-                                        <Card.Text>{badge.description}</Card.Text>
                                         <Card.Text>
-                                            {getBadgeTypeName(badge.countType)}
-                                            {badge.count}
+                                            {badge.description}
                                         </Card.Text>
-                                        <div className="d-flex justify-content-between">
-                                            <Button variant="info" onClick={() => handleAddEdit(badge)}>
-                                                Edit
-                                            </Button>
-                                            <Button variant="danger" onClick={() => handleDelete(badge.id)}>
-                                                Delete
-                                            </Button>
-                                        </div>
+                                        {userRole !== 'Mentor' ? (
+                                            <div className="d-flex justify-content-between">
+                                                <Button variant="danger" onClick={() => handleDelete(badge.id)}>
+                                                    <i className='bi-trash' style={{color: 'white'}}></i> Delete
+                                                </Button>
+                                                <Button variant="primary" onClick={() => handleAddEdit(badge)}>
+                                                    <i className='bi-pencil' style={{color: 'white'}}></i> Edit
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <small>
+                                                Achieved date: {' '} 
+                                                {new Date(badge.achievedDate!).toLocaleString(undefined, {
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                                year: 'numeric',
+                                                month: '2-digit',
+                                                day: '2-digit',
+                                            })}
+                                            </small>
+                                        )}
                                     </Card.Body>
                                 </Card>
                             </Col>
@@ -149,7 +165,14 @@ const Badge: React.FC = () => {
                             <div style={{width: '100%', textAlign: 'center'}}>
                                 <Alert>Badges list is empty</Alert>
                             </div>
+                        )}
 
+                        {userRole == 'Mentor' && (
+                            <div className="d-flex justify-content-center align-items-center">
+                                <div className="alert alert-primary text-center m-3">
+                                Work hard to earn more badges and showcase your achievements!
+                                </div>
+                            </div>
                         )}
                 </Row>
 

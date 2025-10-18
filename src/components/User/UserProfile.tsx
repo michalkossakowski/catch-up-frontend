@@ -142,7 +142,11 @@ const UserProfile = () => {
     }, [isOwnProfile, isLoading, profileUser]);
 
     if (isLoading) {
-        return <Loading />;
+        return (
+            <div className='mt-4'>
+                <Loading />
+            </div>
+        );
     }
 
     if (!profileUser) {
@@ -291,7 +295,7 @@ const UserProfile = () => {
                         maxHeight: userListHeight ? `${userListHeight}px` : '300px'
                     }}
                 >
-                    <UserList userId={userId} />
+                    <UserList userId={userId!} />
                 </Card.Body>
             </Card>
         </div>

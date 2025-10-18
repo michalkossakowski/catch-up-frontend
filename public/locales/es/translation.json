@@ -106,5 +106,8 @@
   "unassigned-newbies": "Novatos no asignados:",
   "no-unassigned-newbies-found": "No se encontraron novatos no asignados.",
   "surname": "Apellido",
-  "position": "Posición"
+  "position": "Posición",
+  "AssignedTasksCount": "Las tareas asignadas cuentan",
+  "CreatedTasksCount": "Las tareas creadas cuentan",
+  "NewbiesCount": "Los novatos con mentores cuentan"
 }

@@ -106,5 +106,8 @@
   "unassigned-newbies": "Nicht zugewiesene Neulinge:",
   "no-unassigned-newbies-found": "Keine nicht zugewiesenen Neulinge gefunden.",
   "surname": "Nachname",
-  "position": "Position"
+  "position": "Position",
+  "AssignedTasksCount": "Zugewiesene Aufgaben zählen",
+  "CreatedTasksCount": "Erstellte Aufgaben zählen",
+  "NewbiesCount": "Betreute Neulinge zählen"
 }

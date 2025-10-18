@@ -231,7 +231,7 @@ const FeedbackListPage: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="m-3">
+            <div className="m-4">
                 <Loading />
             </div>
         );

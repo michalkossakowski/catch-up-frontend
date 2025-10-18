@@ -7,4 +7,5 @@ export interface BadgeDto {
     iconId: number | null;
     count?: number | null;
     countType?: BadgeTypeCountEnum | null;
+    achievedDate?: Date | null;
 }
