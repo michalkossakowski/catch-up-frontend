@@ -74,7 +74,7 @@ const TaskPage = () => {
     useEffect(() => {
         fetchTask();
     },[]);
-    // Fetch comments only when currentCommentPage or itemsPerCommentPage changes, but NOT on initial mount
+    
     useEffect(() => {
         if (fullTask !== null) {
             fetchComments();
@@ -110,7 +110,6 @@ const TaskPage = () => {
             })
             .catch((error) => {
                 setAlertMessage('Error: ' + error.message);
-                //setShowAlert(true); // Show alert on error
             })
     };
     const fetchTask =  () =>{
@@ -128,7 +127,7 @@ const TaskPage = () => {
             })
             .catch((error) => {
                 setAlertMessage('Error: ' + error.message);
-                setShowAlert(true); // Show alert on error
+                setShowAlert(true); 
             })
             .finally(() => setLoading(false));
         setLoading(false);
@@ -149,11 +148,11 @@ const TaskPage = () => {
             setTaskStatus(fullTask.id as number, newStatus)
                 .then((response) => {
                     setTask(response as FullTaskDto);
-                    setShowAlert(false); // Hide alert on success
+                    setShowAlert(false); 
                 })
                 .catch((error) => {
                     setAlertMessage('Error: ' + error.message);
-                    setShowAlert(true); // Show alert on error
+                    setShowAlert(true); 
                 })
                 .finally(() =>{ 
                     setTask({ ...fullTask, status: newStatus } as FullTaskDto);
@@ -322,11 +321,11 @@ const TaskPage = () => {
         if (idToDelete) {
             TaskTimeLogService.deleteTaskTimeLog(idToDelete)
                 .then(() => {
-                    fetchTimeLogs(); // Refresh time logs after deletion
+                    fetchTimeLogs();
                 })
                 .catch((error) => {
                     setAlertMessage('Error: ' + error.message);
-                    setShowAlert(true); // Show alert on error
+                    setShowAlert(true);
                 });
         }
     };
@@ -362,20 +361,20 @@ const TaskPage = () => {
         if (commentData.id) {
             TaskCommentService.patchTaskComment(commentData)
                 .then(() => {
-                    fetchComments(); // Refresh comments after saving
+                    fetchComments(); 
                 })
                 .catch((error) => {
                     setAlertMessage('Error: ' + error.message);
-                    setShowAlert(true); // Show alert on error
+                    setShowAlert(true);
                 });
         } else {
             TaskCommentService.addTaskComment(commentData)
                 .then(() => {
-                    fetchComments(); // Refresh comments after adding
+                    fetchComments();
                 })
                 .catch((error) => {
                     setAlertMessage('Error: ' + error.message);
-                    setShowAlert(true); // Show alert on error
+                    setShowAlert(true);
                 });
         }
         handleCloseCommentModal();
@@ -392,20 +391,20 @@ const TaskPage = () => {
         if (commentData.id) {
             TaskTimeLogService.editTaskTimeLog(commentData)
                 .then(() => {
-                    fetchTimeLogs(); // Refresh time logs after saving
+                    fetchTimeLogs();
                 })
                 .catch((error) => {
                     setAlertMessage('Error: ' + error.message);
-                    setShowAlert(true); // Show alert on error
+                    setShowAlert(true);
                 });
         } else {
             TaskTimeLogService.addTaskTimeLog(commentData)
                 .then(() => {
-                    fetchTimeLogs(); // Refresh time logs after adding
+                    fetchTimeLogs();
                 })
                 .catch((error) => {
                     setAlertMessage('Error: ' + error.message);
-                    setShowAlert(true); // Show alert on error
+                    setShowAlert(true); 
                 });
         }
         handleCloseTimeLogModal();

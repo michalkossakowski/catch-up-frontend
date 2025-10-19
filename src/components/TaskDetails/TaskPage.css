@@ -4,13 +4,12 @@
     gap: 1rem;
     padding: 1rem;
     text-align: left;
-    flex-wrap: wrap; /* Pozwala na zawijanie kolumn na mniejszych ekranach */
-    max-width: 2000px; /* Maksymalna szerokość kontenera */
-    margin: 0 auto; /* Centrowanie */
+    max-width: 2000px; 
+    margin: 0 auto; 
 }
 .column {
-    flex: 1; /* Kolumny zajmują równą przestrzeń */
-    min-width: 400px; /* Minimalna szerokość kolumny */
+    flex: 1;
+    min-width: 400px;
     padding: 20px;
     border-radius: 8px;
 }
@@ -31,20 +30,20 @@
 }
 .taskDetailsContent {
     display: flex;
-    flex-wrap: wrap; /* Zawijanie dla responsywności */
-    gap: 20px; /* Odstęp między dolnymi kolumnami */
-    min-width: 550px; /* Minimalna szerokość kolumny */
+    flex-wrap: wrap;
+    gap: 20px; 
+    min-width: 550px;
 }
 .data-row {
-    display: flex; /* Flexbox dla wyrównania etykiety i wartości */
-    margin-bottom: 10px; /* Odstęp między wierszami */
+    display: flex;
+    margin-bottom: 10px;
 }
 .label {
-    flex: 0 0 150px; /* Stała szerokość dla etykiety */
+    flex: 0 0 150px; 
     font-weight: bold;
 }
 .value {
-    flex: 1; /* Wartość zajmuje resztę przestrzeni */
+    flex: 1; 
 }
 .custom-dropdown-toggle {
     width: 120px;
@@ -55,7 +54,7 @@
 }
 @media (max-width: 768px) {
     .column {
-      min-width: 100%; /* Kolumny zajmują pełną szerokość na małych ekranach */
+      min-width: 100%; 
     }
   }
 .taskDetailsHeaderButtons{
@@ -63,7 +62,7 @@
     
     align-items: left;
     justify-content: left;
-    flex-wrap: wrap; /* Pozwala na zawijanie przy mniejszych ekranach */    
-    gap: 10px; /* Odstęp między przyciskami */
+    flex-wrap: wrap;    
+    gap: 10px; 
     margin-bottom: 20px;
 }
