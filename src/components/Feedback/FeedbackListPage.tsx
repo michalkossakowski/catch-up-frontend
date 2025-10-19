@@ -14,7 +14,7 @@ import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
 import { UserDto } from '../../dtos/UserDto';
 import FeedbackDetailsDialog from './FeedbackDetailsDialog';
-
+import { customSelectStyles } from '../../componentStyles/selectStyles';
 
 const FeedbackListPage: React.FC = () => {
     const animatedComponents = makeAnimated();
@@ -31,8 +31,7 @@ const FeedbackListPage: React.FC = () => {
     const [selectedResolved, setSelectedResolved] = useState<string[]>(["unresolved"]);
     const [originalFeedbacks, setOriginalFeedbacks] = useState<FeedbackDto[]>([]);
     const [selectedResourceTypes, setSelectedResourceTypes] = useState<ResourceTypeEnum[]>([]);
-    const [filterSentByMe, setFilterSentByMe] = useState(false);
-    const [filterSentToMe, setFilterSentToMe] = useState(false);
+    const [filterSender, setFilterSender] = useState('toMe');
     const [sortColumn, setSortColumn] = useState<keyof FeedbackDto | null>(null);
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const [searchTitle, setSearchTitle] = useState('');
@@ -64,6 +63,12 @@ const FeedbackListPage: React.FC = () => {
     }, [user]);
 
     useEffect(() => {
+
+        if(isNewbie){
+            setFilterSender('byMe')
+        }
+
+
         let filtered = originalFeedbacks;
         if (selectedResolved.length === 1) {
             if (selectedResolved.includes("resolved")) {
@@ -77,12 +82,10 @@ const FeedbackListPage: React.FC = () => {
             filtered = filtered.filter(feedback => selectedResourceTypes.includes(feedback.resourceType));
         }
     
-        if (filterSentByMe) {
-            filtered = filtered.filter(feedback => feedback.senderId === user?.id);
-        }
-
-        if (filterSentToMe) {
-            filtered = filtered.filter(feedback => feedback.receiverId === user?.id);
+        if (filterSender == 'byMe') {
+            filtered = filtered.filter(feedback => feedback.senderId == user?.id);
+        } else if (filterSender == 'toMe') {
+            filtered = filtered.filter(feedback => feedback.receiverId == user?.id);
         }
 
         if (dateFrom) {
@@ -130,7 +133,7 @@ const FeedbackListPage: React.FC = () => {
         });
     
         setFeedbacks(filtered);
-    }, [selectedResolved, selectedResourceTypes, originalFeedbacks, sortColumn, sortOrder, filterSentByMe, filterSentToMe, dateTo, dateFrom, selectedSender, selectedReceiver, isNewbie, user]);
+    }, [selectedResolved, selectedResourceTypes, originalFeedbacks, sortColumn, sortOrder, filterSender, dateTo, dateFrom, selectedSender, selectedReceiver, isNewbie, user]);
     
 
     const searchFeedback = async () => {
@@ -228,7 +231,7 @@ const FeedbackListPage: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="m-3">
+            <div className="m-4">
                 <Loading />
             </div>
         );
@@ -240,8 +243,8 @@ const FeedbackListPage: React.FC = () => {
 
     return (
         <>
+            <h1 className='title'><i className='bi bi-arrow-clockwise'/> Feedbacks</h1>
             <div className="container">
-                <h3 className="text-center mt-3">Feedbacks</h3>
                 <div className='searchBox'>
                     <InputGroup className="inputGroup mw-100">
                         <Form.Control
@@ -264,22 +267,22 @@ const FeedbackListPage: React.FC = () => {
                                 <Form.Group as={Row} className="text-start m-0">
                                     <Form.Label className="p-0"><h6>Filter by Sender:</h6></Form.Label>
                                     <Form.Check
-                                        type="switch"
-                                        id="sentByMeSwitch"
-                                        label="Only Sent by Me"
-                                        checked={filterSentByMe}
-                                        onChange={() => setFilterSentByMe(prev => !prev)}
-                                        className="custom-switch"
+                                    type="radio"
+                                    name="senderFilter"
+                                    id="sentByMe"
+                                    label="Sended by Me"
+                                    checked={filterSender === 'byMe'}
+                                    onChange={() => setFilterSender('byMe')}
+                                    className="custom-radio"
                                     />
-                                </Form.Group>
-                                <Form.Group as={Row} className="text-start m-0">
                                     <Form.Check
-                                        type="switch"
-                                        id="sentToMeSwitch"
-                                        label="Only Sent to Me"
-                                        checked={filterSentToMe}
-                                        onChange={() => setFilterSentToMe(prev => !prev)}
-                                        className="custom-switch"
+                                    type="radio"
+                                    name="senderFilter"
+                                    id="sentToMe"
+                                    label="Sended to Me"
+                                    checked={filterSender === 'toMe'}
+                                    onChange={() => setFilterSender('toMe')}
+                                    className="custom-radio"
                                     />
                                 </Form.Group>
                             </>
@@ -314,20 +317,7 @@ const FeedbackListPage: React.FC = () => {
                                     options={resourceTypeOptions}
                                     value={resourceTypeOptions.filter(option => selectedResourceTypes.includes(option.value))}
                                     onChange={handleResourceTypeChange}
-                                    styles={{
-                                        option: (provided) => ({
-                                        ...provided,
-                                        color: 'black',
-                                        }),
-                                        multiValueLabel: (provided) => ({
-                                        ...provided,
-                                        color: 'black',
-                                        }),
-                                        singleValue: (provided) => ({
-                                        ...provided,
-                                        color: 'black',
-                                        }),
-                                    }}
+                                    styles={customSelectStyles}
                                 />
                             </Form.Label>
                         </Form.Group>
@@ -360,20 +350,7 @@ const FeedbackListPage: React.FC = () => {
                                 isMulti={false}
                                 value={groupedOptions.flatMap(group => group.options).find(option => option.value === selectedSender)}
                                 onChange={(selectedOption) => setSelectedSender(selectedOption?.value || '')}
-                                styles={{
-                                    option: (provided) => ({
-                                        ...provided,
-                                        color: 'black',
-                                    }),
-                                    multiValueLabel: (provided) => ({
-                                        ...provided,
-                                        color: 'black',
-                                    }),
-                                    singleValue: (provided) => ({
-                                        ...provided,
-                                        color: 'black',
-                                    }),
-                                }}
+                                styles={customSelectStyles}
                             />
                             </Form.Label>
                         )}
@@ -386,20 +363,7 @@ const FeedbackListPage: React.FC = () => {
                             isMulti={false}
                             value={groupedOptions.flatMap(group => group.options).find(option => option.value === selectedReceiver)}
                             onChange={(selectedOption) => setSelectedReceiver(selectedOption?.value || '')}
-                            styles={{
-                                option: (provided) => ({
-                                    ...provided,
-                                    color: 'black',
-                                }),
-                                multiValueLabel: (provided) => ({
-                                    ...provided,
-                                    color: 'black',
-                                }),
-                                singleValue: (provided) => ({
-                                    ...provided,
-                                    color: 'black',
-                                }),
-                            }}
+                            styles={customSelectStyles}
                         />
                         </Form.Label>
                         </Form.Group>
@@ -445,7 +409,6 @@ const FeedbackListPage: React.FC = () => {
                                         <FeedbackItem 
                                             key={feedback.id} 
                                             feedback={feedback}
-                                            isNewbie={isNewbie}
                                             onInfoClick={handleInfoClick}
                                         />
                                     ))}

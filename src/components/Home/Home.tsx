@@ -7,13 +7,28 @@ import { useAuth } from '../../Provider/authProvider';
 import UnassignedNewbiesList from '../HR/UnassignedNewbiesList';
 import TutorialComponent from '../Tutorial/Tutorial';
 import EventCreatorModal from '../Events/EventCreatorModal';
+import NotificationToast from '../Toast/NotificationToast';
+import { EventDto } from '../../dtos/EventDto';
+import { useNavigate } from 'react-router-dom';
 
 interface HomeProps {
     role: string | null;
 }
+
 export default function Home({ role }: HomeProps): React.ReactElement {
-      const { user } = useAuth();
-      const [showEventModal, setShowEventModal] = useState(false);
+    const { user } = useAuth();
+    const [showEventModal, setShowEventModal] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+    const [toastColor, setToastColor] = useState('');
+    const [upcomingEvents, setUpcomingEvents] = useState<EventDto[]>([]);
+
+    const navigate = useNavigate();
+    
+    const handleNavigate = (path: string) => {
+        navigate(path);
+    };
+
     return(
         <>
             {role == null ? (
@@ -56,7 +71,7 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                                 title="Assignments" 
                                                 description="Assign newbies to mentors." 
                                                 iconName="bi-people" 
-                                                path="/employesassignment"
+                                                path="/employeesassignment"
                                             />
                             
                                             <HomeCard
@@ -86,6 +101,13 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                                 iconName="bi-arrow-clockwise" 
                                                 path="/feedbacks"
                                             />
+                                            
+                                            <HomeCard
+                                                title="Badges" 
+                                                description="Manage, create, edit or remove bages for Mentors." 
+                                                iconName="bi-shield" 
+                                                path="/badges"
+                                            />
                                         </div>
                                     </>
                                 );
@@ -104,7 +126,7 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                                 title="Assignments" 
                                                 description="Assign newbies to mentors." 
                                                 iconName="bi-people" 
-                                                path="/employesassignment"
+                                                path="/employeesassignment"
                                             />
 
                                             <HomeCard
@@ -121,10 +143,28 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                                 iconName="bi-arrow-clockwise" 
                                                 path="/feedbacks"
                                             />
+
+                                            <HomeCard
+                                                title="FAQ" 
+                                                description="Find answear for frequently asked questions." 
+                                                iconName="bi-question-circle" 
+                                                path="/faq"
+                                            />
+
+                                            <HomeCard
+                                                title="Badges" 
+                                                description="Manage, create, edit or remove bages for Mentors." 
+                                                iconName="bi-shield" 
+                                                path="/badges"
+                                            />
                                         </div>
 
                                         <div className="home-extra-container">
                                             <UnassignedNewbiesList />
+                                            <button className="btn btn-primary unassigned-newbies-button" 
+                                                onClick={() => handleNavigate('/employeesassignment')}>
+                                                <i className="bi-person-gear" /> Go to assigment panel
+                                            </button>
                                         </div>
                                     </>
                                 );
@@ -175,17 +215,17 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                             />
                                             
                                             <HomeCard
+                                                title="Badges" 
+                                                description="Explore your badges and achievements." 
+                                                iconName="bi-shield" 
+                                                path="/badges"
+                                            />
+
+                                            <HomeCard
                                             title="Schoolings" 
                                             description="Create and manage schoolings for your newbies." 
                                             iconName="bi-book" 
                                             path="/schoolinglist"
-                                            />
-                                            
-                                            <HomeCard
-                                            title="Materials" 
-                                            description="Edit and manage materials like pdfs photos videos and other files." 
-                                            iconName="bi-tools" 
-                                            path="/editMatList"
                                             />
                                         </div>
                                     </>
@@ -257,19 +297,39 @@ export default function Home({ role }: HomeProps): React.ReactElement {
                                 }
                             })()}
                         <div className="home-events-container" data-tour="home-events">
-                            <UpcomingEvents />
+                            <UpcomingEvents
+                                events={upcomingEvents}
+                                setEvents={setUpcomingEvents}
+                            />
                         </div>
                     </div>  
 
                     <EventCreatorModal
                         show={showEventModal}
                         onClose={() => setShowEventModal(false)}
-                    />   
+                        onEventAdded={(message: string, color: string, newEvent?: EventDto) => {
+                            setToastMessage(message);
+                            setToastColor(color);
+                            setShowToast(true);
+                            if (newEvent) {
+                                newEvent.isNew = true;
+                                setUpcomingEvents(prev => [newEvent, ...prev]);
+                            }
+                        }}
+                    />
+
+                    <NotificationToast
+                        show={showToast}
+                        title="Event Info"
+                        message={toastMessage}
+                        color={toastColor}
+                        onClose={() => setShowToast(false)}
+                        time={2000}
+                    />
 
                     <TutorialComponent />     
                 </>  
             )}
         </>
     );
-}  
-
+}

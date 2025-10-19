@@ -244,24 +244,10 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
     return (
         <>
         <Modal show={show} onHide={handleClose} animation={true} size="xl" centered>
-          <Modal.Header closeButton closeVariant="white">
+          <Modal.Header closeButton>
             <Modal.Title>{t('upload-files')}</Modal.Title>
           </Modal.Header>
-          <Modal.Body className="p-0">
-            <Row className="m-0 p-0">
-                <Col xs="3">
-                    <div className="mt-2 mb-2">
-                    <ListGroup className="border-0 text-start" >
-                        <ListGroup.Item action active={activeTab === "yourFiles"} className="border-0" onClick={() => setActiveTab("yourFiles")}>
-                            {t('your-files')} </ListGroup.Item>
-                        <ListGroup.Item action active={activeTab === "uploadFile"} className="border-0" onClick={() => setActiveTab("uploadFile")}>
-                            {t('upload-files')} 
-                        </ListGroup.Item>
-                    </ListGroup>
-                    </div>
-                </Col>
-                <Col xs="9">
-
+          <Modal.Body>
                 {showAlert && (
                     <div className='alertBox'>
                         <Alert className='alert' variant='danger'>
@@ -276,8 +262,8 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                 ): (<>
                 {activeTab === "yourFiles" ? (
                     <>
-                        <Row className="mt-2 mb-2">
-                            <Col xs={9} className="d-flex align-items-center mb-3">
+                        <Row >
+                            <Col xs={8} className="d-flex align-items-center mb-3">
                                 <InputGroup onKeyDown={(e) => {if (e.key === 'Enter') search()}}>
                                     <InputGroup.Text><i className="bi bi-search"></i></InputGroup.Text>
                                     <Form.Control placeholder={t('search-file-by-names')} value={searchText} onChange={(e) => setSearchText(e.target.value)}/>
@@ -386,28 +372,23 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
                     )}
                     </>
                 )}
-                </Col>
-            </Row>
           </Modal.Body>
-          <Modal.Footer>
+          <Modal.Footer  className="d-flex" style={{justifyContent: 'center'}}>
             {totalPages > 1 &&  activeTab === "yourFiles" && (
-                            <div className="d-flex justify-content-center align-items-center me-4">
-                                <Pagination className="mb-0">
-                                    <Pagination.Prev
-                                        onClick={() => handlePageChange(currentPage - 1)}
-                                        disabled={currentPage === 1}
-                                    />
-                                    {renderPaginationItems()}
-                                    <Pagination.Next
-                                        onClick={() => handlePageChange(currentPage + 1)}
-                                        disabled={currentPage === totalPages}
-                                    />
-                                </Pagination>
-                            </div>
-                        )}
-            <Button variant="secondary" onClick={handleClose}>
-              {t('close')} 
-            </Button>
+                <div className="d-flex ">
+                    <Pagination className="mb-0">
+                        <Pagination.Prev
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                        />
+                        {renderPaginationItems()}
+                        <Pagination.Next
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                        />
+                    </Pagination>
+                </div>
+            )}
           </Modal.Footer>
         </Modal>
         <FileDetailsModal 
@@ -417,7 +398,6 @@ const UploadFileModal: React.FC<UploadFileModalProps> = ({
             filePair={selectedFilePair}
             enableAddToMaterial={true}
             enableRemoveFromMaterial={false}
-            enableEdit={true}
             onAction={onAction}
         />
       </>

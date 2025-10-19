@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Modal, Form, ModalBody, Button } from 'react-bootstrap';
 import { useState } from 'react';
-import MaterialItem from '../MaterialManager/MaterialItem';
 import { TaskTimeLogDto } from "../../dtos/TaskTimeLogDto";
 
 interface TaskTimeLogModalProps {
@@ -43,7 +42,7 @@ const TaskTimeLogModal: React.FC<TaskTimeLogModalProps> = ({show, handleClose, h
         <>
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>{initialData ? 'Edit comment' : 'Add comment'}</Modal.Title>
+                <Modal.Title>{initialData ? 'Edit comment' : 'Log Time'}</Modal.Title>
             </Modal.Header>
             <ModalBody>
                 <Form onSubmit={handleSubmit}>
@@ -77,9 +76,11 @@ const TaskTimeLogModal: React.FC<TaskTimeLogModalProps> = ({show, handleClose, h
                             required
                         />
                     </Form.Group>
-                    <Button variant="primary" type="submit">
-                        Save
-                    </Button>
+                    <div className="justify-content-end d-flex">
+                        <Button variant="primary" type="submit">
+                            Save
+                        </Button>
+                    </div>
                 </Form>
             </ModalBody>
         </Modal>

@@ -78,7 +78,7 @@ export default function UserEdit(): React.ReactElement {
         }
 
         const newUser: UserDto = {
-            id: undefined,
+            id: '',
             name,
             surname,
             email,
@@ -112,7 +112,7 @@ export default function UserEdit(): React.ReactElement {
         <div className='d-flex justify-content-center p-4'>
             <section className="user-edit-box">
                 <form onSubmit={handleSubmit} className="container-lg">
-                    <h2><i className='bi bi-person-plus'/> Add New User</h2>
+                    <h1 className='text-center'><i className='bi bi-person-plus'/> Add New User</h1>
                     <div className="form-group">
                         <label htmlFor="name">Name:</label>
                         <input

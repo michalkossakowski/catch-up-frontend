@@ -72,7 +72,7 @@ const RoadMapPointDetails: React.FC<RoadMapPointTasksProps> = ({ roadMapPointId,
                     <div className="roadmappoint-tasks-list">
                         {tasks.length > 0 ? (
                             tasks.map((task) => (
-                                <div key={task.id} onClick={() => navigate(`/tasks/${task.id}`)} className="roadmappoint-task-item">
+                                <div key={task.id} onClick={() => navigate(`/task/${task.id}`)} className="roadmappoint-task-item">
                                     <div className="roadmappoint-task-content">
                                         <div className="d-flex justify-content-between">
                                             <h5>{task.title}</h5>

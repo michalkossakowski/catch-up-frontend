@@ -16,13 +16,91 @@
 }
 
 .selected-row td{
-  background-color: #db91d14d !important;
+  background-color: #db91d15b !important;
   border: solid 1px #db91d1 !important;
 }
-
-
 
 th.sorted-column {
   background-color: #db91d149; 
   font-weight: bold;
+}
+
+td{
+  vertical-align: middle;
+}
+
+/* Assignment cards */
+
+.manage-assign-button .bi{
+  color:white;
+}
+.assignment-card {
+  border-radius: 2rem;
+  width: 30vw;
+  height: 50vh;
+  margin: 4rem;
+  transition: scale 0.5s ease;
+  scale: 1;
+  text-align: center;
+  padding: 1rem;
+  position: relative;
+}
+
+.assignment-card h2 {
+  position: relative;
+  font-size: 2.75vw;
+  left: 0%;
+  top: 0%;
+  transition:  0.3s ease;
+}
+
+.assignment-card:hover h2 {
+  font-size: 2vw;
+  left: -30%;
+  top: 0%;
+}
+
+.assignment-card p {
+    position: relative;
+    z-index: 2;
+    font-size: 1.5vw;
+    margin-top: 0.5rem;
+    opacity: 0;
+    filter: blur(5px);
+    transition: opacity 0.3s ease, filter 0.3s ease;
+    left: -2%;
+    top: 0%;
+}
+
+.assignment-card:hover p {
+    opacity: 1;
+    filter: blur(0);
+}
+
+.assignment-card:hover {
+    box-shadow: 0 0 4rem #db91d149;
+    scale: 1.1;
+    cursor: pointer;
+}
+
+.assignment-card i {
+    color: #db91d149 !important;
+    font-size: 16vw;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    scale: 1;
+    transition: color 0.3s ease, scale 0.3s ease, transform 0.3s ease;
+    z-index: 1;
+}
+
+.assignment-card:hover i {
+    color: #db91d1 !important;
+    scale: 0.7;
+    transform: translate(-50%, -60%);
+}
+
+.assignment-separator {
+    width: 2rem;
 }

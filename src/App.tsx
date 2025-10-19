@@ -16,7 +16,7 @@ import PresetManage from "./components/Preset/PresetManage.tsx";
 import TaskContentManage from './components/Task/TaskContentManage';
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import TaskDashboard from "./components/TaskDashboard/TaskDashboard.tsx";
-import EmployesAssignmentSelector from './components/NewbieMentor/EmployesAssignmentSelector';
+import EmployeesManager from './components/NewbieMentor/EmployeesManager.tsx';
 import TaskManager from "./components/TaskDashboard/TaskManager.tsx";
 import SchoolingAssignment from './components/Schooling/SchoolingAssignment.tsx';
 import PresetAssign from './components/Preset/PresetAssign';
@@ -35,16 +35,12 @@ import TaskContentDetails from './components/Task/TaskContentDetails';
 import AIAssistant from './components/AI/AIAssistant.tsx';
 import { useTranslation } from "react-i18next";
 import "./i18n.ts";
-
-
 import TaskPage from './components/TaskDetails/TaskPage.tsx';
 import {availableLanguages, changeLanguage, normalizeLanguage} from "./i18n.ts";
-
 import RoadMapExplore from './components/RoadMap/RoadMapExplore.tsx';
 import RoadMapDetails from './components/RoadMap/RoadMapDetails.tsx';
 import Schooling from './components/Schooling/Schooling.tsx';
 import SettingsComponent from './components/Settings/Settings.tsx';
-import EventCreator from './components/Events/EventCreator.tsx';
 import SchoolingList from './components/Schooling/SchoolingList/SchoolingList.tsx';
 import SchoolingManager from './components/Schooling/SchoolingManager.tsx';
 
@@ -73,6 +69,7 @@ function App() {
             setRole(userRole);
             startConnection();
             handleNotifications();
+            window.userId = user.id;
         }
     };
 
@@ -127,13 +124,12 @@ function App() {
         "/taskcontentmanage",
         "/presetmanage",
         "/roadmapmanage",
-        "/editMatList"
+        "/schoolinglist"
     ].some(path => location.pathname.startsWith(path));
 
     const isHRToolsActive = [
         "/adduser",
-        "/employesassignment",
-        "/eventCreator",
+        "/employeesassignment"
     ].some(path => location.pathname.startsWith(path));
 
     const toggleTheme = () => {
@@ -181,11 +177,11 @@ function App() {
                                         <NavLink to="/roadmapexplore" className="nav-link left-sidebar">
                                             <i className="bi bi-compass" /> <span>{t('roadmaps')}</span>
                                         </NavLink>
+                                        {/* <NavLink to="/schoolinglist" className="nav-link">
+                                            <i className="bi bi-book" /> <span>{t('schoolings')}</span>
+                                        </NavLink> */}
                                         </>
                                     )}
-                                    <NavLink to="/schoolinglist" className="nav-link">
-                                        <i className="bi bi-book" /> <span>{t('schoolings')}</span>
-                                    </NavLink>
                                     <NavLink to="/feedbacks" className="nav-link">
                                         <i className="bi bi-arrow-clockwise" /> <span>{t('feedbacks')}</span>
                                     </NavLink>
@@ -218,6 +214,10 @@ function App() {
                                                 <i className="bi bi-compass" /> {t('road-maps')}
                                             </NavDropdown.Item>
                                             <NavDropdown.Divider />
+                                            <NavDropdown.Item as={NavLink} to="/schoolinglist" className="nav-dropdown-item">
+                                                <i className="bi bi-book" /> {t('schoolings')}
+                                            </NavDropdown.Item>
+                                            <NavDropdown.Divider />
                                         </NavDropdown>
                                     )}
                                     {(role === "Admin" || role == "HR")  && (
@@ -229,12 +229,8 @@ function App() {
                                                 <i className="bi bi-person-plus" /> {t('Add User')}
                                             </NavDropdown.Item>
                                             <NavDropdown.Divider />
-                                            <NavDropdown.Item as={NavLink} to="/employesassignment" className="nav-dropdown-item">
+                                            <NavDropdown.Item as={NavLink} to="/employeesassignment" className="nav-dropdown-item">
                                                 <i className="bi bi-people" /> Assignment
-                                            </NavDropdown.Item>
-                                            <NavDropdown.Divider />
-                                            <NavDropdown.Item as={NavLink} to="/eventCreator" className="nav-dropdown-item">
-                                                <i className="bi bi-calendar-plus" /> Event Creator
                                             </NavDropdown.Item>
                                         </NavDropdown>
                                     )}
@@ -345,10 +341,11 @@ function App() {
                             )}
                             <Routes>
                                 <Route path="/" element={<Home role={role}/>} /> 
+                                <Route path="/home" element={<Home role={role}/>} /> 
                                 <Route path="/tasks" element={<TaskDashboard />} />
                                 <Route path="/adduser" element={<AddUser/>}/>
                                 <Route path="/faq" element={<FaqComponent isAdmin={role === "Admin"} />} />
-                                <Route path="/employesassignment" element={<EmployesAssignmentSelector />} />
+                                <Route path="/employeesassignment" element={<EmployeesManager />} />
                                 <Route path="/taskmanage" element={<TaskManager />} />
                                 <Route path="/taskcontentmanage" element={<TaskContentManage />} />
                                 <Route path="/taskcontent" element={<TaskContentManage />} />
@@ -363,10 +360,8 @@ function App() {
                                 <Route path="/profile/:userId" element={<UserProfile />} />
                                 <Route path="/settings" element={<SettingsComponent/>} />
                                 <Route path="/notifications" element={<><NotificationPage /></>} />
-                                <Route path="/eventCreator" element={<EventCreator/>} />
                                 <Route path="/material" element={<MaterialTest />} />
                                 <Route path="/task/:id" element={<TaskPage />} />
-
                                 <Route path="/schoolingassignment" element={<SchoolingAssignment />} />
                                 <Route path="/schooling/:schoolingId/part/:partId" element={<Schooling />} />
                                 <Route path="/schooling/:schoolingId/" element={<Schooling />} />

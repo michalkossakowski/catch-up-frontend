@@ -124,15 +124,15 @@ const TaskColumn: React.FC<TaskColumnProps> = ({
         >
             <div className={`column-header ${colorClass} text-white p-2 rounded-top`}>
                 <h5 className="m-0">{title}</h5>
-                <span className="badge text-dark">{tasks.length}</span>
-                {isDisabled && role === 'Newbie' && (
+                <span className="badge text-dark task-counter">{tasks.length}</span>
+                {title =='Done' && role === 'Newbie' && (
                     <div className="restricted-badge">
                         <i className="bi bi-lock-fill"></i>
                     </div>
                 )}
             </div>
             <div
-                className={`column-body p-2 rounded-bottom ${isDisabled ? 'bg-secondary' : ''}`}
+                className={`column-body p-2 rounded-bottom `}
             >
                 {tasks.length === 0 ? (
                     <div className="empty-column text-center text-muted py-3">

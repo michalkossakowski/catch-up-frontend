@@ -133,20 +133,20 @@ const TaskContentDetails: React.FC = () => {
         <Container className="task-content-details mt-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h1 className="details-title">Task Content Details</h1>
-                <Button variant="outline-success" onClick={handleBack}>
+                <Button variant="primary" onClick={handleBack}>
                     Back to List
                 </Button>
             </div>
 
             <Card className="shadow-sm">
-                <Card.Header className="text-white">
+                <Card.Header >
                     <h2>{taskContent.title}</h2>
                 </Card.Header>
                 <Card.Body>
                     {taskContent.categoryId && (
                         <div className="category-badge mb-4">
                             <h4 className="category-label">Category:</h4>
-                            <span className="badge bg-success fs-5">
+                            <span className="badge bg-info fs-5">
                                 {getCategoryName(taskContent.categoryId)}
                             </span>
                         </div>
@@ -164,14 +164,11 @@ const TaskContentDetails: React.FC = () => {
                     {taskContent.materialsId && material && (
                         <Row className="mb-3">
                             <Col>
-                                <h4 className="mb-3">Additional Materials:</h4>
-                                <div className="material-content">
+                                <div >
                                     <Accordion defaultActiveKey={`item${material.id}`} className="read-only-material">
                                         <MaterialItem
                                             materialId={material.id}
-                                            // onDeleteItem={handleDeleteItem}
-                                            // onMaterialSelect={handleMaterialSelect}
-                                            // readOnly={true}
+                                            enableDownloadFile={true}
                                         />
                                     </Accordion>
                                 </div>

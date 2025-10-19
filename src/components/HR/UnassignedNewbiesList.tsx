@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axiosInstance from '../../../axiosConfig';
 import Loading from '../Loading/Loading';
 import { Alert } from 'react-bootstrap';
 import './UnassignedNewbiesList.css';
@@ -44,21 +43,39 @@ const UnassignedNewbiesList: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <div><Loading /></div>;
+    return (
+      <div
+        style={{marginTop: '5rem'}}
+      >
+        <Loading />
+      </div>
+    );
   }
 
   if (error) {
-    return <p className="text-danger">{error}</p>;
+        return (
+      <div
+        style={{marginTop: '3rem'}}
+      >
+        <div className="alert alert-danger">{error}</div>
+      </div>
+    )
   }
 
   return (
-    <div className='mt-3'>
-      <h5><i className='bi bi-people'/> {t('unassigned-newbies')} {newbies.length}</h5>
+    <div className='m-3'>
+      <h2><i className='bi bi-person-slash'/> {t('unassigned-newbies')} {newbies.length}</h2>
         <div className="mt-3">
           {newbies.length === 0 ? (
-            <Alert className="alert-no-newbies" variant="info">
-              {t('no-unassigned-newbies-found')}
-            </Alert>
+            <>
+              <div className="upcoming-events-container mt-3">
+                <Alert style={{margin: '2rem 2rem 1rem 2rem'}}>
+                  {t('no-unassigned-newbies-found')}
+                </Alert>
+              <i className="bi bi-person-bounding-box unassigned-placeholder"></i>
+              </div>
+            </>
+
           ) : (
             <table className="table-unassigned-newbies table table-striped ">
               <thead>

@@ -377,6 +377,14 @@ const TaskPage = () => {
                     setShowAlert(true);
                 });
         }
+        if (commentData.materialId) {
+            document.dispatchEvent(
+                new CustomEvent('refreshMaterial', {
+                    detail: { materialId: commentData.materialId },
+                })
+            );
+        }
+
         handleCloseCommentModal();
     };
     const handleShowTimeLogModal = (timeLogData?: TaskTimeLogDto) => {
@@ -417,11 +425,10 @@ return (
                 <div className='taskDetailsHeader'>
                     <h1>{fullTask.title}</h1>
                     <div className='taskDetailsHeaderButtons'>
-                        <Dropdown className='dropdown'>
+                        <Dropdown className='dropdown dropdown-task-status'>
                             <Dropdown.Toggle variant="success" id="dropdown-basic" className={`custom-dropdown-toggle ${statusLabels[fullTask.status as StatusEnum]?.color}`}>
                                 {statusLabels[fullTask.status as StatusEnum]?.label || 'Select Status'}
                             </Dropdown.Toggle>
-
                             <Dropdown.Menu>
                                 {Object.entries(statusLabels).map(([key, { label, color }], idx, arr) => (
                                     <>
@@ -438,11 +445,10 @@ return (
 
                             </Dropdown.Menu>
                         </Dropdown>
-                        <Button variant="primary" onClick={()=>handleShowCommentModal()}>Add comment</Button>
+                        <Button variant="info" onClick={()=>handleShowCommentModal()}><i className='bi-chat-left-text'></i> Add Comment</Button>
                         { isTimeLogEnabled &&(
-                            <Button variant="secondary" onClick={()=>handleShowTimeLogModal()}>Log time</Button>
+                            <Button variant="info" onClick={()=>handleShowTimeLogModal()}><i className='bi-clock-history'></i> Log Time</Button>
                         )}
-                        
                     </div>
                 </div>
                 <div className='taskDetailsContent'>
@@ -456,10 +462,7 @@ return (
                                     enableDownloadFile={true}
                                     enableAddingFile={false}
                                     enableRemoveFile={false}
-                                    enableEdittingMaterialName={false}
-                                    enableEdittingFile={false}
-                                    showMaterialName={true}
-                                    nameTitle='See Materials' />
+                                    enableEdittingMaterialName={false}/>
                             </div>
                         )}
                     </div>

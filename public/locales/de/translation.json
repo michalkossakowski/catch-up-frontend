@@ -56,7 +56,7 @@
   "material-operation-confirmation": "Materialbetriebsbestätigung",
   "material-operation-info": "Materialbetriebsinformationen",
   "your-browser-does-not-support-the-video-element": "Ihr Browser unterstützt das Videoelement nicht.",
-  "file-details": "Dateidetails -",
+  "file-details": "Dateidetails",
   "download": "Herunterladen",
   "remove-from-material": "Aus Material entfernen",
   "add-to-material": "Zu Material hinzufügen",
@@ -106,5 +106,8 @@
   "unassigned-newbies": "Nicht zugewiesene Neulinge:",
   "no-unassigned-newbies-found": "Keine nicht zugewiesenen Neulinge gefunden.",
   "surname": "Nachname",
-  "position": "Position"
+  "position": "Position",
+  "AssignedTasksCount": "Zugewiesene Aufgaben zählen",
+  "CreatedTasksCount": "Erstellte Aufgaben zählen",
+  "NewbiesCount": "Betreute Neulinge zählen"
 }

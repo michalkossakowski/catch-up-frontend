@@ -184,14 +184,14 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({
     };
 
     return (
-        <section className='editBox task-content-edit'>
+        <section className='task-content-edit'>
             {showAlert && (
                 <Alert variant='danger' onClose={() => setShowAlert(false)} dismissible>
                     {alertMessage}
                 </Alert>
             )}
             
-            <form onSubmit={handleSubmit} className="container-lg text-left">
+            <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="title">Title:</label>
                     <input
@@ -215,7 +215,7 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({
                         required
                     />
                 </div>
-
+                <br />
                 <div className="form-group">
                     <label htmlFor="category">Category:</label>
                     <Autocomplete
@@ -263,30 +263,22 @@ const TaskContentEdit: React.FC<TaskContentEditProps> = ({
                 
                 <div className="form-group mb-4">
                     <MaterialItem
-                        materialId={materialsId ?? 0} 
+                        materialId={materialsId ?? undefined} 
                         materialCreated={materialCreated} 
                         enableAddingFile={true}
                         enableDownloadFile={true}
                         enableRemoveFile={true}
                         enableEdittingMaterialName={true}
-                        enableEdittingFile={true}
-                        nameTitle="Task Materials"
-                        showMaterialName={true}
                     />
                 </div>
 
-                <div className='buttonBox'>
-                    <Button type="submit" variant="primary">
-                        {isEditMode ? 'Save Changes' : 'Add new Task Content'}
-                    </Button>
+                <div className='buttonBox justify-content-end'>
                     <Button variant="danger" onClick={onCancel}>
                         Cancel 
                     </Button>
-                    {materialsId && (
-                        <Button variant="secondary" onClick={() => setMaterialsId(null)}>
-                            Remove materials
-                        </Button>
-                    )}
+                    <Button type="submit" variant="primary">
+                        {isEditMode ? 'Save Changes' : 'Add new Task Content'}
+                    </Button>
                 </div>
             </form>
             

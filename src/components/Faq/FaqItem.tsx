@@ -31,31 +31,28 @@ export default function FaqItem(props: FaqProps): React.ReactElement {
                                 enableAddingFile={false}
                                 enableRemoveFile={false}
                                 enableEdittingMaterialName ={false}
-                                enableEdittingFile={false}
-                                showMaterialName= {true}
-                                nameTitle='See Materials'
                             />
                         </div>  
                     )}
 
-                <div className='buttonBox'>
+                <div className='mt-3 justify-content-between d-flex'>
+                    <FeedbackButton resourceId={props.faq.id} resourceType={ResourceTypeEnum.Faq} receiverId={props.faq.creatorId} />
                     {props.isAdmin && (
-                        <>
-                            <Button
-                                variant="primary"
-                                onClick={() => props.editClick(props.faq.id)}>
-                                Edit
-                            </Button>
-                            <Button
+                        <div>
+                            <Button 
                                 variant="danger"
                                 onClick={() => props.deleteClick(props.faq.id)}>
-                                Delete
+                                <i className='bi-trash' style={{color: 'white'}}></i> Delete
                             </Button>
-                        </>
-
+                            <Button className='ms-2'
+                                variant="primary"
+                                onClick={() => props.editClick(props.faq.id)}>
+                                <i className='bi-pencil' style={{color: 'white'}}></i> Edit
+                            </Button>
+                        </div>
                     )}
-                    <FeedbackButton resourceId={props.faq.id} resourceType={ResourceTypeEnum.Faq} receiverId={props.faq.creatorId} />
-                    </div>
+                 
+                </div>
                 </Accordion.Body>
             </Accordion.Item>
         </>

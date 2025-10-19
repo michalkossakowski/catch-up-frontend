@@ -1,20 +1,20 @@
 .taskDetails{
     display: flex;
     flex-direction: column;
-    gap: 1rem;
     padding: 1rem;
     text-align: left;
+    flex-wrap: wrap; 
     max-width: 2000px; 
-    margin: 0 auto; 
 }
 .column {
     flex: 1;
-    min-width: 400px;
-    padding: 20px;
-    border-radius: 8px;
+    min-width: 400px; 
+    padding: 1rem;
+    border-radius: 1rem;
 }
 .description{
     flex: 2;
+    padding: 0 1rem 0 1rem;
 }
 .addittionalInfo{
     max-width: 600px;
@@ -24,33 +24,53 @@
 }
 
 .taskDetailsHeader {
-    padding: 20px;
-    border-radius: 8px;
+    padding: 1rem 1rem 0 1rem;
+    border-radius: 1rem;
     text-align: left;
 }
 .taskDetailsContent {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px; 
-    min-width: 550px;
+    gap: 1rem;
+    min-width: 550px; 
 }
 .data-row {
     display: flex;
-    margin-bottom: 10px;
+    margin-bottom: 0.2rem; 
 }
 .label {
-    flex: 0 0 150px; 
+    flex: 0 0 150px;
     font-weight: bold;
 }
 .value {
-    flex: 1; 
+    flex: 1;
 }
 .custom-dropdown-toggle {
-    width: 120px;
-    color: black;
+    width: fit-content;
+    color: white;
+    border-color: #00000000;
 }
+
+.btn.show, .btn:first-child:active {
+    border-color: #3131312f;
+}
+
+.custom-dropdown-toggle:hover {
+ border-color: #3131312f;;
+}
+
 .custom-dropdown-item {
-    color: black;
+    color: white ;
+}
+
+.custom-dropdown-item:hover {
+    font-weight: bold;
+    color: white ;
+}
+
+
+.dropdown-item {
+    border-radius: 0.3rem;
 }
 @media (max-width: 768px) {
     .column {
@@ -65,4 +85,26 @@
     flex-wrap: wrap;    
     gap: 10px; 
     margin-bottom: 20px;
+}
+
+.nav-tabs{
+
+    padding-bottom: 0.5rem;
+}
+
+.nav-item button{
+    border: 0.1rem solid #83838377 !important;
+    border-radius: 10px !important;
+}
+
+.nav-item .nav-link.active{
+    border-color: #db52c9 !important;
+}
+
+.taskDetailsHeaderButtons i {
+    color: white !important;
+}
+
+.taskDetailsHeaderButtons button {
+    color: white !important;
 }

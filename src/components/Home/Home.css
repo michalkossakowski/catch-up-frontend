@@ -33,3 +33,7 @@
 .home-extra-container{
     min-width: 30rem;
 }
+
+.unassigned-newbies-button i{
+    color: white !important;
+}

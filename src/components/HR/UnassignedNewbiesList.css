@@ -15,3 +15,7 @@
     border: none !important;
 }
 
+.unassigned-placeholder{
+    color: #db91d150 !important;
+    font-size: 10rem;
+}

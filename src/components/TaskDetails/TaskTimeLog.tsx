@@ -3,7 +3,6 @@ import { TaskTimeLogDto } from '../../dtos/TaskTimeLogDto';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { Card, Button } from 'react-bootstrap';
-import MaterialItem from '../MaterialManager/MaterialItem';
 import './TaskComment.css'
 import { use } from 'i18next';
 import { useAuth } from '../../Provider/authProvider';

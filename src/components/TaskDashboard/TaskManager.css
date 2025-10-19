@@ -1,6 +1,6 @@
 .task-manager-container {
     max-width: 100%;
-    padding: 20px;
+    padding: 0 1rem 1rem 1rem;
 }
 
 .task-management-wrapper {
@@ -82,13 +82,18 @@
 
 .task-card {
     border-radius: 4px;
-    border-left: 4px solid #0268d6;
+    background-color: #ffffff21;
+    border-left: 4px solid #db91d1;
     width: 100%;
     margin-bottom: 10px;
     box-sizing: border-box;
     position: relative;
     top: 0;
     transition: top 0.2s ease;
+}
+
+.task-counter{
+    color: white !important;
 }
 
 .task-card .card-body {
@@ -128,7 +133,7 @@
 
 .pool-task-card {
     border-radius: 4px;
-    border-left: 4px solid #17a2b8;
+    border-left: 4px solid #5cd3b3dc;
     transition: all 0.2s ease;
     width: 100%;
     box-sizing: border-box;
@@ -139,7 +144,7 @@
 }
 
 .pool-task-card-catergory {
-    background-color: #17a2b8;
+    background-color: #5cd3b3dc;
 }
 
 .pool-task-card:hover {
@@ -307,7 +312,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(58, 58, 58, 0.247);
     pointer-events: none;
     z-index: 1;
 }
@@ -318,19 +323,19 @@
 
 .restricted-badge {
     position: absolute;
+    font-size: 1.5rem;
     top: 5px;
-    right: 5px;
+    right: 40px;
     width: 24px;
     height: 24px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #dc3545;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+.restricted-badge .bi{
+    color: rgb(255, 255, 255);
+}
 .custom-select{
     color: inherit;
 }
@@ -346,6 +351,7 @@
 .search-input {
     flex: 2;
     max-width: 400px;
+    margin-left: 0.5rem;
 }
 
 .filter-control {
@@ -428,4 +434,14 @@
     .date-range-filter {
         min-width: 100%;
     }
+}
+
+.select-newbie-first-alert-box{
+    display: flex;
+    justify-content: center;
+}
+
+
+.select-newbie-first-alert{
+    margin-top: 5rem;
 }

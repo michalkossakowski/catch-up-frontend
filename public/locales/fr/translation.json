@@ -56,7 +56,7 @@
   "material-operation-confirmation": "Confirmation de fonctionnement du matériau",
   "material-operation-info": "Informations sur l'opération matérielle",
   "your-browser-does-not-support-the-video-element": "Votre navigateur ne prend pas en charge l'élément vidéo.",
-  "file-details": "Détails du fichier -",
+  "file-details": "Détails du fichier",
   "download": "Télécharger",
   "remove-from-material": "Retirer du matériau",
   "add-to-material": "Ajouter au matériel",
@@ -106,5 +106,8 @@
   "unassigned-newbies": "Débutants non attribués:",
   "no-unassigned-newbies-found": "Aucun débutant non attribué trouvé.",
   "surname": "Nom de famille",
-  "position": "Position"
+  "position": "Position",
+  "AssignedTasksCount": "Nombre de tâches assignées",
+  "CreatedTasksCount": "Nombre de tâches créées",
+  "NewbiesCount": "Les débutants encadrés comptent"
 }

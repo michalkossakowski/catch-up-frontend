@@ -157,8 +157,10 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
         setShowToast(true);
         
         fetchTaskContents();
-        setShowEditModal(false);
-        setEditedTaskContent(null);
+        setTimeout(() => {
+            setShowEditModal(false);
+            setEditedTaskContent(null);
+        }, 50);
     };
 
     const getCategoryName = (categoryId: number) => {
@@ -221,9 +223,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
     };
 
     return (
-        <section className='container task-content'>
-            <h2 className='title'>Task Contents</h2>
-
+        <section>
             {/* Filters and Search */}
             <div className="filter-container mb-4">
                 <Row className="mb-3">
@@ -316,7 +316,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
             )}
 
             {!showError && !loading && taskContentsData && (
-                <div>
+                <div className="task-content">
                     {taskContentsData.items.length === 0 ? (
                         <div className="text-center p-3">
                             <Alert variant="info">No task contents found</Alert>
@@ -345,28 +345,25 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                                             </div>
                                         </Accordion.Header>
                                         
-                                        <Accordion.Body className="task-content-body">
+                                        <Accordion.Body className="accordion-body">
+                                            <label>Description:</label>
                                             <div className="task-description mb-3">
                                                 <p>{taskContent.description}</p>
                                             </div>
 
                                             {taskContent.materialsId && (
                                                 <div className="material-container task-content-materials">
-                                                    <h6>Additional Materials:</h6>
                                                     <MaterialItem
                                                         materialId={taskContent.materialsId}
                                                         enableDownloadFile={true}
-                                                        showMaterialName={true}
                                                         enableEdittingMaterialName={false}
                                                         enableAddingFile={false}
                                                         enableRemoveFile={false}
-                                                        enableEdittingFile={false}
-                                                        nameTitle=""
                                                     />
                                                 </div>
                                             )}
 
-                                            <div className="buttonBox">
+                                            <div className="buttonBox justify-content-between d-flex">
                                                 <Button
                                                     variant="success"
                                                     onClick={() => viewDetails(taskContent.id)}
@@ -375,19 +372,20 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
                                                 </Button>
                                                 
                                                 {isAdmin && (
-                                                    <>
-                                                        <Button
-                                                            variant="outline-success"
-                                                            onClick={() => initEdit(taskContent.id)}
-                                                            className="me-2">
-                                                            Edit
-                                                        </Button>
+                                                    <div>
                                                         <Button
                                                             variant="danger"
-                                                            onClick={() => initDelete(taskContent.id)}>
-                                                            Delete
+                                                            onClick={() => initDelete(taskContent.id)}
+                                                            className="me-2">
+                                                            <i className='bi-trash' style={{color: 'white'}}></i> Delete
                                                         </Button>
-                                                    </>
+                                                        <Button
+                                                            variant="primary"
+                                                            onClick={() => initEdit(taskContent.id)}>
+                                                            <i className='bi-pencil' style={{color: 'white'}}></i> Edit
+                                                        </Button>
+
+                                                    </div>
                                                 )}
                                             </div>
                                         </Accordion.Body>
