@@ -166,15 +166,15 @@ function App() {
                             <Navbar expand="lg" className="flex-column vh-100 p-3 bg-body-tertiary navbar-expand-lg left-navbar">
                                 <Navbar.Brand href="/" className="nav-brand">catchUp</Navbar.Brand>
                                 <Nav className="flex-column w-100" data-tour="left-sidebar">
-                                    <NavLink to='/' className="nav-link">
+                                    <NavLink to='/' className="nav-link truncate-text" title={t('home')}>
                                         <i className="bi bi-house-door" /> <span>{t('home')}</span>
                                     </NavLink>
                                     {role === "Newbie" && (
                                         <>
-                                        <NavLink to="/tasks" className="nav-link left-sidebar">
+                                        <NavLink to="/tasks" className="nav-link left-sidebar" truncate-text title={t('tasks')}>
                                             <i className="bi bi-list-task" /> <span>{t('tasks')}</span>
                                         </NavLink>
-                                        <NavLink to="/roadmapexplore" className="nav-link left-sidebar">
+                                        <NavLink to="/roadmapexplore" className="nav-link left-sidebar truncate-text" title={t('roadmaps')}>
                                             <i className="bi bi-compass" /> <span>{t('roadmaps')}</span>
                                         </NavLink>
                                         {/* <NavLink to="/schoolinglist" className="nav-link">
@@ -182,21 +182,21 @@ function App() {
                                         </NavLink> */}
                                         </>
                                     )}
-                                    <NavLink to="/feedbacks" className="nav-link">
+                                    <NavLink to="/feedbacks" className="nav-link truncate-text" title={t('feedbacks')}>
                                         <i className="bi bi-arrow-clockwise" /> <span>{t('feedbacks')}</span>
                                     </NavLink>
                                     {role != "Newbie" &&(
-                                        <NavLink to="/badges" className="nav-link">
+                                        <NavLink to="/badges" className="nav-link truncate-text" title={t('badges')}>
                                             <i className="bi bi-shield" /> <span>{t('badges')}</span>
                                         </NavLink>
                                     )}
-                                    <NavLink to="/faq" className="nav-link" data-tour="faq-nav-link">
+                                    <NavLink to="/faq" className="nav-link truncate-text" title={t('faq')} data-tour="faq-nav-link">
                                         <i className="bi bi-question-circle" /> <span>{t('faq')}</span>
                                     </NavLink>
                                     {(role == "Mentor" || role == "Admin") && (
                                         <NavDropdown
                                             className={isManageToolsActive ? "navdropdown-active" : ""}
-                                            title={<><i className="bi bi-pencil-square" /> <span>{t('manage-tools')}</span></>}
+                                            title={<><i className="bi bi-pencil-square" /> <span className='truncate-text-dropdown' title={t('manage-tools')}>{t('manage-tools')}</span></>}
                                         >
                                             <NavDropdown.Item as={NavLink} to="/taskmanage" className="nav-dropdown-item">
                                                 <i className="bi bi-list-task" /> {t('tasks')}
@@ -223,7 +223,7 @@ function App() {
                                     {(role === "Admin" || role == "HR")  && (
                                         <NavDropdown
                                             className={isHRToolsActive ? "navdropdown-active" : ""}
-                                            title={<><i className="bi bi-person-lock" /> <span>HR Tools</span></>}
+                                            title={<><i className="bi bi-person-lock" /> <span className='truncate-text' title="HR Tools">HR Tools</span></>}
                                         >
                                             <NavDropdown.Item as={NavLink} to="/adduser" className="nav-dropdown-item">
                                                 <i className="bi bi-person-plus" /> {t('Add User')}

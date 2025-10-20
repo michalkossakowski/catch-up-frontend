@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+import { useAuth } from "../../Provider/authProvider";
 import { useEffect,useState } from 'react';
 import { FullTaskDto } from '../../dtos/FullTaskDto';
 import { TaskCommentDto } from '../../dtos/TaskCommentDto';
@@ -20,7 +21,9 @@ import ConfirmModal from '../Modal/ConfirmModal';
 
 const TaskPage = () => {
     const { id } = useParams<{ id: string }>();
+    const { user, getRole } = useAuth();
 
+    const [userRole, setUserRole] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [commentLoading, setCommentLoading] = useState(false);
     const [timeLogLoading, setTimeLogLoading] = useState(false);
@@ -63,15 +66,30 @@ const TaskPage = () => {
         color: string;
       }
       
-      const statusLabels: Record<StatusEnum, StatusInfo> = {
+      const allStatusLabels: Record<StatusEnum, StatusInfo> = {
         [StatusEnum.ToDo]: { label: "To Do", color: "to-do-status" },
         [StatusEnum.InProgress]: { label: "In Progress", color: "in-progress-status" },
         [StatusEnum.ToReview]: { label: "To Review", color: "review-status" },
         [StatusEnum.ReOpen]: { label: "Reopen", color: "reopened-status" },
         [StatusEnum.Done]: { label: "Done", color: "done-status" },
       };
-
+    const newbieStatusLabels: Record<StatusEnum, StatusInfo> = {
+      [StatusEnum.ToDo]: { label: "To Do", color: "to-do-status" },
+      [StatusEnum.InProgress]: { label: "In Progress", color: "in-progress-status" },
+      [StatusEnum.ToReview]: { label: "To Review", color: "review-status" }
+    };
+      const [statusLabels, setStatusLabels] = useState<Record<StatusEnum, StatusInfo>>(allStatusLabels);
     useEffect(() => {
+        const fetchUserRole = async () => {
+            const role = await getRole();
+            setUserRole(role);
+            if (role === 'Newbie') {
+                setStatusLabels(newbieStatusLabels);
+            } else {
+                setStatusLabels(allStatusLabels);
+            }
+        }
+        fetchUserRole();
         fetchTask();
     },[]);
     
