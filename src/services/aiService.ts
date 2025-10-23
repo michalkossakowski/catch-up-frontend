@@ -1,36 +1,21 @@
-import axiosInstance from '../../axiosConfig';
 import { AIChatDto } from '../dtos/AIChatDto';
-import { getLocalSetting } from '../Provider/LocalSettingProvider';
-
 
 export const GetAIChatResponse = async (message: string): Promise<string> => {
-  try {
-    let aiResponseStyle = getLocalSetting('aiResponseStyle')?.toString();
-   
-    if(aiResponseStyle == undefined || aiResponseStyle.trim() === ""){
-      aiResponseStyle = "normal"
-    }
+  console.log(`Mocked GetAIChatResponse called with message: ${message}`);
+  
+  const aiChatDto: AIChatDto = {
+      message: message,
+      additionalPromptPreferences: `Use "normal" language style.`
+  };
 
-    let aiChatDto: AIChatDto = {
-        message: message,
-        additionalPromptPreferences: `Use "${aiResponseStyle}" language style.`
-    };
-    
-    const response = await axiosInstance.post("/AI/GetAIChatResponse", aiChatDto)
+  // Simulate an API call delay
+  await new Promise(resolve => setTimeout(resolve, 500));
 
-    return response.data.message;
-  } catch (error: any) {
-    handleError('getAIChatResponse', error);
-    throw error;
-  }
+  // Return a mocked response
+  return "This is a mocked AI response.";
 };
-
 
 const handleError = (operation: string, error: any): void => {
   console.error(`${operation} failed:`, error);
-  if (!error.response) {
-    throw new Error('API is not available');
-  }
-  throw new Error(error.response.data?.message || 'An unexpected error occurred');
+  throw new Error('An unexpected error occurred in mock service');
 };
-

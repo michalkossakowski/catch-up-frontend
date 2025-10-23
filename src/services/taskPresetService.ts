@@ -1,101 +1,71 @@
-import axiosInstance from '../../axiosConfig';
 import { TaskPresetDto } from '../dtos/TaskPresetDto';
 
+let taskPresets: TaskPresetDto[] = [
+    { id: 1, presetId: 1, taskContentId: 1, isDeleted: false },
+    { id: 2, presetId: 1, taskContentId: 2, isDeleted: false },
+    { id: 3, presetId: 2, taskContentId: 2, isDeleted: false },
+    { id: 4, presetId: 3, taskContentId: 3, isDeleted: false },
+];
+
 export const getAllTaskPresets = async (): Promise<TaskPresetDto[]> => {
-    try {
-        const response = await axiosInstance.get<TaskPresetDto[]>('/TaskPreset/GetAll');
-        return response.data;
-    } catch (error: any) {
-        handleError('getAllTaskPresets', error);
-        throw error;
-    }
+    console.log('Mocked getAllTaskPresets called');
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return taskPresets.filter(tp => !tp.isDeleted);
 };
 
 export const getTaskPresetById = async (taskPresetId: number): Promise<TaskPresetDto[]> => {
-    try {
-        const response = await axiosInstance.get<TaskPresetDto[]>(`/TaskPreset/GetById/${taskPresetId}`);
-        return response.data;
-    } catch (error: any) {
-        handleError('getTaskPresetById', error);
-        throw error;
-    }
+    console.log(`Mocked getTaskPresetById called with taskPresetId: ${taskPresetId}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return taskPresets.filter(tp => tp.id === taskPresetId && !tp.isDeleted);
 };
 
 export const getTaskPresetsByTaskContent = async (taskContentId: number): Promise<TaskPresetDto[]> => {
-    try {
-        const response = await axiosInstance.get<TaskPresetDto[]>(`/TaskPreset/GetByTaskContent/${taskContentId}`);
-        return response.data;
-    } catch (error: any) {
-        handleError('getTaskPresetsByTaskContent', error);
-        throw error;
-    }
+    console.log(`Mocked getTaskPresetsByTaskContent called with taskContentId: ${taskContentId}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return taskPresets.filter(tp => tp.taskContentId === taskContentId && !tp.isDeleted);
 };
 
 export const addTaskPreset = async (taskPreset: TaskPresetDto): Promise<TaskPresetDto> => {
-    try {
-        const response = await axiosInstance.post<TaskPresetDto>('/TaskPreset/Add', taskPreset);
-        return response.data;
-    } catch (error: any) {
-        handleError('addTaskPreset', error);
-        throw error;
-    }
+    console.log('Mocked addTaskPreset called with taskPreset:', taskPreset);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const newTaskPreset: TaskPresetDto = { ...taskPreset, id: Math.max(...taskPresets.map(tp => tp.id)) + 1, isDeleted: false };
+    taskPresets.push(newTaskPreset);
+    return newTaskPreset;
 };
 
 export const editTaskPreset = async (taskPresetId: number, taskPreset: TaskPresetDto): Promise<void> => {
-    try {
-        await axiosInstance.put(`/TaskPreset/Edit/${taskPresetId}`, taskPreset);
-    } catch (error: any) {
-        handleError('editTaskPreset', error);
-        throw error;
+    console.log(`Mocked editTaskPreset called with taskPresetId: ${taskPresetId}, taskPreset:`, taskPreset);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const index = taskPresets.findIndex(tp => tp.id === taskPresetId);
+    if (index !== -1) {
+        taskPresets[index] = { ...taskPreset, id: taskPresetId, isDeleted: false };
     }
 };
 
 export const removeTaskFromPreset = async (presetId: number, taskContentId: number): Promise<void> => {
-    try {
-        await axiosInstance.delete(`/TaskPreset/RemoveTaskFromPreset/${presetId}/${taskContentId}`);
-    } catch (error: any) {
-        handleError('removeTaskFromPreset', error);
-        throw error;
-    }
+    console.log(`Mocked removeTaskFromPreset called with presetId: ${presetId}, taskContentId: ${taskContentId}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    taskPresets = taskPresets.filter(tp => !(tp.presetId === presetId && tp.taskContentId === taskContentId));
 };
 
 export const removeTaskFromAllPresets = async (taskContentId: number): Promise<void> => {
-    try {
-        console.log('API call URL:', `/TaskPreset/RemoveTaskFromAllPresets/${taskContentId}`);
-        await axiosInstance.delete(`/TaskPreset/RemoveTaskFromAllPresets/${taskContentId}`);
-    } catch (error: any) {
-        console.error('Error in removeTaskFromAllPresets:', error);
-        if (error.response?.status === 404) {
-            console.error('Endpoint not found. Please check if the API endpoint exists and is correctly configured.');
-        }
-        handleError('removeTaskFromAllPresets', error);
-        throw error;
-    }
+    console.log(`Mocked removeTaskFromAllPresets called with taskContentId: ${taskContentId}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    taskPresets = taskPresets.filter(tp => tp.taskContentId !== taskContentId);
 };
 
 export const getTaskPresetsByPreset = async (presetId: number): Promise<TaskPresetDto[]> => {
-    try {
-        const response = await axiosInstance.get<TaskPresetDto[]>(`/TaskPreset/GetByPreset/${presetId}`);
-        return response.data;
-    } catch (error) {
-        handleError('getTaskPresetsByPreset', error);
-        throw error;
-    }
+    console.log(`Mocked getTaskPresetsByPreset called with presetId: ${presetId}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return taskPresets.filter(tp => tp.presetId === presetId && !tp.isDeleted);
 };
 
 export const deleteByPresetId = async (presetId: number): Promise<void> => {
-    try {
-        await axiosInstance.delete(`/TaskPreset/DeleteByPreset/${presetId}`);
-    } catch (error: any) {
-        handleError('deleteByPresetId', error);
-        throw error;
-    }
+    console.log(`Mocked deleteByPresetId called with presetId: ${presetId}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    taskPresets.forEach(tp => {
+        if (tp.presetId === presetId) {
+            tp.isDeleted = true;
+        }
+    });
 };
-
-const handleError = (operation: string, error: any): void => {
-    console.error(`${operation} failed:`, error);
-    if (!error.response) {
-        throw new Error('API is not available');
-    }
-    throw new Error(error.response.data?.message || 'An unexpected error occurred');
-}; 

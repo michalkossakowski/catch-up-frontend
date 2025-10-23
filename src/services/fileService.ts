@@ -1,148 +1,102 @@
 import { FileDto } from '../dtos/FileDto';
-import axiosInstance from '../../axiosConfig';
+
+let files: FileDto[] = [
+    { id: 1, name: 'document.pdf', type: 'application/pdf', source: '/files/document.pdf', dateOfUpload: new Date(), sizeInBytes: 1024, owner: '1' },
+    { id: 2, name: 'image.png', type: 'image/png', source: '/files/image.png', dateOfUpload: new Date(), sizeInBytes: 2048, owner: '1' },
+    { id: 3, name: 'presentation.pptx', type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', source: '/files/presentation.pptx', dateOfUpload: new Date(), sizeInBytes: 3072, owner: '2' },
+];
+
 const fileService =
 {
     uploadFile: async (
-        file: File, 
+        file: File,
         materialId?: number, 
-        ownerId?: string, 
+        ownerId?: string,
         dateOfUpload?: Date,
          onProgress?: (percent: number) => void
     ): Promise<{ message: string; fileDto: FileDto; materialId: number }> => {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        try {
-            const response = await axiosInstance.post<{ message: string; fileDto: FileDto; materialId: number }>
-            (
-                `File/Upload`,
-                formData,
-                {
-                    params: {
-                        ...(materialId && { materialId }), 
-                        ...(ownerId && { ownerId }), 
-                        ...(dateOfUpload && { dateOfUpload })
-                    },
-                    headers: {'Content-Type': 'multipart/form-data'},
-                    onUploadProgress: (progressEvent) => {
-                        if (progressEvent.total) {
-                            const percentCompleted = Math.round(
-                                (progressEvent.loaded * 100) / progressEvent.total
-                            );
-                            onProgress?.(percentCompleted);
-                        }
-                    }
-                }
-            );
-            return response.data;
-        }
-        catch (error)
-        {
-            handleError('uploadFile', error);
-            throw error;
-        }
+        console.log('Mocked uploadFile called with:', { file, materialId, ownerId, dateOfUpload });
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        onProgress?.(100);
+        const newFile: FileDto = {
+            id: Math.max(...files.map(f => f.id)) + 1,
+            name: file.name,
+            type: file.type,
+            source: `/files/${file.name}`,
+            dateOfUpload: dateOfUpload || new Date(),
+            sizeInBytes: file.size,
+            owner: ownerId || '1',
+        };
+        files.push(newFile);
+        return { message: 'File uploaded successfully', fileDto: newFile, materialId: materialId || 0 };
     },
 
     downloadFile: async (fileId: number): Promise<Blob> => {
-        try
-        {
-            const response = await axiosInstance.get(`/File/Download/${fileId}`, {responseType: 'blob',});
-            return response.data;
+        console.log(`Mocked downloadFile called with fileId: ${fileId}`);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const file = files.find(f => f.id === fileId);
+        if (!file) {
+            throw new Error('File not found');
         }
-        catch (error)
-        {
-            console.error('File download error:', error);
-            throw error;
-        }
+        return new Blob([`Mock content for ${file.name}`], { type: 'text/plain' });
     },
 
     getFileById: async (fileId: number): Promise<FileDto> => {
-        try {
-            const response = await axiosInstance.get<FileDto>(`/File/Get/${fileId}`);
-            return response.data;
-        } catch (error) {
-            console.error('Get file by id error:', error);
-            throw error;
+        console.log(`Mocked getFileById called with fileId: ${fileId}`);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const file = files.find(f => f.id === fileId);
+        if (!file) {
+            throw new Error('File not found');
         }
+        return file;
     },
 
-    getAllFiles: async(): Promise<FileDto[]> => {
-        try
-        {
-            const response = await axiosInstance.get<FileDto[]>(`/File/GetAllFiles`)
-            return response.data
-        }
-        catch(error)
-        {
-            console.error('File get error:', error)
-            throw error
-        }
+    getAllFiles: async (): Promise<FileDto[]> => {
+        console.log('Mocked getAllFiles called');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return files;
     },
 
-    getAllFilesPagination: async(page: number, pageSize: number): Promise<{files: FileDto[], totalCount: number}> => {
-        try
-        {
-            const response = await axiosInstance.get<{files: FileDto[], totalCount: number}>(`/File/GetAllFiles/${page}/${pageSize}`)
-            return response.data
-        }
-        catch(error)
-        {
-            console.error('File get error:', error)
-            throw error
-        }
+    getAllFilesPagination: async (page: number, pageSize: number): Promise<{ files: FileDto[], totalCount: number }> => {
+        console.log(`Mocked getAllFilesPagination called with page: ${page}, pageSize: ${pageSize}`);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const paginatedFiles = files.slice((page - 1) * pageSize, page * pageSize);
+        return { files: paginatedFiles, totalCount: files.length };
     },
 
-    getAllOwnedFiles: async(userId: string): Promise<FileDto[]> => {
-        try
-        {
-            const response = await axiosInstance.get<FileDto[]>(`/File/GetAllUserFiles/${userId}`)
-            return response.data
-        }
-        catch(error)
-        {
-            console.error('File get error:', error)
-            throw error
-        }
+    getAllOwnedFiles: async (userId: string): Promise<FileDto[]> => {
+        console.log(`Mocked getAllOwnedFiles called with userId: ${userId}`);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return files.filter(f => f.owner === userId);
     },
 
-    getAllOwnedFilesPagination: async(userId: string, page: number, pageSize: number): Promise<{files: FileDto[], totalCount: number}> => {
-        try
-        {
-            const response = await axiosInstance.get<{files: FileDto[], totalCount: number}>(`/File/GetAllUserFiles/${userId}/${page}/${pageSize}`)
-            return response.data
-        }
-        catch(error)
-        {
-            console.error('File get error:', error)
-            throw error
-        }
+    getAllOwnedFilesPagination: async (userId: string, page: number, pageSize: number): Promise<{ files: FileDto[], totalCount: number }> => {
+        console.log(`Mocked getAllOwnedFilesPagination called with userId: ${userId}, page: ${page}, pageSize: ${pageSize}`);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const userFiles = files.filter(f => f.owner === userId);
+        const paginatedFiles = userFiles.slice((page - 1) * pageSize, page * pageSize);
+        return { files: paginatedFiles, totalCount: userFiles.length };
     },
 
-    changeFile: async(fileDto: FileDto): Promise<FileDto> => {
-        try {
-            const response = await axiosInstance.put<FileDto>(`/File/ChangeFile/`, fileDto);
-            return response.data;
-        } catch (error) {
-            console.error('File change error:', error);
-            throw error;
+    changeFile: async (fileDto: FileDto): Promise<FileDto> => {
+        console.log('Mocked changeFile called with fileDto:', fileDto);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const index = files.findIndex(f => f.id === fileDto.id);
+        if (index === -1) {
+            throw new Error('File not found');
         }
+        files[index] = fileDto;
+        return files[index];
     },
 
-    findByQuestion: async (userId: string, question: string, page: number, pageSize: number): Promise<{files: FileDto[], totalCount: number}> => {
-        try {
-            const response = await axiosInstance.get<{files: FileDto[], totalCount: number}>(`/File/GetBySearchTag/${userId}/${question}/${page}/${pageSize}`);
-            return response.data;
-        } catch (error) {
-            console.error('File get error:', error);
-            throw error;
-        }
+    findByQuestion: async (userId: string, question: string, page: number, pageSize: number): Promise<{ files: FileDto[], totalCount: number }> => {
+        console.log(`Mocked findByQuestion called with userId: ${userId}, question: ${question}, page: ${page}, pageSize: ${pageSize}`);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        // This is a simplified search. A real implementation would be more complex.
+        const userFiles = files.filter(f => f.owner === userId && f.name?.toLowerCase().includes(question.toLowerCase()));
+        const paginatedFiles = userFiles.slice((page - 1) * pageSize, page * pageSize);
+        return { files: paginatedFiles, totalCount: userFiles.length };
     }
 }
-const handleError = (operation: string, error: any): void => {
-    console.error(`${operation} failed:`, error);
-    if (!error.response) {
-        throw new Error('API is not available');
-    }
-    throw new Error(error.response.data?.message || 'An unexpected error occurred');
-};
+
 export default fileService;

@@ -1,22 +1,16 @@
-import axiosInstance from '../../axiosConfig.ts'
+let isTaskTimeLoggingEnabled = true;
 
 const CompanySettingsService = {
     setTaskTimeLoggingSetting: async (isEnabled: boolean): Promise<void> => {
-        try {
-            await axiosInstance.patch<boolean>(`/CompanySettings/SetTaskTimeLoggingSetting/${isEnabled }`);
-        } catch (error: any) {
-            console.error('Error while setting task time logging setting', error);
-            throw error;
-        }
+        console.log(`Mocked setTaskTimeLoggingSetting called with isEnabled: ${isEnabled}`);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        isTaskTimeLoggingEnabled = isEnabled;
     },
     getTaskTimeLoggingSetting: async (): Promise<boolean> => {
-        try {
-            const response = await axiosInstance.get<boolean>('/CompanySettings/GetTaskTimeLoggingSetting');
-            return response.data;
-        } catch (error: any) {
-            console.error('Error while getting task time logging setting', error);
-            throw error;
-        }
+        console.log('Mocked getTaskTimeLoggingSetting called');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return isTaskTimeLoggingEnabled;
     }
 };
-export default CompanySettingsService;  
+
+export default CompanySettingsService;

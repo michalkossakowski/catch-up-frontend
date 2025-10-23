@@ -1,49 +1,49 @@
-import axiosInstance from '../../axiosConfig';
+import { UserProfileDto } from '../dtos/UserProfileDto';
 
-export interface UserProfileDto {
-  userId: string;
-  bio?: string;
-  department?: string;
-  location?: string;
-  phone?: string;
-  teamsUsername?: string;
-  slackUsername?: string;
-  interests: string[];
-  languages: string[];
-}
+let userProfiles: UserProfileDto[] = [
+    {
+        userId: '1',
+        bio: 'Software developer with a passion for frontend technologies.',
+        department: 'Engineering',
+        location: 'New York, USA',
+        phone: '123-456-7890',
+        teamsUsername: 'johndoe',
+        slackUsername: 'johndoe',
+        interests: ['React', 'TypeScript', 'Node.js'],
+        languages: ['English', 'Spanish'],
+    },
+];
 
 const getUserProfile = async (userId: string): Promise<UserProfileDto | null> => {
-  try {
-    const response = await axiosInstance.get(`/UserProfile/${userId}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching user profile:', error);
-    return null;
-  }
+    console.log(`Mocked getUserProfile called with userId: ${userId}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const profile = userProfiles.find(p => p.userId === userId);
+    return profile || null;
 };
 
 const createUserProfile = async (profile: UserProfileDto): Promise<UserProfileDto | null> => {
-  try {
-    const response = await axiosInstance.post(`/UserProfile`, profile);
-    return response.data;
-  } catch (error) {
-    console.error('Error creating user profile:', error);
-    throw error;
-  }
+    console.log('Mocked createUserProfile called with profile:', profile);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    if (userProfiles.some(p => p.userId === profile.userId)) {
+        throw new Error('User profile already exists');
+    }
+    userProfiles.push(profile);
+    return profile;
 };
 
 const updateUserProfile = async (profile: UserProfileDto): Promise<UserProfileDto | null> => {
-  try {
-    const response = await axiosInstance.put(`/UserProfile/${profile.userId}`, profile);
-    return response.data;
-  } catch (error) {
-    console.error('Error updating user profile:', error);
-    throw error;
-  }
+    console.log('Mocked updateUserProfile called with profile:', profile);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const index = userProfiles.findIndex(p => p.userId === profile.userId);
+    if (index === -1) {
+        throw new Error('User profile not found');
+    }
+    userProfiles[index] = profile;
+    return profile;
 };
 
 export default {
-  getUserProfile,
-  createUserProfile,
-  updateUserProfile
-}; 
+    getUserProfile,
+    createUserProfile,
+    updateUserProfile
+};

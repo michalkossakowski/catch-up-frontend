@@ -317,7 +317,7 @@ const TaskContentComponent: React.FC<TaskContentComponentProps> = ({ isAdmin }) 
 
             {!showError && !loading && taskContentsData && (
                 <div className="task-content">
-                    {taskContentsData.items.length === 0 ? (
+                    {taskContentsData.items == undefined || taskContentsData.items.length === 0 ? (
                         <div className="text-center p-3">
                             <Alert variant="info">No task contents found</Alert>
                         </div>

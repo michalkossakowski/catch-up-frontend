@@ -1,156 +1,88 @@
-import axiosInstance from '../../axiosConfig';
+
 import { TaskContentDto } from '../dtos/TaskContentDto';
 import { TaskContentQueryParameters } from '../dtos/TaskContentQueryParametersDto';
 import { PagedResponse } from '../interfaces/PagedResponse';
 
-// to jest stary getContents [deprecated]
+let taskContents: TaskContentDto[] = [
+    { id: 1, title: 'Implement login page', description: 'Create the login page UI.', categoryId: 1, creatorId: '1'},
+    { id: 2, title: 'Setup database', description: 'Configure the database connection.', categoryId: 2, creatorId: '1'},
+    { id: 3, title: 'Deploy to production', description: 'Deploy the application to the production server.', categoryId: 3, creatorId: '2'},
+];
+
 export const getAllTaskContents = async (): Promise<TaskContentDto[]> => {
-    try {
-        const response = await axiosInstance.get<{taskContents: TaskContentDto[], totalCount: number}>(
-            `/TaskContent/GetAll/${1}/${999999}` // temp change
-        );
-        return response.data.taskContents;
-    } catch (error: any) {
-        console.error('Błąd API:', error.response);
-        handleError('getTaskContents', error);
-        throw error;
-    }
+    console.log('Mocked getAllTaskContents called');
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return taskContents;
 };
 
-// nowy getAll z paginacja - uzywac tego!
-export const getTaskContents = async (page: number = 1, pageSize: number = 5): Promise<{taskContents: TaskContentDto[], totalCount: number}> => {
-    try {
-        const response = await axiosInstance.get<{taskContents: TaskContentDto[], totalCount: number}>(
-            `/TaskContent/GetAll/${page}/${pageSize}`
-        );
-        return response.data;
-    } catch (error: any) {
-        console.error('Błąd API:', error.response);
-        handleError('getTaskContents', error);
-        throw error;
-    }
+export const getTaskContents = async (page: number = 1, pageSize: number = 5): Promise<{ taskContents: TaskContentDto[], totalCount: number }> => {
+    console.log(`Mocked getTaskContents called with page: ${page}, pageSize: ${pageSize}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const filteredTaskContents = taskContents;
+    const paginatedTaskContents = filteredTaskContents.slice((page - 1) * pageSize, page * pageSize);
+    return { taskContents: paginatedTaskContents, totalCount: filteredTaskContents.length };
 };
 
 export const getTaskContentsWithPagination = async (params: TaskContentQueryParameters): Promise<PagedResponse<TaskContentDto>> => {
-    try {
-        const queryParams = new URLSearchParams();
-        
-        queryParams.append('pageNumber', params.pageNumber.toString());
-        queryParams.append('pageSize', params.pageSize.toString());
-        
-        if (params.titleFilter) {
-            queryParams.append('titleFilter', params.titleFilter);
-        }
-        
-        if (params.categoryFilter) {
-            queryParams.append('categoryFilter', params.categoryFilter.toString());
-        }
-        
-        if (params.creatorFilter) {
-            queryParams.append('creatorFilter', params.creatorFilter);
-        }
-        
-        if (params.sortBy) {
-            queryParams.append('sortBy', params.sortBy);
-        }
-        
-        if (params.sortOrder) {
-            queryParams.append('sortOrder', params.sortOrder);
-        }
-
-        const response = await axiosInstance.get<PagedResponse<TaskContentDto>>(
-            `/TaskContent/Get?${queryParams.toString()}`
-        );
-        return response.data;
-    } catch (error: any) {
-        console.error('Błąd API:', error.response);
-        handleError('getTaskContentsWithPagination', error);
-        throw error;
-    }
+    console.log('Mocked getTaskContentsWithPagination called with params:', params);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    let filteredTaskContents = taskContents;
+    // Apply filters, sorting, etc. based on params (simplified for mock)
+    const pageNumber = params.pageNumber ?? 1;
+    const pageSize = params.pageSize ?? 10;
+    const paginatedTaskContents = filteredTaskContents.slice((pageNumber - 1) * pageSize, pageNumber * pageSize);
+    return { data: paginatedTaskContents, totalCount: filteredTaskContents.length, pageNumber, pageSize };
 };
 
 export const getById = async (id: string): Promise<TaskContentDto[]> => {
-    try {
-        const response = await axiosInstance.get<TaskContentDto[]>('/TaskContent/GetById/'+id);
-        return response.data;
-    } catch (error: any) {
-        handleError('getById', error);
-        throw error;
-    }
-}
+    console.log(`Mocked getById called with id: ${id}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return taskContents.filter(tc => tc.id === parseInt(id) );
+};
 
 export const getByTitle = async (title: string): Promise<TaskContentDto[]> => {
-    try {
-        const response = await axiosInstance.get<TaskContentDto[]>('/TaskContent/GetByTitle/'+title);
-        return response.data;
-    } catch (error: any) {
-        handleError('getByTitle', error);
-        throw error;
-    }
-}
+    console.log(`Mocked getByTitle called with title: ${title}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return taskContents.filter(tc => tc.title.toLowerCase().includes(title.toLowerCase()) );
+};
 
 export const getByCreatorId = async (creatorId: string): Promise<TaskContentDto[]> => {
-    try {
-        const response = await axiosInstance.get<TaskContentDto[]>('/TaskContent/GetByCreatorId/'+creatorId);
-        return response.data;
-    } catch (error: any) {
-        handleError('getByCreatorId', error);
-        throw error;
-    }
-}
+    console.log(`Mocked getByCreatorId called with creatorId: ${creatorId}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return taskContents.filter(tc => tc.creatorId === creatorId );
+};
 
 export const getByCategoryId = async (categoryId: string): Promise<TaskContentDto[]> => {
-    try {
-        const response = await axiosInstance.get<TaskContentDto[]>('/TaskContent/GetByCategoryId/'+categoryId);
-        return response.data;
-    } catch (error: any) {
-        handleError('getByCategoryId', error);
-        throw error;
-    }
-}
+    console.log(`Mocked getByCategoryId called with categoryId: ${categoryId}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return taskContents.filter(tc => tc.categoryId === parseInt(categoryId) );
+};
 
 export const addTaskContent = async (taskContent: TaskContentDto): Promise<TaskContentDto> => {
-    try {
-
-        console.log('Current User ID:', taskContent.creatorId);
-
-        if (!taskContent.creatorId) {
-            console.error('CreatorId is not set in TaskContentDto');
-            throw new Error('CreatorId is required');
-        }
-        
-        const response = await axiosInstance.post<TaskContentDto>('/TaskContent/Add/', taskContent);
-        return response.data;
-    } catch (error: any) {
-        handleError('addTaskContent', error);
-        throw error;
-    }
+    console.log('Mocked addTaskContent called with taskContent:', taskContent);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const newTaskContent: TaskContentDto = { ...taskContent, id: Math.max(...taskContents.map(tc => tc.id)) + 1};
+    taskContents.push(newTaskContent);
+    return newTaskContent;
 };
 
 export const editTaskContent = async (taskContent: TaskContentDto): Promise<TaskContentDto> => {
-    try {
-        const response = await axiosInstance.put<TaskContentDto>('/TaskContent/Edit/' + taskContent.id, taskContent);
-        return response.data;
-    } catch (error: any) {
-        handleError('editTaskContent', error);
-        throw error;
+    console.log('Mocked editTaskContent called with taskContent:', taskContent);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const index = taskContents.findIndex(tc => tc.id === taskContent.id);
+    if (index === -1) {
+        throw new Error('TaskContent not found');
     }
+    taskContents[index] = { ...taskContent};
+    return taskContents[index];
 };
 
 export const deleteTaskContent = async (id: number): Promise<any> => {
-    try {
-        const response = await axiosInstance.delete('/TaskContent/Delete/' + id);
-        return response.data;
-    } catch (error: any) {
-        handleError('deleteTaskContent', error);
-        throw error;
+    console.log(`Mocked deleteTaskContent called with id: ${id}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const index = taskContents.findIndex(tc => tc.id === id);
+    if (index !== -1) {
+        taskContents[index];
     }
-};
-
-const handleError = (operation: string, error: any): void => {
-    console.error(`${operation} failed:`, error);
-    if (!error.response) {
-        throw new Error('API is not available');
-    }
-    throw new Error(error.response.data?.message || 'An unexpected error occurred');
+    return { message: 'TaskContent deleted successfully' };
 };

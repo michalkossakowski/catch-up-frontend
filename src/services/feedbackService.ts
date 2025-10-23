@@ -1,60 +1,45 @@
-import axiosInstance from '../../axiosConfig';
 import { FeedbackDto } from '../dtos/FeedbackDto';
+import { ResourceTypeEnum } from '../Enums/ResourceTypeEnum';
+
+let feedbacks: FeedbackDto[] = [
+    { id: 1, title: 'Great app!', description: 'I really like using Catch-up.', senderId: '1', receiverId: '2', resourceType: ResourceTypeEnum.Faq, resourceId: 1, createdDate: new Date(), isResolved: false },
+    { id: 2, title: 'Bug report', description: 'I found a bug in the calendar.', senderId: '2', receiverId: '1', resourceType: ResourceTypeEnum.Schooling, resourceId: 2, createdDate: new Date(), isResolved: false },
+    { id: 3, title: 'Feature request', description: 'Please add a dark mode.', senderId: '1', receiverId: '2', resourceType: ResourceTypeEnum.Task, resourceId: 1, createdDate: new Date(), isResolved: true },
+];
 
 export const addFeedback = async (feedback: FeedbackDto): Promise<any> => {
-    try {
-        const response = await axiosInstance.post('/feedback/Add', feedback);
-        return response.data;
-    } catch (error: any) {
-        handleError('addFeedback', error);
-        throw error;
-    }
+    console.log('Mocked addFeedback called with feedback:', feedback);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const newFeedback: FeedbackDto = { ...feedback, id: Math.max(...feedbacks.map(f => f.id ?? 0)) + 1, createdDate: new Date(), isResolved: false };
+    feedbacks.push(newFeedback);
+    return newFeedback;
 };
 
 export const getFeedbacks = async (): Promise<FeedbackDto[]> => {
-    try {
-        const response = await axiosInstance.get<FeedbackDto[]>(`/feedback/GetAll`);
-        return response.data;
-    } catch (error: any) {
-        handleError('getFeedbacks', error);
-        throw error;
-    }
+    console.log('Mocked getFeedbacks called');
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return feedbacks;
 };
 
 export const getTitleFeedbacks = async (searchingTitle: string): Promise<FeedbackDto[]> => {
-    try {
-        const response = await axiosInstance.get<FeedbackDto[]>(`/feedback/GetByTitle/${searchingTitle}`);
-        return response.data;
-    } catch (error: any) {
-        handleError('getTitleFeedbacks', error);
-        throw error;
-    }
+    console.log(`Mocked getTitleFeedbacks called with searchingTitle: ${searchingTitle}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return feedbacks.filter(f => f.title.toLowerCase().includes(searchingTitle.toLowerCase()));
 };
 
 export const deleteFeedback = async (id: number): Promise<any> => {
-    try {
-        const response = await axiosInstance.delete(`/feedback/delete/${id}`);
-        return response.data;
-    } catch (error: any) {
-        handleError('deleteFeedback', error);
-        throw error;
-    }
+    console.log(`Mocked deleteFeedback called with id: ${id}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    feedbacks = feedbacks.filter(f => f.id !== id);
+    return { message: 'Feedback deleted successfully' };
 };
 
 export const doneFeedback = async (id: number): Promise<any> => {
-    try {
-        const response = await axiosInstance.put(`/feedback/ChangeDoneStatus/${id}`);
-        return response.data;
-    } catch (error: any) {
-        handleError('changeDoneFeedback', error);
-        throw error;
+    console.log(`Mocked doneFeedback called with id: ${id}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const index = feedbacks.findIndex(f => f.id === id);
+    if (index !== -1) {
+        feedbacks[index].isResolved = !feedbacks[index].isResolved;
     }
-};
-
-const handleError = (operation: string, error: any): void => {
-    console.error(`${operation} failed:`, error);
-    if (!error.response) {
-        throw new Error('API is not available');
-    }
-    throw new Error(error.response.data?.message || 'An unexpected error occurred');
+    return { message: 'Feedback status changed successfully' };
 };

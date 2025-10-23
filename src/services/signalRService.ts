@@ -1,60 +1,57 @@
-import * as signalR from "@microsoft/signalr";
-import axiosInstance from "../../axiosConfig";
-import Cookies from "js-cookie";
 
-const API_URL = axiosInstance.defaults.baseURL?.toString().replace('/api/', '');
-const HUB_URL = API_URL + "/notificationHub";
+// Mock implementation of the SignalR service
 
-const connection = new signalR.HubConnectionBuilder()
-    .withUrl(HUB_URL, {
-        accessTokenFactory: () => {
-            const token = Cookies.get("accessToken");
-            if (!token) {
-                throw new Error('JWT token is missing');
-            }
-            return token;
-        },
-        skipNegotiation: true,
-        withCredentials: true,
-        transport: signalR.HttpTransportType.WebSockets,
-    })
-    .withAutomaticReconnect()
-    .build();
-
-const resetSubscriptions = () => {
-    connection.off("ReceiveNotification");
+const mockConnection = {
+    on: (event: string, callback: (...args: any[]) => void) => {
+        console.log(`Mock SignalR: Subscribed to event '${event}'`);
+        // You can simulate receiving messages here if needed
+        // For example, to test notification handling:
+        // if (event === "ReceiveNotification") {
+        //     setInterval(() => {
+        //         callback({ message: "This is a mock notification!" });
+        //     }, 10000);
+        // }
+    },
+    off: (event: string) => {
+        console.log(`Mock SignalR: Unsubscribed from event '${event}'`);
+    },
+    start: () => {
+        console.log("Mock SignalR: Connection started");
+        return Promise.resolve();
+    },
+    stop: () => {
+        console.log("Mock SignalR: Connection stopped");
+        return Promise.resolve();
+    },
+    onclose: (callback: (error?: Error) => void) => {
+        console.log("Mock SignalR: onclose registered");
+    },
+    state: "Disconnected", // Initial state
 };
 
 const startConnection = async () => {
-    if (connection.state === signalR.HubConnectionState.Disconnected) {
+    if (mockConnection.state === "Disconnected") {
         try {
-            await connection.start();
-            console.log("✅ SignalR connected");
+            await mockConnection.start();
+            mockConnection.state = "Connected";
+            console.log("✅ Mock SignalR connected");
         } catch (err) {
-            console.error("❌ SignalR error:", err);
-            setTimeout(startConnection, 5000);
+            console.error("❌ Mock SignalR error:", err);
         }
-    } else {
-        console.log("Connection state:", connection.state);
     }
 };
-
-connection.onclose(() => {
-    console.warn("🔴 SignalR disconnected, reconnecting...");
-    resetSubscriptions();
-    setTimeout(startConnection, 5000);
-});
 
 const stopConnection = async () => {
-    if (connection.state !== signalR.HubConnectionState.Disconnected) {
+    if (mockConnection.state !== "Disconnected") {
         try {
-            resetSubscriptions();
-            await connection.stop();
-            console.log("✅ SignalR stopped and subscriptions cleared");
+            await mockConnection.stop();
+            mockConnection.state = "Disconnected";
+            console.log("✅ Mock SignalR stopped");
         } catch (err) {
-            console.error("❌ Error stopping SignalR:", err);
+            console.error("❌ Error stopping Mock SignalR:", err);
         }
     }
 };
 
-export { connection, startConnection, stopConnection };
+// Export the mocked objects and functions
+export { mockConnection as connection, startConnection, stopConnection };

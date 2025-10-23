@@ -1,107 +1,84 @@
-import axiosInstance from "../../axiosConfig";
+
 import { SchoolingDto } from "../dtos/SchoolingDto";
 import { SchoolingPartDto } from "../dtos/SchoolingPartDto";
 import { SchoolingPartUpdateDto } from "../dtos/SchoolingPartUpdateDto";
 import { SchoolingQueryParameters } from "../dtos/SchoolingQueryParametersDto";
 import { PagedResponse } from "../interfaces/PagedResponse";
 
-export const getSchooling = async(schoolingId: number): Promise<SchoolingDto> =>{
-    try
-    {
-        const response = await axiosInstance.get<SchoolingDto>(`/Schooling/Get/${schoolingId}`)
-        return response.data
-    }
-    catch(error)
-    {
-        handleError('Error while getting schooling', error)
-        throw error
-    }  
-}
-export const getUserSchooling = async(schoolingId: number): Promise<SchoolingDto> =>{
-    try
-    {
-        const response = await axiosInstance.get<SchoolingDto>(`/Schooling/GetUserSchooling/${schoolingId}`)
-        return response.data
-    }
-    catch(error)
-    {
-        handleError('Error while getting schooling', error)
-        throw error
-    }  
-}
-export const getSchoolingPart = async(schoolingPartId: number): Promise<SchoolingPartDto> =>{
-    try
-    {
-        const response = await axiosInstance.get<SchoolingPartDto>(`/Schooling/GetSchoolingPart/${schoolingPartId}`)
-        return response.data
-    }
-    catch(error)
-    {
-        handleError('Error while getting schooling Part', error)
-        throw error
-    }  
-}
-export const updateUserSchoolingPartState = async(schoolingUserPartId: number, partId: number, state: boolean): Promise<SchoolingPartDto> =>{
-    try
-    {
-        const response = await axiosInstance.patch(`/Schooling/ChangeUserSchoolingPartState/${schoolingUserPartId}/${partId}/${state}`)
-        return response.data
-    }
-    catch(error)
-    {
-        handleError('Error while updating schooling Part state', error)
-        throw error
-    }  
-}
-export const editSchoolingPart = async(schoolingPart: SchoolingPartUpdateDto) => {
-    try 
-    {
-        const response = await axiosInstance.put(`/Schooling/EditSchoolingPart/`, schoolingPart)
-        return response
-    } 
-    catch (error) 
-    {
-        console.error('Error in editing schooling part:', error)
-        throw error
-    }
-}
+let schoolings: SchoolingDto[] = [
+    { id: 1, title: 'React Fundamentals', categoryId: 1},
+    { id: 2, title: 'Advanced Node.js', categoryId: 2 },
+];
 
-export const editSchooling = async(schooling: SchoolingDto) => {
-    try 
-    {
-        const response = await axiosInstance.put(`/Schooling/EditSchooling/`, schooling)
-        return response
-    } 
-    catch (error) 
-    {
-        console.error('Error in editing schooling:', error)
-        throw error
+export const getSchooling = async (schoolingId: number): Promise<SchoolingDto> => {
+    console.log(`Mocked getSchooling called with schoolingId: ${schoolingId}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const schooling = schoolings.find(s => s.id === schoolingId);
+    if (!schooling) {
+        throw new Error('Schooling not found');
     }
-}
-export const getSchoolings = async(params: SchoolingQueryParameters = {}): Promise<PagedResponse<SchoolingDto>> => {
-    try {
-        const response = await axiosInstance.get<PagedResponse<SchoolingDto>>(`/Schooling/Get`,{
-            params:{
-                pageNumber: params.pageNumber ?? 1,
-                pageSize: params.pageSize ?? 10,
-                titleFilter: params.titleFilter,
-                categoryFilter: params.categoryFilter,
-                sortBy: params.sortBy,
-                sortOrder: params.sortOrder ?? 'asc',
-                mode: params.mode ?? 'all',
-            }
-        });
-        return response.data;
-    } catch (error) {
-        handleError('Error while getting all schoolings', error);
-        throw error;
-    }
-}
+    return schooling;
+};
 
-const handleError = (operation: string, error: any): void => {
-    console.error(`${operation} failed:`, error);
-    if (!error.response) {
-        throw new Error('API is not available');
+export const getUserSchooling = async (schoolingId: number): Promise<SchoolingDto> => {
+    console.log(`Mocked getUserSchooling called with schoolingId: ${schoolingId}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const schooling = schoolings.find(s => s.id === schoolingId && !s.isDeleted);
+    if (!schooling) {
+        throw new Error('Schooling not found');
     }
-    throw new Error(error.response.data?.message || 'An unexpected error occurred');
+    return schooling; // In a real scenario, this would be user-specific
+};
+
+export const getSchoolingPart = async (schoolingPartId: number): Promise<SchoolingPartDto> => {
+    console.log(`Mocked getSchoolingPart called with schoolingPartId: ${schoolingPartId}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    for (const schooling of schoolings) {
+        const part = schooling.parts?.find(p => p.id === schoolingPartId && !p.isDeleted);
+        if (part) {
+            return part;
+        }
+    }
+    throw new Error('Schooling part not found');
+};
+
+export const updateUserSchoolingPartState = async (schoolingUserPartId: number, partId: number, state: boolean): Promise<SchoolingPartDto> => {
+    console.log(`Mocked updateUserSchoolingPartState called with schoolingUserPartId: ${schoolingUserPartId}, partId: ${partId}, state: ${state}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    // This is a mock, so we just return the part as if it was updated.
+    return getSchoolingPart(partId);
+};
+
+export const editSchoolingPart = async (schoolingPart: SchoolingPartUpdateDto) => {
+    console.log('Mocked editSchoolingPart called with schoolingPart:', schoolingPart);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    for (const schooling of schoolings) {
+        const index = schooling.parts?.findIndex(p => p.id === schoolingPart.id) ?? -1;
+        if (index !== -1) {
+            //schooling.parts[index] = { ...schooling.parts[index], ...schoolingPart };
+            break;
+        }
+    }
+    return { status: 200, data: 'Schooling part edited' };
+};
+
+export const editSchooling = async (schooling: SchoolingDto) => {
+    console.log('Mocked editSchooling called with schooling:', schooling);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const index = schoolings.findIndex(s => s.id === schooling.id);
+    if (index !== -1) {
+        schoolings[index] = { ...schooling, isDeleted: false };
+    }
+    return { status: 200, data: 'Schooling edited' };
+};
+
+export const getSchoolings = async (params: SchoolingQueryParameters = {}): Promise<PagedResponse<SchoolingDto>> => {
+    console.log('Mocked getSchoolings called with params:', params);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    let filteredSchoolings = schoolings.filter(s => !s.isDeleted);
+    // Apply filters, sorting, etc. based on params (simplified for mock)
+    const pageNumber = params.pageNumber ?? 1;
+    const pageSize = params.pageSize ?? 10;
+    const paginatedSchoolings = filteredSchoolings.slice((pageNumber - 1) * pageSize, pageNumber * pageSize);
+    return { data: paginatedSchoolings, totalCount: filteredSchoolings.length, pageNumber, pageSize };
 };

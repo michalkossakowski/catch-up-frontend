@@ -1,4 +1,3 @@
-import axiosInstance from '../../axiosConfig';
 import { PresetDto } from '../dtos/PresetDto';
 
 interface PresetResponse {
@@ -6,102 +5,76 @@ interface PresetResponse {
     preset: PresetDto;
 }
 
+let presets: PresetDto[] = [
+    { id: 1, name: 'Onboarding', creatorId: '1'},
+    { id: 2, name: 'Bug Fixing', creatorId: '1' },
+    { id: 3, name: 'Feature Development', creatorId: '2'},
+];
+
 export const getPresets = async (): Promise<PresetDto[]> => {
-    try {
-        const response = await axiosInstance.get<PresetDto[]>('/Preset/GetAll');
-        return response.data;
-    } catch (error: any) {
-        handleError('getPresets', error);
-        throw error;
-    }
+    console.log('Mocked getPresets called');
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return presets;
 };
 
 export const getPresetById = async (id: number): Promise<PresetDto> => {
-    try {
-        const response = await axiosInstance.get<PresetDto>(`/Preset/GetById/${id}`);
-        return response.data;
-    } catch (error: any) {
-        handleError('getPresetById', error);
-        throw error;
+    console.log(`Mocked getPresetById called with id: ${id}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const preset = presets.find(p => p.id === id);
+    if (!preset) {
+        throw new Error('Preset not found');
     }
+    return preset;
 };
 
 export const getPresetsByCreatorId = async (creatorId: string): Promise<PresetDto[]> => {
-    try {
-        const response = await axiosInstance.get<PresetDto[]>(`/Preset/GetByCreatorId/${creatorId}`);
-        return response.data;
-    } catch (error: any) {
-        handleError('getPresetsByCreatorId', error);
-        throw error;
-    }
+    console.log(`Mocked getPresetsByCreatorId called with creatorId: ${creatorId}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return presets.filter(p => p.creatorId === creatorId);
 };
 
 export const getPresetsByName = async (name: string): Promise<PresetDto[]> => {
-    try {
-        const response = await axiosInstance.get<PresetDto[]>(`/Preset/GetByName/${name}`);
-        return response.data;
-    } catch (error: any) {
-        if (error.response && error.response.status === 404) {
-            return [];
-        }
-        handleError('getPresetsByName', error);
-        throw error;
-    }
+    console.log(`Mocked getPresetsByName called with name: ${name}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return presets.filter(p => p.name.toLowerCase().includes(name.toLowerCase()));
 };
 
 export const getPresetsByTaskContent = async (taskContentId: number): Promise<PresetDto[]> => {
-    try {
-        const response = await axiosInstance.get<PresetDto[]>(`/Preset/GetByTaskContent/${taskContentId}`);
-        return response.data;
-    } catch (error: any) {
-        handleError('getPresetsByTaskContent', error);
-        throw error;
-    }
+    console.log(`Mocked getPresetsByTaskContent called with taskContentId: ${taskContentId}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return presets;
 };
 
 export const searchPresets = async (searchString: string): Promise<PresetDto[]> => {
-    try {
-        const response = await axiosInstance.get<PresetDto[]>(`/Preset/SearchPresets/${searchString}`);
-        return response.data;
-    } catch (error: any) {
-        handleError('searchPresets', error);
-        throw error;
-    }
+    console.log(`Mocked searchPresets called with searchString: ${searchString}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return presets.filter(p => p.name.toLowerCase().includes(searchString.toLowerCase()));
 };
 
 export const addPreset = async (preset: PresetDto): Promise<PresetDto> => {
-    try {
-        const response = await axiosInstance.post<PresetResponse>('/Preset/Add', preset);
-        return response.data.preset;
-    } catch (error: any) {
-        handleError('addPreset', error);
-        throw error;
-    }
+    console.log('Mocked addPreset called with preset:', preset);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const newPreset: PresetDto = { ...preset, id: Math.max(...presets.map(p => p.id)) + 1 };
+    presets.push(newPreset);
+    return newPreset;
 };
 
 export const editPreset = async (preset: PresetDto): Promise<PresetDto> => {
-    try {
-        const response = await axiosInstance.put<PresetResponse>(`/Preset/Edit/${preset.id}`, preset);
-        return response.data.preset;
-    } catch (error: any) {
-        handleError('editPreset', error);
-        throw error;
+    console.log('Mocked editPreset called with preset:', preset);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const index = presets.findIndex(p => p.id === preset.id);
+    if (index === -1) {
+        throw new Error('Preset not found');
     }
+    presets[index] = { ...preset};
+    return presets[index];
 };
 
 export const deletePreset = async (id: number): Promise<void> => {
-    try {
-        await axiosInstance.delete(`/Preset/Delete/${id}`);
-    } catch (error: any) {
-        handleError('deletePreset', error);
-        throw error;
+    console.log(`Mocked deletePreset called with id: ${id}`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const index = presets.findIndex(p => p.id === id);
+    if (index !== -1) {
+        presets[index];
     }
 };
-
-const handleError = (operation: string, error: any): void => {
-    console.error(`${operation} failed:`, error);
-    if (!error.response) {
-        throw new Error('API is not available');
-    }
-    throw new Error(error.response.data?.message || 'An unexpected error occurred');
-}; 

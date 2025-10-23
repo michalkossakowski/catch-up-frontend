@@ -5,7 +5,6 @@ import {UserDto as User} from "../dtos/UserDto.ts"
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../store/store.ts";
 import {clearTasks} from "../store/taskSlice";
-import {stopConnection} from "../services/signalRService";
 import {jwtDecode} from "jwt-decode";
 
 interface AuthContextType {
@@ -118,8 +117,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         }
     };
 
-    const logout = async () => {
-        await stopConnection();
+    const logout = () => {
         setAccessToken(null);
         setRefreshToken(null);
         setUser(null);
@@ -129,6 +127,13 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     const getRole = async (): Promise<string> => {
+        if (accessToken === 'mock-access-token') {
+            if (user) {
+                return user.type;
+            }
+            return "Newbie"; // Should not happen if user is set on login
+        }
+
         const token = Cookies.get("accessToken");
 
         try {

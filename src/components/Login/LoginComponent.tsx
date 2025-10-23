@@ -1,14 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../../../axiosConfig';
 import { useAuth } from '../../Provider/authProvider';
-import { jwtDecode } from 'jwt-decode';
 import './LoginComponent.css';
 import { useTranslation } from 'react-i18next';
 import { Button, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { availableLanguages, changeLanguage, normalizeLanguage } from '../../i18n';
 import backgroundVideoDark from '/Login/dark_office.mp4';
 import backgroundVideoLight from '/Login/light_office.mp4';
+import { UserDto } from '../../dtos/UserDto';
+import { TypeEnum } from '../../Enums/TypeEnum';
+
+// Mock data from userService.ts
+const users: UserDto[] = [
+    { id: '1', name: 'John', surname: 'Doe', email: 'john.doe@example.com', password: 'password', type: TypeEnum.Mentor, position: 'Senior Developer' },
+    { id: '2', name: 'Jane', surname: 'Smith', email: 'jane.smith@example.com', password: 'password', type: TypeEnum.Newbie, position: 'Junior Developer' },
+    { id: '3', name: 'Peter', surname: 'Jones', email: 'peter.jones@example.com', password: 'password', type: TypeEnum.Mentor, position: 'Team Lead' },
+    { id: '4', name: 'Mary', surname: 'Williams', email: 'mary.williams@example.com', password: 'password', type: TypeEnum.Newbie, position: 'Junior Developer' },
+    { id: '5', name: 'Admin', surname: 'User', email: 'admin@catchup.com', password: 'zaq1@WSX', type: TypeEnum.Admin, position: 'Administrator' },
+];
+
 
 const darkThemeMusic = '/Login/electro-summer-positive-party.mp3';
 const lightThemeMusic = '/Login/chinese-new-year-festivel_2.mp3';
@@ -85,45 +95,36 @@ const LoginComponent: React.FC<LoginComponentProps> = ({ toggleTheme, theme }) =
     }
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
 
-    try {
-      const response = await axiosInstance.post('Auth/Login', { email, password });
-      const { accessToken, refreshToken } = response.data;
+    // Mock login logic
+    const user = users.find(u => u.email === email && u.password === password);
+
+    if (user) {
+      // Simulate token generation
+      const accessToken = 'mock-access-token';
+      const refreshToken = 'mock-refresh-token';
+
       setAccessToken(accessToken);
       setRefreshToken(refreshToken);
-
-      const decodedToken: any = jwtDecode(accessToken);
-      const userId = decodedToken.nameid;
-
-      const userResponse = await axiosInstance.get(`User/GetById/${userId}`);
-      const userData = userResponse.data;
-      setUser(userData);
+      setUser(user);
       
       navigate('/');
 
       if (backgroundMusicRef.current) {
         backgroundMusicRef.current.pause();
       }
-    } catch (err: any) {
-      if (err.response) {
-        if (err.response.status === 404) {
-          setError(t('invalid-email-or-password'));
-        } else {
-          setError(t('an-unexpected-error-occurred-please-try-again'));
-        }
-      } else {
-        setError(t('api-is-down-sorry'));
-      }
+    } else {
+      setError(t('invalid-email-or-password'));
       setAccessToken(null);
       setRefreshToken(null);
       setUser(null);
-    } finally {
-      setIsLoading(false);
     }
+
+    setIsLoading(false);
   };
 
   return (
