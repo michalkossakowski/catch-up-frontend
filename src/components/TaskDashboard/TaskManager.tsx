@@ -257,9 +257,7 @@ function TaskManager() {
                                     </div>
 
                                     <div className="filter-control newbie-select">
-                                        {selectedNewbie.length == 0 &&(
-                                            <b className="select-newbie-here">First select newbie here:</b>
-                                        )}
+
                                         <Select
                                             isClearable={true}
                                             isSearchable={true}

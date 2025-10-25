@@ -144,6 +144,7 @@
 }
 
 .pool-task-card-catergory {
+    font-size: 0.9em;
     background-color: #5cd3b3dc;
 }
 
@@ -164,7 +165,6 @@
 
 .pool-task-card .card-title {
     margin-bottom: 4px;
-    font-size: 14px;
     line-height: 1.2;
     max-height: 2.4em;
     overflow: hidden;
