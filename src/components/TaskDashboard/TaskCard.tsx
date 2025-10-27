@@ -115,6 +115,18 @@ const TaskCard: React.FC<TaskCardProps> = ({
                         </Dropdown>
                     </div>
                 </div>
+                <p 
+                    className="card-text text-muted small mb-2"
+                    style={{
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                    }}
+                >
+                    {task.description}
+                </p>
                 <div className="d-flex justify-content-between align-items-center">
                     <small className="text-muted">Due: {formatDate(task.deadline)}</small>
                     {categoryName && (
