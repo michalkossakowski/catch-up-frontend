@@ -97,6 +97,25 @@ export const GetFullTaskData = async (taskId: number): Promise<TaskFullDataDto> 
     }
 }
 
+export const updateTaskRoadMapPoint = async (taskId: number, roadMapPointId: number | null): Promise<void> => {
+    try {
+        // First get the task to retrieve its current data
+        const taskData = await axiosInstance.get<TaskDto>(`/Task/GetTaskById/${taskId}`);
+        const task = taskData.data;
+        
+        // Update only the roadMapPointId field
+        const taskDto: TaskDto = {
+            ...task,
+            roadMapPointId: roadMapPointId?.toString() || null,
+        };
+        
+        await axiosInstance.put(`/Task/EditTask/${taskId}`, taskDto);
+    } catch (error: any) {
+        handleError('updateTaskRoadMapPoint', error);
+        throw error;
+    }
+}
+
 const handleError = (operation: string, error: any): void => {
     console.error(`${operation} failed:`, error);
     if (!error.response) {

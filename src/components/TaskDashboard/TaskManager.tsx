@@ -60,10 +60,15 @@ function TaskManager() {
 
     useEffect(() => {
         const selectedLocalNewbie = location.state?.selectedNewbie;
+        const savedNewbie = localStorage.getItem('selectedNewbieTaskManager');
+        
         if(selectedLocalNewbie){
             setSelectedNewbie(selectedLocalNewbie);
+            localStorage.setItem('selectedNewbieTaskManager', selectedLocalNewbie);
+        } else if (savedNewbie) {
+            setSelectedNewbie(savedNewbie);
         }
-    },[]);
+    },[location.state]);
 
     // On change of a newbie
     useEffect(() => {
@@ -267,7 +272,15 @@ function TaskManager() {
                                                 label: `${newbie.name} ${newbie.surname}`
                                             }))}
                                             placeholder="Select a newbie..."
-                                            onChange={(selectedOption) => setSelectedNewbie(selectedOption?.value ?? '')}
+                                            onChange={(selectedOption) => {
+                                                const newbieId = selectedOption?.value ?? '';
+                                                setSelectedNewbie(newbieId);
+                                                if (newbieId) {
+                                                    localStorage.setItem('selectedNewbieTaskManager', newbieId);
+                                                } else {
+                                                    localStorage.removeItem('selectedNewbieTaskManager');
+                                                }
+                                            }}
                                             value={newbies.map(newbie => ({
                                                 value: newbie.id,
                                                 label: `${newbie.name} ${newbie.surname}`

@@ -4,6 +4,7 @@ import { Dropdown } from 'react-bootstrap';
 import { FullTaskDto } from '../../dtos/FullTaskDto';
 import { ResourceTypeEnum } from '../../Enums/ResourceTypeEnum';
 import {AddFeedbackDialog} from "../Feedback/AddFeedbackDialog.tsx";
+import { AddTaskToRoadMapDialog } from './AddTaskToRoadMapDialog';
 import { useNavigate } from 'react-router-dom';
 import {StatusEnum} from "../../Enums/StatusEnum.ts";
 
@@ -27,6 +28,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
                                                isLoading = false
                                            }) => {
     const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
+    const [showRoadMapDialog, setShowRoadMapDialog] = useState(false);
     const navigate = useNavigate();
     const [{ isDragging }, drag] = useDrag({
         type: 'TASK',
@@ -59,6 +61,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
     };
 
     return (
+        <>
         <div
             ref={dragRef}
             className={`task-card card mb-2 shadow-sm ${isDragging ? 'opacity-50' : ''} ${isDisabled && task.status !== StatusEnum.ReOpen ? 'opacity-50' : ''}`}
@@ -111,11 +114,18 @@ const TaskCard: React.FC<TaskCardProps> = ({
                                 >
                                     <i className="bi bi-chat-square-text me-2"></i>Feedback
                                 </Dropdown.Item>
+                                <Dropdown.Item
+                                    onClick={() => {
+                                        setShowRoadMapDialog(true);
+                                    }}
+                                >
+                                    <i className="bi bi-signpost me-2"></i>Add to Roadmap
+                                </Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
                     </div>
                 </div>
-                <p 
+                <p
                     className="card-text text-muted small mb-2"
                     style={{
                         display: '-webkit-box',
@@ -139,16 +149,27 @@ const TaskCard: React.FC<TaskCardProps> = ({
                     )}
                 </div>
             </div>
-
-            {showFeedbackDialog && (
-                <AddFeedbackDialog
-                    resourceId={task.id!}
-                    resourceType={ResourceTypeEnum.Task}
-                    receiverId={task.assigningId}
-                    onClose={() => setShowFeedbackDialog(false)}
-                />
-            )}
         </div>
+        
+        {showFeedbackDialog && (
+            <AddFeedbackDialog
+                resourceId={task.id!}
+                resourceType={ResourceTypeEnum.Task}
+                receiverId={task.assigningId}
+                onClose={() => setShowFeedbackDialog(false)}
+            />
+        )}
+        
+        {showRoadMapDialog && (
+            <AddTaskToRoadMapDialog
+                taskId={task.id!}
+                taskTitle={task.title}
+                newbieId={task.newbieId}
+                currentRoadMapPointId={task.roadMapPointId}
+                onClose={() => setShowRoadMapDialog(false)}
+            />
+        )}
+    </>
     );
 };
 
