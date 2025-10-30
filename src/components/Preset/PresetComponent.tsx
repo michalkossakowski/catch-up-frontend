@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Accordion, Alert, Button, Form, InputGroup } from 'react-bootstrap';
+import { Accordion, Alert, Button, Form, InputGroup, Modal } from 'react-bootstrap';
 import { PresetDto } from '../../dtos/PresetDto';
 import { TaskContentDto } from '../../dtos/TaskContentDto';
 import { getPresets, getPresetsByName, deletePreset } from '../../services/presetService';
@@ -9,6 +9,7 @@ import PresetEdit from './PresetEdit';
 import './PresetComponent.css';
 import { useNavigate } from 'react-router-dom';
 import NotificationToast from '../Toast/NotificationToast';
+import PresetTaskContentItem from './PresetTaskContentItem';
 
 interface PresetComponentProps {
     isAdmin: boolean;
@@ -21,7 +22,6 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
     const [showError, setShowError] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
     const [searchName, setSearchName] = useState('');
-    const [showEdit, setShowEdit] = useState(false);
     const [editedPreset, setEditedPreset] = useState<PresetDto | null>(null);
     const [presetTasks, setPresetTasks] = useState<Map<number, TaskContentDto[]>>(new Map());
     const navigate = useNavigate();
@@ -29,6 +29,7 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [toastColor, setToastColor] = useState('');
+    const [showEditModal, setShowEditModal] = useState<boolean>(false);
 
     useEffect(() => {
         getAllPresets();
@@ -139,12 +140,12 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
 
     const editClick = (presetId: number) => {
         setEditedPreset(presets.find(preset => preset.id === presetId) || null);
-        setShowEdit(true);
+        setShowEditModal(true);
     };
 
     const handlePresetUpdated = () => {
         getAllPresets();
-        setShowEdit(false);
+        setShowEditModal(false);
         setEditedPreset(null);
         setToastMessage("Preset updated successfully");
         setToastColor("green");
@@ -162,31 +163,15 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
 
     return (
         <>
-            {isAdmin && (
-                <div>
-                    {!showEdit && (
-                        <PresetEdit 
-                            isEditMode={false} 
-                            onPresetEdited={handlePresetUpdated} 
-                        />
-                    )}
-                    {showEdit && editedPreset && (
-                        <div>
-                            <Button variant="primary" onClick={() => setShowEdit(false)}>
-                                Back to Add
-                            </Button>
-                            <PresetEdit 
-                                preset={editedPreset} 
-                                isEditMode={true} 
-                                onPresetEdited={handlePresetUpdated}
-                            />
-                        </div>
+            <section className='container'>
+                <div className="d-flex align-items-center justify-content-between mb-2">
+                    <h2 className='title mb-0'>Presets</h2>
+                    {isAdmin && (
+                        <Button variant="success" onClick={() => { setEditedPreset(null); setShowEditModal(true); }}>
+                            Create new preset
+                        </Button>
                     )}
                 </div>
-            )}
-
-            <section className='container'>
-                <h2 className='title'>Presets</h2>
 
                 <div className='loaderBox'>
                     {loading && <span className='loader'></span>}
@@ -227,11 +212,11 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
                                         </Accordion.Header>
                                         <Accordion.Body>
                                             <h5>Tasks in preset:</h5>
-                                            <ul className="preset-tasks-list">
+                                            <div>
                                                 {presetTasks.get(preset.id)?.map(task => (
-                                                    <li key={task.id}>{task.title}</li>
+                                                    <PresetTaskContentItem key={task.id} item={task} />
                                                 ))}
-                                            </ul>
+                                            </div>
 
                                             {isAdmin && (
                                                 <div className='buttonBox'>
@@ -275,6 +260,25 @@ const PresetComponent: React.FC<PresetComponentProps> = ({ isAdmin }) => {
                     onClose={() => setShowToast(false)}
                 />
             </section>
+
+            <Modal 
+                show={showEditModal} 
+                onHide={() => { setShowEditModal(false); setEditedPreset(null); }} 
+                size="lg" 
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>{editedPreset ? 'Edit Preset' : 'Create New Preset'}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <PresetEdit 
+                        preset={editedPreset || undefined}
+                        isEditMode={!!editedPreset}
+                        onPresetEdited={handlePresetUpdated}
+                        onCancel={() => { setShowEditModal(false); setEditedPreset(null); }}
+                    />
+                </Modal.Body>
+            </Modal>
         </>
     );
 };
