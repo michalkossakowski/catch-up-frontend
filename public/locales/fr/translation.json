@@ -63,7 +63,7 @@
   "delete": "Supprimer",
   "name": "Nom",
   "owner": "Propriétaire",
-  "size": "Taille :",
+  "size": "Taille:",
   "file-type": "Type de fichier:",
   "save-changes": "Enregistrer les modifications",
   "undefine-date": "Date indéfini",

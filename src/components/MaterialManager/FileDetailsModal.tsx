@@ -1,111 +1,51 @@
-import { useEffect, useState } from "react";
-import { Button, Col, Container, Modal, Row, Stack } from "react-bootstrap";
+import { useEffect, useState, useRef } from "react";
+import { Button, Container, Modal, Row, Col, Stack } from "react-bootstrap";
 import { FilePair } from "../../interfaces/FilePair";
 import { UserDto } from "../../dtos/UserDto";
 import { getUserById } from "../../services/userService";
-import styles from './material.module.scss';
 import fileService from "../../services/fileService";
-import materialService from "../../services/materialService";
+import styles from './material.module.scss';
 import { OnActionEnum } from "../../Enums/OnActionEnum";
 import { t } from "i18next";
 
 interface FileDetailsModalProps {
-    showModal: boolean;
-    onClose(): void;
-    onAction(action: OnActionEnum, data?: any, fileInMaterial?: boolean): void;
-    filePair?: FilePair;
-    materialId?: number;
-    enableDownload?: boolean;
-    enableDelete?: boolean;
-    enableAddToMaterial?: boolean;
-    enableRemoveFromMaterial?: boolean;
-    isFileInMaterial?: boolean;
+  showModal: boolean;
+  onClose(): void;
+  onAction(action: OnActionEnum, data?: any, fileInMaterial?: boolean): void;
+  filePair?: FilePair;
+  materialId?: number;
+  enableDownload?: boolean;
+  enableDelete?: boolean;
+  enableAddToMaterial?: boolean;
+  enableRemoveFromMaterial?: boolean;
+  isFileInMaterial?: boolean;
 }
+
 const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
-    showModal,
-    onClose,
-    onAction,
-    filePair,
-    materialId,
-    enableDownload = true,
-    enableDelete = false,
-    enableAddToMaterial = false,
-    enableRemoveFromMaterial = false,
-    isFileInMaterial = false,
+  showModal,
+  onClose,
+  filePair,
+  enableDownload = true,
 }) => {
   const [show, setShow] = useState(false);
   const [owner, setOwner] = useState<UserDto>();
+  const [fileUrl, setFileUrl] = useState<string>();
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [zoom, setZoom] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const startPos = useRef({ x: 0, y: 0 });
+  const startOffset = useRef({ x: 0, y: 0 });
+
+  const hasPreview =
+    filePair?.fileDto.type?.startsWith("image/") ||
+    filePair?.fileDto.type?.startsWith("video/") ||
+    filePair?.fileDto.type === "application/pdf";
 
   useEffect(() => {
-    if(filePair){
-      
-      if (filePair.fileDto.owner) {
-        getUserById(filePair.fileDto.owner).then((data) => {
-          setOwner(data);
-        });
-      }
-    }
+    setZoom(1);
+    setPosition({ x: 0, y: 0 });
   }, [filePair]);
-
-  useEffect(() => {
-    setShow(showModal);
-  }, [showModal]);
-
-  useEffect(() => {
-    if (materialId === 0 || materialId === null || materialId === undefined) {
-      enableRemoveFromMaterial = false;
-      enableAddToMaterial = false;
-    }
-  }, [materialId]);
-
-  const handleClose = () => {
-    setShow(false)
-    onClose();
-  };
-
-  const onDownload = async () => { 
-    var url;
-    if(!filePair?.file)
-    {
-      if(filePair?.fileDto.id)
-        await fileService.downloadFile(filePair?.fileDto.id).then((data) => {
-          url = URL.createObjectURL(data);
-        }).catch((error) => {
-          console.error("Failed to fetch file data:", error);
-        });
-    }  
-    else{
-      url = URL.createObjectURL(filePair.file);
-    }
-    const a = document.createElement('a');
-    if (url) 
-      a.href = url;
-    else {
-      console.error("URL is undefined. Cannot set href.");
-      return;
-    }
-    a.download = `${filePair?.fileDto.name}`;
-    a.click();
-    window.URL.revokeObjectURL(url);
-  }
-
-  const handleRemoveFromMaterial = () => {
-    if (!isFileInMaterial) {
-      console.log(filePair?.fileDto.id);
-      onAction(OnActionEnum.FileRemovedFromMaterial, {index: filePair?.fileDto.id}, false);
-      handleClose();
-      return;
-    }
-    if (!materialId || !filePair?.fileDto.id) 
-    { return; }
-    
-    materialService.removeFile(materialId, filePair?.fileDto.id ?? 0).then(() => {
-      onAction(OnActionEnum.FileRemovedFromMaterial, {fileId: filePair?.fileDto.id}, true);
-      handleClose();
-    }).catch((error) => {
-      console.error("Failed to remove file from material:", error);
-    });
-  }
 
   const getFileIcon = (fileType?: string) => {    
     if (!fileType) return "bi-file-earmark";
@@ -116,41 +56,191 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
     if (fileType.includes("zip")) return "bi-file-earmark-zip";
     return "bi-file-earmark"; 
   };
-  const onAddToMaterial = () => {
-    if (!materialId || !filePair?.fileDto.id)
-    { return; }
-    materialService.addFile(materialId, filePair?.fileDto.id ?? 0).then(() => {
-      onAction(OnActionEnum.FileAddedToMaterial, {data: filePair});
-      handleClose();
+  useEffect(() => {
+    if (showModal && filePair) {
+      if (hasPreview) {
+        setShow(true);
+        loadFileUrl();
+      } else {
+        setShowInfoModal(true);
+      }
+    } else {
+      setShow(false);
+      setShowInfoModal(false);
     }
-    ).catch((error) => {
-      console.error("Failed to add file to material:", error);
-    })
-  }
-  const getFileSize = (size?: number) => {
-    var tempSize = size;
-    if (!tempSize) return "0 KB";
+  }, [showModal, filePair]);
 
-    tempSize = tempSize / 1024;
-    if (tempSize < 1024) return tempSize.toFixed(2) + " KB";
-    tempSize = tempSize / 1024;
-
-    if  (tempSize < 1024 ) return (tempSize).toFixed(2) + " MB";
-
-    tempSize = tempSize / 1024;
-    if  (tempSize < 1024 ) return (tempSize).toFixed(2) + " GB";
+  const loadFileUrl = async () => {
+    try {
+      if (!filePair) return;
+      let url: string;
+      if (!filePair.file && filePair.fileDto.id) {
+        const data = await fileService.downloadFile(filePair.fileDto.id);
+        url = URL.createObjectURL(data);
+      } else if (filePair.file) {
+        url = URL.createObjectURL(filePair.file);
+      } else return;
+      setFileUrl(url);
+    } catch (error) {
+      console.error("Failed to load file:", error);
+    }
   };
+
+  useEffect(() => {
+    if (filePair?.fileDto.owner) getUserById(filePair.fileDto.owner).then(setOwner);
+  }, [filePair]);
+
+  const handleClose = () => {
+    setShow(false);
+    setShowInfoModal(false);
+    onClose();
+  };
+
+  const onDownload = async () => {
+    try {
+      let url: string | undefined;
+      if (!filePair?.file && filePair?.fileDto.id) {
+        const data = await fileService.downloadFile(filePair.fileDto.id);
+        url = URL.createObjectURL(data);
+      } else if (filePair?.file) {
+        url = URL.createObjectURL(filePair.file);
+      }
+      if (!url) throw new Error("URL is undefined");
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${filePair?.fileDto.name}`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Failed to download file:", error);
+    }
+  };
+
+  const getFileSize = (size?: number) => {
+    if (!size) return "0 KB";
+    let temp = size / 1024;
+    if (temp < 1024) return `${temp.toFixed(2)} KB`;
+    temp /= 1024;
+    if (temp < 1024) return `${temp.toFixed(2)} MB`;
+    temp /= 1024;
+    return `${temp.toFixed(2)} GB`;
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (!filePair?.fileDto.type?.startsWith("image/")) return;
+    e.preventDefault(); 
+    if (e.deltaY < 0) setZoom((z) => Math.min(z + 0.2, 5));
+    else setZoom((z) => Math.max(z - 0.2, 0.5));
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!filePair?.fileDto.type?.startsWith("image/") || zoom <= 1) return;
+    e.preventDefault();
+    setIsDragging(true);
+    startPos.current = { x: e.clientX, y: e.clientY };
+    startOffset.current = { ...position };
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    const dx = e.clientX - startPos.current.x;
+    const dy = e.clientY - startPos.current.y;
+    setPosition({ x: startOffset.current.x + dx, y: startOffset.current.y + dy });
+  };
+
+  const handleMouseUp = () => setIsDragging(false);
+  const handleMouseLeave = () => setIsDragging(false);
+
   return (
-      <>
-      <Modal show={show} onHide={handleClose} animation={false}>
+    <>
+      <Modal show={show} onHide={handleClose} centered size="xl" animation={false}>
         <Modal.Header closeButton>
-          <Modal.Title >{t('file-details')}</Modal.Title>
+          <Modal.Title>{filePair?.fileDto.name}</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body
+          onWheel={handleWheel}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          className="d-flex justify-content-center align-items-center bg-light"
+          style={{
+            aspectRatio: "16/9",
+            overflow: "hidden",
+            cursor: isDragging ? "grabbing" : zoom > 1 ? "grab" : "default",
+            position: "relative",
+          }}
+        >
+          {filePair?.fileDto.type?.startsWith("image/") && fileUrl && (
+            <img
+              src={fileUrl}
+              alt={filePair?.fileDto.name}
+              style={{
+                transform: `translate(${position.x}px, ${position.y}px) scale(${zoom})`,
+                transformOrigin: "center",
+                transition: isDragging ? "none" : "transform 0.1s ease",
+                maxWidth: "100%",
+                maxHeight: "100%",
+                objectFit: "contain",
+                userSelect: "none",
+                display: "block",
+              }}
+              draggable={false}
+            />
+          )}
+          {filePair?.fileDto.type?.startsWith("video/") && fileUrl && (
+            <video controls style={{ maxWidth: "100%", maxHeight: "70vh" }}>
+              <source src={fileUrl} type={filePair.fileDto.type} />
+            </video>
+          )}
+          {filePair?.fileDto.type === "application/pdf" && fileUrl && (
+            <iframe
+              src={fileUrl}
+              title="PDF Preview"
+              width="100%"
+              height="100%"
+              style={{ border: "none" }}
+            ></iframe>
+          )}
+        </Modal.Body>
+
+        <Modal.Footer className="justify-content-between">
+          <Stack direction="horizontal" gap={2}>
+            {filePair?.fileDto.type?.startsWith("image/") && (
+              <>
+                <Button variant="outline-secondary" onClick={() => setZoom((z) => Math.max(z - 0.2, 0.5))}>
+                  −
+                </Button>
+                <span>{Math.round(zoom * 100)}%</span>
+                <Button variant="outline-secondary" onClick={() => setZoom((z) => Math.min(z + 0.2, 5))}>
+                  +
+                </Button>
+              </>
+            )}
+          </Stack>
+          <Stack direction="horizontal" gap={2}>
+            <Button variant="success" onClick={() => setShowInfoModal(true)}>
+              Details
+            </Button>
+            {enableDownload && (
+              <Button variant="primary" onClick={onDownload}>
+                {t("download")}
+              </Button>
+            )}
+          </Stack>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showInfoModal} onHide={() => setShowInfoModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{t("file-details")}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Container>
             <Row>
-              <Col xs={5} className="text-start">
-                {filePair?.fileDto.type?.startsWith("image/") && filePair?.file ? (
+              <Col xs={12} md={5} className="text-center mb-3">
+               {filePair?.fileDto.type?.startsWith("image/") && filePair?.file ? (
                   <img 
                       src={URL.createObjectURL(filePair?.file)} 
                       alt={filePair?.fileDto.name} 
@@ -173,35 +263,30 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
                   <i className={`${getFileIcon(filePair?.fileDto?.type)} ${styles.fileIconSize}` }></i>
                 }
               </Col>
-              <Col className="text-start">
-                <p>{t('name')}: {filePair?.fileDto?.name}</p>
-                <p>{t('owner')}: {owner?.name + " " +owner?.surname}</p>
-                <p>{t('size')} {getFileSize(filePair?.fileDto.sizeInBytes)}</p>
-                <p>{t('file-type')} {filePair?.fileDto.type}</p>
-                <p>Uploaded: {filePair?.fileDto.dateOfUpload
-                  ? new Date(filePair?.fileDto.dateOfUpload).toLocaleString("pl-PL", {
-                      year: "numeric",
-                      month: "numeric",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      })
-                      : t('undefine-date')}
+              <Col className="text-start" style={{wordWrap:'break-word'}}>
+                <p>{t("name")}: {filePair?.fileDto?.name}</p>
+                <p>{t("owner")}: {owner?.name} {owner?.surname}</p>
+                <p>{t("size")} {getFileSize(filePair?.fileDto.sizeInBytes)}</p> 
+                <p>{t("file-type")} {filePair?.fileDto.type}</p>
+                <p>Uploaded: {' '}
+                  {filePair?.fileDto.dateOfUpload
+                    ? new Date(filePair.fileDto.dateOfUpload).toLocaleString("pl-PL")
+                    : t("undefine-date")}
                 </p>
               </Col>
             </Row>
           </Container>
         </Modal.Body>
-        <Modal.Footer className='justify-content-end'>
-          <Stack direction="horizontal" gap={2} className="mb-3">
-            {enableDownload && <Button variant="primary" onClick={() => onDownload()}>{t('download')}</Button>}
-            {enableRemoveFromMaterial && <Button variant="danger" onClick = {() => handleRemoveFromMaterial() }>{t('remove-from-material')}</Button>}
-            {enableAddToMaterial && <Button variant="success" onClick={() => onAddToMaterial()}>{t('add-to-material')}</Button>}
-            {enableDelete && <Button variant="danger">{t('delete')}</Button>}
-          </Stack>
+        <Modal.Footer>
+          {enableDownload && (
+            <Button variant="primary" onClick={onDownload}>
+              {t("download")}
+            </Button>
+          )}
         </Modal.Footer>
       </Modal>
     </>
-  )
-}
+  );
+};
+
 export default FileDetailsModal;

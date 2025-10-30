@@ -247,7 +247,7 @@ function App() {
                             onClick={() => setSidebarVisible(!isSidebarVisible)}
                             data-tour="hide-sidebar"
                         >
-                            {isSidebarVisible ? <i className="bi bi-arrow-left-square" /> : <i className="bi bi-arrow-right-square" />}
+                            {isSidebarVisible ? <i className="bi bi-list-nested" /> : <i className="bi bi-list" />}
                         </Button>
 
                         <Container fluid className={`main-content ${isSidebarVisible ? "sidebar-visible" : "sidebar-hidden"}`}>

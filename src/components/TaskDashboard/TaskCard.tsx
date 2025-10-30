@@ -157,6 +157,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
                 resourceType={ResourceTypeEnum.Task}
                 receiverId={task.assigningId}
                 onClose={() => setShowFeedbackDialog(false)}
+                onShowToast={() => true} 
             />
         )}
         
