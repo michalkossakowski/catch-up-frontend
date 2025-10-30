@@ -21,10 +21,11 @@ const FileIcon: React.FC<FileIconProps> = ({
 {
 
     const getFileIcon = () => {    
-        if (fileType.startsWith("image/") || fileType.startsWith("video/")) // Nie pokazujemy ikon dla obrazów
+        if (fileType.startsWith("image/") || fileType.startsWith("video/")) return null
         if (fileType === "application/pdf") return "bi-file-earmark-pdf"; 
         if (fileType.includes("word")) return "bi-file-earmark-word";
         if (fileType.includes("excel")) return "bi-file-earmark-excel";
+        if (fileType.includes("xlsx")) return "bi-file-earmark-excel";
         if (fileType.includes("zip")) return "bi-file-earmark-zip";
         return "bi-file-earmark"; // Domyślna ikona
     };
