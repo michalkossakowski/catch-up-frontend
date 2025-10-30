@@ -54,6 +54,29 @@
     --bs-form-invalid-border-color: #ea868f;
 }
 
+.accordion-button {
+	background-color: var(--bs-tertiary-bg);
+	color: var(--bs-body-color);
+}
+.accordion-button:not(.collapsed) {
+	background-color: var(--bs-tertiary-bg);
+	color: var(--bs-body-color);
+}
+.accordion-body {
+	background-color: var(--bs-body-bg);
+	color: var(--bs-body-color);
+}
+.modal-content {
+	background-color: var(--bs-body-bg);
+	color: var(--bs-body-color);
+	border-color: var(--bs-border-color);
+}
+.form-control, .form-select {
+	background-color: var(--bs-body-bg);
+	color: var(--bs-body-color);
+	border-color: var(--bs-border-color);
+}
+
 .bg-body-tertiary {
     --bs-bg-opacity: 1;
     background-image: linear-gradient(270deg, rgba(0, 0, 0, 1), rgba(0, 17, 11, 0.2)) !important; 
