@@ -177,9 +177,9 @@ function App() {
                                         <NavLink to="/roadmapexplore" className="nav-link left-sidebar truncate-text" title={t('roadmaps')}>
                                             <i className="bi bi-compass" /> <span>{t('roadmaps')}</span>
                                         </NavLink>
-                                        {/* <NavLink to="/schoolinglist" className="nav-link">
+                                        <NavLink to="/schoolinglist" className="nav-link">
                                             <i className="bi bi-book" /> <span>{t('schoolings')}</span>
-                                        </NavLink> */}
+                                        </NavLink>
                                         </>
                                     )}
                                     <NavLink to="/feedbacks" className="nav-link truncate-text" title={t('feedbacks')}>

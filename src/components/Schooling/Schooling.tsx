@@ -10,17 +10,25 @@ import "./Schooling.scss";
 import { OnActionEnum } from "../../Enums/OnActionEnum";
 import { FeedbackButton } from "../Feedback/FeedbackButton";
 import { ResourceTypeEnum } from "../../Enums/ResourceTypeEnum";
+import { useAuth } from "../../Provider/authProvider";
+import { TypeEnum } from "../../Enums/TypeEnum";
 
 const Schooling: React.FC = () => {
   const { schoolingId, partId } = useParams();
+  const { user, getRole } = useAuth();
 
   const [schooling, setSchooling] = useState<SchoolingDto | null>(null);
   const [editMode, setEditMode] = useState(false);
   const [actionTrigger, setActionTrigger] = useState<OnActionEnum>(-1);
+  const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
     fetchSchooling();
   }, []);
+
+  useEffect(() => {
+    getRole().then(r => setRole(r));
+  }, [getRole]);
 
   const fetchSchooling = async () => {
     if (!schoolingId) return;
@@ -79,14 +87,16 @@ const Schooling: React.FC = () => {
             </Button>
           </>
         ) : (
-          <Button
-            variant="primary"
-            className="me-2"
-            onClick={() => setEditMode(true)}
-          >
-            <i className='bi-pencil' style={{color: 'white'}}> </i>
-            Start Editing
-          </Button>
+          ([TypeEnum.Admin, TypeEnum.Mentor].includes(role as TypeEnum)) && (
+            <Button
+              variant="primary"
+              className="me-2"
+              onClick={() => setEditMode(true)}
+            >
+              <i className='bi-pencil' style={{color: 'white'}}> </i>
+              Start Editing
+            </Button>
+          )
         )}
         <FeedbackButton resourceId={schooling?.id!} resourceType={ResourceTypeEnum.Schooling} receiverId={schooling?.creatorId!} />
       </div>
