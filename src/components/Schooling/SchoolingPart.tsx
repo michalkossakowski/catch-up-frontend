@@ -9,6 +9,7 @@ import TipTap from "../TextEditor/TipTap";
 import MaterialItem from "../MaterialManager/MaterialItem";
 import { OnActionEnum } from "../../Enums/OnActionEnum";
 import { Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 interface SchoolingPartProps {
   partId?: number;
   changePartState?: (partId: number, state: boolean) => void;
@@ -17,6 +18,8 @@ interface SchoolingPartProps {
   actionTrigger?: OnActionEnum;
   numberofParts?: number;
   schoolingId?: number;
+  nextPartId?: number;
+  previousPartId?: number;
 }
 const SchoolingPart: React.FC<SchoolingPartProps> = ({
   partId,
@@ -26,6 +29,8 @@ const SchoolingPart: React.FC<SchoolingPartProps> = ({
   order = 0,
   numberofParts = 0,
   schoolingId = 0,
+  nextPartId,
+  previousPartId,
 }) => {
   const [loading, setLoading] = useState(true);
   const [schoolingPart, setSchoolingPart] = useState<SchoolingPartDto | null>(
@@ -117,10 +122,12 @@ const SchoolingPart: React.FC<SchoolingPartProps> = ({
               enableEdittingMaterialName={true}
             />
           )}
-          <div className='d-flex justify-content-between mt-4 w-100 padding-20'>
-                <Button variant='primary' active ={order > 1} href={`/Schooling/${schoolingId}/part/${order - 1}`} >Previous</Button>
-                <Button variant='primary' active ={order < numberofParts} href={`/Schooling/${schoolingId}/part/${order + 1}`} >Next</Button>
+          {!editMode &&(
+            <div className='d-flex justify-content-between mt-4 w-100 padding-20'>
+                {previousPartId && <Button variant='primary' as={Link} to={`/Schooling/${schoolingId}/part/${previousPartId}`} ><i className='bi-arrow-left' style={{color:'white'}}> </i>Previous</Button>}
+                {nextPartId && <Button variant='primary' className={!previousPartId ? 'ms-auto' : ''} as={Link} to={`/Schooling/${schoolingId}/part/${nextPartId}`}>Next <i style={{color:'white'}} className='bi-arrow-right'></i></Button>}
             </div>
+          )}
         </div>
       )}
     </>

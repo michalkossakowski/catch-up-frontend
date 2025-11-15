@@ -113,6 +113,24 @@ const Schooling: React.FC = () => {
                     actionTrigger={actionTrigger}
                     numberofParts={schooling?.schoolingParts.length}
                     schoolingId={Number(schoolingId)}
+                    previousPartId={
+                      schooling
+                        ? schooling.schoolingParts[
+                            schooling.schoolingParts.findIndex(
+                              (p) => p.id === Number(partId)
+                            ) - 1
+                          ]?.id
+                        : undefined
+                    }
+                    nextPartId={
+                      schooling
+                        ? schooling.schoolingParts[
+                            schooling.schoolingParts.findIndex(
+                              (p) => p.id === Number(partId)
+                            ) + 1
+                          ]?.id
+                        : undefined
+                    }
                   />
                 </>
               )}

@@ -361,22 +361,22 @@ const SchoolingList: React.FC = () => {
                                 <div className="d-flex  align-items-center justify-content-between mt-2 me-2">
                                     <Button 
                                     variant="primary" 
-                                    className="me-2 ms-2 ps-3 pe-3"  
+                                    className="ms-2 ps-3 pe-3"  
                                     onClick={handleClose}><i className='bi-arrow-left' style={{color: 'white'}}> </i>Back</Button>
                                     <Button 
                                         variant="success" 
-                                        className="me-2 ms-2 ps-3 pe-3"
+                                        className="ps-3 pe-3"
                                         onClick={() => navigateToSchooling()}
                                     ><i className='bi-eye' style={{color: 'white'}}/> Open</Button>
-                                    <div className="d-flex">
-                                        {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
-                                        <Button 
-                                            variant="danger"
-                                            onClick={() => handleDeleteSchooling()}>
-                                            <i className='bi-trash' style={{color: 'white'}}></i> Delete
-                                        </Button>
-                                        )}
-                                    </div>
+
+                                    {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
+                                    <Button 
+                                        variant="danger"
+                                        onClick={() => handleDeleteSchooling()}>
+                                        <i className='bi-trash' style={{color: 'white'}}></i> Delete
+                                    </Button>
+                                    )}
+
                                 </div>                
                             </div>
 
