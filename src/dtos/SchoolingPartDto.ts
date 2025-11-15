@@ -5,7 +5,6 @@ export interface SchoolingPartDto {
     title?: string;
     content?: string;
     shortDescription?: string;
-    iconFile?: FileDto;
-    materials?: number[];
-    schoolingUserId?: number;
+    materialsId?: number;
+    order?: number;
 }

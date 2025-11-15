@@ -1,25 +1,28 @@
 import { useEffect, useState } from 'react';
-import { editSchoolingPart, getSchoolingPart, updateUserSchoolingPartState } from '../../services/schoolingService';
+import { editSchoolingPart, getSchoolingPart } from '../../services/schoolingService';
 import Loading from '../Loading/Loading';
 import { SchoolingPartDto } from '../../dtos/SchoolingPartDto';
 import TipTap from '../TextEditor/TipTap';
 import MaterialItem from '../MaterialManager/MaterialItem';
 import { OnActionEnum } from '../../Enums/OnActionEnum';
+import { Button } from 'react-bootstrap';
 interface SchoolingPartProps {
     partId?: number;
-    isDone?: boolean;
     changePartState?: (partId: number, state: boolean) => void;
     editMode?: boolean;
     order?: number;
     actionTrigger?: OnActionEnum;
+    numberofParts?: number;
+    schoolingId?: number;
 }
 const SchoolingPart: React.FC<SchoolingPartProps> = ({
     partId,
-    isDone,
     changePartState,
     editMode = false,
     actionTrigger = -1,
     order = 0,
+    numberofParts = 0,
+    schoolingId = 0,
 }) => {
     const [loading, setLoading] = useState(true);
     const [schoolingPart, setSchoolingPart] = useState<SchoolingPartDto | null>(null);    
@@ -36,21 +39,13 @@ const SchoolingPart: React.FC<SchoolingPartProps> = ({
         getSchoolingPart(partId!).then((res) => {
             setSchoolingPart(res);
             setEditedSchoolingPart(res);
+            console.log(res);
         })
         .finally(() => {
             setLoading(false);
         })
     }
 
-    const markPartAsComplete = async () => {
-        changePartState?.(partId!, true);
-        updateUserSchoolingPartState(schoolingPart?.schoolingUserId!, partId!, true);
-    }
-    
-    const markPartAsIncomplete = async () => {
-        changePartState?.(partId!, false);
-        updateUserSchoolingPartState(schoolingPart?.schoolingUserId!, partId!, false);
-    }
 
     useEffect(() => {
         switch (actionTrigger) {
@@ -71,12 +66,15 @@ const SchoolingPart: React.FC<SchoolingPartProps> = ({
             title: editedSchoolingPart?.title!,
             content: editorContent,
             shortDescription: editedSchoolingPart?.shortDescription!,
-            iconFileId: editedSchoolingPart?.iconFile?.id ?? undefined,
-            materialsId: editedSchoolingPart?.materials ?? [],
+            order: editedSchoolingPart?.order,
+            materialsId: editedSchoolingPart?.materialsId,
         }).then((res) => {
         });
     }
-
+    const materialCreated = (materialId: number) => {
+        if (!editedSchoolingPart) return;
+        editedSchoolingPart.materialsId = materialId;
+    };
   return (
   <>
     {loading ? 
@@ -92,21 +90,30 @@ const SchoolingPart: React.FC<SchoolingPartProps> = ({
                     setEditedSchoolingPart(prev => prev ? { ...prev, content: html } : null);
                   }}
             />
-            { editedSchoolingPart?.materials?.map((id ,index ) => (
+            { editedSchoolingPart?.materialsId &&
                 <MaterialItem 
-                    key={id} 
-                    materialId={id}
+                    key={editedSchoolingPart?.materialsId} 
+                    materialId={editedSchoolingPart?.materialsId}
                     enableDownloadFile={true}
                     enableAddingFile={false}
                     enableRemoveFile={false}
                     enableEdittingMaterialName={false}
                 />
-            ))}
-            {isDone ? 
-                <button className='btn btn-primary mt-3 mb-3 ' onClick={markPartAsIncomplete}>Mark as incomplete</button>
-            :
-                <button className='btn btn-primary mt-3 mb-3 ' onClick={markPartAsComplete}>Mark as complete</button>
             }
+            {editedSchoolingPart?.materialsId == null && editMode &&
+            <MaterialItem
+                    materialId={editedSchoolingPart?.materialsId}
+                    materialCreated={materialCreated}
+
+                    enableAddingFile={true}
+                    enableDownloadFile={true}
+                    enableRemoveFile={true}
+                    enableEdittingMaterialName={true}
+                />}
+            {/* <div className='d-flex justify-content-between mt-4 w-100 padding-20'>
+                <Button variant='primary' active ={order > 1} href={`/Schooling/${schoolingId}/part/${order - 1}`} >Previous</Button>
+                <Button variant='primary' active ={order < numberofParts} href={`/Schooling/${schoolingId}/part/${order + 1}`} >Next</Button>
+            </div> */}
         </div>
     }
   </>

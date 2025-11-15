@@ -2,7 +2,7 @@ import { Col, Row } from "react-bootstrap";
 import SchoolingItem from "./SchoolingItem";
 import SchoolingProgressBar from "./SchoolingProgressBar/SchoolingProgressBar";
 import { useEffect, useState } from "react";
-import { getUserSchooling } from "../../services/schoolingService";
+import { getSchooling, editSchooling } from "../../services/schoolingService";
 import { SchoolingDto } from "../../dtos/SchoolingDto";
 import { useParams } from "react-router-dom";
 import SchoolingPart from "./SchoolingPart";
@@ -25,7 +25,7 @@ const Schooling: React.FC = () => {
 
     const fetchSchooling = async () => {
         if (!schoolingId) return;
-            getUserSchooling(Number(schoolingId)).then((res) => {
+            getSchooling(Number(schoolingId)).then((res) => {
                 setSchooling(res);
             })
             .catch((err) => {
@@ -38,13 +38,13 @@ const Schooling: React.FC = () => {
     const changePartState = (partId: number, state: boolean): void => {
         setSchooling((prevState) => {
             if (!prevState) return null;
-            const updatedParts = prevState.schoolingPartProgressBar.map((part) => {
+            const updatedParts = prevState.schoolingParts.map((part) => {
                 if (part.id === partId) {
                     return { ...part, isDone: state };
                 }
                 return part;
             });
-            return { ...prevState, schoolingPartProgressBar: updatedParts };
+            return { ...prevState, schoolingParts: updatedParts };
         });
     }   
     const resize = (isToSmall: boolean) => {
@@ -55,6 +55,15 @@ const Schooling: React.FC = () => {
       setActionTrigger(OnActionEnum.Saved);
       setEditMode(false)
       setTimeout(() => setActionTrigger(OnActionEnum.None), 100);
+      // try{
+      //   editSchooling(schooling!).then((res) => {
+      //     setActionTrigger(OnActionEnum.Saved);
+      //     setEditMode(false)
+      //     setTimeout(() => setActionTrigger(OnActionEnum.None), 100);
+      //   })
+      // }catch(error){
+      //   console.error('Error in saving schooling:', error)
+      // }
     }
 
     const handleCancelButtonClick = () => {
@@ -87,23 +96,32 @@ const Schooling: React.FC = () => {
                 />
             </Col>
             <Col sm={noPlace ? 12 : isOpen ? 10 : 11} className={`p-0 ps-3 pt-3 m-0 d-flex flex-column align-items-center ${noPlace ? "p-4" : "pe-5"}`}>
-                {partId ? 
-                <SchoolingPart
-              
-                  order={schooling?.schoolingPartProgressBar.find((part) => part.id === Number(partId))?.order ?? 0}
-                  editMode={editMode}
-                  partId={Number(partId)}
-                  isDone={schooling?.schoolingPartProgressBar.find((part) => part.id === Number(partId))?.isDone}
-                  changePartState={changePartState}
-                  actionTrigger={actionTrigger}
-                />
-                :
-                <SchoolingItem
+                {partId != undefined && 
+                <>
+                  <SchoolingPart
+                    order={
+                      schooling
+                        ? schooling.schoolingParts.findIndex(
+                            (p) => p.id === Number(partId)
+                          ) + 1
+                        : 0
+                    }
                     editMode={editMode}
-                    schooling={schooling ?? undefined}
+                    partId={Number(partId)}
+                    changePartState={changePartState}
                     actionTrigger={actionTrigger}
-                />
+                    numberofParts={schooling?.schoolingParts.length}
+                    schoolingId={Number(schoolingId)}
+                  />
+                </>
                 }
+                { partId == undefined &&
+                <>
+                  <p>{schooling?.shortDescription}</p>
+                  <span className="mt-4 text-secondary">Select a part to start learning.</span>
+                </>
+                } 
+
             </Col>
         </Row>
       </>

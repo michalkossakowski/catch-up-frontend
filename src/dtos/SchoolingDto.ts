@@ -1,5 +1,5 @@
 import { FileDto } from "./FileDto";
-import { SchoolingPartProgressBarDto } from "./SchoolingPartProgressBarDto";
+import { SchoolingPartDto } from "./SchoolingPartDto";
 
 export interface SchoolingDto {
     id?: number;
@@ -8,7 +8,6 @@ export interface SchoolingDto {
     title?: string;
     shortDescription?: string;
     priority?: number;
-    iconFile?: FileDto;
     content?: string;
-    schoolingPartProgressBar: SchoolingPartProgressBarDto[];
+    schoolingParts: SchoolingPartDto[];
 }

@@ -46,39 +46,17 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
     }
   }
   useEffect(() => {
-    var schoolingPartProgressBar = schooling?.schoolingPartProgressBar;
+    var schoolingPartProgressBar = schooling?.schoolingParts;
     setLastElement(schoolingPartProgressBar?.[schoolingPartProgressBar.length - 1]?.order!);
   },[schooling])
 
   useEffect(() => {
-    const fetchIcons = async () => {
-      const iconsObj: { [key: number]: File | null } = {};
-      if (schooling) {
-        const file = schooling.iconFile ? await downloadIconFile(schooling.iconFile) : null;
-        iconsObj[0] = file;
-        await Promise.all(
-          schooling.schoolingPartProgressBar.map(async (part, index) => {
-            if (part.fileIcon) {
-              const file = await downloadIconFile(part.fileIcon);
-              iconsObj[index+1] = file;
-            }
-          })
-        );
-        setIcons(iconsObj);
-      }
-    };
-  
-    fetchIcons();
+
+
   }, [schooling]);
 
-  const downloadIconFile = async (fileDto: FileDto): Promise<File> => {
-    const blob = await fileService.downloadFile(fileDto.id!);
-    return new File([blob], fileDto.name ?? "File Icon", { type: fileDto.type });
-  }
 
-  const schoolingIsDone = () => {
-    return schooling?.schoolingPartProgressBar.every((part) => part.isDone) ?? false;
-  }
+
   return (
     <>
       {noPlace ? 
@@ -110,7 +88,6 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
                     <SchoolingProgressBarElement 
                       showVl = {false}
                       hide = {isOpen} 
-                      isDone = {schoolingIsDone()} 
                       title={schooling?.title ?? ""} 
                       img={icons[0] ?? undefined}
                       Id={0}
@@ -118,12 +95,11 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
                   </Nav.Link>
                   <hr className="border border-1 opacity-100 m-0"/>
                   {
-                    schooling?.schoolingPartProgressBar?.map((part, index) => (
+                    schooling?.schoolingParts?.map((part, index) => (
                       <Nav.Link key={index} className="sidebar-navlink" onClick={handleClickNavLink} href={part.id ? `/Schooling/${schooling.id}/part/${part.id}` : "#"}>
                         <SchoolingProgressBarElement 
                           showVl = {part.order != lastElement} 
                           hide = {isOpen} 
-                          isDone = {part.isDone} 
                           title={part.title ?? ""} 
                           img={icons[index+1] ?? undefined}
                           Id={part.id}
@@ -146,8 +122,7 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
               <Nav.Link className="sidebar-navlink" href={schooling?.id ? `/Schooling/${schooling.id}` : "#"}>
                 <SchoolingProgressBarElement 
                   showVl = {false}
-                  hide = {isOpen} 
-                  isDone = {schoolingIsDone()} 
+                  hide = {isOpen}  
                   title={schooling?.title ?? ""} 
                   img={icons[0] ?? undefined}
                   Id={0}
@@ -155,12 +130,11 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
               </Nav.Link>
               <hr className="border border-1 opacity-100 m-0"/>
                   {
-                    schooling?.schoolingPartProgressBar?.map((part, index) => (
+                    schooling?.schoolingParts?.map((part, index) => (
                       <Nav.Link key={index} className="sidebar-navlink" href={part.id ? `/Schooling/${schooling.id}/part/${part.id}` : "#"}>
                         <SchoolingProgressBarElement 
                           showVl = {part.order != lastElement} 
                           hide = {isOpen} 
-                          isDone = {part.isDone} 
                           title={part.title ?? ""} 
                           img={icons[index+1] ?? undefined}
                           Id={part.id}

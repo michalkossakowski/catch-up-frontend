@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Loading from "../../Loading/Loading";
 import { SchoolingQueryParameters } from "../../../dtos/SchoolingQueryParametersDto";
-import { getSchoolings } from "../../../services/schoolingService";
+import { getSchoolings, deleteSchooling } from "../../../services/schoolingService";
 import { PagedResponse } from "../../../interfaces/PagedResponse";
 import { SchoolingDto } from "../../../dtos/SchoolingDto";
 import Select from 'react-select'
@@ -229,18 +229,14 @@ const SchoolingList: React.FC = () => {
         });
     }
 
-    const handleSwitchSubscribedSchoolings = () => {
-        if (myCreatedSchoolings) {
-            return
-        }
-        setSubscribedSchooling(prev => {
-            const newValue = !prev;
-            const mode = newValue ? 'subscribed' : 'all';
-            params.mode = mode;
-            setParamMode(mode);
+    const handleDeleteSchooling = async () => {
+        try {
+            if (selectedSchooling?.id)
+                await deleteSchooling(selectedSchooling?.id);
             fetchSchoolings(params);
-            return newValue;
-        });
+        } catch (error) {
+            console.error('Failed to delete schooling', error);
+        }
     }
 
     const navigateToSchooling = () => {
@@ -297,15 +293,7 @@ const SchoolingList: React.FC = () => {
                     <div className="col-12 col-lg-2 text-start mb-3">
                         <h4>Filters</h4>    
                         <hr/>
-                        
-                        <Form.Group className="text-start m-0 mb-3 fs-6">
-                            <Form.Check
-                                type="switch"
-                                label="Subscribed"
-                                checked={subscribedSchooling}
-                                onChange={() => handleSwitchSubscribedSchoolings()}
-                            />
-                        </Form.Group>
+
                         {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
                             <Form.Group className="text-start m-0 mb-3 fs-6">
                                 <Form.Check
@@ -371,23 +359,25 @@ const SchoolingList: React.FC = () => {
                                     variant="success" 
                                     className="btn-sm me-2 ms-2 ps-3 pe-3"
                                     onClick={() => navigateToSchooling()}
-                                >Visit</Button>
+                                >Open</Button>
                                 <div className="d-flex">
-                                    <Dropdown className="me-2">
-                                        <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic" size="sm">
-                                            Action
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item href="#/action-1">Subscribe</Dropdown.Item>
-                                            <Dropdown.Item href="#/action-2">Unsubscribe</Dropdown.Item>
-                                        {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
-                                            <>
-                                                <Dropdown.Divider />
-                                                <Dropdown.Item href="#/action-3">Edit</Dropdown.Item>
-                                                <Dropdown.Item href="#/action-3">Delete</Dropdown.Item>
-                                            </>)}
-                                        </Dropdown.Menu>
-                                    </Dropdown>
+                                    {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
+                                     <Button 
+                                        variant="danger"
+                                        onClick={() => handleDeleteSchooling()}>
+                                        <i className='bi-trash' style={{color: 'white'}}></i> Delete
+                                    </Button>
+
+                                    // <Dropdown className="me-2">
+                                    //     <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic" size="sm">
+                                    //         Action
+                                    //     </Dropdown.Toggle>
+                                    //     <Dropdown.Menu>                                      
+                                                
+                                    //             <Dropdown.Item onClick={() => handleDeleteSchooling()}>Delete</Dropdown.Item>
+                                    //     </Dropdown.Menu>
+                                    // </Dropdown>
+                                    )}
                                     <CloseButton onClick={handleClose} className="fs-5"/>
                                 </div>
                             </div>

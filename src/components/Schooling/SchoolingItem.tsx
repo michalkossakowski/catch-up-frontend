@@ -53,7 +53,7 @@ const SchoolingItem: React.FC<SchoolingItemProps> = ({
     editSchooling(editedSchooling).then((res) => {});
   }
   const nextEl = () => {
-    const partId = schooling?.schoolingPartProgressBar?.[0]?.id;
+    const partId = schooling?.schoolingParts?.[0]?.id;
     if (partId !== undefined) {
       navigate(`/Schooling/${schooling?.id}/part/${parseInt(partId.toString())}`);
     }

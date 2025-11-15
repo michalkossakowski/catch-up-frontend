@@ -1,7 +1,6 @@
 import axiosInstance from "../../axiosConfig";
 import { SchoolingDto } from "../dtos/SchoolingDto";
 import { SchoolingPartDto } from "../dtos/SchoolingPartDto";
-import { SchoolingPartUpdateDto } from "../dtos/SchoolingPartUpdateDto";
 import { SchoolingQueryParameters } from "../dtos/SchoolingQueryParametersDto";
 import { PagedResponse } from "../interfaces/PagedResponse";
 
@@ -17,18 +16,7 @@ export const getSchooling = async(schoolingId: number): Promise<SchoolingDto> =>
         throw error
     }  
 }
-export const getUserSchooling = async(schoolingId: number): Promise<SchoolingDto> =>{
-    try
-    {
-        const response = await axiosInstance.get<SchoolingDto>(`/Schooling/GetUserSchooling/${schoolingId}`)
-        return response.data
-    }
-    catch(error)
-    {
-        handleError('Error while getting schooling', error)
-        throw error
-    }  
-}
+
 export const getSchoolingPart = async(schoolingPartId: number): Promise<SchoolingPartDto> =>{
     try
     {
@@ -53,10 +41,10 @@ export const updateUserSchoolingPartState = async(schoolingUserPartId: number, p
         throw error
     }  
 }
-export const editSchoolingPart = async(schoolingPart: SchoolingPartUpdateDto) => {
+export const editSchoolingPart = async(schoolingPart: SchoolingPartDto) => {
     try 
     {
-        const response = await axiosInstance.put(`/Schooling/EditSchoolingPart/`, schoolingPart)
+        const response = await axiosInstance.put(`/Schooling/EditSchoolingPart`, schoolingPart)
         return response
     } 
     catch (error) 
@@ -69,6 +57,11 @@ export const editSchoolingPart = async(schoolingPart: SchoolingPartUpdateDto) =>
 export const editSchooling = async(schooling: SchoolingDto) => {
     try 
     {
+        schooling.content = schooling.content ?? "";
+        for (let part of schooling.schoolingParts) {
+            part.content = part.content ?? "";
+        }
+        console.log(schooling);
         const response = await axiosInstance.put(`/Schooling/EditSchooling/`, schooling)
         return response
     } 
@@ -95,6 +88,16 @@ export const getSchoolings = async(params: SchoolingQueryParameters = {}): Promi
     } catch (error) {
         handleError('Error while getting all schoolings', error);
         throw error;
+    }
+}
+export const deleteSchooling = async(schoolingId: number) => {
+    try 
+    {
+        const response = await axiosInstance.delete(`/Schooling/Delete/${schoolingId}`)
+        return response
+    }catch (error){
+        console.error('Error in deleting schooling:', error)
+        
     }
 }
 
