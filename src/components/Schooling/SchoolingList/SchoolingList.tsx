@@ -359,7 +359,10 @@ const SchoolingList: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="d-flex  align-items-center justify-content-between mt-2 me-2">
-
+                                    <Button 
+                                    variant="primary" 
+                                    className="me-2 ms-2 ps-3 pe-3"  
+                                    onClick={handleClose}><i className='bi-arrow-left' style={{color: 'white'}}> </i>Back</Button>
                                     <Button 
                                         variant="success" 
                                         className="me-2 ms-2 ps-3 pe-3"
@@ -376,10 +379,7 @@ const SchoolingList: React.FC = () => {
                                     </div>
                                 </div>                
                             </div>
-                                <Button 
-                                variant="primary" 
-                                className="me-2 ms-2 ps-3 pe-3 mt-3"  
-                                onClick={handleClose}><i className='bi-arrow-left' style={{color: 'white'}}> </i>Back</Button>
+
                         </div>
                     </div>
                 </div>
