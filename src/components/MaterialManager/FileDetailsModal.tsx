@@ -4,6 +4,7 @@ import { FilePair } from "../../interfaces/FilePair";
 import { UserDto } from "../../dtos/UserDto";
 import { getUserById } from "../../services/userService";
 import fileService from "../../services/fileService";
+import materialService from "../../services/materialService";
 import styles from './material.module.scss';
 import { OnActionEnum } from "../../Enums/OnActionEnum";
 import { t } from "i18next";
@@ -24,8 +25,12 @@ interface FileDetailsModalProps {
 const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
   showModal,
   onClose,
+  onAction,
   filePair,
+  materialId,
   enableDownload = true,
+  enableAddToMaterial = false,
+  isFileInMaterial = false,
 }) => {
   const [show, setShow] = useState(false);
   const [owner, setOwner] = useState<UserDto>();
@@ -47,15 +52,16 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
     setPosition({ x: 0, y: 0 });
   }, [filePair]);
 
-  const getFileIcon = (fileType?: string) => {    
+  const getFileIcon = (fileType?: string) => {
     if (!fileType) return "bi-file-earmark";
-    if (fileType.startsWith("image/") || fileType.startsWith("video/")) return "" 
-    if (fileType === "application/pdf") return "bi-file-earmark-pdf"; 
+    if (fileType.startsWith("image/") || fileType.startsWith("video/")) return "";
+    if (fileType === "application/pdf") return "bi-file-earmark-pdf";
     if (fileType.includes("word")) return "bi-file-earmark-word";
     if (fileType.includes("excel")) return "bi-file-earmark-excel";
     if (fileType.includes("zip")) return "bi-file-earmark-zip";
-    return "bi-file-earmark"; 
+    return "bi-file-earmark";
   };
+
   useEffect(() => {
     if (showModal && filePair) {
       if (hasPreview) {
@@ -106,6 +112,7 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
         url = URL.createObjectURL(filePair.file);
       }
       if (!url) throw new Error("URL is undefined");
+
       const a = document.createElement("a");
       a.href = url;
       a.download = `${filePair?.fileDto.name}`;
@@ -126,9 +133,22 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
     return `${temp.toFixed(2)} GB`;
   };
 
+  const onAddToMaterial = async () => {
+    if (!materialId || !filePair?.fileDto.id) return;
+    try {
+      await materialService.addFile(materialId, filePair.fileDto.id);
+      onAction(OnActionEnum.FileAddedToMaterial, { data: filePair }, true);
+      setShow(false);
+      setShowInfoModal(false);
+      onClose();
+    } catch (err) {
+      console.error("Failed to add file to material:", err);
+    }
+  };
+
   const handleWheel = (e: React.WheelEvent) => {
     if (!filePair?.fileDto.type?.startsWith("image/")) return;
-    e.preventDefault(); 
+    e.preventDefault();
     if (e.deltaY < 0) setZoom((z) => Math.min(z + 0.2, 5));
     else setZoom((z) => Math.max(z - 0.2, 0.5));
   };
@@ -189,11 +209,13 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
               draggable={false}
             />
           )}
+
           {filePair?.fileDto.type?.startsWith("video/") && fileUrl && (
             <video controls style={{ maxWidth: "100%", maxHeight: "70vh" }}>
               <source src={fileUrl} type={filePair.fileDto.type} />
             </video>
           )}
+
           {filePair?.fileDto.type === "application/pdf" && fileUrl && (
             <iframe
               src={fileUrl}
@@ -219,10 +241,16 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
               </>
             )}
           </Stack>
+
           <Stack direction="horizontal" gap={2}>
             <Button variant="success" onClick={() => setShowInfoModal(true)}>
               Details
             </Button>
+            {enableAddToMaterial && (
+              <Button variant="secondary" onClick={onAddToMaterial}>
+                {t("add-to-material")}
+              </Button>
+            )}
             {enableDownload && (
               <Button variant="primary" onClick={onDownload}>
                 {t("download")}
@@ -236,39 +264,40 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
         <Modal.Header closeButton>
           <Modal.Title>{t("file-details")}</Modal.Title>
         </Modal.Header>
+
         <Modal.Body>
           <Container>
             <Row>
               <Col xs={12} md={5} className="text-center mb-3">
-               {filePair?.fileDto.type?.startsWith("image/") && filePair?.file ? (
-                  <img 
-                      src={URL.createObjectURL(filePair?.file)} 
-                      alt={filePair?.fileDto.name} 
-                      className={`${styles.imageThumbnail} rounded shadow-sm`}
-                      style={{ width: "150px", height: "150px", objectFit: "cover" }}
-                      draggable="false"
-                      onContextMenu={(e) => e.preventDefault()}
+                {filePair?.fileDto.type?.startsWith("image/") && filePair?.file ? (
+                  <img
+                    src={URL.createObjectURL(filePair?.file)}
+                    alt={filePair?.fileDto.name}
+                    className={`${styles.imageThumbnail} rounded shadow-sm`}
+                    style={{ width: "150px", height: "150px", objectFit: "cover" }}
+                    draggable="false"
+                    onContextMenu={(e) => e.preventDefault()}
                   />
-                ):
-                filePair?.fileDto.type?.startsWith("video/") && filePair?.file ? (
-                  <video 
-                    controls 
+                ) : filePair?.fileDto.type?.startsWith("video/") && filePair?.file ? (
+                  <video
+                    controls
                     className={`${styles.videoThumbnail} rounded shadow-sm`}
                     style={{ width: "150px", height: "150px", objectFit: "cover" }}
-                    > 
-                      {t('your-browser-does-not-support-the-video-element')}  
-                      <source src={URL.createObjectURL(filePair?.file)} type={filePair.fileDto.type} />
+                  >
+                    <source src={URL.createObjectURL(filePair?.file)} type={filePair.fileDto.type} />
                   </video>
-                ) : 
-                  <i className={`${getFileIcon(filePair?.fileDto?.type)} ${styles.fileIconSize}` }></i>
-                }
+                ) : (
+                  <i className={`${getFileIcon(filePair?.fileDto?.type)} ${styles.fileIconSize}`}></i>
+                )}
               </Col>
-              <Col className="text-start" style={{wordWrap:'break-word'}}>
+
+              <Col className="text-start" style={{ wordWrap: "break-word" }}>
                 <p>{t("name")}: {filePair?.fileDto?.name}</p>
                 <p>{t("owner")}: {owner?.name} {owner?.surname}</p>
-                <p>{t("size")} {getFileSize(filePair?.fileDto.sizeInBytes)}</p> 
+                <p>{t("size")} {getFileSize(filePair?.fileDto.sizeInBytes)}</p>
                 <p>{t("file-type")} {filePair?.fileDto.type}</p>
-                <p>Uploaded: {' '}
+                <p>
+                  Uploaded:{" "}
                   {filePair?.fileDto.dateOfUpload
                     ? new Date(filePair.fileDto.dateOfUpload).toLocaleString("pl-PL")
                     : t("undefine-date")}
@@ -277,12 +306,21 @@ const FileDetailsModal: React.FC<FileDetailsModalProps> = ({
             </Row>
           </Container>
         </Modal.Body>
+
         <Modal.Footer>
-          {enableDownload && (
-            <Button variant="primary" onClick={onDownload}>
-              {t("download")}
-            </Button>
-          )}
+          <Stack direction="horizontal" gap={2}>
+            {enableAddToMaterial && (
+              <Button variant="secondary" onClick={onAddToMaterial}>
+                {t("add-to-material")}
+              </Button>
+            )}
+
+            {enableDownload && (
+              <Button variant="primary" onClick={onDownload}>
+                {t("download")}
+              </Button>
+            )}
+          </Stack>
         </Modal.Footer>
       </Modal>
     </>

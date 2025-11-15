@@ -3,13 +3,13 @@
     .card:hover {
         box-shadow: 0 2px 8px #DB91D1;
         transform: translateY(-2px);
+        transition: 0.3s ease;
     }
 }
+
 .schooling-list{
     .right-sidebar {
         width: 400px;
-        min-height: 450px;
-        max-height: 550px;
         transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
         overflow-y: auto;
         &.hide {
@@ -31,4 +31,22 @@
     .badge{
         background-color: #DB91D1 !important;
     }
+}
+
+.sidebar-card{
+    border: 1px solid #7474746e;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    text-align: left;
+}
+
+
+.card-schooling-preview {
+  border-radius: 0.5rem;
+}
+
+
+
+.schooling-selected h6 {
+    color: #DB91D1 !important; 
 }

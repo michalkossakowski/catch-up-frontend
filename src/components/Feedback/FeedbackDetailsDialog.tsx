@@ -60,7 +60,6 @@ const FeedbackDetailsDialog: React.FC<FeedbackDetailsDialogProps> = ({
             <hr></hr>
             {feedback.materialId && (
               <>
-                <hr></hr>
                 <MaterialItem 
                     materialId={feedback.materialId} 
                     enableDownloadFile={true} 

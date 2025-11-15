@@ -78,7 +78,7 @@ export default function UserEdit(): React.ReactElement {
         }
 
         const newUser: UserDto = {
-            id: '',
+            id: undefined,
             name,
             surname,
             email,
@@ -239,7 +239,7 @@ export default function UserEdit(): React.ReactElement {
                             </div>
                         )}
                     </div>
-                    <div className="buttonBox">
+                    <div className="buttonBoxAddUser">
                         <Button type="submit" variant="primary" disabled={!isNameValid || !isSurnameValid || !isEmailValid || !isPasswordValid || !isConfirmPasswordValid || !isPositionValid || !isTypeValid}>
                             Add New User
                         </Button>

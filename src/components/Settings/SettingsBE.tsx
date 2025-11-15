@@ -38,15 +38,7 @@ const SettingsBE: React.FC = () => {
                         />
                     </Form>
                 </div>
-                <div className='single-setting'>
-                    Placeholder
-                    <Form>
-                        <Form.Check 
-                            type="switch"
-                            id="placeholder-id"
-                        />
-                    </Form>
-                </div>
+
             </div>
         </>
     );

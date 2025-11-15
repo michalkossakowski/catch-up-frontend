@@ -437,224 +437,192 @@ const TaskPage = () => {
     };
 return (
     <>
-        {!showAlert && !loading && fullTask && (
-            
-            <><div className='taskDetails'>
-                <div className='taskDetailsHeader'>
-                    <h1>{fullTask.title}</h1>
-                    <div className='taskDetailsHeaderButtons'>
-                        <Dropdown className='dropdown dropdown-task-status'>
-                            <Dropdown.Toggle variant="success" id="dropdown-basic" className={`custom-dropdown-toggle ${statusLabels[fullTask.status as StatusEnum]?.color}`}>
-                                {statusLabels[fullTask.status as StatusEnum]?.label || 'Select Status'}
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu>
-                                {Object.entries(statusLabels).map(([key, { label, color }], idx, arr) => (
-                                    <>
-                                        <Dropdown.Item
-                                            key={key}
-                                            onClick={() => handleStatusChange(Number(key) as StatusEnum)}
-                                            className={color + ' custom-dropdown-item'}
-                                        >
-                                            {label}
-                                        </Dropdown.Item>
-                                        {idx < arr.length - 1 && <Dropdown.Divider key={`divider-${key}`} />}
-                                    </>
-                                ))}
+        <div className="task-page-container">
+            {loading && (
+                <div className='loaderBox'>
+                    <Loading/>
+                </div>
+            )}
+            {showAlert && (
+                <div className='alertBox'>
+                    <Alert variant='danger'>
+                        {alertMessage}
+                    </Alert>
+                </div>
+            )}
+            {!loading && !showAlert && fullTask && (
+                <>
+                    <div className="task-page-card">
+                        <div className='task-page-header'>
+                            <h1>{fullTask.title}</h1>
+                            <div className='task-page-header-buttons'>
+                                <Button variant="primary" onClick={() => handleShowCommentModal()}><i className='bi-chat-left-text' style={{color:'white'}}></i> Add Comment</Button>
+                                {isTimeLogEnabled && (
+                                    <Button variant="success" onClick={() => handleShowTimeLogModal()}><i className='bi-clock-history' style={{color:'white'}}></i> Log Time</Button>
+                                )}
+                            </div>
+                        </div>
 
-                            </Dropdown.Menu>
-                        </Dropdown>
-                        <Button variant="info" onClick={()=>handleShowCommentModal()}><i className='bi-chat-left-text'></i> Add Comment</Button>
-                        { isTimeLogEnabled &&(
-                            <Button variant="info" onClick={()=>handleShowTimeLogModal()}><i className='bi-clock-history'></i> Log Time</Button>
-                        )}
-                    </div>
-                </div>
-                <div className='taskDetailsContent'>
-                    <div className='column description'>
-                        <b>Description:</b>
-                        <p>{fullTask.description}</p>
-                        {fullTask.materialsId && (
+                        <div className='task-page-body'>
                             <div>
-                                <MaterialItem
-                                    materialId={fullTask.materialsId}
-                                    enableDownloadFile={true}
-                                    enableAddingFile={false}
-                                    enableRemoveFile={false}
-                                    enableEdittingMaterialName={false}/>
+                                <div className='task-description-section'>
+                                    <h5>Description</h5>
+                                    <p className="task-description-content">{fullTask.description}</p>
+                                    {fullTask.materialsId && (
+                                        <div className="task-materials-section">
+                                            <h5>Additional Materials</h5>
+                                            <MaterialItem
+                                                materialId={fullTask.materialsId}
+                                                enableDownloadFile={true}
+                                                enableAddingFile={false}
+                                                enableRemoveFile={false}
+                                                enableEdittingMaterialName={false}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        )}
+
+                            <div className='task-additional-info'>
+                                <h5>Details</h5>
+                                <div className='data-row'>
+                                    <div className="label">Assigner:</div>
+                                    <div className="value">{fullTask.assigningName}</div>
+                                </div>
+                                <div className='data-row'>
+                                    <div className="label">Assignee:</div>
+                                    <div className="value">{fullTask.newbieName}</div>
+                                </div>
+                                <div className='data-row'>
+                                    <div className="label">Assignment Date:</div>
+                                    <div className="value">{formatDate(fullTask.assignmentDate)}</div>
+                                </div>
+                                <div className='data-row'>
+                                    <div className="label">Finalization Date:</div>
+                                    <div className="value">{formatDate(fullTask.finalizationDate)}</div>
+                                </div>
+                                <div className='data-row'>
+                                    <div className="label">Deadline:</div>
+                                    <div className="value">{formatDate(fullTask.deadline)}</div>
+                                </div>
+                                {isTimeLogEnabled && (
+                                    <div className='data-row'>
+                                        <div className="label">Time Spent:</div>
+                                        <div className="value">{hours}h {minutes}m</div>
+                                    </div>
+                                )}
+                                <div className='data-row'>
+                                    <div className="label">Status:</div>
+                                    <Dropdown>
+                                        <Dropdown.Toggle id="dropdown-basic" className={`custom-dropdown-toggle ${statusLabels[fullTask.status as StatusEnum]?.color}`}>
+                                            {statusLabels[fullTask.status as StatusEnum]?.label || 'Select Status'}
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                            {Object.entries(statusLabels).map(([key, { label, color }]) => (
+                                                <Dropdown.Item
+                                                    key={key}
+                                                    onClick={() => handleStatusChange(Number(key) as StatusEnum)}
+                                                    className={`custom-dropdown-item ${color}`}
+                                                >
+                                                    {label}
+                                                </Dropdown.Item>
+                                            ))}
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div className='column addittionalInfo'>
-                        <div className='data-row '>
-                            <div className="label">Assigner:</div>
-                            <div className="value">{fullTask.assigningName}</div>
-                        </div>
-                        <div className='data-row '>
-                            <div className="label">Assignee:</div>
-                            <div className="value">{fullTask.newbieName}</div>
-                        </div>
-                        <div className='data-row '>
-                            <div className="label">Assignment Date:</div>
-                            <div className="value">{formatDate(fullTask.assignmentDate)}</div>
-                        </div>
-                        <div className='data-row '>
-                            <div className="label">Finalization Date:</div>
-                            <div className="value">{formatDate(fullTask.finalizationDate)}</div>
-                        </div>
-                        <div className='data-row '>
-                            <div className="label">Deadline:</div>
-                            <div className="value">{formatDate(fullTask.deadline)}</div>
-                        </div>
-                        { isTimeLogEnabled && (
-                            <div className='data-row '>
-                                <div className="label">Spend Time:</div>
-                                <div className="value">{hours} h {minutes} m</div>
-                            </div>
-                        )}
-                        
+
+                    <div className="task-page-card task-page-tabs">
+                        <Tabs defaultActiveKey="comments" id="task-details-tabs" className="mb-3">
+                            <Tab eventKey="comments" title={`Comments (${commentsTotalCount})`}>
+                                {commentLoading ? (
+                                    <div className='loaderBox'><Loading /></div>
+                                ) : commentsTotalCount === 0 ? (
+                                    <Alert variant='info'>No comments yet.</Alert>
+                                ) : (
+                                    <>
+                                        <div className="pagination-controls">
+                                            <div className="items-per-page-selector">
+                                                <Form.Label className="me-2 mb-0">Per page:</Form.Label>
+                                                <Form.Select value={itemsPerCommentPage} onChange={handleItemsPerCommentPageChange} style={{ width: 'auto' }}>
+                                                    <option value={5}>5</option>
+                                                    <option value={10}>10</option>
+                                                    <option value={20}>20</option>
+                                                    <option value={50}>50</option>
+                                                </Form.Select>
+                                            </div>
+                                            <div className="page-selector">
+                                                <Form.Label className="me-2 mb-0">Page:</Form.Label>
+                                                <Form.Select value={currentCommentPage} onChange={handleCommentPageSelectChange} style={{ width: 'auto' }}>
+                                                    {Array.from({ length: totalCommentPages }, (_, i) => (
+                                                        <option key={i + 1} value={i + 1}>{i + 1}</option>
+                                                    ))}
+                                                </Form.Select>
+                                            </div>
+                                        </div>
+                                        {taskComments.map((comment) => (
+                                            <TaskComment key={comment.id} taskComment={comment} deleteClick={commentDelete} editClick={handleShowCommentModal} />
+                                        ))}
+                                        {totalCommentPages > 1 && (
+                                            <div className="d-flex justify-content-center mt-3">
+                                                <Pagination>
+                                                    <Pagination.Prev onClick={() => handleCommentPageChange(currentCommentPage - 1)} disabled={currentCommentPage === 1} />
+                                                    {renderCommentPaginationItems()}
+                                                    <Pagination.Next onClick={() => handleCommentPageChange(currentCommentPage + 1)} disabled={currentCommentPage === totalCommentPages} />
+                                                </Pagination>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </Tab>
+                            <Tab eventKey="timeLogs" title={`Time Logs (${timeLogTotalCount})`} disabled={!isTimeLogEnabled}>
+                                {timeLogLoading ? (
+                                    <div className='loaderBox'><Loading /></div>
+                                ) : timeLogTotalCount === 0 ? (
+                                    <Alert variant='info'>No time logs yet.</Alert>
+                                ) : (
+                                    <>
+                                        <div className="pagination-controls">
+                                            <div className="items-per-page-selector">
+                                                <Form.Label className="me-2 mb-0">Per page:</Form.Label>
+                                                <Form.Select value={itemsPerTimeLogPage} onChange={handleItemsPerTimeLogPageChange} style={{ width: 'auto' }}>
+                                                    <option value={5}>5</option>
+                                                    <option value={10}>10</option>
+                                                    <option value={20}>20</option>
+                                                    <option value={50}>50</option>
+                                                </Form.Select>
+                                            </div>
+                                            <div className="page-selector">
+                                                <Form.Label className="me-2 mb-0">Page:</Form.Label>
+                                                <Form.Select value={currentTimeLogPage} onChange={handleTimeLogPageSelectChange} style={{ width: 'auto' }}>
+                                                    {Array.from({ length: totalTimeLogPages }, (_, i) => (
+                                                        <option key={i + 1} value={i + 1}>{i + 1}</option>
+                                                    ))}
+                                                </Form.Select>
+                                            </div>
+                                        </div>
+                                        {taskTimeLogs.map((timeLog) => (
+                                            <TaskTimeLog key={timeLog.id} taskTimeLog={timeLog} newbieId={fullTask.newbieId} deleteClick={timeLogDelete} editClick={handleShowTimeLogModal} />
+                                        ))}
+                                        {totalTimeLogPages > 1 && (
+                                            <div className="d-flex justify-content-center mt-3">
+                                                <Pagination>
+                                                    <Pagination.Prev onClick={() => handleTimeLogPageChange(currentTimeLogPage - 1)} disabled={currentTimeLogPage === 1} />
+                                                    {renderTimeLogPaginationItems()}
+                                                    <Pagination.Next onClick={() => handleTimeLogPageChange(currentTimeLogPage + 1)} disabled={currentTimeLogPage === totalTimeLogPages} />
+                                                </Pagination>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </Tab>
+                        </Tabs>
                     </div>
-                </div>
-                <Tabs
-                    defaultActiveKey="comments"
-                    id="uncontrolled-tab-example"
-                    className="mb-3"
-                    >
-                    <Tab eventKey="comments" title={`Comments (${commentsTotalCount})`}>
-                        {commentsTotalCount==0 &&(
-                            <div className='alert alert-info'>No comments yet.</div>
-                        )}
-                        {!loading && !commentLoading && !showAlert && commentsTotalCount>0 && (
-                            <div className="d-flex justify-content-between mb-3 align-items-center">
-                                <Form.Group controlId="itemsPerPage" className="d-flex align-items-center mx-3">
-                                    <Form.Label className="me-2 mb-0">Comments per page:</Form.Label>
-                                    <Form.Select 
-                                        value={itemsPerCommentPage}
-                                        onChange={handleItemsPerCommentPageChange}
-                                        style={{ width: 'auto' }}
-                                    >
-                                        <option value={5}>5</option>
-                                        <option value={10}>10</option>
-                                        <option value={20}>20</option>
-                                        <option value={50}>50</option>
-                                    </Form.Select>
-                                </Form.Group>
-                                <Form.Group controlId="pageSelect" className="d-flex align-items-center mx-3">
-                                    <Form.Label className="me-2 mb-0">Page:</Form.Label>
-                                    <Form.Select
-                                        value={currentCommentPage}
-                                        onChange={handleCommentPageSelectChange}
-                                        style={{ width: 'auto' }}
-                                    >
-                                        {Array.from({ length: totalCommentPages }, (_, i) => (
-                                            <option key={i + 1} value={i + 1}>
-                                                {i + 1}
-                                            </option>
-                                        ))}
-                                    </Form.Select>
-                                </Form.Group>
-                            </div>
-                        )}
-                        {taskComments.map((comment,index) => (
-                            <TaskComment key={comment.id} taskComment={comment} deleteClick={commentDelete} editClick={handleShowCommentModal}/>
-                        ))}
-                        {totalCommentPages > 1 && (
-                            <div className="d-flex justify-content-center align-items-center mt-3">
-                                <Pagination className="mb-0">
-                                    <Pagination.Prev
-                                        onClick={() => handleCommentPageChange(currentCommentPage - 1)}
-                                        disabled={currentCommentPage === 1}
-                                    />
-                                    {renderCommentPaginationItems()}
-                                    <Pagination.Next
-                                        onClick={() => handleCommentPageChange(currentCommentPage + 1)}
-                                        disabled={currentCommentPage === totalCommentPages}
-                                    />
-                                </Pagination>
-                            </div>
-                        )}
-                        {commentLoading && (
-                            <div className='loaderBox'>
-                                <Loading/>
-                            </div>
-                        )}
-                    </Tab>
-                    <Tab eventKey="timeLogs" title={`Time logs (${timeLogTotalCount})`} disabled={!isTimeLogEnabled}>
-                        {timeLogTotalCount==0 &&(
-                            <div className='alert alert-info'>No time logs yet.</div>
-                        )}
-                        {!timeLogLoading && isTimeLogEnabled && !loading && !showAlert && timeLogTotalCount>0 && (
-                            <div className="d-flex justify-content-between mb-3 align-items-center">
-                                <Form.Group controlId="itemsPerTimeLogPage" className="d-flex align-items-center mx-3">
-                                    <Form.Label className="me-2 mb-0">Time logs per page:</Form.Label>
-                                    <Form.Select 
-                                        value={itemsPerTimeLogPage}
-                                        onChange={handleItemsPerTimeLogPageChange}
-                                        style={{ width: 'auto' }}
-                                    >
-                                        <option value={5}>5</option>
-                                        <option value={10}>10</option>
-                                        <option value={20}>20</option>
-                                        <option value={50}>50</option>
-                                    </Form.Select>
-                                </Form.Group>
-                                <Form.Group controlId="TimeLogPageSelect" className="d-flex align-items-center mx-3">
-                                    <Form.Label className="me-2 mb-0">Page:</Form.Label>
-                                    <Form.Select
-                                        value={currentTimeLogPage}
-                                        onChange={handleTimeLogPageSelectChange}
-                                        style={{ width: 'auto' }}
-                                    >
-                                        {Array.from({ length: totalTimeLogPages }, (_, i) => (
-                                            <option key={i + 1} value={i + 1}>
-                                                {i + 1}
-                                            </option>
-                                        ))}
-                                    </Form.Select>
-                                </Form.Group>
-                            </div>
-                        )}
-                        {taskTimeLogs.map((timeLog,index) => (
-                            <TaskTimeLog key={timeLog.id} taskTimeLog={timeLog} newbieId={fullTask.newbieId} deleteClick={timeLogDelete} editClick={handleShowTimeLogModal}/>
-                        ))}
-                        {totalTimeLogPages > 1 && (
-                            <div className="d-flex justify-content-center align-items-center mt-3">
-                                <Pagination className="mb-0">
-                                    <Pagination.Prev
-                                        onClick={() => handleTimeLogPageChange(currentTimeLogPage - 1)}
-                                        disabled={currentTimeLogPage === 1}
-                                    />
-                                    {renderTimeLogPaginationItems()}
-                                    <Pagination.Next
-                                        onClick={() => handleTimeLogPageChange(currentTimeLogPage + 1)}
-                                        disabled={currentTimeLogPage === totalTimeLogPages}
-                                    />
-                                </Pagination>
-                            </div>
-                        )}
-                    </Tab>
-                    {timeLogLoading && (
-                        <div className='loaderBox'>
-                            <Loading/>
-                        </div>
-                    )}
-                </Tabs>
-            </div>
-            
-            </>
-        )}
-        
-        {loading && (
-            <div className='loaderBox'>
-                <Loading/>
-            </div>
-        )}
-        {showAlert && (
-            <div className='alertBox'>
-                <Alert className='alert' variant='danger'>
-                    {alertMessage}
-                </Alert>
-            </div>
-        )}
+                </>
+            )}
+        </div>
         <ConfirmModal 
             show={showConfirmModal} 
             title={modalTitle}
@@ -677,8 +645,6 @@ return (
             initialData={timeLogModalData}
         />  
     </>
-    
-    
     );
 };
 

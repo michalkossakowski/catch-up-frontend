@@ -200,7 +200,7 @@ const SchoolingList: React.FC = () => {
     const mapCategory = (categoryId: number | undefined): string => {
         if (!categories) return "Unknown Category";
         const category = categories.find(cat => cat.id === categoryId);
-        return category && category.name ? category.name.substring(0, 15)+"..." : "Unknown Category";
+        return category && category.name ? category.name: "Unknown Category";
     }
 
     
@@ -254,10 +254,10 @@ const SchoolingList: React.FC = () => {
                             onChange={handleItemsPerPageChange}
                             style={{ width: 'auto' }}
                         >
+                            <option value={5}>5</option>
                             <option value={10}>10</option>
-                            <option value={25}>25</option>
+                            <option value={20}>20</option>
                             <option value={50}>50</option>
-                            <option value={100}>100</option>
                         </Form.Select>
                     </Form.Group>
                     <Form.Group controlId="pageSelect" className="d-flex align-items-center order-2 order-lg-3">
@@ -291,21 +291,7 @@ const SchoolingList: React.FC = () => {
                 <hr className="border-2"/>
                 <div className="mb-3 row">
                     <div className="col-12 col-lg-2 text-start mb-3">
-                        <h4>Filters</h4>    
-                        <hr/>
-
-                        {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
-                            <Form.Group className="text-start m-0 mb-3 fs-6">
-                                <Form.Check
-                                    type="switch"
-                                    label="Created Schoolings"
-                                    checked={myCreatedSchoolings}
-                                    onChange={() => handleSwitchSchoolingOwner()}
-                                />
-                            </Form.Group>
-                        )}
-                        <hr/>
-                        <label className="mb-2 fs-6">Filtr by Category:</label>
+                        <label className="mb-2 fs-6">Filter by Category:</label>
                         <Select
                             components={animatedComponents}
                             options={options}
@@ -331,14 +317,24 @@ const SchoolingList: React.FC = () => {
                     </div>
                     <div className="col-12 col-lg-10 d-flex">
                         <div className="w-100">
-                            {schoolings.items.map((schooling) => (
-                                <span key={schooling.id} onClick={() => handleSelectSchooling(schooling.id || null)} >
-                                    <SchoolingListItem 
-                                        schooling={schooling} 
-                                        mapCategory={mapCategory}
-                                    />
-                                </span>
-                            ))}
+                            {schoolings.items.map((schooling, i) => {
+                                const isSelected = selectedSchooling?.id === schooling.id;
+
+                                return (
+                                    <span
+                                        key={schooling.id}
+                                        onClick={() => handleSelectSchooling(schooling.id || null)}
+                                        className={isSelected ? "schooling-selected" : ""}
+                                    >
+                                        <SchoolingListItem 
+                                            schooling={schooling}
+                                            index={i + 1}   
+                                            mapCategory={mapCategory}
+                                        />
+                                    </span>
+                                );
+                            })}
+
                             <div className="d-flex justify-content-center align-items-center mt-3">
                                 <Pagination className="mb-0">
                                     <Pagination.Prev
@@ -353,43 +349,37 @@ const SchoolingList: React.FC = () => {
                                 </Pagination>
                             </div>
                         </div>
-                        <div className={`right-sidebar ${show ? "show" : "hide"} card`}>
-                            <div className="d-flex  align-items-center justify-content-between mt-2 me-2">
-                                <Button 
-                                    variant="success" 
-                                    className="btn-sm me-2 ms-2 ps-3 pe-3"
-                                    onClick={() => navigateToSchooling()}
-                                >Open</Button>
-                                <div className="d-flex">
+                        <div className={`right-sidebar ${show ? "show" : "hide"}`}>
+                            <div className="sidebar-card">
+                                <div className="m-2">
+                                    <h6 className="fw-medium">{selectedSchooling ? selectedSchooling.title : "Select a schooling to view details"}</h6>
+                                    <div className="fw-light text-secondary-emphasis"><p>Priority: <span>{selectedSchooling?.priority}</span></p></div>
+                                    <div className="card-schooling-preview text-bg-primary">
+                                        <p className="p-2">{selectedSchooling?.shortDescription}</p>
+                                    </div>
+                                </div>
+                                <div className="d-flex  align-items-center justify-content-between mt-2 me-2">
+                                    <Button 
+                                    variant="primary" 
+                                    className="ms-2 ps-3 pe-3"  
+                                    onClick={handleClose}><i className='bi-arrow-left' style={{color: 'white'}}> </i>Back</Button>
+                                    <Button 
+                                        variant="success" 
+                                        className="ps-3 pe-3"
+                                        onClick={() => navigateToSchooling()}
+                                    ><i className='bi-eye' style={{color: 'white'}}/> Open</Button>
+
                                     {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
-                                     <Button 
+                                    <Button 
                                         variant="danger"
                                         onClick={() => handleDeleteSchooling()}>
                                         <i className='bi-trash' style={{color: 'white'}}></i> Delete
                                     </Button>
-
-                                    // <Dropdown className="me-2">
-                                    //     <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic" size="sm">
-                                    //         Action
-                                    //     </Dropdown.Toggle>
-                                    //     <Dropdown.Menu>                                      
-                                                
-                                    //             <Dropdown.Item onClick={() => handleDeleteSchooling()}>Delete</Dropdown.Item>
-                                    //     </Dropdown.Menu>
-                                    // </Dropdown>
                                     )}
-                                    <CloseButton onClick={handleClose} className="fs-5"/>
-                                </div>
+
+                                </div>                
                             </div>
-                            <div className="border-1 border-top mt-2">
-                                <div className="m-2">
-                                    <h6 className="fw-medium">{selectedSchooling ? selectedSchooling.title : "Select a schooling to view details"}</h6>
-                                    <div className="fw-light text-secondary-emphasis"><p>Priority: <span>{selectedSchooling?.priority}</span></p></div>
-                                    <div className="card text-bg-primary">
-                                        <p className="p-2">{selectedSchooling?.shortDescription}</p>
-                                    </div>
-                                </div>
-                            </div>                    
+
                         </div>
                     </div>
                 </div>

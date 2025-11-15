@@ -1,4 +1,4 @@
-import { Col, Row } from "react-bootstrap";
+import { Card, Col, Row, Container, Button } from "react-bootstrap";
 import SchoolingItem from "./SchoolingItem";
 import SchoolingProgressBar from "./SchoolingProgressBar/SchoolingProgressBar";
 import { useEffect, useState } from "react";
@@ -8,95 +8,106 @@ import { useParams } from "react-router-dom";
 import SchoolingPart from "./SchoolingPart";
 import "./Schooling.scss";
 import { OnActionEnum } from "../../Enums/OnActionEnum";
+import { FeedbackButton } from "../Feedback/FeedbackButton";
+import { ResourceTypeEnum } from "../../Enums/ResourceTypeEnum";
+import { useAuth } from "../../Provider/authProvider";
+import { TypeEnum } from "../../Enums/TypeEnum";
 
 const Schooling: React.FC = () => {
+  const { schoolingId, partId } = useParams();
+  const { user, getRole } = useAuth();
 
-    const { schoolingId, partId } = useParams();
+  const [schooling, setSchooling] = useState<SchoolingDto | null>(null);
+  const [editMode, setEditMode] = useState(false);
+  const [actionTrigger, setActionTrigger] = useState<OnActionEnum>(-1);
+  const [role, setRole] = useState<string | null>(null);
 
-    const [isOpen, setIsOpen] = useState(true);
-    const [schooling, setSchooling] = useState<SchoolingDto | null>(null);
-    const [noPlace, setNoPlace] = useState(window.innerWidth < 1250);
-    const [editMode, setEditMode] = useState(false);
-    const [actionTrigger, setActionTrigger] = useState<OnActionEnum>(-1);
+  useEffect(() => {
+    fetchSchooling();
+  }, []);
 
-    useEffect(() => {
-        fetchSchooling();
-    },[])
+  useEffect(() => {
+    getRole().then(r => setRole(r));
+  }, [getRole]);
 
-    const fetchSchooling = async () => {
-        if (!schoolingId) return;
-            getSchooling(Number(schoolingId)).then((res) => {
-                setSchooling(res);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    }
-    const onOpen = (value: boolean): void => {
-        setIsOpen(value);
-    };
-    const changePartState = (partId: number, state: boolean): void => {
-        setSchooling((prevState) => {
-            if (!prevState) return null;
-            const updatedParts = prevState.schoolingParts.map((part) => {
-                if (part.id === partId) {
-                    return { ...part, isDone: state };
-                }
-                return part;
-            });
-            return { ...prevState, schoolingParts: updatedParts };
-        });
-    }   
-    const resize = (isToSmall: boolean) => {
-        setNoPlace(isToSmall);
-    }
+  const fetchSchooling = async () => {
+    if (!schoolingId) return;
+    getSchooling(Number(schoolingId))
+      .then((res) => {
+        setSchooling(res);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
-    const handleSaveButtonClick = () => {
-      setActionTrigger(OnActionEnum.Saved);
-      setEditMode(false)
-      setTimeout(() => setActionTrigger(OnActionEnum.None), 100);
-      // try{
-      //   editSchooling(schooling!).then((res) => {
-      //     setActionTrigger(OnActionEnum.Saved);
-      //     setEditMode(false)
-      //     setTimeout(() => setActionTrigger(OnActionEnum.None), 100);
-      //   })
-      // }catch(error){
-      //   console.error('Error in saving schooling:', error)
-      // }
-    }
+  const changePartState = (partId: number, state: boolean): void => {
+    setSchooling((prevState) => {
+      if (!prevState) return null;
+      const updatedParts = prevState.schoolingParts.map((part) => {
+        if (part.id === partId) {
+          return { ...part, isDone: state };
+        }
+        return part;
+      });
+      return { ...prevState, schoolingParts: updatedParts };
+    });
+  };
 
-    const handleCancelButtonClick = () => {
-      setActionTrigger(OnActionEnum.CancelSave);
-      setEditMode(false)
-      setTimeout(() => setActionTrigger(OnActionEnum.None), 100);
-    }
+  const handleSaveButtonClick = () => {
+    setActionTrigger(OnActionEnum.Saved);
+    setEditMode(false);
+    setTimeout(() => setActionTrigger(OnActionEnum.None), 100);
+  };
 
-    return (
-      <>
-        <div className="utility-menu d-flex justify-content-end border-2 border-bottom">
-          {editMode
-            ?
-              <>
-                <a className="me-2" onClick={() => handleSaveButtonClick()}>Save</a>
-                <a className="me-2" onClick={() => handleCancelButtonClick()}>Cancel</a>
-              </>
-            :
-              <a className="me-2" onClick={() => setEditMode(true)}>Start Editing</a>    
-          }
-          <div className="vr"></div>
-          <a className="me-2" onClick={() => {}}>Feedback</a>
-        </div>
-        <Row className={`position-relative p-0 m-0 ${noPlace ? "flex-column" : ""}`}>
-            <Col sm={noPlace ? 12 : isOpen ? 2 : 1} className={`p-0 m-0 pt-3 border-2 ${!noPlace? "border-end" :""}`}>      
-                <SchoolingProgressBar 
-                    schooling={schooling ?? undefined}
-                    onOpen={onOpen}
-                    resize={resize}
-                />
-            </Col>
-            <Col sm={noPlace ? 12 : isOpen ? 10 : 11} className={`p-0 ps-3 pt-3 m-0 d-flex flex-column align-items-center ${noPlace ? "p-4" : "pe-5"}`}>
-                {partId != undefined && 
+  const handleCancelButtonClick = () => {
+    setActionTrigger(OnActionEnum.CancelSave);
+    setEditMode(false);
+    setTimeout(() => setActionTrigger(OnActionEnum.None), 100);
+  };
+
+  return (
+    <Container className="py-4">
+      <div className="utility-menu d-flex justify-content-end align-items-center pb-3">
+        {editMode ? (
+          <>
+            <Button
+              variant="primary"
+              className="me-2"
+              onClick={() => handleSaveButtonClick()}
+            >
+              Save
+            </Button>
+            <Button
+              variant="secondary"
+              className="me-2"
+              onClick={() => handleCancelButtonClick()}
+            >
+              Cancel
+            </Button>
+          </>
+        ) : (
+          ([TypeEnum.Admin, TypeEnum.Mentor].includes(role as TypeEnum)) && (
+            <Button
+              variant="primary"
+              className="me-2"
+              onClick={() => setEditMode(true)}
+            >
+              <i className='bi-pencil' style={{color: 'white'}}> </i>
+              Start Editing
+            </Button>
+          )
+        )}
+        <FeedbackButton resourceId={schooling?.id!} resourceType={ResourceTypeEnum.Schooling} receiverId={schooling?.creatorId!} />
+      </div>
+      <Row>
+        <Col md={3} className="p-0 pe-4 border-end">
+          <SchoolingProgressBar schooling={schooling ?? undefined} />
+        </Col>
+        <Col md={9} className="p-0 ps-4">
+          <Card className="schooling-card w-100">
+            <Card.Body>
+              {partId != undefined && (
                 <>
                   <SchoolingPart
                     order={
@@ -112,19 +123,44 @@ const Schooling: React.FC = () => {
                     actionTrigger={actionTrigger}
                     numberofParts={schooling?.schoolingParts.length}
                     schoolingId={Number(schoolingId)}
+                    previousPartId={
+                      schooling
+                        ? schooling.schoolingParts[
+                            schooling.schoolingParts.findIndex(
+                              (p) => p.id === Number(partId)
+                            ) - 1
+                          ]?.id
+                        : undefined
+                    }
+                    nextPartId={
+                      schooling
+                        ? schooling.schoolingParts[
+                            schooling.schoolingParts.findIndex(
+                              (p) => p.id === Number(partId)
+                            ) + 1
+                          ]?.id
+                        : undefined
+                    }
                   />
                 </>
-                }
-                { partId == undefined &&
+              )}
+              {partId == undefined && (
                 <>
-                  <p>{schooling?.shortDescription}</p>
-                  <span className="mt-4 text-secondary">Select a part to start learning.</span>
+                  <h2>{schooling?.title}</h2>
+                  <p className="text-secondary mt-4">
+                    {schooling?.shortDescription}
+                  </p>
+                  <hr />
+                  <span className="mt-4 text-secondary">
+                    Select a part to start learning.
+                  </span>
                 </>
-                } 
-
-            </Col>
-        </Row>
-      </>
-    );
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  );
 };
 export default Schooling;
