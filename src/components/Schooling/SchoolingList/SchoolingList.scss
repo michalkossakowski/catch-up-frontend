@@ -3,6 +3,7 @@
     .card:hover {
         box-shadow: 0 2px 8px #DB91D1;
         transform: translateY(-2px);
+        transition: 0.3s ease;
     }
 }
 .schooling-list{

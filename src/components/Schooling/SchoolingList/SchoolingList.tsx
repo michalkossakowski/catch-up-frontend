@@ -200,7 +200,7 @@ const SchoolingList: React.FC = () => {
     const mapCategory = (categoryId: number | undefined): string => {
         if (!categories) return "Unknown Category";
         const category = categories.find(cat => cat.id === categoryId);
-        return category && category.name ? category.name.substring(0, 15)+"..." : "Unknown Category";
+        return category && category.name ? category.name: "Unknown Category";
     }
 
     
@@ -254,10 +254,10 @@ const SchoolingList: React.FC = () => {
                             onChange={handleItemsPerPageChange}
                             style={{ width: 'auto' }}
                         >
+                            <option value={5}>5</option>
                             <option value={10}>10</option>
-                            <option value={25}>25</option>
+                            <option value={20}>20</option>
                             <option value={50}>50</option>
-                            <option value={100}>100</option>
                         </Form.Select>
                     </Form.Group>
                     <Form.Group controlId="pageSelect" className="d-flex align-items-center order-2 order-lg-3">
@@ -291,21 +291,7 @@ const SchoolingList: React.FC = () => {
                 <hr className="border-2"/>
                 <div className="mb-3 row">
                     <div className="col-12 col-lg-2 text-start mb-3">
-                        <h4>Filters</h4>    
-                        <hr/>
-
-                        {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
-                            <Form.Group className="text-start m-0 mb-3 fs-6">
-                                <Form.Check
-                                    type="switch"
-                                    label="Created Schoolings"
-                                    checked={myCreatedSchoolings}
-                                    onChange={() => handleSwitchSchoolingOwner()}
-                                />
-                            </Form.Group>
-                        )}
-                        <hr/>
-                        <label className="mb-2 fs-6">Filtr by Category:</label>
+                        <label className="mb-2 fs-6">Filter by Category:</label>
                         <Select
                             components={animatedComponents}
                             options={options}
@@ -331,14 +317,18 @@ const SchoolingList: React.FC = () => {
                     </div>
                     <div className="col-12 col-lg-10 d-flex">
                         <div className="w-100">
-                            {schoolings.items.map((schooling) => (
-                                <span key={schooling.id} onClick={() => handleSelectSchooling(schooling.id || null)} >
-                                    <SchoolingListItem 
-                                        schooling={schooling} 
-                                        mapCategory={mapCategory}
-                                    />
-                                </span>
-                            ))}
+                        {schoolings.items.map((schooling, i) => (
+                            <span
+                                key={schooling.id}
+                                onClick={() => handleSelectSchooling(schooling.id || null)}
+                            >
+                                <SchoolingListItem 
+                                    schooling={schooling}
+                                    index={i + 1}   
+                                    mapCategory={mapCategory}
+                                />
+                            </span>
+                        ))}
                             <div className="d-flex justify-content-center align-items-center mt-3">
                                 <Pagination className="mb-0">
                                     <Pagination.Prev
@@ -357,9 +347,9 @@ const SchoolingList: React.FC = () => {
                             <div className="d-flex  align-items-center justify-content-between mt-2 me-2">
                                 <Button 
                                     variant="success" 
-                                    className="btn-sm me-2 ms-2 ps-3 pe-3"
+                                    className="me-2 ms-2 ps-3 pe-3"
                                     onClick={() => navigateToSchooling()}
-                                >Open</Button>
+                                ><i className='bi-eye' style={{color: 'white'}}/> Open</Button>
                                 <div className="d-flex">
                                     {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
                                      <Button 
