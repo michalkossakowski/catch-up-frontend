@@ -317,18 +317,24 @@ const SchoolingList: React.FC = () => {
                     </div>
                     <div className="col-12 col-lg-10 d-flex">
                         <div className="w-100">
-                        {schoolings.items.map((schooling, i) => (
-                            <span
-                                key={schooling.id}
-                                onClick={() => handleSelectSchooling(schooling.id || null)}
-                            >
-                                <SchoolingListItem 
-                                    schooling={schooling}
-                                    index={i + 1}   
-                                    mapCategory={mapCategory}
-                                />
-                            </span>
-                        ))}
+                            {schoolings.items.map((schooling, i) => {
+                                const isSelected = selectedSchooling?.id === schooling.id;
+
+                                return (
+                                    <span
+                                        key={schooling.id}
+                                        onClick={() => handleSelectSchooling(schooling.id || null)}
+                                        className={isSelected ? "schooling-selected" : ""}
+                                    >
+                                        <SchoolingListItem 
+                                            schooling={schooling}
+                                            index={i + 1}   
+                                            mapCategory={mapCategory}
+                                        />
+                                    </span>
+                                );
+                            })}
+
                             <div className="d-flex justify-content-center align-items-center mt-3">
                                 <Pagination className="mb-0">
                                     <Pagination.Prev
@@ -343,43 +349,37 @@ const SchoolingList: React.FC = () => {
                                 </Pagination>
                             </div>
                         </div>
-                        <div className={`right-sidebar ${show ? "show" : "hide"} card`}>
-                            <div className="d-flex  align-items-center justify-content-between mt-2 me-2">
-                                <Button 
-                                    variant="success" 
-                                    className="me-2 ms-2 ps-3 pe-3"
-                                    onClick={() => navigateToSchooling()}
-                                ><i className='bi-eye' style={{color: 'white'}}/> Open</Button>
-                                <div className="d-flex">
-                                    {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
-                                     <Button 
-                                        variant="danger"
-                                        onClick={() => handleDeleteSchooling()}>
-                                        <i className='bi-trash' style={{color: 'white'}}></i> Delete
-                                    </Button>
-
-                                    // <Dropdown className="me-2">
-                                    //     <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic" size="sm">
-                                    //         Action
-                                    //     </Dropdown.Toggle>
-                                    //     <Dropdown.Menu>                                      
-                                                
-                                    //             <Dropdown.Item onClick={() => handleDeleteSchooling()}>Delete</Dropdown.Item>
-                                    //     </Dropdown.Menu>
-                                    // </Dropdown>
-                                    )}
-                                    <CloseButton onClick={handleClose} className="fs-5"/>
-                                </div>
-                            </div>
-                            <div className="border-1 border-top mt-2">
+                        <div className={`right-sidebar ${show ? "show" : "hide"}`}>
+                            <div className="sidebar-card">
                                 <div className="m-2">
                                     <h6 className="fw-medium">{selectedSchooling ? selectedSchooling.title : "Select a schooling to view details"}</h6>
                                     <div className="fw-light text-secondary-emphasis"><p>Priority: <span>{selectedSchooling?.priority}</span></p></div>
-                                    <div className="card text-bg-primary">
+                                    <div className="card-schooling-preview text-bg-primary">
                                         <p className="p-2">{selectedSchooling?.shortDescription}</p>
                                     </div>
                                 </div>
-                            </div>                    
+                                <div className="d-flex  align-items-center justify-content-between mt-2 me-2">
+
+                                    <Button 
+                                        variant="success" 
+                                        className="me-2 ms-2 ps-3 pe-3"
+                                        onClick={() => navigateToSchooling()}
+                                    ><i className='bi-eye' style={{color: 'white'}}/> Open</Button>
+                                    <div className="d-flex">
+                                        {[TypeEnum.Mentor, TypeEnum.Manager, TypeEnum.Admin].includes(role as TypeEnum) && (
+                                        <Button 
+                                            variant="danger"
+                                            onClick={() => handleDeleteSchooling()}>
+                                            <i className='bi-trash' style={{color: 'white'}}></i> Delete
+                                        </Button>
+                                        )}
+                                    </div>
+                                </div>                
+                            </div>
+                                <Button 
+                                variant="primary" 
+                                className="me-2 ms-2 ps-3 pe-3 mt-3"  
+                                onClick={handleClose}><i className='bi-arrow-left' style={{color: 'white'}}> </i>Hide</Button>
                         </div>
                     </div>
                 </div>
