@@ -379,7 +379,7 @@ const SchoolingList: React.FC = () => {
                                 <Button 
                                 variant="primary" 
                                 className="me-2 ms-2 ps-3 pe-3 mt-3"  
-                                onClick={handleClose}><i className='bi-arrow-left' style={{color: 'white'}}> </i>Hide</Button>
+                                onClick={handleClose}><i className='bi-arrow-left' style={{color: 'white'}}> </i>Back</Button>
                         </div>
                     </div>
                 </div>
