@@ -12,12 +12,11 @@ const SchoolingProgressBar: React.FC<SchoolingProgressBarProps> = ({
 }) => {
   return (
     <div className="schooling-progress-bar">
+      <h4><i className='bi-book'></i> Schooling:</h4>
       <NavLink
         to={`/Schooling/${schooling?.id}`}
         className="nav-link p-0 mb-4 schooling-title-link"
       >
-
-        <h4><i className='bi-book'></i> Schooling</h4>
         <h5> {schooling?.title}</h5>
       </NavLink>
       <div className="progress-bar-vertical">
